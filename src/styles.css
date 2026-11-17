@@ -148,19 +148,21 @@ ul { list-style: none; }
 .pcard-media { display: grid; place-items: center; height: 262px; background: var(--tile); padding: 26px 24px 14px; }
 .pcard-media img { width: 100%; height: 100%; object-fit: contain; mix-blend-mode: multiply; transition: transform .25s; }
 .pcard:hover .pcard-media img { transform: scale(1.04); }
-.pcard-body { padding: 22px 28px 24px; display: grid; gap: 8px; align-content: start; }
+.pcard-body { padding: 22px clamp(14px, 1.9vw, 28px) 24px; display: grid; gap: 8px; align-content: start; }
 .pcard-series { font-size: 13px; line-height: 18px; color: var(--muted); }
 .pcard-series span { color: var(--brand); }
 .pcard h3 { font-size: 20px; line-height: 25px; font-weight: 600; color: #171717; height: 50px; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
 .pcard-price { margin-top: 6px; display: flex; flex-wrap: wrap; gap: 0 8px; align-items: baseline; }
 .pcard-price strong { font-size: 16px; line-height: 22px; font-weight: 500; color: #151515; }
 .pcard-price s { font-size: 13px; color: var(--muted); }
-.pcard.special a { display: grid; grid-template-rows: 262px 1fr; height: 100%; }
+.pcard.special { grid-template-rows: 1fr; }
+.pcard.special a { display: grid; grid-template-rows: 262px auto; height: 100%; align-content: start; }
 .pcard.special .pcard-media { padding: 0; }
 .pcard.special .pcard-media img { object-fit: cover; mix-blend-mode: normal; }
-.pcard.special .pcard-body { justify-items: start; }
-.pcard.special strong { font-size: 22px; line-height: 27px; font-weight: 600; color: var(--title); }
-.pcard.special b { width: 34px; height: 34px; border-radius: 999px; background: var(--title); color: #fff; display: grid; place-items: center; font-size: 16px; }
+.pcard.special .pcard-body { display: flex; flex-direction: column; align-items: flex-start; gap: 14px; }
+.pcard.special strong { font-size: clamp(16px, 1.5vw, 22px); line-height: 1.24; font-weight: 600; color: var(--title); overflow-wrap: anywhere; }
+.pcard.special:hover b { transform: translateX(4px); background: var(--brand); }
+.pcard.special b { flex: none; width: 34px; height: 34px; transition: transform .2s, background .2s; border-radius: 999px; background: var(--title); color: #fff; display: grid; place-items: center; font-size: 16px; }
 /* Why shop: 3 columns, 178+266 / 222+222 / 460 */
 .benefits { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; height: 460px; }
 .benefits-col { display: grid; gap: 16px; min-height: 0; }
@@ -735,7 +737,9 @@ ul { list-style: none; }
   .pcard-body { padding: 14px 14px 16px; gap: 5px; }
   .pcard h3 { font-size: 16px; line-height: 20px; height: 40px; }
   .pcard-price strong { font-size: 13px; line-height: 20px; white-space: nowrap; }
-  .pcard.special a { grid-template-rows: 180px 1fr; }
+  .pcard.special a { grid-template-rows: 180px auto; }
+  .product-shell .rail-track > .pcard.special:last-child:nth-child(odd) a { grid-template-rows: none; grid-template-columns: 44% 1fr; align-items: center; }
+  .product-shell .rail-track > .pcard.special:last-child:nth-child(odd) .pcard-media { height: 140px; }
   .pcard.special strong { font-size: 16px; line-height: 20px; }
   .benefits { display: flex; height: auto; gap: 12px; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; padding-bottom: 2px; }
   .benefits-col { display: contents; }
