@@ -140,9 +140,11 @@ ul { list-style: none; }
 .promo.photo .promo-media img { position: absolute; inset: 0; width: 100%; height: 100%; max-width: none; object-fit: cover; object-position: 60% 58%; mix-blend-mode: normal; -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 38%); mask-image: linear-gradient(90deg, transparent 0%, #000 38%); }
 .promo-media img { height: 223px; width: auto; max-width: 100%; object-fit: contain; mix-blend-mode: multiply; }
 /* Product card: 259×418, media 262 on #f7f8f9, body 22/28/24 */
-.product-shell .rail-track { gap: 20px; padding-bottom: 2px; }
+/* DJI product rows: five fixed blocks that share the page width, no sliding */
+.product-shell .rail-track { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 20px; padding-bottom: 2px; overflow: visible; }
+.product-shell .slider-arrow { display: none; }
 .module .feature-card + .product-shell .rail-track { gap: 20px; }
-.pcard { flex: 0 0 calc((100% - 80px) / 5) !important; min-width: 259px; background: #fff; border: 1px solid rgba(0, 0, 0, 0.04); border-radius: var(--radius); overflow: hidden; box-shadow: 0 1px 4px rgba(0, 0, 0, 0.03); display: grid; grid-template-rows: 262px 1fr; }
+.pcard { min-width: 0; background: #fff; border: 1px solid rgba(0, 0, 0, 0.04); border-radius: var(--radius); overflow: hidden; box-shadow: 0 1px 4px rgba(0, 0, 0, 0.03); display: grid; grid-template-rows: 262px 1fr; }
 .pcard-media { display: grid; place-items: center; height: 262px; background: var(--tile); padding: 26px 24px 14px; }
 .pcard-media img { width: 100%; height: 100%; object-fit: contain; mix-blend-mode: multiply; transition: transform .25s; }
 .pcard:hover .pcard-media img { transform: scale(1.04); }
@@ -631,6 +633,7 @@ ul { list-style: none; }
   .promo.photo .promo-media img { height: 100%; }
   /* product rows become a two-column grid, as on DJI mobile */
   .product-shell .rail-track, .module .feature-card + .product-shell .rail-track { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; overflow: visible; }
+  .product-shell .rail-track > :last-child:nth-child(odd) { grid-column: 1 / -1; }
   .pcard { flex: none !important; min-width: 0; grid-template-rows: 180px 1fr; }
   .pcard-media { height: 180px; padding: 12px; }
   .pcard-body { padding: 14px 14px 16px; gap: 5px; }
