@@ -4,6 +4,7 @@ import { useCart } from "../cart.jsx";
 import { addOns, faq, promo } from "../data/site.js";
 import { Countdown, Icon, Link, QtyStepper, usd } from "../components/ui.jsx";
 import stories from "../data/stories.json";
+import Story from "../components/Story.jsx";
 
 /* Structure follows the Bambu Lab and ComMarker store product pages (studied 2026-11-16):
    breadcrumbs → sticky gallery with thumbnail row and trust icons | long buy column (title, red price + typical price + save pill,
@@ -21,7 +22,7 @@ function addOnsFor(product) {
 function useStory(handle) {
   return useMemo(() => {
     const story = stories[handle];
-    if (!story) return { highlights: [], cases: [], videos: [], specs: null, qa: [], bullets: null };
+    if (!story) return { highlights: [], cases: [], videos: [], specs: null, qa: [], bullets: null, blocks: [] };
     const cards = [];
     let cases = [];
     for (const b of story.blocks) {
@@ -33,17 +34,18 @@ function useStory(handle) {
     const highlights = [];
     for (let i = 0; highlights.length < 7 && cards.some((c) => c[i]); i++) cards.forEach((c) => c[i] && highlights.length < 7 && highlights.push(c[i]));
     if (!cases.length) cases = (story.blocks.find((b) => b.kind === "gallery")?.items || []).slice(0, 5).map((i) => ({ ...i, eyebrow: i.title, text: "" }));
-    const promise = story.blocks.find((b) => b.kind === "promise")?.items.map((i) => [i.title, i.text]) || [];
     return {
       highlights, cases,
       videos: story.blocks.filter((b) => b.kind === "videos").flatMap((b) => b.videos).slice(0, 8),
       specs: story.blocks.find((b) => b.kind === "specs")?.groups || null,
-      qa: [...promise, ...(story.blocks.find((b) => b.kind === "faq")?.qa || [])],
+      qa: story.blocks.find((b) => b.kind === "faq")?.qa || [],
+      blocks: story.blocks.filter((b) => b.kind !== "specs" && b.kind !== "faq"),
       bullets: story.highlights.length >= 3 ? story.highlights.slice(0, 6) : null,
     };
   }, [handle]);
 }
 
+// eslint-disable-next-line no-unused-vars
 function UseCases({ cases }) {
   const [i, setI] = useState(0);
   const c = cases[i] || cases[0];
@@ -80,6 +82,19 @@ export default function Product({ handle }) {
   useEffect(() => {
     setVariantId(null); setPhoto(0); setPicked({}); setQty(1); setAllSpecs(false); setDetails(null); setActive("overview");
   }, [handle]);
+  useEffect(() => {
+    const spy = () => {
+      const ids = ["overview", "highlights", "cases", "compare", "specs", "faq"];
+      let current = "overview";
+      for (const id of ids) {
+        const el = document.getElementById(`pdp-${id}`);
+        if (el && el.getBoundingClientRect().top < 200) current = id;
+      }
+      setActive(current);
+    };
+    window.addEventListener("scroll", spy, { passive: true });
+    return () => window.removeEventListener("scroll", spy);
+  }, [handle]);
   const options = useMemo(() => addOnsFor(product || {}), [product]);
   const story = useStory(handle);
   if (!product) return <div className="container section-pad"><h1>Product not found</h1><Link to="/">Back to store</Link></div>;
@@ -105,10 +120,10 @@ export default function Product({ handle }) {
   const questions = [...story.qa, ...faq];
   const specGroups = story.specs || (product.specs ? [{ group: "Key specifications", rows: [["Best for", product.bestFor], ...Object.entries(product.specs)] }] : null);
   const bullets = story.bullets || (product.specs ? Object.entries(product.specs).slice(0, 6).map(([k, v]) => `${k}: ${v}`) : [product.tagline]);
-  const features = story.highlights;
+  const hasGallery = story.blocks.some((b) => b.kind === "gallery");
   const glance = isMachine && product.specs ? Object.entries(product.specs).slice(0, 6) : [];
   const home = product.kind === "machine" ? ["machines", "Laser Machines"] : product.kind === "material" ? ["materials", "Materials"] : ["accessories", "Accessories"];
-  const sections = [["overview", "Overview"], features.length && ["highlights", "Features"], story.cases.length && ["cases", "Applications"], compare.length && ["compare", "Compare"], specGroups && ["specs", "Specs"], ["faq", "FAQ"]].filter(Boolean);
+  const sections = [["overview", "Overview"], story.blocks.length && ["highlights", "Features"], hasGallery && ["cases", "Applications"], compare.length && ["compare", "Compare"], specGroups && ["specs", "Specs"], ["faq", "FAQ"]].filter(Boolean);
   const jump = (id) => {
     setActive(id);
     document.getElementById(`pdp-${id}`)?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -250,32 +265,13 @@ export default function Product({ handle }) {
       </section>
 
       {glance.length > 0 && (
-        <section className="pdp-section">
+        <section className="pdp-glance">
           <h2>Highlights at a Glance</h2>
           <div className="glance">{glance.map(([k, v]) => <div key={k}><strong>{v}</strong><span>{k}</span></div>)}</div>
         </section>
       )}
 
-      {features.length > 0 && (
-        <section id="pdp-highlights" className="pdp-section">
-          <h2>Explore {product.name.replace("™", "")}</h2>
-          <div className="stories">
-            {features.map((h, n) => (
-              <article key={n} className="story">
-                <img src={img(h.img, 1400)} alt="" loading="lazy" />
-                <div><h3>{h.title}</h3><p>{h.text}</p></div>
-              </article>
-            ))}
-          </div>
-        </section>
-      )}
-
-      {story.cases.length > 0 && (
-        <section id="pdp-cases" className="pdp-section">
-          <h2>Endless Possibilities With {product.name.replace("™", "")}</h2>
-          <UseCases key={handle} cases={story.cases} />
-        </section>
-      )}
+      {story.blocks.length > 0 && <Story key={handle} blocks={story.blocks} firstId="pdp-highlights" galleryId="pdp-cases" />}
 
       {compare.length > 0 && (
         <section id="pdp-compare" className="pdp-section">
