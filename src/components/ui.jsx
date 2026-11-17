@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { img, money } from "../lib.js";
+import { useCart } from "../cart.jsx";
 
 export const Link = ({ to, href, children, ...rest }) =>
   href ? (
@@ -77,9 +78,20 @@ export function ProductCard({ product }) {
 }
 
 /** Collection card (DJI "collection-v2 card"): flat gray tile, title, "USD $x", round Shop → action. */
+/** Listing card. Accessories and materials get a direct Add to Cart button (stays on the listing);
+    products with several options send the shopper to the product page to choose. Machines keep the DJI hover arrow. */
 export function CollectionCard({ product }) {
+  const { add } = useCart();
+  const [added, setAdded] = useState(false);
+  const quick = product.kind !== "machine";
+  const single = product.variants.length === 1;
+  const addNow = () => {
+    add(product.handle, product.variants[0].id, 1);
+    setAdded(true);
+    setTimeout(() => setAdded(false), 1800);
+  };
   return (
-    <article className="ccard">
+    <article className={`ccard${quick ? " quick" : ""}`}>
       <Link to={`/products/${product.handle}`} className="ccard-link">
         {product.compareAt && <span className="ccard-tag">Sale</span>}
         {!product.available && <span className="ccard-tag muted">Sold out</span>}
@@ -87,11 +99,24 @@ export function CollectionCard({ product }) {
         <span className="ccard-content">
           <span className="ccard-details">
             <span className="ccard-title">{product.name}</span>
-            <span className="ccard-price">USD <b>{money(product.price)}</b>{product.compareAt && <s>USD {money(product.compareAt)}</s>}</span>
+            <span className="ccard-price">{product.priceVaries && "From "}USD <b>{money(product.price)}</b>{product.compareAt && <s>USD {money(product.compareAt)}</s>}</span>
           </span>
-          <span className="ccard-action"><span>Shop</span><Icon name="arrow" size={18} /></span>
+          {!quick && <span className="ccard-action"><span>Shop</span><Icon name="arrow" size={18} /></span>}
         </span>
       </Link>
+      {quick && (
+        <div className="ccard-buy">
+          {!product.available ? (
+            <button type="button" disabled>Sold Out</button>
+          ) : single ? (
+            <button type="button" className={added ? "added" : ""} onClick={addNow} aria-live="polite">
+              <Icon name={added ? "check" : "cart"} size={18} />{added ? "Added to Cart" : "Add to Cart"}
+            </button>
+          ) : (
+            <Link to={`/products/${product.handle}`}>Select Options<Icon name="arrow" size={16} /></Link>
+          )}
+        </div>
+      )}
     </article>
   );
 }
