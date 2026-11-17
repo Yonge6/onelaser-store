@@ -71,9 +71,10 @@ export const categoryRail = [
   ["Materials", "/collections/materials", "1-8-glitter-acrylic-sheets-12-12-4-pack-for-laser-engraving-cutting"],
 ];
 
+// One flagship per machine line, so the home page does not repeat the same machines module after module.
 export const hot = [
   "onelaser-xrf-desktop-laser-machine", "hydra-7-gen-2-70w-rf-co2-dual-laser-machine", "cobra-8-90w-co2-laser-engraver-cutter",
-  "vertigo-vertical-laser-engraver", "piburn-omni-for-onelaser", "onelaser-x-series-riser-base", "filtrabox-micro",
+  "vertigo-vertical-laser-engraver",
 ];
 
 // Lifestyle backgrounds for the What's Hot tiles: generated with ChatGPT from the official 1laser.com renders (2026-11-16).

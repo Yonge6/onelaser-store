@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { asset, byHandle, img } from "../lib.js";
-import { bestSellers, categoryRail, heroSlides, hot, hotImages, promo, promoBanner, seriesBlocks } from "../data/site.js";
+import { categoryRail, heroSlides, hot, hotImages, promo, promoBanner, seriesBlocks } from "../data/site.js";
 import { Benefits } from "../components/Chrome.jsx";
 import { Countdown, Link, ProductCard, Rail, usd } from "../components/ui.jsx";
 
@@ -38,6 +38,51 @@ function Hero() {
   );
 }
 
+function SeriesBody({ b }) {
+  return (
+    <>
+      <Link to={b.to} className="feature-card">
+        <img src={asset(b.image)} alt="" loading="lazy" />
+        <span className="feature-copy"><small>{b.kicker}</small><strong>{b.name}</strong><em>{b.text}</em><b>Buy Now</b></span>
+      </Link>
+      <Rail label={b.title} className="product-shell">
+        {b.picks.map((h) => <ProductCard key={h} product={byHandle[h]} />)}
+        <article className="pcard special">
+          <Link to={b.view}>
+            <span className="pcard-media"><img src={asset(b.image)} alt="" loading="lazy" /></span>
+            <span className="pcard-body"><strong>{b.viewLabel}</strong><b aria-hidden="true">→</b></span>
+          </Link>
+        </article>
+      </Rail>
+    </>
+  );
+}
+
+const SeriesModule = ({ b }) => (
+  <section className="module">
+    <div className="page"><h2>{b.title}</h2><SeriesBody b={b} /></div>
+  </section>
+);
+
+/** The three machine lines share one module with tabs: OneLaser has nine current machines, not enough for a module each. */
+function Machines() {
+  const lines = seriesBlocks.slice(0, 3);
+  const [i, setI] = useState(0);
+  return (
+    <section className="module">
+      <div className="page">
+        <div className="module-head">
+          <h2>Shop Machines</h2>
+          <div className="module-tabs" role="tablist" aria-label="Machine lines">
+            {lines.map((b, n) => <button key={b.title} type="button" role="tab" aria-selected={n === i} className={n === i ? "on" : ""} onClick={() => setI(n)}>{b.title}<small>{b.name}</small></button>)}
+          </div>
+        </div>
+        <div className="module-panel" key={i}><SeriesBody b={lines[i]} /></div>
+      </div>
+    </section>
+  );
+}
+
 export default function Home() {
   return (
     <div className="home">
@@ -53,7 +98,7 @@ export default function Home() {
       <section className="module">
         <div className="page">
           <h2>What's Hot</h2>
-          <Rail label="What's hot" className="hot-shell">
+          <Rail label="What's hot" className="hot-shell four">
             {hot.map((h) => byHandle[h]).map((p) => (
               <article key={p.handle} className={`hot-tile${hotImages[p.handle] ? " photo" : ""}`}>
                 <Link to={`/products/${p.handle}`} className="hot-media" aria-label={p.name}><img src={hotImages[p.handle] ? asset(hotImages[p.handle]) : img(p.images[0], 700)} alt="" loading="lazy" /></Link>
@@ -74,35 +119,11 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="module">
-        <div className="page">
-          <h2>Best Sellers</h2>
-          <Rail label="Best sellers" className="product-shell">{bestSellers.map((h) => <ProductCard key={h} product={byHandle[h]} />)}</Rail>
-        </div>
-      </section>
+      <Machines />
 
       <Benefits />
 
-      {seriesBlocks.map((b) => (
-        <section key={b.title} className="module">
-          <div className="page">
-            <h2>{b.title}</h2>
-            <Link to={b.to} className="feature-card">
-              <img src={asset(b.image)} alt="" loading="lazy" />
-              <span className="feature-copy"><small>{b.kicker}</small><strong>{b.name}</strong><em>{b.text}</em><b>Buy Now</b></span>
-            </Link>
-            <Rail label={b.title} className="product-shell">
-              {b.picks.map((h) => <ProductCard key={h} product={byHandle[h]} />)}
-              <article className="pcard special">
-                <Link to={b.view}>
-                  <span className="pcard-media"><img src={asset(b.image)} alt="" loading="lazy" /></span>
-                  <span className="pcard-body"><strong>{b.viewLabel}</strong><b aria-hidden="true">→</b></span>
-                </Link>
-              </article>
-            </Rail>
-          </div>
-        </section>
-      ))}
+      <SeriesModule b={seriesBlocks[3]} />
     </div>
   );
 }

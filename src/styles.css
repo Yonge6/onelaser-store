@@ -112,6 +112,21 @@ ul { list-style: none; }
 .module h2 { font-size: 43.2px; line-height: 48px; font-weight: 800; color: var(--title); margin-bottom: 24px; letter-spacing: -0.01em; }
 /* What's Hot: 344×376 tiles, copy bottom-left, price + white pill */
 .hot-shell .rail-track { gap: 16px; padding: 34px 0 2px; }
+@media (min-width: 861px) {
+  .hot-shell.four .rail-track { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); overflow: visible; }
+  .hot-shell.four .hot-tile { min-width: 0; }
+  .hot-shell.four .slider-arrow { display: none; }
+}
+.module-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; margin-bottom: 24px; }
+.module-head h2 { margin-bottom: 0; }
+.module-tabs { display: flex; gap: 8px; }
+.module-tabs button { min-width: 150px; padding: 10px 22px; border-radius: 999px; background: #fff; border: 1px solid rgba(0, 0, 0, 0.08); text-align: center; font-size: 15px; line-height: 20px; font-weight: 700; color: var(--title); transition: background .2s, color .2s, border-color .2s; }
+.module-tabs button small { display: block; font-size: 12px; line-height: 16px; font-weight: 500; color: var(--muted); }
+.module-tabs button:hover { border-color: var(--title); }
+.module-tabs button.on { background: var(--title); border-color: var(--title); color: #fff; }
+.module-tabs button.on small { color: rgba(255, 255, 255, 0.7); }
+.module-panel { animation: panel-in .35s ease; }
+@keyframes panel-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
 .hot-shell .slider-arrow { width: 77px; height: 77px; font-size: 44px; line-height: 70px; }
 .hot-shell .slider-arrow.prev { left: 24px; } .hot-shell .slider-arrow.next { right: 24px; }
 .hot-tile { position: relative; flex: 0 0 25% !important; min-width: 344px; height: clamp(376px, calc(376px + (100vw - 1440px) * 0.13), 438px); border-radius: var(--radius); overflow: hidden; color: #fff; background: radial-gradient(120% 90% at 70% 10%, #4a4d55 0%, #23252a 55%, #121316 100%); box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05); }
@@ -721,6 +736,11 @@ ul { list-style: none; }
   .module h2 { font-size: 28px; line-height: 31px; margin-bottom: 18px; }
   .slider-arrow { display: none; }
   .hot-shell .rail-track { gap: 10px; padding: 26px 28px 2px 0; }
+  .module-head { display: block; margin-bottom: 16px; }
+  .module-head h2 { margin-bottom: 14px; }
+  .module-tabs { gap: 6px; }
+  .module-tabs button { flex: 1; min-width: 0; padding: 8px 6px; font-size: 13px; line-height: 18px; }
+  .module-tabs button small { font-size: 11px; line-height: 14px; }
   .hot-tile { flex: 0 0 240px !important; min-width: 0; height: 312px; }
   .hot-media img { height: 170px; top: 12px; }
   .hot-copy { left: 19px; right: 19px; bottom: 68px; }

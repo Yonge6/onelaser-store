@@ -13,7 +13,7 @@
 
 | 页面 | 地址 | 模块（自上而下） |
 | --- | --- | --- |
-| 首页 | `#/` | 公告条 38 → 页头 71 → 轮播 430（倒计时）+ 品类条 → What's Hot → 促销横幅 260 → Best Sellers → Why shop（三列拼图 460）→ 每条产品线：418 横幅 + 4 个商品 + Explore 卡 → 服务条 → 订阅 → 页脚 |
+| 首页 | `#/` | 首屏轮播 + 分类条 → What's Hot（每条产品线一台，共 4 张）→ 黑五横幅 → Shop Machines（Desktop / Workshop / Industrial 三个标签共用一个模块）→ Why shop → Accessories & Materials。机器只有 9 台，所以不再每条线单独一个模块，也去掉了 Best Sellers |
 | 列表页 | `#/collections/machines` 等 | 面包屑 → 居中标题 → 272 筛选栏（品类树、筛选、Reset）→ 件数 + 排序 → 3 列卡片 331×414 |
 | 商品详情 | `#/products/:handle` | 照 Bambu Lab + ComMarker：面包屑 → 左侧吸顶图库（缩略图行、四个保障图标）/ 右侧长购买栏（红色价格+划线价+省多少、卖点列表、黑五倒计时条、套餐卡、选购帮助行、配件加购、数量+加购/立即购买、订单说明、支付方式）→ 吸顶锚点导航 → 深色产品总览 → Highlights at a Glance → 官网完整卖点长叙事（`src/components/Story.jsx`，深色：横幅、图文、切换式卖点、视频弹窗、作品墙、对比表、保障卡，滚动渐显）→ 机型对比 → 完整参数表 → FAQ；底部固定购买条 |
 | 购物车 | `#/cart` | 极简页头 → 提示条 → 表格 726/150/150/150/24 → 左备注 600、右合计 500 → Continue Shopping / Check Out → 服务条 |
