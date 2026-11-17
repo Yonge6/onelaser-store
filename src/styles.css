@@ -166,9 +166,11 @@ ul { list-style: none; }
 .benefits-col { display: grid; gap: 16px; min-height: 0; }
 .benefits-col.a { grid-template-rows: 178px 1fr; }
 .benefits-col.b { grid-template-rows: 1fr 1fr; }
-.benefit-tile { background: #fff; border: 1px solid rgba(0, 0, 0, 0.04); border-radius: var(--radius); padding: 20px 24px 0; display: flex; flex-direction: column; align-items: center; text-align: center; overflow: hidden; min-height: 0; }
-.benefit-tile strong { font-size: 20px; line-height: 26px; font-weight: 500; color: #2f3135; }
-.benefit-text { font-size: 13px; line-height: 20px; color: var(--muted); max-width: 320px; }
+.benefit-tile { background: #fff; border: 1px solid rgba(0, 0, 0, 0.04); border-radius: var(--radius); padding: 24px 24px 0; display: flex; flex-direction: column; align-items: center; text-align: center; overflow: hidden; min-height: 0; }
+.benefit-tile strong { font-size: 24px; line-height: 30px; font-weight: 700; color: var(--title); letter-spacing: -0.01em; }
+.benefit-text { font-size: 14px; line-height: 20px; color: var(--muted); max-width: 320px; margin-top: 4px; }
+.benefit-art { height: min(100%, 132px); width: auto; transition: transform .3s; }
+.benefit-tile:hover .benefit-art { transform: translateY(-3px) scale(1.03); }
 .benefit-media { flex: 1; min-height: 0; width: 100%; display: grid; place-items: center; color: var(--brand); padding: 8px 0 16px; }
 .benefit-media img { max-height: 100%; width: auto; object-fit: contain; }
 /* Product-line module: 418 feature card + product row */
@@ -738,7 +740,7 @@ ul { list-style: none; }
   .benefits { display: flex; height: auto; gap: 12px; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; padding-bottom: 2px; }
   .benefits-col { display: contents; }
   .benefit-tile { flex: 0 0 214px; height: 280px; padding: 20px 16px 0; scroll-snap-align: start; }
-  .benefit-tile strong { font-size: 17px; line-height: 22px; }
+  .benefit-tile strong { font-size: 19px; line-height: 24px; }
   .feature-card { height: 528px; margin-bottom: 12px; }
   .feature-card::after { background: linear-gradient(180deg, rgba(0,0,0,.72) 0%, rgba(0,0,0,.2) 50%, rgba(0,0,0,.45) 100%); }
   .feature-copy { width: 100%; padding: 26px; gap: 8px; align-content: start; grid-template-rows: auto auto auto 1fr; }

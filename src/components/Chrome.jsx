@@ -93,15 +93,63 @@ export function MiniHeader() {
   );
 }
 
+/* Two-tone illustrations for the "Why shop" tiles: brand-red line work on a soft tint, one dark accent each. */
+const R = "#e7310e", T = "#ffe4dc", D = "#1d1d1f";
+const ART = {
+  returns: (
+    <>
+      <ellipse cx="70" cy="62" rx="52" ry="38" fill="#fff4f0" />
+      <path d="M38 46 70 32l32 14v34L70 94 38 80z" fill={T} stroke={R} strokeWidth="3" strokeLinejoin="round" />
+      <path d="M38 46l32 14 32-14M70 60v34" stroke={R} strokeWidth="3" strokeLinejoin="round" />
+      <path d="M54 39l32 14v11" stroke={D} strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M96 24a30 30 0 0 0-50-6" stroke={D} strokeWidth="3" strokeLinecap="round" />
+      <path d="M44 6v13h13" stroke={D} strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+    </>
+  ),
+  warranty: (
+    <>
+      <ellipse cx="70" cy="58" rx="54" ry="40" fill="#fff4f0" />
+      <path d="M70 12 40 24v24c0 21 12 36 30 46 18-10 30-25 30-46V24z" fill={T} stroke={R} strokeWidth="3" strokeLinejoin="round" />
+      <path d="M57 51l10 10 18-20" stroke={R} strokeWidth="5" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M112 20v10M107 25h10M24 62v8M20 66h8" stroke={D} strokeWidth="3" strokeLinecap="round" />
+      <circle cx="26" cy="30" r="3.5" fill={D} />
+    </>
+  ),
+  support: (
+    <>
+      <ellipse cx="68" cy="60" rx="54" ry="38" fill="#fff4f0" />
+      <path d="M36 62V52a30 30 0 0 1 60 0v10" stroke={R} strokeWidth="3" strokeLinecap="round" />
+      <rect x="28" y="56" width="16" height="26" rx="7" fill={T} stroke={R} strokeWidth="3" />
+      <rect x="88" y="56" width="16" height="26" rx="7" fill={T} stroke={R} strokeWidth="3" />
+      <path d="M96 82c0 8-8 12-20 12" stroke={R} strokeWidth="3" strokeLinecap="round" />
+      <rect x="62" y="89" width="14" height="9" rx="4.5" fill={R} />
+      <path d="M100 8h24a5 5 0 0 1 5 5v14a5 5 0 0 1-5 5h-12l-8 7v-7h-4a5 5 0 0 1-5-5V13a5 5 0 0 1 5-5z" fill="#fff" stroke={D} strokeWidth="3" strokeLinejoin="round" />
+      <path d="M105 20h.01M112 20h.01M119 20h.01" stroke={D} strokeWidth="4" strokeLinecap="round" />
+    </>
+  ),
+  payment: (
+    <>
+      <ellipse cx="68" cy="60" rx="54" ry="38" fill="#fff4f0" />
+      <rect x="20" y="28" width="84" height="56" rx="9" fill={T} stroke={R} strokeWidth="3" />
+      <path d="M20 46h84" stroke={R} strokeWidth="8" />
+      <path d="M32 68h22" stroke={R} strokeWidth="4" strokeLinecap="round" />
+      <circle cx="102" cy="76" r="20" fill="#fff" stroke={D} strokeWidth="3" />
+      <rect x="93" y="74" width="18" height="13" rx="3" fill={D} />
+      <path d="M97 74v-4a5 5 0 0 1 10 0v4" stroke={D} strokeWidth="3" strokeLinecap="round" />
+    </>
+  ),
+};
+const BenefitArt = ({ name }) => <svg className="benefit-art" viewBox="0 0 140 104" fill="none" aria-hidden="true">{ART[name]}</svg>;
+
 /** "Why shop" bento (DJI figma-benefits): three columns, tiles 178+266 / 222+222 / 460. */
 export function Benefits() {
-  const icons = { "30-Day Easy Returns": "refresh", "3-2-1 Warranty": "shield", "U.S.-Based Support": "headset", "Secure Payment": "lock" };
+  const icons = { "30-Day Easy Returns": "returns", "3-2-1 Warranty": "warranty", "U.S.-Based Support": "support", "Secure Payment": "payment" };
   const tile = ([title, text]) => (
     <div key={title} className="benefit-tile">
       <strong>{title}</strong>
       <span className="benefit-text">{text}</span>
       <span className="benefit-media">
-        {icons[title] ? <Icon name={icons[title]} size={72} /> : <img src={img(byHandle["piburn-omni-for-onelaser"].images[0], 700)} alt="" loading="lazy" />}
+        {icons[title] ? <BenefitArt name={icons[title]} /> : <img src={img(byHandle["piburn-omni-for-onelaser"].images[0], 700)} alt="" loading="lazy" />}
       </span>
     </div>
   );
