@@ -18,7 +18,7 @@ export default function Compare() {
                 <th key={m.handle}>
                   <Link to={`/products/${m.handle}`}><img src={img(m.images[0], 300)} alt="" loading="lazy" /><b>{m.name}</b></Link>
                   <Price product={m} from />
-                  <Link to={`/products/${m.handle}`} className="btn btn-dark btn-sm">Buy Now</Link>
+                  <Link to={`/products/${m.handle}`} className="btn btn-outline-dark btn-sm">Buy Now</Link>
                 </th>
               ))}
             </tr>

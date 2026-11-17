@@ -13,7 +13,6 @@ const load = () => {
 
 export function CartProvider({ children }) {
   const [lines, setLines] = useState(load); // [{handle, variantId, qty}]
-  const [drawerOpen, setDrawerOpen] = useState(false);
   useEffect(() => {
     try {
       localStorage.setItem(KEY, JSON.stringify(lines));
@@ -31,18 +30,17 @@ export function CartProvider({ children }) {
     const subtotal = items.reduce((s, i) => s + i.total, 0);
     const savings = items.reduce((s, i) => s + (i.variant.compareAt ? (i.variant.compareAt - i.variant.price) * i.qty : 0), 0);
     const count = items.reduce((s, i) => s + i.qty, 0);
-    const add = (handle, variantId, qty = 1, { open = true } = {}) => {
+    const add = (handle, variantId, qty = 1) => {
       setLines((prev) => {
         const hit = prev.find((l) => l.variantId === variantId);
         return hit ? prev.map((l) => (l === hit ? { ...l, qty: l.qty + qty } : l)) : [...prev, { handle, variantId, qty }];
       });
-      if (open) setDrawerOpen(true);
     };
     const setQty = (variantId, qty) =>
       setLines((prev) => (qty <= 0 ? prev.filter((l) => l.variantId !== variantId) : prev.map((l) => (l.variantId === variantId ? { ...l, qty } : l))));
     const clear = () => setLines([]);
-    return { items, subtotal, savings, count, add, setQty, clear, drawerOpen, setDrawerOpen };
-  }, [lines, drawerOpen]);
+    return { items, subtotal, savings, count, add, setQty, clear };
+  }, [lines]);
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
 }

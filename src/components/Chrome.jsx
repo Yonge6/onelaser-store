@@ -1,18 +1,18 @@
 import { useEffect, useState } from "react";
-import { asset, go, img, money, products } from "../lib.js";
+import { asset, go, img, products } from "../lib.js";
 import { useCart } from "../cart.jsx";
 import { nav, promo, benefits } from "../data/site.js";
-import { Icon, Link, Price, QtyStepper } from "./ui.jsx";
+import { Icon, Link, Price } from "./ui.jsx";
 
 export function Header({ path }) {
-  const { count, setDrawerOpen } = useCart();
+  const { count } = useCart();
   const [open, setOpen] = useState(null); // mega menu label
   const [mobile, setMobile] = useState(false);
   const [search, setSearch] = useState(false);
   const [q, setQ] = useState("");
   useEffect(() => {
-    setOpen(null); setMobile(false); setSearch(false); setDrawerOpen(false);
-  }, [path, setDrawerOpen]);
+    setOpen(null); setMobile(false); setSearch(false);
+  }, [path]);
   const hits = q.trim().length > 1 ? products.filter((p) => `${p.name} ${p.title}`.toLowerCase().includes(q.trim().toLowerCase())).slice(0, 6) : [];
   const submit = (e) => {
     e.preventDefault();
@@ -39,9 +39,9 @@ export function Header({ path }) {
           <div className="header-tools">
             <button type="button" className="icon-btn" aria-label="Search" onClick={() => setSearch((s) => !s)}><Icon name="search" /></button>
             <Link href="https://www.1laser.com/account/login" className="icon-btn only-desktop" aria-label="Account"><Icon name="user" /></Link>
-            <button type="button" className="icon-btn cart-btn" aria-label={`Cart, ${count} items`} onClick={() => setDrawerOpen(true)}>
+            <Link to="/cart" className="icon-btn cart-btn" aria-label={`Cart, ${count} items`}>
               <Icon name="cart" />{count > 0 && <em>{count}</em>}
-            </button>
+            </Link>
           </div>
         </div>
         {nav.filter((n) => n.label === open).map((n) => (
@@ -96,64 +96,27 @@ export function Header({ path }) {
   );
 }
 
-export function CartDrawer() {
-  const { items, subtotal, count, setQty, drawerOpen, setDrawerOpen } = useCart();
-  useEffect(() => {
-    document.body.style.overflow = drawerOpen ? "hidden" : "";
-    const esc = (e) => e.key === "Escape" && setDrawerOpen(false);
-    window.addEventListener("keydown", esc);
-    return () => window.removeEventListener("keydown", esc);
-  }, [drawerOpen, setDrawerOpen]);
-  if (!drawerOpen) return null;
-  const close = () => setDrawerOpen(false);
+/** Minimal header for cart and checkout (DJI Store): logo + account link only. */
+export function MiniHeader() {
   return (
-    <div className="drawer-scrim" onClick={close}>
-      <aside className="drawer" onClick={(e) => e.stopPropagation()} aria-label="Cart">
-        <div className="drawer-head"><b>Cart ({count})</b><button type="button" className="icon-btn" aria-label="Close cart" onClick={close}><Icon name="close" /></button></div>
-        {items.length === 0 ? (
-          <div className="drawer-empty"><p>Your cart is empty.</p><Link to="/collections/machines" className="btn btn-dark" onClick={close}>Shop laser machines</Link></div>
-        ) : (
-          <>
-            <ul className="lines">
-              {items.map((i) => <CartLine key={i.variantId} item={i} setQty={setQty} onNavigate={close} />)}
-            </ul>
-            <div className="drawer-foot">
-              <div className="row"><span>Subtotal</span><b>{money(subtotal)}</b></div>
-              <p className="muted small">Shipping and taxes calculated at checkout.</p>
-              <Link to="/checkout" className="btn btn-red btn-block" onClick={close}>Checkout</Link>
-              <Link to="/cart" className="btn btn-outline btn-block" onClick={close}>View cart</Link>
-            </div>
-          </>
-        )}
-      </aside>
-    </div>
-  );
-}
-
-export function CartLine({ item, setQty, onNavigate }) {
-  return (
-    <li className="line">
-      <Link to={`/products/${item.handle}`} onClick={onNavigate} className="line-img"><img src={img(item.variant.image || item.product.images[0], 200)} alt="" /></Link>
-      <div className="line-main">
-        <Link to={`/products/${item.handle}`} onClick={onNavigate}><b>{item.product.name}</b></Link>
-        {item.variant.title && <span className="muted small">{item.variant.title}</span>}
-        <div className="row">
-          <QtyStepper value={item.qty} onChange={(n) => setQty(item.variantId, n)} />
-          <Price product={item.product} variant={item.variant} />
-        </div>
+    <header className="mini-header">
+      <div className="wrap">
+        <Link to="/" className="logo" aria-label="OneLaser Store home"><img src={asset("onelaser-logo-transparent.svg")} alt="OneLaser" /><span>STORE</span></Link>
+        <Link href="https://www.1laser.com/account/login" className="more small">Sign In</Link>
       </div>
-    </li>
+    </header>
   );
 }
 
+/** "Why shop" bento tiles (DJI Store). */
 export function Benefits() {
   const icons = ["refresh", "shield", "headset", "check", "lock"];
   return (
     <section className="section wrap">
-      <h2 className="h2 center">Why buy from the OneLaser Store</h2>
-      <ul className="benefits">
+      <h2 className="h2">Why shop with OneLaser Store</h2>
+      <ul className="why">
         {benefits.map(([title, text], i) => (
-          <li key={title}><Icon name={icons[i]} size={30} /><b>{title}</b><span>{text}</span></li>
+          <li key={title}><b>{title}</b><span>{text}</span><Icon name={icons[i]} size={56} /></li>
         ))}
       </ul>
     </section>

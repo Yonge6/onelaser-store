@@ -1,8 +1,11 @@
 import { useEffect, useState } from "react";
-import { accessories, asset, byHandle, img, machines } from "../lib.js";
-import { accessoryTabs, applications, categoryRail, heroSlides, hot, machineTabs, promo, seriesBlocks } from "../data/site.js";
+import { asset, byHandle, img } from "../lib.js";
+import { bestSellers, categoryRail, heroSlides, hot, promo, promoBanner, seriesBlocks } from "../data/site.js";
 import { Benefits } from "../components/Chrome.jsx";
 import { Countdown, Link, Price, ProductCard, Rail } from "../components/ui.jsx";
+
+/* Structure follows the DJI Store homepage:
+   promo hero + category strip → What's Hot → promo banner → Best Sellers → Why shop → one block per product line. */
 
 function Hero() {
   const [i, setI] = useState(0);
@@ -35,30 +38,19 @@ function Hero() {
   );
 }
 
-function Tabs({ tabs, value, onChange }) {
-  return (
-    <div className="tabs" role="tablist">
-      {tabs.map((t) => <button key={t} type="button" role="tab" aria-selected={t === value} className={t === value ? "on" : ""} onClick={() => onChange(t)}>{t}</button>)}
-    </div>
-  );
-}
-
 export default function Home() {
-  const [mTab, setMTab] = useState(machineTabs[0][0]);
-  const [aTab, setATab] = useState(accessoryTabs[0][0]);
-  const mList = machines.filter(machineTabs.find(([t]) => t === mTab)[1]);
-  const aCat = accessoryTabs.find(([t]) => t === aTab)[1];
-  const aList = accessories.filter((p) => p.category === aCat || (aCat === "expansion" && p.category === "air")).slice(0, 4);
   return (
     <>
       <Hero />
 
-      <section className="wrap cat-rail">
-        <Rail label="Shop by category">
-          {categoryRail.map(([label, to, handle]) => (
-            <Link key={label} to={to} className="cat"><img src={img(byHandle[handle].images[0], 240)} alt="" loading="lazy" /><span>{label}</span></Link>
-          ))}
-        </Rail>
+      <section className="cat-strip">
+        <div className="wrap">
+          <Rail label="Shop by category">
+            {categoryRail.map(([label, to, handle]) => (
+              <Link key={label} to={to} className="cat"><img src={img(byHandle[handle].images[0], 240)} alt="" loading="lazy" /><span>{label}</span></Link>
+            ))}
+          </Rail>
+        </div>
       </section>
 
       <section className="section wrap">
@@ -66,71 +58,53 @@ export default function Home() {
         <Rail label="What's hot">
           {hot.map((h) => byHandle[h]).map((p) => (
             <Link key={p.handle} to={`/products/${p.handle}`} className="hot-card">
-              <b>{p.name}</b>
-              <span className="muted">{p.tagline}</span>
-              <Price product={p} from />
-              <span className="btn btn-dark btn-sm">Buy Now</span>
-              <img src={img(p.images[0], 500)} alt="" loading="lazy" />
+              <img src={img(p.images[0], 600)} alt="" loading="lazy" />
+              <span className="hot-foot">
+                <span><b>{p.name}</b><small>{p.tagline}</small><Price product={p} from /></span>
+                <span className="btn btn-light btn-sm">Buy Now</span>
+              </span>
             </Link>
           ))}
         </Rail>
       </section>
 
       <section className="section wrap">
-        <div className="section-head"><h2 className="h2">Laser Machines</h2><Link to="/collections/machines" className="more">View all ›</Link></div>
-        <Tabs tabs={machineTabs.map(([t]) => t)} value={mTab} onChange={setMTab} />
-        <div className="grid grid-4">{mList.map((p) => <ProductCard key={p.handle} product={p} />)}</div>
-        <div className="helper-row">
-          <div className="helper">
-            <div><b>Which laser is right for me?</b><span>Compare power, work area and speed side by side.</span></div>
-            <Link to="/compare" className="btn btn-outline">Compare machines</Link>
-          </div>
-          <div className="helper">
-            <div><b>Talk to a laser expert</b><span>Free consultation with the U.S.-based team.</span></div>
-            <Link href="https://www.1laser.com/pages/sales-consultation" className="btn btn-outline">Book a call</Link>
-          </div>
-        </div>
+        <Link to={promoBanner.to} className="promo-banner">
+          <img src={asset(promoBanner.image)} alt="" loading="lazy" />
+          <span><small>{promoBanner.kicker}</small><b>{promoBanner.title}</b><em>{promoBanner.text}</em></span>
+        </Link>
       </section>
 
+      <section className="section wrap">
+        <h2 className="h2">Best Sellers</h2>
+        <div className="card-row six">{bestSellers.map((h) => <ProductCard key={h} product={byHandle[h]} shop={false} />)}</div>
+      </section>
+
+      <Benefits />
+
       {seriesBlocks.map((b) => (
-        <section key={b.name} className="section wrap series">
-          <p className="kicker">{b.kicker}</p>
+        <section key={b.title} className="section wrap series">
           <h2 className="h2">{b.title}</h2>
-          <div className="series-grid">
-            <Link to={b.to} className="series-feature">
-              <img src={asset(b.image)} alt="" loading="lazy" />
-              <div><h3>{b.name}</h3><p>{b.text}</p><span className="btn btn-light btn-sm">Buy Now</span></div>
-            </Link>
-            <div className="grid grid-2">{b.picks.map((h) => <ProductCard key={h} product={byHandle[h]} compact />)}</div>
+          <Link to={b.to} className="series-banner">
+            <img src={asset(b.image)} alt="" loading="lazy" />
+            <span><small>{b.kicker}</small><b>{b.name}</b><em>{b.text}</em><span className="btn btn-light btn-sm">Buy Now</span></span>
+          </Link>
+          <div className="card-row five">
+            {b.picks.map((h) => <ProductCard key={h} product={byHandle[h]} shop={false} />)}
+            <Link to={b.view} className="card explore-card"><b>{b.viewLabel}</b><span className="explore-arrow" aria-hidden="true">→</span></Link>
           </div>
-          <Link to={b.view} className="more center-link">{b.viewLabel} ›</Link>
         </section>
       ))}
 
       <section className="section wrap">
-        <div className="section-head"><h2 className="h2">Accessories</h2><Link to="/collections/accessories" className="more">View all ›</Link></div>
-        <Tabs tabs={accessoryTabs.map(([t]) => t)} value={aTab} onChange={setATab} />
-        <div className="grid grid-4">{aList.map((p) => <ProductCard key={p.handle} product={p} compact />)}</div>
-      </section>
-
-      <section className="section wrap">
-        <div className="section-head"><h2 className="h2">Materials</h2><Link to="/collections/materials" className="more">View all ›</Link></div>
-        <div className="tiles">
-          <Link to="/collections/acrylic" className="tile"><img src={asset("material-acrylic.webp")} alt="" loading="lazy" /><div><h3>Acrylic Sheets</h3><p>Frosted, translucent, glitter and mirror.</p><span>Shop now ›</span></div></Link>
-          <Link to="/collections/leatherette" className="tile"><img src={asset("material-leather.webp")} alt="" loading="lazy" /><div><h3>Leatherette</h3><p>Heat-activated adhesive sheets for engraving.</p><span>Shop now ›</span></div></Link>
+        <div className="helper">
+          <div><b>Which laser is right for me?</b><span>Compare power, work area and speed side by side, or talk to a U.S.-based laser expert.</span></div>
+          <div className="helper-actions">
+            <Link to="/compare" className="btn btn-dark">Compare machines</Link>
+            <Link href="https://www.1laser.com/pages/sales-consultation" className="btn btn-outline">Book a free call</Link>
+          </div>
         </div>
       </section>
-
-      <section className="section wrap">
-        <h2 className="h2">Made with OneLaser</h2>
-        <Rail label="Applications">
-          {applications.map(([label, image]) => (
-            <div key={label} className="app-card"><img src={asset(image)} alt="" loading="lazy" /><span>{label}</span></div>
-          ))}
-        </Rail>
-      </section>
-
-      <Benefits />
     </>
   );
 }

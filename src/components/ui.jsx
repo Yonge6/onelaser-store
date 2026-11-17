@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { img, money, saving } from "../lib.js";
-import { useCart } from "../cart.jsx";
 
 export const Link = ({ to, href, children, ...rest }) =>
   href ? (
@@ -53,35 +52,29 @@ export function QtyStepper({ value, onChange, min = 0 }) {
   );
 }
 
-/** Listing card (Bambu-style): badge, image, name, tagline, chips, price, Buy Now. */
-export function ProductCard({ product, compact = false }) {
-  const { add } = useCart();
+const LABELS = { rotary: "Rotary attachment", fume: "Fume extraction", optics: "Optics", cooling: "Water chiller", expansion: "Expansion", air: "Air assist", software: "Software & training", acrylic: "Acrylic sheets", leatherette: "Leatherette" };
+export const productLabel = (p) => (p.kind === "machine" ? `${p.seriesName.replace(" Series", "")} laser` : LABELS[p.category] || "Accessory");
+
+/** Product card (DJI Store): image, category label, name, price, "Shop →". Sale badge follows Bambu's "$X OFF". */
+export function ProductCard({ product, shop = true }) {
   const off = saving(product);
-  const single = product.variants.length === 1;
   return (
-    <article className={`card${compact ? " card-compact" : ""}`}>
-      <Link to={`/products/${product.handle}`} className="card-media">
+    <Link to={`/products/${product.handle}`} className="card">
+      <span className="card-media">
         {off > 0 && <span className="badge badge-sale">{money(off)} OFF</span>}
         {!product.available && <span className="badge badge-muted">Sold out</span>}
-        <img src={img(product.images[0], 600)} alt={product.name} loading="lazy" />
-      </Link>
-      <div className="card-body">
-        {product.kind === "machine" && !compact && <p className="card-kicker">{product.badge}</p>}
-        <h3><Link to={`/products/${product.handle}`}>{product.name}</Link></h3>
-        <p className="card-tagline">{product.tagline}</p>
-        {product.chips && !compact && (
-          <ul className="chips">{product.chips.map((c) => <li key={c}>{c}</li>)}</ul>
-        )}
-        <div className="card-foot">
-          <Price product={product} from />
-          {single && product.available ? (
-            <button type="button" className="btn btn-dark btn-sm" onClick={() => add(product.handle, product.variants[0].id)}>Add to Cart</button>
-          ) : (
-            <Link to={`/products/${product.handle}`} className="btn btn-dark btn-sm">{product.available ? "Buy Now" : "View"}</Link>
-          )}
-        </div>
-      </div>
-    </article>
+        <img src={img(product.images[0], 600)} alt="" loading="lazy" />
+      </span>
+      <span className="card-body">
+        <span className="card-label">{productLabel(product)}</span>
+        <b className="card-name">{product.name}</b>
+        <span className="card-price">
+          {product.priceVaries && "From "}USD <strong className={product.compareAt ? "sale" : ""}>{money(product.price)}</strong>
+          {product.compareAt && <s>{money(product.compareAt)}</s>}
+        </span>
+        {shop && <span className="card-shop">Shop →</span>}
+      </span>
+    </Link>
   );
 }
 
