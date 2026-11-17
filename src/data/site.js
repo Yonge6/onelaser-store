@@ -76,12 +76,19 @@ export const hot = [
   "vertigo-vertical-laser-engraver", "piburn-omni-for-onelaser", "onelaser-x-series-riser-base", "filtrabox-micro",
 ];
 
+// Lifestyle backgrounds for the What's Hot tiles: generated with ChatGPT from the official 1laser.com renders (2026-11-16).
+export const hotImages = {
+  "onelaser-xrf-desktop-laser-machine": "hot-xrf.jpg", "hydra-7-gen-2-70w-rf-co2-dual-laser-machine": "hot-hydra7.jpg",
+  "cobra-8-90w-co2-laser-engraver-cutter": "hot-cobra8.jpg", "vertigo-vertical-laser-engraver": "hot-vertigo.jpg",
+  "piburn-omni-for-onelaser": "hot-piburn.jpg", "onelaser-x-series-riser-base": "hot-riser.jpg", "filtrabox-micro": "hot-filtrabox.jpg",
+};
+
 export const bestSellers = [
   "onelaser-xrf-desktop-laser-machine", "cobra-10-100w-co2-laser-engraver-cutter", "hydra-9-gen-2-70w-rf-co2-dual-laser-machine",
   "vertigo-vertical-laser-engraver", "hydra-7-gen-2-70w-rf-co2-dual-laser-machine",
 ];
 
-export const promoBanner = { kicker: "OneLaser Store Picks", title: "Black Friday: save up to $3,000", text: "Every machine and accessory currently on sale, in one place.", product: "hydra-9-gen-2-70w-rf-co2-dual-laser-machine", to: "/collections/deals" };
+export const promoBanner = { kicker: "OneLaser Store Picks", title: "Black Friday: save up to $3,000", text: "Every machine and accessory currently on sale, in one place.", product: "hydra-9-gen-2-70w-rf-co2-dual-laser-machine", image: "promo-hydra9.jpg", to: "/collections/deals" };
 
 export const seriesBlocks = [
   { kicker: "Create anywhere", title: "Desktop", name: "XRF 38W", text: "Air-cooled RF, true 3G acceleration and a 0.07 mm laser spot in an all-in-one desktop machine.", image: "home-product-xrf-scene.webp", to: "/products/onelaser-xrf-desktop-laser-machine", view: "/collections/machines", viewLabel: "Explore Desktop Machines and Accessories",

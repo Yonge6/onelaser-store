@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { asset, byHandle, img } from "../lib.js";
-import { bestSellers, categoryRail, heroSlides, hot, promo, promoBanner, seriesBlocks } from "../data/site.js";
+import { bestSellers, categoryRail, heroSlides, hot, hotImages, promo, promoBanner, seriesBlocks } from "../data/site.js";
 import { Benefits } from "../components/Chrome.jsx";
 import { Countdown, Link, ProductCard, Rail, usd } from "../components/ui.jsx";
 
@@ -55,8 +55,8 @@ export default function Home() {
           <h2>What's Hot</h2>
           <Rail label="What's hot" className="hot-shell">
             {hot.map((h) => byHandle[h]).map((p) => (
-              <article key={p.handle} className="hot-tile">
-                <Link to={`/products/${p.handle}`} className="hot-media" aria-label={p.name}><img src={img(p.images[0], 700)} alt="" loading="lazy" /></Link>
+              <article key={p.handle} className={`hot-tile${hotImages[p.handle] ? " photo" : ""}`}>
+                <Link to={`/products/${p.handle}`} className="hot-media" aria-label={p.name}><img src={hotImages[p.handle] ? asset(hotImages[p.handle]) : img(p.images[0], 700)} alt="" loading="lazy" /></Link>
                 <div className="hot-copy"><h3><Link to={`/products/${p.handle}`}>{p.name}</Link></h3><p>{p.tagline}</p></div>
                 <div className="hot-footer"><span>{p.priceVaries ? "From " : ""}{usd(p.price)}</span><Link to={`/products/${p.handle}`} className="hot-cta">Buy Now</Link></div>
               </article>
@@ -67,9 +67,9 @@ export default function Home() {
 
       <section className="module">
         <div className="page">
-          <Link to={promoBanner.to} className="promo">
+          <Link to={promoBanner.to} className="promo photo">
             <span className="promo-copy"><span>{promoBanner.kicker}</span><strong>{promoBanner.title}</strong><em>{promoBanner.text}</em></span>
-            <span className="promo-media"><img src={img(byHandle[promoBanner.product].images[0], 900)} alt="" loading="lazy" /></span>
+            <span className="promo-media"><img src={asset(promoBanner.image)} alt="" loading="lazy" /></span>
           </Link>
         </div>
       </section>
