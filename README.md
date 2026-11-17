@@ -15,7 +15,7 @@
 | --- | --- | --- |
 | 首页 | `#/` | 公告条 38 → 页头 71 → 轮播 430（倒计时）+ 品类条 → What's Hot → 促销横幅 260 → Best Sellers → Why shop（三列拼图 460）→ 每条产品线：418 横幅 + 4 个商品 + Explore 卡 → 服务条 → 订阅 → 页脚 |
 | 列表页 | `#/collections/machines` 等 | 面包屑 → 居中标题 → 272 筛选栏（品类树、筛选、Reset）→ 件数 + 排序 → 3 列卡片 331×414 |
-| 商品页 | `#/products/<handle>` | 586/586 购买区（方形图库、标题、价格、权益框、Select Option、Add to Cart/Buy Now、可展开行、Top Accessories）→ 锚点导航 53 → Take a Closer Look → Use Cases → Which is the Best for You? → FAQ；底部固定购买条 84 |
+| 商品详情 | `#/products/:handle` | 照 Bambu Lab + ComMarker：面包屑 → 左侧吸顶图库（缩略图行、四个保障图标）/ 右侧长购买栏（红色价格+划线价+省多少、卖点列表、黑五倒计时条、套餐卡、选购帮助行、配件加购、数量+加购/立即购买、订单说明、支付方式）→ 吸顶锚点导航 → 深色产品总览 → Highlights at a Glance → 功能卡片 → 应用场景 → 机型对比 → 完整参数表 → FAQ；底部固定购买条 |
 | 购物车 | `#/cart` | 极简页头 → 提示条 → 表格 726/150/150/150/24 → 左备注 600、右合计 500 → Continue Shopping / Check Out → 服务条 |
 | 结算 | `#/checkout` | 照 DJI 结算页：65 页头 → 左 500 表单 / 右 400 订单摘要（灰底 #F5F5F5）→ 提示条、快捷支付、Contact、Delivery、Shipping method、Payment 单选列表、Pay now；手机端摘要折叠在顶部（仅演示，支付栏已禁用） |
 
