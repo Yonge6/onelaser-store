@@ -78,7 +78,7 @@ export const hot = [
 
 export const bestSellers = [
   "onelaser-xrf-desktop-laser-machine", "cobra-10-100w-co2-laser-engraver-cutter", "hydra-9-gen-2-70w-rf-co2-dual-laser-machine",
-  "vertigo-vertical-laser-engraver", "hydra-7-gen-2-70w-rf-co2-dual-laser-machine", "cobra-8-90w-co2-laser-engraver-cutter",
+  "vertigo-vertical-laser-engraver", "hydra-7-gen-2-70w-rf-co2-dual-laser-machine",
 ];
 
 export const promoBanner = { kicker: "OneLaser Store Picks", title: "Black Friday: save up to $3,000", text: "Every machine and accessory currently on sale, in one place.", product: "hydra-9-gen-2-70w-rf-co2-dual-laser-machine", to: "/collections/deals" };
