@@ -3,6 +3,8 @@ import { accessories, byHandle, go, img, machines, money } from "../lib.js";
 import { useCart } from "../cart.jsx";
 import { addOns, faq } from "../data/site.js";
 import { Icon, Link, Price, ProductCard, QtyStepper } from "../components/ui.jsx";
+import Story, { SpecGroups } from "../components/Story.jsx";
+import stories from "../data/stories.json";
 
 function addOnsFor(product) {
   if (product.kind !== "machine") return [];
@@ -39,7 +41,13 @@ export default function Product({ handle }) {
   const isMachine = product.kind === "machine";
   const many = product.variants.length > 6;
   const related = isMachine ? machines.filter((m) => m.series === product.series && m.handle !== handle).concat(machines.filter((m) => m.series !== product.series && m.series !== "legacy")).slice(0, 4) : accessories.filter((a) => a.category === product.category && a.handle !== handle).slice(0, 4);
-  const sections = [["overview", "Overview"], ...(isMachine ? [["specs", "Specs"]] : []), ["faq", "FAQ"]];
+  const story = stories[handle];
+  const storyBlocks = story?.blocks.filter((b) => !["specs", "faq"].includes(b.kind)) || [];
+  const specBlock = story?.blocks.find((b) => b.kind === "specs");
+  const faqBlock = story?.blocks.find((b) => b.kind === "faq");
+  const highlights = story?.highlights.length >= 3 ? story.highlights : null;
+  const hasVideos = storyBlocks.some((b) => b.kind === "videos");
+  const sections = [["overview", "Overview"], ...(isMachine ? [["specs", "Specs"]] : []), ...(hasVideos ? [["videos", "Videos"]] : []), ["faq", "FAQ"]];
   const buyButtons = (
     <div className="buy-buttons">
       <button type="button" className="btn btn-dark" disabled={!variant.available} onClick={() => commit(false)}>{variant.available ? "Add to Cart" : "Sold out"}</button>
@@ -74,7 +82,11 @@ export default function Product({ handle }) {
               <li><Icon name="shield" size={18} /> {isMachine ? "3-2-1 Warranty" : "Official OneLaser accessory"}</li>
               <li><Icon name="headset" size={18} /> U.S.-Based Support</li>
             </ul>
-            {product.chips && <ul className="feature-list">{Object.entries(product.specs).slice(0, 6).map(([k, v]) => <li key={k}><b>{k}:</b> {v}</li>)}</ul>}
+            {highlights ? (
+              <ul className="feature-list">{highlights.slice(0, 6).map((h) => { const [k, ...v] = h.split(":"); return <li key={h}><b>{k}:</b>{v.join(":")}</li>; })}</ul>
+            ) : (
+              product.chips && <ul className="feature-list">{Object.entries(product.specs).slice(0, 6).map(([k, v]) => <li key={k}><b>{k}:</b> {v}</li>)}</ul>
+            )}
             {product.fit && <p className="fit">Fits: {product.fit}</p>}
 
             {product.variants.length > 1 && (
@@ -129,7 +141,7 @@ export default function Product({ handle }) {
 
       <div className="pdp-tabs">
         <div className="wrap">
-          {sections.map(([id, label]) => <button key={id} type="button" className={tab === id ? "on" : ""} onClick={() => { setTab(id); document.getElementById(`pdp-${id}`)?.scrollIntoView({ behavior: "smooth", block: "start" }); }}>{label}</button>)}
+          {sections.map(([id, label]) => <button key={id} type="button" className={tab === id ? "on" : ""} onClick={() => { setTab(id); (document.getElementById(`pdp-${id}`) || document.querySelector(".story-videos"))?.scrollIntoView({ behavior: "smooth", block: "start" }); }}>{label}</button>)}
         </div>
       </div>
 
@@ -141,25 +153,35 @@ export default function Product({ handle }) {
               {Object.entries(product.specs).slice(0, 6).map(([k, v]) => <div key={k}><span>{k}</span><b>{v}</b></div>)}
             </div>
           )}
-          <p className="pdp-desc">{product.description}{product.description.length >= 1500 ? "…" : ""}</p>
-          <div className="pdp-photos">{product.images.slice(1, 5).map((src) => <img key={src} src={img(src, 900)} alt="" loading="lazy" />)}</div>
-          <Link href={product.sourceUrl} className="more">See the full product story on 1laser.com ›</Link>
+          {storyBlocks.length === 0 && (
+            <>
+              <p className="pdp-desc">{product.description}{product.description.length >= 1500 ? "…" : ""}</p>
+              <div className="pdp-photos">{product.images.slice(1, 5).map((src) => <img key={src} src={img(src, 900)} alt="" loading="lazy" />)}</div>
+              <Link href={product.sourceUrl} className="more">See the full product story on 1laser.com ›</Link>
+            </>
+          )}
         </section>
+
+        {storyBlocks.length > 0 && <Story blocks={storyBlocks} />}
 
         {isMachine && (
           <section id="pdp-specs" className="pdp-section">
-            <h2 className="h2">Specs</h2>
-            <table className="spec-table"><tbody>
-              <tr><th>Best for</th><td>{product.bestFor}</td></tr>
-              {Object.entries(product.specs).map(([k, v]) => <tr key={k}><th>{k}</th><td>{v}</td></tr>)}
-            </tbody></table>
+            <h2 className="h2">Specifications</h2>
+            {specBlock ? (
+              <SpecGroups groups={specBlock.groups} />
+            ) : (
+              <table className="spec-table"><tbody>
+                <tr><th>Best for</th><td>{product.bestFor}</td></tr>
+                {Object.entries(product.specs).map(([k, v]) => <tr key={k}><th>{k}</th><td>{v}</td></tr>)}
+              </tbody></table>
+            )}
             <Link to="/compare" className="more">Compare all machines ›</Link>
           </section>
         )}
 
         <section id="pdp-faq" className="pdp-section">
           <h2 className="h2">FAQ</h2>
-          {faq.map(([q, a]) => <details key={q} className="faq"><summary>{q}</summary><p>{a}</p></details>)}
+          {[...(faqBlock?.qa || []), ...faq].map(([q, a]) => <details key={q} className="faq"><summary>{q}</summary><p>{a}</p></details>)}
         </section>
 
         {related.length > 0 && (

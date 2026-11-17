@@ -26,6 +26,7 @@
 | --- | --- |
 | 促销条、导航、首页轮播/推荐/分区、卖点、FAQ、商品页推荐配件 | `src/data/site.js` |
 | 商品数据（价格、图片、规格） | 不要手改 `src/data/catalog.json`；更新 `data-source/` 里的原始数据后运行 `npm run catalog` |
+| 商品页长图文内容 | 更新 `data-source/product-pages.json` 后运行 `npm run stories`；版式改 `src/components/Story.jsx` |
 | 颜色、字号、间距、响应式 | `src/styles.css`（顶部 `:root` 是设计变量） |
 | 各页面结构 | `src/pages/*.jsx`，公共头尾和购物车在 `src/components/` |
 
@@ -42,6 +43,6 @@ npm run build
 - 首页轮播第一张用的是带文字的旧 banner，左侧用深色遮罩盖住了原文字；需要一张无文字的 XRF 主视觉。
 - 「Why buy」里的承诺（30 天退货、3-2-1 保修、美国本土支持等）取自官网现有文案，上线前需老板确认。
 - 商品页推荐配件的兼容性按机型系列粗配（`site.js` 的 `addOns`），需逐型号核对。
-- 商品页长图文（Overview）只放了官网描述摘要和前几张图，完整卖点故事还没搬。
+- 机器商品页的长图文（卖点、视频、应用、规格、对比、保障）是从官网各商品页抓取后按统一版式重排的（`data-source/product-pages.json` → `npm run stories` → `src/data/stories.json`，版式在 `src/components/Story.jsx`）。Cobra 和上一代机型官网本身以整张图为主，所以这几页图多字少。配件和耗材页仍是简版。
 - 运费、税、分期、折扣码、账号登录都是占位；真实下单仍在 Shopify。
 - 机器规格来自之前整理的规格表（`data-source/machine-specs.json`），本次未重新逐项核对。
