@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import { asset, go, img, products } from "../lib.js";
+import { asset, byHandle, go, img, products } from "../lib.js";
 import { useCart } from "../cart.jsx";
 import { nav, promo, benefits } from "../data/site.js";
-import { Icon, Link, Price } from "./ui.jsx";
+import { Icon, Link, usd } from "./ui.jsx";
 
 export function Header({ path }) {
   const { count } = useCart();
@@ -20,45 +20,34 @@ export function Header({ path }) {
   };
   return (
     <>
-      <div className="announce">
-        <Link to={promo.link}><b>{promo.label}</b> · {promo.headline} <u>Shop now →</u></Link>
-      </div>
-      <header className="header" onMouseLeave={() => setOpen(null)}>
-        <div className="header-bar wrap">
+      <div className="announce"><Link to={promo.link}>{promo.label} · {promo.headline} <u>Buy Now →</u></Link></div>
+      <header className="site-header" onMouseLeave={() => setOpen(null)}>
+        <div className="site-header-bar">
           <button type="button" className="icon-btn only-mobile" aria-label="Menu" onClick={() => setMobile(true)}><Icon name="menu" /></button>
-          <Link to="/" className="logo" aria-label="OneLaser Store home">
-            <img src={asset("onelaser-logo-transparent.svg")} alt="OneLaser" /><span>STORE</span>
-          </Link>
-          <nav className="nav" aria-label="Primary">
+          <Link to="/" className="brand" aria-label="OneLaser Store home"><img src={asset("onelaser-logo-transparent.svg")} alt="OneLaser" /><span>Store</span></Link>
+          <nav className="site-nav" aria-label="Primary">
             {nav.map((n) => (
-              <Link key={n.label} to={n.to} href={n.href} className={n.hot ? "hot" : ""} onMouseEnter={() => setOpen(n.columns ? n.label : null)} onFocus={() => setOpen(n.columns ? n.label : null)}>
-                {n.label}
-              </Link>
+              <Link key={n.label} to={n.to} href={n.href} className={n.hot ? "hot" : ""} onMouseEnter={() => setOpen(n.columns ? n.label : null)} onFocus={() => setOpen(n.columns ? n.label : null)}>{n.label}</Link>
             ))}
           </nav>
-          <div className="header-tools">
-            <button type="button" className="icon-btn" aria-label="Search" onClick={() => setSearch((s) => !s)}><Icon name="search" /></button>
-            <Link href="https://www.1laser.com/account/login" className="icon-btn only-desktop" aria-label="Account"><Icon name="user" /></Link>
-            <Link to="/cart" className="icon-btn cart-btn" aria-label={`Cart, ${count} items`}>
-              <Icon name="cart" />{count > 0 && <em>{count}</em>}
-            </Link>
+          <div className="site-actions">
+            <button type="button" className="icon-btn" aria-label="Search" onClick={() => setSearch((s) => !s)}><Icon name="search" size={24} /></button>
+            <Link href="https://www.1laser.com/account/login" className="icon-btn" aria-label="Account"><Icon name="user" size={24} /></Link>
+            <Link to="/cart" className="icon-btn cart-btn" aria-label={`Cart, ${count} items`}><Icon name="cart" size={24} /><em>{count}</em></Link>
           </div>
         </div>
         {nav.filter((n) => n.label === open).map((n) => (
           <div key={n.label} className="mega">
-            <div className="wrap mega-inner">
+            <div className="mega-inner">
               {n.columns.map((c) => (
-                <div key={c.title}>
-                  <p>{c.title}</p>
-                  {c.links.map(([label, to]) => <Link key={to} to={to}>{label}</Link>)}
-                </div>
+                <div key={c.title}><h2>{c.title}</h2>{c.links.map(([label, to]) => <Link key={to} to={to}>{label}</Link>)}</div>
               ))}
             </div>
           </div>
         ))}
         {search && (
           <div className="mega search-panel">
-            <form className="wrap" onSubmit={submit}>
+            <form className="mega-inner" onSubmit={submit}>
               <div className="search-field">
                 <Icon name="search" />
                 <input autoFocus value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search machines, accessories, materials" aria-label="Search" />
@@ -66,11 +55,7 @@ export function Header({ path }) {
               </div>
               {hits.length > 0 && (
                 <ul className="search-hits">
-                  {hits.map((p) => (
-                    <li key={p.handle}>
-                      <Link to={`/products/${p.handle}`}><img src={img(p.images[0], 120)} alt="" /><span>{p.name}</span><Price product={p} from /></Link>
-                    </li>
-                  ))}
+                  {hits.map((p) => <li key={p.handle}><Link to={`/products/${p.handle}`}><img src={img(p.images[0], 120)} alt="" /><span>{p.name}</span><b>USD {usd(p.price)}</b></Link></li>)}
                 </ul>
               )}
             </form>
@@ -79,11 +64,11 @@ export function Header({ path }) {
       </header>
       {mobile && (
         <div className="drawer-scrim" onClick={() => setMobile(false)}>
-          <aside className="drawer drawer-left" onClick={(e) => e.stopPropagation()} aria-label="Menu">
+          <aside className="drawer" onClick={(e) => e.stopPropagation()} aria-label="Menu">
             <div className="drawer-head"><b>Menu</b><button type="button" className="icon-btn" aria-label="Close" onClick={() => setMobile(false)}><Icon name="close" /></button></div>
             <div className="mobile-nav">
               {nav.map((n) => (
-                <details key={n.label} open={false}>
+                <details key={n.label}>
                   <summary>{n.columns ? n.label : <Link to={n.to} href={n.href}>{n.label}</Link>}</summary>
                   {n.columns?.flatMap((c) => c.links).map(([label, to]) => <Link key={to + label} to={to}>{label}</Link>)}
                 </details>
@@ -96,32 +81,54 @@ export function Header({ path }) {
   );
 }
 
-/** Minimal header for cart and checkout (DJI Store): logo + account link only. */
+/** Minimal header for cart and checkout (DJI cart-v2 store header). */
 export function MiniHeader() {
   return (
-    <header className="mini-header">
-      <div className="wrap">
-        <Link to="/" className="logo" aria-label="OneLaser Store home"><img src={asset("onelaser-logo-transparent.svg")} alt="OneLaser" /><span>STORE</span></Link>
-        <Link href="https://www.1laser.com/account/login" className="more small">Sign In</Link>
+    <header className="store-header">
+      <div className="container">
+        <Link to="/" className="brand" aria-label="OneLaser Store home"><img src={asset("onelaser-logo-transparent.svg")} alt="OneLaser" /><span>Store</span></Link>
+        <Link href="https://www.1laser.com/account/login">Sign In</Link>
       </div>
     </header>
   );
 }
 
-/** "Why shop" bento tiles (DJI Store). */
+/** "Why shop" bento (DJI figma-benefits): three columns, tiles 178+266 / 222+222 / 460. */
 export function Benefits() {
-  const icons = ["refresh", "shield", "headset", "check", "lock"];
+  const icons = { "30-Day Easy Returns": "refresh", "3-2-1 Warranty": "shield", "U.S.-Based Support": "headset", "Secure Payment": "lock" };
+  const tile = ([title, text]) => (
+    <div key={title} className="benefit-tile">
+      <strong>{title}</strong>
+      <span className="benefit-text">{text}</span>
+      <span className="benefit-media">
+        {icons[title] ? <Icon name={icons[title]} size={72} /> : <img src={img(byHandle["piburn-omni-for-onelaser"].images[0], 700)} alt="" loading="lazy" />}
+      </span>
+    </div>
+  );
+  const [returns, warranty, support, accessories, payment] = benefits;
   return (
-    <section className="section wrap">
-      <h2 className="h2">Why shop with OneLaser Store</h2>
-      <ul className="why">
-        {benefits.map(([title, text], i) => (
-          <li key={title}><b>{title}</b><span>{text}</span><Icon name={icons[i]} size={56} /></li>
-        ))}
-      </ul>
+    <section className="module">
+      <div className="page">
+        <h2>Why shop with OneLaser Store</h2>
+        <div className="benefits">
+          <div className="benefits-col a">{[returns, support].map(tile)}</div>
+          <div className="benefits-col b">{[warranty, payment].map(tile)}</div>
+          <div className="benefits-col c">{[accessories].map(tile)}</div>
+        </div>
+      </div>
     </section>
   );
 }
+
+export const ServiceStrip = () => (
+  <div className="service-strip">
+    <div className="page">
+      <div><Icon name="truck" size={40} /><p>Shipping Options at Checkout<br />Delivery Estimated by Address</p></div>
+      <div><Icon name="card" size={40} /><p>We accept credit cards, PayPal<br />and financing</p></div>
+      <div><Icon name="headset" size={40} /><p>U.S.-Based Support: <Link href="https://www.1laser.com/pages/contact-us">Contact Us</Link></p></div>
+    </div>
+  </div>
+);
 
 export function Footer() {
   const cols = [
@@ -133,23 +140,26 @@ export function Footer() {
     ["Policies", [["Shipping Policy", "https://www.1laser.com/pages/shipping-policy"], ["Refund Policy", "https://www.1laser.com/pages/refund-policy"], ["Warranty Policy", "https://www.1laser.com/pages/warranty-policy"], ["Payment Methods", "https://www.1laser.com/pages/payment-methods"], ["About Us", "https://www.1laser.com/pages/about-us"]]],
   ];
   return (
-    <footer className="footer">
-      <div className="wrap footer-top">
-        <form className="newsletter" onSubmit={(e) => e.preventDefault()}>
-          <h3>Stay in the loop</h3>
-          <p>Deals, new machines and project ideas.</p>
-          <div><input type="email" placeholder="Email address" aria-label="Email address" disabled /><button className="btn btn-light" disabled>Subscribe</button></div>
+    <footer>
+      <ServiceStrip />
+      <div className="footer-newsletter">
+        <div className="page">
+          <h2>Be the first to know</h2>
+          <p>Subscribe for product launches, deals and project ideas from OneLaser.</p>
+          <form onSubmit={(e) => e.preventDefault()}><input type="email" placeholder="Email address" aria-label="Email address" disabled /><button disabled>Subscribe</button></form>
           <small>Newsletter sign-up is disabled in this draft.</small>
-        </form>
-        {cols.map(([title, links]) => (
-          <div key={title}><p>{title}</p>{links.map(([l, to]) => <Link key={to} to={to}>{l}</Link>)}</div>
-        ))}
-        {ext.map(([title, links]) => (
-          <div key={title}><p>{title}</p>{links.map(([l, href]) => <Link key={href} href={href}>{l}</Link>)}</div>
-        ))}
+        </div>
       </div>
-      <div className="wrap footer-bottom">
-        <span>© 2026 OneLaser. Design draft for internal review — not the live store. Content and prices from 1laser.com (2026-11-16).</span>
+      <div className="footer-main">
+        <div className="page">
+          <div className="footer-intro">
+            <Link to="/" className="brand"><img src={asset("onelaser-logo-transparent.svg")} alt="OneLaser" /><span>Store</span></Link>
+            <p>Design draft for internal review — not the live store. Content and prices from 1laser.com (2026-11-16).</p>
+          </div>
+          {cols.map(([title, links]) => <div key={title}><h3>{title}</h3>{links.map(([l, to]) => <Link key={to} to={to}>{l}</Link>)}</div>)}
+          {ext.map(([title, links]) => <div key={title}><h3>{title}</h3>{links.map(([l, href]) => <Link key={href} href={href}>{l}</Link>)}</div>)}
+        </div>
+        <div className="page footer-legal">© 2026 OneLaser</div>
       </div>
     </footer>
   );

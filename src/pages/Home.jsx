@@ -2,10 +2,10 @@ import { useEffect, useState } from "react";
 import { asset, byHandle, img } from "../lib.js";
 import { bestSellers, categoryRail, heroSlides, hot, promo, promoBanner, seriesBlocks } from "../data/site.js";
 import { Benefits } from "../components/Chrome.jsx";
-import { Countdown, Link, Price, ProductCard, Rail } from "../components/ui.jsx";
+import { Countdown, Link, ProductCard, Rail, usd } from "../components/ui.jsx";
 
-/* Structure follows the DJI Store homepage:
-   promo hero + category strip → What's Hot → promo banner → Best Sellers → Why shop → one block per product line. */
+/* Module order, sizes and type follow the DJI Store homepage (measured 2026-11-16):
+   hero 430 + category strip → What's Hot → promo → Best Sellers → Why shop → one module per product line. */
 
 function Hero() {
   const [i, setI] = useState(0);
@@ -16,95 +16,93 @@ function Hero() {
     return () => clearInterval(t);
   }, [paused]);
   return (
-    <section className="hero" onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)} aria-roledescription="carousel">
+    <div className="hero" onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)} aria-roledescription="carousel">
       {heroSlides.map((s, n) => (
-        <div key={s.title} className={`hero-slide${n === i ? " active" : ""}${s.masked ? " masked" : ""}`} aria-hidden={n !== i}>
+        <article key={s.title} className={`hero-slide${n === i ? " active" : ""}${s.masked ? " masked" : ""}`} aria-hidden={n !== i}>
           <img src={asset(s.image)} alt="" />
-          <div className="wrap hero-copy">
-            <p className="eyebrow">{s.eyebrow}</p>
+          <div className="hero-copy">
+            <p className="kicker">{s.eyebrow}</p>
             <h1>{s.title}</h1>
-            <p className="hero-text">{s.text}</p>
+            <p>{s.text}</p>
             {s.countdown && <Countdown endsAt={promo.endsAt} />}
-            <Link to={s.to} className="btn btn-light" tabIndex={n === i ? 0 : -1}>Buy Now</Link>
+            <Link to={s.to} className="pill" tabIndex={n === i ? 0 : -1}>Buy Now</Link>
           </div>
-        </div>
+        </article>
       ))}
-      <button type="button" className="hero-arrow prev" aria-label="Previous slide" onClick={() => setI((i + heroSlides.length - 1) % heroSlides.length)}>‹</button>
-      <button type="button" className="hero-arrow next" aria-label="Next slide" onClick={() => setI((i + 1) % heroSlides.length)}>›</button>
+      <button type="button" className="slider-arrow prev" aria-label="Previous slide" onClick={() => setI((i + heroSlides.length - 1) % heroSlides.length)}>‹</button>
+      <button type="button" className="slider-arrow next" aria-label="Next slide" onClick={() => setI((i + 1) % heroSlides.length)}>›</button>
       <div className="hero-dots">
         {heroSlides.map((s, n) => <button key={s.title} type="button" aria-label={`Slide ${n + 1}`} className={n === i ? "on" : ""} onClick={() => setI(n)} />)}
       </div>
-    </section>
+    </div>
   );
 }
 
 export default function Home() {
   return (
-    <>
-      <Hero />
+    <div className="home">
+      <section className="home-top">
+        <Hero />
+        <div className="category-tabs">
+          {categoryRail.map(([label, to, handle]) => (
+            <Link key={label} to={to} className="category"><span><img src={img(byHandle[handle].images[0], 200)} alt="" loading="lazy" /></span><span>{label}</span></Link>
+          ))}
+        </div>
+      </section>
 
-      <section className="cat-strip">
-        <div className="wrap">
-          <Rail label="Shop by category">
-            {categoryRail.map(([label, to, handle]) => (
-              <Link key={label} to={to} className="cat"><img src={img(byHandle[handle].images[0], 240)} alt="" loading="lazy" /><span>{label}</span></Link>
+      <section className="module">
+        <div className="page">
+          <h2>What's Hot</h2>
+          <Rail label="What's hot" className="hot-shell">
+            {hot.map((h) => byHandle[h]).map((p) => (
+              <article key={p.handle} className="hot-tile">
+                <Link to={`/products/${p.handle}`} className="hot-media" aria-label={p.name}><img src={img(p.images[0], 700)} alt="" loading="lazy" /></Link>
+                <div className="hot-copy"><h3><Link to={`/products/${p.handle}`}>{p.name}</Link></h3><p>{p.tagline}</p></div>
+                <div className="hot-footer"><span>{p.priceVaries ? "From " : ""}{usd(p.price)}</span><Link to={`/products/${p.handle}`} className="hot-cta">Buy Now</Link></div>
+              </article>
             ))}
           </Rail>
         </div>
       </section>
 
-      <section className="section wrap">
-        <h2 className="h2">What's Hot</h2>
-        <Rail label="What's hot">
-          {hot.map((h) => byHandle[h]).map((p) => (
-            <Link key={p.handle} to={`/products/${p.handle}`} className="hot-card">
-              <img src={img(p.images[0], 600)} alt="" loading="lazy" />
-              <span className="hot-foot">
-                <span><b>{p.name}</b><small>{p.tagline}</small><Price product={p} from /></span>
-                <span className="btn btn-light btn-sm">Buy Now</span>
-              </span>
-            </Link>
-          ))}
-        </Rail>
+      <section className="module">
+        <div className="page">
+          <Link to={promoBanner.to} className="promo">
+            <span className="promo-copy"><span>{promoBanner.kicker}</span><strong>{promoBanner.title}</strong><em>{promoBanner.text}</em></span>
+            <span className="promo-media"><img src={img(byHandle[promoBanner.product].images[0], 900)} alt="" loading="lazy" /></span>
+          </Link>
+        </div>
       </section>
 
-      <section className="section wrap">
-        <Link to={promoBanner.to} className="promo-banner">
-          <img src={asset(promoBanner.image)} alt="" loading="lazy" />
-          <span><small>{promoBanner.kicker}</small><b>{promoBanner.title}</b><em>{promoBanner.text}</em></span>
-        </Link>
-      </section>
-
-      <section className="section wrap">
-        <h2 className="h2">Best Sellers</h2>
-        <div className="card-row six">{bestSellers.map((h) => <ProductCard key={h} product={byHandle[h]} shop={false} />)}</div>
+      <section className="module">
+        <div className="page">
+          <h2>Best Sellers</h2>
+          <Rail label="Best sellers" className="product-shell">{bestSellers.map((h) => <ProductCard key={h} product={byHandle[h]} />)}</Rail>
+        </div>
       </section>
 
       <Benefits />
 
       {seriesBlocks.map((b) => (
-        <section key={b.title} className="section wrap series">
-          <h2 className="h2">{b.title}</h2>
-          <Link to={b.to} className="series-banner">
-            <img src={asset(b.image)} alt="" loading="lazy" />
-            <span><small>{b.kicker}</small><b>{b.name}</b><em>{b.text}</em><span className="btn btn-light btn-sm">Buy Now</span></span>
-          </Link>
-          <div className="card-row five">
-            {b.picks.map((h) => <ProductCard key={h} product={byHandle[h]} shop={false} />)}
-            <Link to={b.view} className="card explore-card"><b>{b.viewLabel}</b><span className="explore-arrow" aria-hidden="true">→</span></Link>
+        <section key={b.title} className="module">
+          <div className="page">
+            <h2>{b.title}</h2>
+            <Link to={b.to} className="feature-card">
+              <img src={asset(b.image)} alt="" loading="lazy" />
+              <span className="feature-copy"><small>{b.kicker}</small><strong>{b.name}</strong><em>{b.text}</em><b>Buy Now</b></span>
+            </Link>
+            <Rail label={b.title} className="product-shell">
+              {b.picks.map((h) => <ProductCard key={h} product={byHandle[h]} />)}
+              <article className="pcard special">
+                <Link to={b.view}>
+                  <span className="pcard-media"><img src={asset(b.image)} alt="" loading="lazy" /></span>
+                  <span className="pcard-body"><strong>{b.viewLabel}</strong><b aria-hidden="true">→</b></span>
+                </Link>
+              </article>
+            </Rail>
           </div>
         </section>
       ))}
-
-      <section className="section wrap">
-        <div className="helper">
-          <div><b>Which laser is right for me?</b><span>Compare power, work area and speed side by side, or talk to a U.S.-based laser expert.</span></div>
-          <div className="helper-actions">
-            <Link to="/compare" className="btn btn-dark">Compare machines</Link>
-            <Link href="https://www.1laser.com/pages/sales-consultation" className="btn btn-outline">Book a free call</Link>
-          </div>
-        </div>
-      </section>
-    </>
+    </div>
   );
 }

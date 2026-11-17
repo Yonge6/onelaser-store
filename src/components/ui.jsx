@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { img, money, saving } from "../lib.js";
+import { img, money } from "../lib.js";
 
 export const Link = ({ to, href, children, ...rest }) =>
   href ? (
@@ -17,11 +17,15 @@ export const Icon = ({ name, size = 22 }) => {
     menu: <path d="M4 7h16M4 12h16M4 17h16" />,
     chevron: <path d="m9 6 6 6-6 6" />,
     check: <path d="m5 12 4.5 4.5L19 7" />,
+    plus: <path d="M12 5v14M5 12h14" />,
+    arrow: <path d="M5 12h14M13 6l6 6-6 6" />,
+    trash: <path d="M5 7h14M10 7V5h4v2M7 7l1 12h8l1-12M10 11v5M14 11v5" />,
     truck: <><path d="M3 6h11v10H3zM14 9h4l3 3v4h-7" /><circle cx="7" cy="17.5" r="1.6" /><circle cx="17.5" cy="17.5" r="1.6" /></>,
-    shield: <path d="M12 3 5 6v5c0 4.5 3 8 7 10 4-2 7-5.500 7-10V6z" />,
+    shield: <path d="M12 3 5 6v5c0 4.5 3 8 7 10 4-2 7-5.5 7-10V6z" />,
     refresh: <><path d="M4 12a8 8 0 0 1 14-5l2 2M20 12a8 8 0 0 1-14 5l-2-2" /><path d="M20 4v5h-5M4 20v-5h5" /></>,
-    headset: <><path d="M5 13a7 7 0 0 1 14 0" /><rect x="3.500" y="13" width="4" height="6" rx="1.500" /><rect x="16.500" y="13" width="4" height="6" rx="1.500" /></>,
+    headset: <><path d="M5 13a7 7 0 0 1 14 0" /><rect x="3.5" y="13" width="4" height="6" rx="1.5" /><rect x="16.5" y="13" width="4" height="6" rx="1.5" /></>,
     lock: <><rect x="5" y="11" width="14" height="9" rx="2" /><path d="M8 11V8a4 4 0 0 1 8 0v3" /></>,
+    card: <><rect x="3" y="6" width="18" height="12" rx="2" /><path d="M3 10h18" /></>,
     filter: <path d="M4 6h16l-6 7v5l-4 2v-7z" />,
   };
   return (
@@ -31,13 +35,16 @@ export const Icon = ({ name, size = 22 }) => {
   );
 };
 
-export function Price({ product, variant, from = false, large = false }) {
+/** DJI writes prices as "$439.00 USD" on product pages and "USD $439" on cards and in the cart. */
+export const usd = (n) => `$${Number(n).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+
+export function Price({ product, variant, from = false }) {
   const v = variant || product;
   return (
-    <span className={`price${large ? " price-lg" : ""}`}>
-      {from && product.priceVaries && <span className="price-from">From </span>}
-      <span className={v.compareAt ? "price-now sale" : "price-now"}>{money(v.price)}</span>
-      {v.compareAt && <s>{money(v.compareAt)}</s>}
+    <span className="price">
+      {from && product.priceVaries && "From "}
+      <span>{usd(v.price)} USD</span>
+      {v.compareAt && <s>{usd(v.compareAt)} USD</s>}
     </span>
   );
 }
@@ -45,7 +52,7 @@ export function Price({ product, variant, from = false, large = false }) {
 export function QtyStepper({ value, onChange, min = 0 }) {
   return (
     <span className="qty">
-      <button type="button" aria-label="Decrease quantity" onClick={() => onChange(Math.max(min, value - 1))}>−</button>
+      <button type="button" aria-label="Decrease quantity" disabled={value <= min} onClick={() => onChange(Math.max(min, value - 1))}>−</button>
       <span aria-live="polite">{value}</span>
       <button type="button" aria-label="Increase quantity" onClick={() => onChange(value + 1)}>+</button>
     </span>
@@ -55,26 +62,37 @@ export function QtyStepper({ value, onChange, min = 0 }) {
 const LABELS = { rotary: "Rotary attachment", fume: "Fume extraction", optics: "Optics", cooling: "Water chiller", expansion: "Expansion", air: "Air assist", software: "Software & training", acrylic: "Acrylic sheets", leatherette: "Leatherette" };
 export const productLabel = (p) => (p.kind === "machine" ? `${p.seriesName.replace(" Series", "")} laser` : LABELS[p.category] || "Accessory");
 
-/** Product card (DJI Store): image, category label, name, price, "Shop →". Sale badge follows Bambu's "$X OFF". */
-export function ProductCard({ product, shop = true }) {
-  const off = saving(product);
+/** Home product card (DJI "figma-product-card"): gray media, series line, two-line name, "From USD $x". */
+export function ProductCard({ product }) {
   return (
-    <Link to={`/products/${product.handle}`} className="card">
-      <span className="card-media">
-        {off > 0 && <span className="badge badge-sale">{money(off)} OFF</span>}
-        {!product.available && <span className="badge badge-muted">Sold out</span>}
-        <img src={img(product.images[0], 600)} alt="" loading="lazy" />
-      </span>
-      <span className="card-body">
-        <span className="card-label">{productLabel(product)}</span>
-        <b className="card-name">{product.name}</b>
-        <span className="card-price">
-          {product.priceVaries && "From "}USD <strong className={product.compareAt ? "sale" : ""}>{money(product.price)}</strong>
-          {product.compareAt && <s>{money(product.compareAt)}</s>}
+    <article className="pcard">
+      <Link to={`/products/${product.handle}`} className="pcard-media"><img src={img(product.images[0], 500)} alt="" loading="lazy" /></Link>
+      <div className="pcard-body">
+        <p className="pcard-series">{product.compareAt && <span>Sale · </span>}{productLabel(product)}</p>
+        <h3><Link to={`/products/${product.handle}`}>{product.name}</Link></h3>
+        <span className="pcard-price"><strong>{product.priceVaries ? "From " : ""}USD {usd(product.price)}</strong></span>
+      </div>
+    </article>
+  );
+}
+
+/** Collection card (DJI "collection-v2 card"): flat gray tile, title, "USD $x", round Shop → action. */
+export function CollectionCard({ product }) {
+  return (
+    <article className="ccard">
+      <Link to={`/products/${product.handle}`} className="ccard-link">
+        {product.compareAt && <span className="ccard-tag">Sale</span>}
+        {!product.available && <span className="ccard-tag muted">Sold out</span>}
+        <span className="ccard-media"><img src={img(product.images[0], 700)} alt="" loading="lazy" /></span>
+        <span className="ccard-content">
+          <span className="ccard-details">
+            <span className="ccard-title">{product.name}</span>
+            <span className="ccard-price">USD <b>{money(product.price)}</b>{product.compareAt && <s>USD {money(product.compareAt)}</s>}</span>
+          </span>
+          <span className="ccard-action"><span>Shop</span><Icon name="arrow" size={18} /></span>
         </span>
-        {shop && <span className="card-shop">Shop →</span>}
-      </span>
-    </Link>
+      </Link>
+    </article>
   );
 }
 
@@ -92,23 +110,23 @@ export function Countdown({ endsAt }) {
   return (
     <div className="countdown" role="timer">
       {parts.map(([label, n]) => (
-        <div key={label}><b>{String(n).padStart(2, "0")}</b><span>{label}</span></div>
+        <span key={label}><strong>{String(n).padStart(2, "0")}</strong><small>{label}</small></span>
       ))}
     </div>
   );
 }
 
-/** Horizontal scroll rail with arrow buttons (DJI "What's Hot"). */
-export function Rail({ children, label }) {
+/** Horizontal slider with round overlay arrows (DJI "slider-shell"). */
+export function Rail({ children, label, className = "" }) {
   const scroll = (e, dir) => {
     const track = e.currentTarget.parentElement.querySelector(".rail-track");
     track.scrollBy({ left: dir * track.clientWidth * 0.8, behavior: "smooth" });
   };
   return (
-    <div className="rail" aria-label={label}>
-      <button type="button" className="rail-arrow prev" aria-label="Previous" onClick={(e) => scroll(e, -1)}>‹</button>
+    <div className={`rail ${className}`} aria-label={label}>
+      <button type="button" className="slider-arrow prev" aria-label="Previous" onClick={(e) => scroll(e, -1)}>‹</button>
       <div className="rail-track">{children}</div>
-      <button type="button" className="rail-arrow next" aria-label="Next" onClick={(e) => scroll(e, 1)}>›</button>
+      <button type="button" className="slider-arrow next" aria-label="Next" onClick={(e) => scroll(e, 1)}>›</button>
     </div>
   );
 }

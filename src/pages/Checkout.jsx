@@ -17,13 +17,13 @@ export default function Checkout() {
     return (
       <div className="checkout-done">
         <span className="done-mark"><Icon name="check" size={34} /></span>
-        <h1 className="h1">Thank you — this is a demo order</h1>
-        <p className="lead">Confirmation page layout. No order was placed and no payment was taken. Demo total: {money(done)}.</p>
-        <Link to="/" className="btn btn-dark">Back to store</Link>
+        <h1>Thank you — this is a demo order</h1>
+        <p>Confirmation page layout. No order was placed and no payment was taken. Demo total: {money(done)}.</p>
+        <Link to="/" className="btn-primary">Back to store</Link>
       </div>
     );
   if (!items.length)
-    return <div className="wrap section center"><h1 className="h1">Nothing to check out</h1><Link to="/collections/machines" className="btn btn-dark">Shop laser machines</Link></div>;
+    return <div className="checkout-done"><h1>Nothing to check out</h1><Link to="/collections/machines" className="btn-primary">Shop laser machines</Link></div>;
   const place = (e) => {
     e.preventDefault();
     setDone(subtotal);
@@ -34,8 +34,8 @@ export default function Checkout() {
     <div className="checkout">
       <div className="checkout-main">
         <header className="checkout-head">
-          <Link to="/" className="logo"><img src={asset("onelaser-logo-transparent.svg")} alt="OneLaser" /><span>STORE</span></Link>
-          <Link to="/cart" className="more">‹ Back to cart</Link>
+          <Link to="/" className="brand"><img src={asset("onelaser-logo-transparent.svg")} alt="OneLaser" /><span>Store</span></Link>
+          <Link to="/cart" className="back-link">‹ Back to cart</Link>
         </header>
         <p className="demo-note">Design draft: this page shows the checkout layout only. Do not enter real personal or payment details — nothing is saved or submitted.</p>
         <form onSubmit={place} autoComplete="off">
@@ -79,7 +79,7 @@ export default function Checkout() {
               </div>
             )}
           </section>
-          <button className="btn btn-red btn-block btn-lg">Place demo order</button>
+          <button className="btn-primary block">Place demo order</button>
           <p className="muted small center">Demo only — no charge, no order.</p>
         </form>
       </div>
@@ -94,7 +94,7 @@ export default function Checkout() {
               </li>
             ))}
           </ul>
-          <div className="discount"><input placeholder="Discount code or gift card" aria-label="Discount code" disabled /><button type="button" className="btn btn-outline btn-sm" disabled>Apply</button></div>
+          <div className="discount"><input placeholder="Discount code or gift card" aria-label="Discount code" disabled /><button type="button" className="btn-soft" disabled>Apply</button></div>
         </OrderSummary>
       </div>
     </div>

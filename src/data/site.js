@@ -81,16 +81,16 @@ export const bestSellers = [
   "vertigo-vertical-laser-engraver", "hydra-7-gen-2-70w-rf-co2-dual-laser-machine", "cobra-8-90w-co2-laser-engraver-cutter",
 ];
 
-export const promoBanner = { kicker: "OneLaser Store Picks", title: "Black Friday: save up to $3,000", text: "Every machine and accessory currently on sale, in one place.", image: "home-product-hydra-gen2-scene.webp", to: "/collections/deals" };
+export const promoBanner = { kicker: "OneLaser Store Picks", title: "Black Friday: save up to $3,000", text: "Every machine and accessory currently on sale, in one place.", product: "hydra-9-gen-2-70w-rf-co2-dual-laser-machine", to: "/collections/deals" };
 
 export const seriesBlocks = [
-  { kicker: "Create anywhere", title: "Desktop", name: "XRF 38W", text: "Air-cooled RF, true 3G acceleration and a 0.07 mm laser spot in an all-in-one desktop machine.", image: "home-product-xrf-scene.webp", to: "/products/onelaser-xrf-desktop-laser-machine", view: "/collections/machines", viewLabel: "Explore desktop machines and accessories",
+  { kicker: "Create anywhere", title: "Desktop", name: "XRF 38W", text: "Air-cooled RF, true 3G acceleration and a 0.07 mm laser spot in an all-in-one desktop machine.", image: "home-product-xrf-scene.webp", to: "/products/onelaser-xrf-desktop-laser-machine", view: "/collections/machines", viewLabel: "Explore Desktop Machines and Accessories",
     picks: ["onelaser-xrf-desktop-laser-machine", "vertigo-vertical-laser-engraver", "onelaser-x-series-riser-base", "onelaser-automatic-conveyor-feeder"] },
-  { kicker: "For production", title: "Workshop", name: "Cobra Series", text: "90W to 130W glass CO₂ power with Smart Dual Air-Assist for wood, acrylic and leather.", image: "home-product-cobra-scene.webp", to: "/collections/cobra-series", view: "/collections/cobra-series", viewLabel: "Explore Cobra machines and accessories",
+  { kicker: "For production", title: "Workshop", name: "Cobra Series", text: "90W to 130W glass CO₂ power with Smart Dual Air-Assist for wood, acrylic and leather.", image: "home-product-cobra-scene.webp", to: "/collections/cobra-series", view: "/collections/cobra-series", viewLabel: "Explore Cobra Machines and Accessories",
     picks: ["cobra-8-90w-co2-laser-engraver-cutter", "cobra-10-100w-co2-laser-engraver-cutter", "cobra-14-130w-co2-laser-engraver-cutter", "onelaser-industrial-chiller-for-hydra-laser-engraver"] },
-  { kicker: "Scale up", title: "Industrial", name: "Hydra Gen2", text: "70W RF Pro or 38W RF + glass-tube Hybrid configurations for precision, speed and scale.", image: "home-product-hydra-gen2-scene.webp", to: "/collections/hydra-gen2", view: "/collections/hydra-gen2", viewLabel: "Explore Hydra Gen2 machines and accessories",
+  { kicker: "Scale up", title: "Industrial", name: "Hydra Gen2", text: "70W RF Pro or 38W RF + glass-tube Hybrid configurations for precision, speed and scale.", image: "home-product-hydra-gen2-scene.webp", to: "/collections/hydra-gen2", view: "/collections/hydra-gen2", viewLabel: "Explore Hydra Gen2 Machines and Accessories",
     picks: ["hydra-7-gen-2-70w-rf-co2-dual-laser-machine", "hydra-9-gen-2-70w-rf-co2-dual-laser-machine", "hydra-13-gen-2-70w-rf-co2-dual-laser-machine", "hydra-16-gen-2-70w-rf-co2-dual-laser-machine"] },
-  { kicker: "Complete your setup", title: "Accessories & Materials", name: "Built for OneLaser", text: "Rotaries, fume extraction, optics and laser-ready materials tested for OneLaser machines.", image: "home-product-vertigo-scene.webp", to: "/collections/accessories", view: "/collections/accessories", viewLabel: "Explore accessories and materials",
+  { kicker: "Complete your setup", title: "Accessories & Materials", name: "Built for OneLaser", text: "Rotaries, fume extraction, optics and laser-ready materials tested for OneLaser machines.", image: "home-product-vertigo-scene.webp", to: "/collections/accessories", view: "/collections/accessories", viewLabel: "Explore Accessories and Materials",
     picks: ["piburn-omni-for-onelaser", "filtrabox-micro", "1-8-glitter-acrylic-sheets-12-12-4-pack-for-laser-engraving-cutting", "makerdepot-1-0mm-no-foam-leatherette-sheets-12-20-5-pack-for-laser-engraving-cutting"] },
 ];
 

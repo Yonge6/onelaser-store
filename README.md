@@ -9,18 +9,33 @@
 - **结构**：照 [DJI Store](https://us.store.dji.com/) + [Bambu Lab Store](https://us.store.bambulab.com/) 的购物框架；参考 [GoPro](https://gopro.com/en/us/)（Why shop / 应用场景）和 [ComMarker](https://store.commarker.com/)（机型对比）。
 - **内容**：机器、配件、耗材、价格、图片、参数全部来自 www.1laser.com（2026-11-16 抓取，含黑五价）。品牌沿用 OneLaser 的 Certia 字体和红色。
 
-## 页面（结构以 DJI Store 为骨架，桌面和手机一致）
+## 页面（模块和 UI 规范对照 DJI Store 实测，2026-11-16）
 
-| 页面 | 地址 | 结构（自上而下） |
+| 页面 | 地址 | 模块（自上而下） |
 | --- | --- | --- |
-| 首页 | `#/` | 促销轮播+倒计时 → 品类入口条 → What's Hot → 促销横幅 → Best Sellers → Why shop → 每条产品线一个区块（横幅 + 4 个商品 + Explore 入口）→ 选型入口 |
-| 列表页 | `#/collections/machines` 等 | 面包屑 → 居中标题 → 左侧筛选栏（品类树、优惠/库存、Reset）→ 件数 + 排序 → 3 列卡片（手机 2 列，筛选变全屏面板） |
-| 商品页 | `#/products/<handle>` | 购买区（图库、价格、权益框、选配置、推荐配件、Add to Cart / Buy Now）→ 锚点导航 → Take a Closer Look（桌面拼图网格，手机横滑）→ Use Cases → 视频 → Which is the Best for You → Specs（折叠）→ FAQ；底部吸附购买条 |
-| 购物车 | `#/cart` | 极简页头 → 商品表格 → 左备注、右合计 → Continue Shopping / Check Out → 三项保障 |
+| 首页 | `#/` | 公告条 38 → 页头 71 → 轮播 430（倒计时）+ 品类条 → What's Hot → 促销横幅 260 → Best Sellers → Why shop（三列拼图 460）→ 每条产品线：418 横幅 + 4 个商品 + Explore 卡 → 服务条 → 订阅 → 页脚 |
+| 列表页 | `#/collections/machines` 等 | 面包屑 → 居中标题 → 272 筛选栏（品类树、筛选、Reset）→ 件数 + 排序 → 3 列卡片 331×414 |
+| 商品页 | `#/products/<handle>` | 586/586 购买区（方形图库、标题、价格、权益框、Select Option、Add to Cart/Buy Now、可展开行、Top Accessories）→ 锚点导航 53 → Take a Closer Look → Use Cases → Which is the Best for You? → FAQ；底部固定购买条 84 |
+| 购物车 | `#/cart` | 极简页头 → 提示条 → 表格 726/150/150/150/24 → 左备注 600、右合计 500 → Continue Shopping / Check Out → 服务条 |
 | 结算 | `#/checkout` | Shopify 结算布局（仅演示，支付栏已禁用） |
-| 机型对比 | `#/compare` | 全部机型参数对比表 |
 
-购物流程：Add to Cart → 购物车页 → Check Out；Buy Now → 直接到结算。与 DJI 不同的三处：角标用了 Bambu 的 “$X OFF”，商品页多了一行视频和折叠的 Specs，首页末尾多了一个选型入口。
+**UI 规范（取自 DJI 实测值）**
+
+| 项 | 桌面 | 手机 |
+| --- | --- | --- |
+| 首页底色 / 卡片 | 页面 `#F5F5F7`，卡片白底，圆角 8，1px `rgba(0,0,0,.04)` 描边 | 同 |
+| 模块标题 h2 | 43.2/48，字重 800 | 28/31，字重 800 |
+| 轮播标题 | 44/47，字重 700；副标题 18/25 | 36/38；14/20 |
+| 按钮 | 胶囊形，44 高，13px 字重 700 | 40 高，12px |
+| 商品卡 | 259 宽，图区 262 `#F7F8F9`，名称 20/25 字重 600，价格 16/22 字重 500 | 两列网格，名称 16/20 |
+| 商品页 | 标题 32/36 字重 600，价格 20/24 字重 600，分节标题 32/48 字重 700，卖点卡标题 24/30 字重 600 | 分节标题 24/32，卖点卡 299×440 横滑 |
+| 间距 | 首页模块上 34.56 下 36，左右 32；商品页分节上 104 | 模块上 16 下 24，左右 16 |
+
+保留了 OneLaser 的两样东西：字体 Certia（DJI 用 Manrope）和品牌红（DJI 在同样位置用蓝 `#0060EF`）。DJI 的可变字重按就近映射到 Certia 的固定字重：850→800，720–760→700，600–650→600。
+
+与 DJI 仍不同的地方：商品页没有 “In the Box”（官网没有装箱数据）；DJI 的 “Compare Options” 可展开行换成了 “Tech Specs”；What's Hot 卡片 DJI 有实拍背景图，这里是深色渐变加产品图；Why shop 的插图用的是图标；购物车没有做每行的勾选框。
+
+购物流程：Add to Cart → 购物车页 → Check Out；Buy Now → 直接到结算。
 
 ## 团队怎么改
 

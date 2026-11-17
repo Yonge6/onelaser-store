@@ -2,11 +2,13 @@ import { useEffect, useMemo, useState } from "react";
 import { byHandle, go, img, machines, money } from "../lib.js";
 import { useCart } from "../cart.jsx";
 import { addOns, faq } from "../data/site.js";
-import { Icon, Link, Price, QtyStepper } from "../components/ui.jsx";
+import { Icon, Link, Price, QtyStepper, usd } from "../components/ui.jsx";
 import stories from "../data/stories.json";
 
-/* Structure follows the DJI Store product page:
-   buy area → anchor nav → Take a Closer Look → Use Cases → Which is the Best for You → Specs → FAQ. */
+/* Modules, sizes and type follow the DJI Store product page (measured 2026-11-16):
+   586/586 buy area (gallery, title, price, summary box, Select Option, buy group, expandable row, top accessories)
+   → anchor nav → Take a Closer Look → Use Cases → Which is the Best for You? → FAQ, with a fixed bottom buy bar.
+   DJI's "In the Box" is omitted (no data on 1laser.com); specs live in the expandable row where DJI has "Compare Options". */
 
 function addOnsFor(product) {
   if (product.kind !== "machine") return [];
@@ -49,7 +51,7 @@ function UseCases({ cases }) {
       <div className="usecase-tabs" role="tablist">
         {cases.map((x, n) => <button key={n} type="button" role="tab" aria-selected={n === i} className={n === i ? "on" : ""} onClick={() => setI(n)}>{x.eyebrow || x.title}</button>)}
       </div>
-      {c.text && <p className="usecase-text"><b>{c.title}</b> {c.text}</p>}
+      {c.text && <p className="usecase-description">{c.text}</p>}
     </>
   );
 }
@@ -69,13 +71,15 @@ export default function Product({ handle }) {
   const [variantId, setVariantId] = useState(null);
   const [photo, setPhoto] = useState(0);
   const [picked, setPicked] = useState({});
+  const [specsOpen, setSpecsOpen] = useState(false);
+  const [details, setDetails] = useState(null);
   const [active, setActive] = useState("highlights");
   useEffect(() => {
-    setVariantId(null); setPhoto(0); setPicked({}); setActive("highlights");
+    setVariantId(null); setPhoto(0); setPicked({}); setSpecsOpen(false); setDetails(null); setActive("highlights");
   }, [handle]);
   const options = useMemo(() => addOnsFor(product || {}), [product]);
   const story = useStory(handle);
-  if (!product) return <div className="wrap section"><h1 className="h1">Product not found</h1><Link to="/" className="more">Back to store ›</Link></div>;
+  if (!product) return <div className="container section-pad"><h1>Product not found</h1><Link to="/">Back to store</Link></div>;
 
   const variant = product.variants.find((v) => v.id === variantId) || product.variants.find((v) => v.available) || product.variants[0];
   const gallery = variant.image && !product.images.includes(variant.image) ? [variant.image, ...product.images] : product.images;
@@ -93,32 +97,28 @@ export default function Product({ handle }) {
   };
   const isMachine = product.kind === "machine";
   const many = product.variants.length > 6;
-  const parent = isMachine ? ["Laser Machines", "/collections/machines"] : product.kind === "material" ? ["Materials", "/collections/materials"] : ["Accessories", "/collections/accessories"];
   const compare = isMachine ? compareSet(product) : [];
   const questions = [...story.qa, ...faq];
-  const sections = [
-    story.highlights.length && ["highlights", "Highlights"], story.cases.length && ["cases", "Use Cases"], story.videos.length && ["videos", "Videos"],
-    compare.length && ["compare", "Compare"], isMachine && ["specs", "Specs"], ["faq", "FAQs"],
-  ].filter(Boolean);
+  const specGroups = story.specs || (product.specs ? [{ group: "Key specifications", rows: [["Best for", product.bestFor], ...Object.entries(product.specs)] }] : null);
+  const bullets = story.bullets || (product.specs ? Object.entries(product.specs).slice(0, 6).map(([k, v]) => `${k}: ${v}`) : [product.tagline]);
+  const sections = [story.highlights.length && ["highlights", "Highlights"], story.cases.length && ["cases", "Use Cases"], compare.length && ["compare", "Compare"], ["faq", "FAQs"]].filter(Boolean);
   const jump = (id) => {
     setActive(id);
     document.getElementById(`pdp-${id}`)?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
-  const buyButtons = (
-    <div className="buy-buttons">
-      <button type="button" className="btn btn-outline-dark" disabled={!variant.available} onClick={() => commit(false)}>{variant.available ? "Add to Cart" : "Sold out"}</button>
-      <button type="button" className="btn btn-red" disabled={!variant.available} onClick={() => commit(true)}>Buy Now</button>
-    </div>
+  const buttons = (
+    <>
+      <button type="button" className="buy" disabled={!variant.available} onClick={() => commit(false)}>{variant.available ? "Add to Cart" : "Sold Out"}</button>
+      <button type="button" className="buy-now" disabled={!variant.available} onClick={() => commit(true)}>Buy Now</button>
+    </>
   );
 
   return (
     <div className="pdp">
-      <div className="wrap">
-        <nav className="crumbs"><Link to="/">Home</Link> / <Link to={parent[1]}>{parent[0]}</Link> / <span>{product.name}</span></nav>
-        <div className="pdp-top">
+      <section className="pdp-main">
+        <div className="pdp-hero">
           <div className="gallery">
-            <div className="gallery-main">
-              {variant.compareAt && <span className="badge badge-sale">{money(variant.compareAt - variant.price)} OFF</span>}
+            <div className="gallery-stage">
               <img src={img(gallery[photo] || gallery[0], 1200)} alt={product.name} />
               <span className="gallery-count">{photo + 1}/{gallery.length}</span>
               {gallery.length > 1 && (
@@ -127,177 +127,153 @@ export default function Product({ handle }) {
                   <button type="button" className="gallery-arrow next" aria-label="Next image" onClick={() => setPhoto((photo + 1) % gallery.length)}>›</button>
                 </>
               )}
-            </div>
-            <div className="thumbs">
-              {gallery.map((src, i) => <button key={src} type="button" className={i === photo ? "on" : ""} onClick={() => setPhoto(i)} aria-label={`Image ${i + 1}`}><img src={img(src, 160)} alt="" loading="lazy" /></button>)}
+              <div className="gallery-thumbs">
+                {gallery.map((src, i) => <button key={src} type="button" className={i === photo ? "on" : ""} onClick={() => setPhoto(i)} aria-label={`Image ${i + 1}`}><img src={img(src, 120)} alt="" loading="lazy" /></button>)}
+              </div>
             </div>
           </div>
 
-          <div className="buybox">
+          <div className="info">
             <h1>{product.name}</h1>
-            <Price product={product} variant={variant} large />
-            <div className="benefit-box">
-              <div className="benefit-row"><Icon name="shield" size={20} /><div><b>30-Day Easy Returns</b><b>{isMachine ? "3-2-1 Warranty · U.S.-Based Support" : "U.S.-Based Support"}</b></div></div>
-              <div className="benefit-row">
-                <Icon name="check" size={20} />
-                <ul>
-                  {story.bullets
-                    ? story.bullets.map((h) => <li key={h}>{h}</li>)
-                    : product.specs
-                      ? Object.entries(product.specs).slice(0, 6).map(([k, v]) => <li key={k}>{k}: {v}</li>)
-                      : <li>{product.tagline}</li>}
-                  {product.fit && <li>Fits: {product.fit}</li>}
-                </ul>
+            <p className="pdp-price"><Price product={product} variant={variant} /></p>
+            <div className="official-summary">
+              <div className="summary-row">
+                <Icon name="shield" size={24} />
+                <ul><li>30-Day Easy Returns</li><li>{isMachine ? "3-2-1 Warranty · U.S.-Based Support" : "U.S.-Based Support"}</li></ul>
+                <Icon name="chevron" size={20} />
+              </div>
+              <div className="summary-row">
+                <Icon name="check" size={24} />
+                <ul>{bullets.map((b) => <li key={b}>{b}</li>)}{product.fit && <li>Fits: {product.fit}</li>}</ul>
               </div>
             </div>
 
-            {product.variants.length > 1 && (
-              <div className="option-group">
-                <h2>Select {product.optionName || "Option"}</h2>
-                {many ? (
-                  <select className="select" value={variant.id} onChange={(e) => pickVariant(product.variants.find((v) => v.id === e.target.value))}>
-                    {product.variants.map((v) => <option key={v.id} value={v.id} disabled={!v.available}>{v.title} — {money(v.price)}{v.available ? "" : " (sold out)"}</option>)}
-                  </select>
-                ) : (
-                  product.variants.map((v) => (
-                    <button key={v.id} type="button" className={`option${v.id === variant.id ? " on" : ""}`} disabled={!v.available} onClick={() => pickVariant(v)}>
-                      <span><b>{v.title}</b>{!v.available && <em>Sold out</em>}</span>
-                      <Price product={product} variant={v} />
-                    </button>
-                  ))
+            <div className="variants">
+              <p className="legend">Select {product.optionName || "Option"}</p>
+              {many ? (
+                <select className="variant-select" value={variant.id} onChange={(e) => pickVariant(product.variants.find((v) => v.id === e.target.value))}>
+                  {product.variants.map((v) => <option key={v.id} value={v.id} disabled={!v.available}>{v.title} — {usd(v.price)} USD{v.available ? "" : " (sold out)"}</option>)}
+                </select>
+              ) : (
+                product.variants.map((v) => (
+                  <button key={v.id} type="button" className={`variant-card${v.id === variant.id ? " on" : ""}`} disabled={!v.available} onClick={() => pickVariant(v)}>
+                    <span className="variant-heading">
+                      <span className="variant-media"><img src={img(v.image || product.images[0], 200)} alt="" /></span>
+                      <span className="variant-name">{v.title || product.name}{!v.available && " (Sold out)"}</span>
+                      <span className="variant-price">{usd(v.price)} USD{v.compareAt && <s>{usd(v.compareAt)} USD</s>}</span>
+                    </span>
+                    {v.id === variant.id && <small className="variant-description">{product.tagline}</small>}
+                  </button>
+                ))
+              )}
+            </div>
+
+            <div className="buy-group">{buttons}</div>
+
+            {specGroups && (
+              <div className="expand-row">
+                <button type="button" aria-expanded={specsOpen} onClick={() => setSpecsOpen(!specsOpen)}><span>Tech Specs</span><span aria-hidden="true">{specsOpen ? "−" : "+"}</span></button>
+                {specsOpen && (
+                  <div className="expand-body">
+                    {specGroups.map((g) => (
+                      <div key={g.group}><h3>{g.group}</h3><dl>{g.rows.map(([k, v]) => <div key={k}><dt>{k}</dt><dd>{v}</dd></div>)}</dl></div>
+                    ))}
+                  </div>
                 )}
               </div>
             )}
 
             {options.length > 0 && (
-              <div className="option-group">
+              <section className="accessories">
                 <h2>Don't Miss Top Accessories</h2>
-                {options.map((a) => (
-                  <div key={a.handle} className={`addon${picked[a.handle] ? " on" : ""}`}>
-                    <img src={img(a.images[0], 160)} alt="" loading="lazy" />
-                    <div>
-                      <b>{a.name}</b>
-                      <span className="row"><Price product={a} /><Link to={`/products/${a.handle}`} className="more small">Details</Link></span>
-                    </div>
-                    {picked[a.handle] ? (
-                      <QtyStepper value={picked[a.handle]} onChange={(n) => setPicked((s) => ({ ...s, [a.handle]: n }))} />
-                    ) : (
-                      <button type="button" className="add-circle" aria-label={`Add ${a.name}`} onClick={() => setPicked((s) => ({ ...s, [a.handle]: 1 }))}>+</button>
-                    )}
-                  </div>
-                ))}
-              </div>
+                <div className="accessory-list">
+                  {options.map((a) => (
+                    <article key={a.handle} className="accessory-pick">
+                      <label className="accessory-check"><input type="checkbox" checked={!!picked[a.handle]} onChange={(e) => setPicked((s) => ({ ...s, [a.handle]: e.target.checked ? 1 : 0 }))} aria-label={`Add ${a.name}`} /></label>
+                      <div className="accessory-image"><img src={img(a.images[0], 240)} alt="" loading="lazy" /></div>
+                      <div className="accessory-content">
+                        <h3>{a.name}</h3>
+                        <p className="accessory-price">{usd(a.price)} USD</p>
+                        <QtyStepper value={picked[a.handle] || 0} onChange={(n) => setPicked((s) => ({ ...s, [a.handle]: n }))} />
+                        <p className="accessory-description">{a.tagline}</p>
+                        <button type="button" className="accessory-details" aria-expanded={details === a.handle} onClick={() => setDetails(details === a.handle ? null : a.handle)}><span>Details</span><span aria-hidden="true">{details === a.handle ? "−" : "+"}</span></button>
+                        {details === a.handle && <p className="accessory-more">{a.description.slice(0, 420)}… <Link to={`/products/${a.handle}`}>View product</Link></p>}
+                      </div>
+                    </article>
+                  ))}
+                </div>
+              </section>
             )}
-
-            <div className="summary">
-              {addOnTotal > 0 && <div className="row total"><span>Total</span><b>{money(total)}</b></div>}
-              <p className="muted small"><Icon name="truck" size={16} /> Shipping and delivery estimate shown at checkout.</p>
-              {buyButtons}
-            </div>
           </div>
         </div>
-      </div>
+      </section>
 
-      <div className="pdp-tabs">
-        <div className="wrap">
-          {sections.map(([id, label]) => <button key={id} type="button" className={active === id ? "on" : ""} onClick={() => jump(id)}>{label}</button>)}
-        </div>
-      </div>
+      <nav className="anchor-nav" aria-label="Product sections">
+        <div>{sections.map(([id, label]) => <button key={id} type="button" className={active === id ? "on" : ""} onClick={() => jump(id)}>{label}</button>)}</div>
+      </nav>
 
-      <div className="wrap pdp-body">
-        {story.highlights.length > 0 && (
-          <section id="pdp-highlights" className="pdp-section">
-            <h2 className="h2 center">Take a Closer Look</h2>
-            <div className="closer-grid">
-              {story.highlights.map((h, n) => (
-                <article key={n} className="closer-card">
-                  <img src={img(h.img, 1400)} alt="" loading="lazy" />
-                  <div><h3>{h.title}</h3><p>{h.text}</p></div>
+      {story.highlights.length > 0 && (
+        <section id="pdp-highlights" className="pdp-section">
+          <h2>Take a Closer Look</h2>
+          <div className="stories">
+            {story.highlights.map((h, n) => (
+              <article key={n} className="story">
+                <img src={img(h.img, 1400)} alt="" loading="lazy" />
+                <div><h3>{h.title}</h3><p>{h.text}</p></div>
+              </article>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {story.cases.length > 0 && (
+        <section id="pdp-cases" className="pdp-section">
+          <h2>Made With {product.name.replace("™", "")}</h2>
+          <UseCases key={handle} cases={story.cases} />
+        </section>
+      )}
+
+      {compare.length > 0 && (
+        <section id="pdp-compare" className="pdp-section">
+          <h2>Which is the Best for You?</h2>
+          <div className="compare-scroll">
+            <div className="compare-products">
+              {compare.map((m) => (
+                <article key={m.handle}>
+                  <Link to={`/products/${m.handle}`} className="compare-media"><img src={img(m.images[0], 600)} alt="" loading="lazy" /></Link>
+                  <h3>{m.name}</h3>
+                  <p className="compare-subtitle">{m.tagline}</p>
+                  <p className="compare-price">From USD {money(m.price)}</p>
+                  <Link to={`/products/${m.handle}`} className="compare-btn">Buy Now</Link>
                 </article>
               ))}
             </div>
-          </section>
-        )}
-
-        {story.cases.length > 0 && (
-          <section id="pdp-cases" className="pdp-section">
-            <h2 className="h2 center">Made With {product.name.replace("™", "")}</h2>
-            <UseCases key={handle} cases={story.cases} />
-          </section>
-        )}
-
-        {story.videos.length > 0 && (
-          <section id="pdp-videos" className="pdp-section">
-            <h2 className="h2 center">Reviews & Owner Stories</h2>
-            <div className="video-rail">
-              {story.videos.map((v) => (
-                <a key={v.id} href={`https://www.youtube.com/watch?v=${v.id}`} target="_blank" rel="noreferrer" aria-label="Watch on YouTube">
-                  <img src={img(v.img, 700)} alt="" loading="lazy" /><span className="play" aria-hidden="true">▶</span>
-                </a>
+            <div className="compare-specs">
+              {COMPARE_ROWS.map((r) => (
+                <div key={r} className="compare-row">{compare.map((m) => <div key={m.handle} className="compare-cell"><strong>{m.specs[r]}</strong><span>{r}</span></div>)}</div>
               ))}
             </div>
-          </section>
-        )}
-
-        {compare.length > 0 && (
-          <section id="pdp-compare" className="pdp-section">
-            <h2 className="h2 center">Which is the Best for You?</h2>
-            <div className="best-scroll">
-              <div className="best">
-                {compare.map((m) => (
-                  <div key={m.handle} className="best-col">
-                    <Link to={`/products/${m.handle}`}><img src={img(m.images[0], 500)} alt="" loading="lazy" /></Link>
-                    <h3>{m.name}</h3>
-                    <p className="muted small">{m.tagline}</p>
-                    <p className="best-price">From USD {money(m.price)}</p>
-                    {m.handle === handle ? <span className="btn btn-sm btn-dark is-current">Viewing</span> : <Link to={`/products/${m.handle}`} className="btn btn-sm btn-outline-dark">Buy Now</Link>}
-                    {COMPARE_ROWS.map((r) => <div key={r} className="best-stat"><b>{m.specs[r]}</b><span>{r}</span></div>)}
-                  </div>
-                ))}
-              </div>
-            </div>
-            <Link to="/compare" className="more center-link">Compare all machines ›</Link>
-          </section>
-        )}
-
-        {isMachine && (
-          <section id="pdp-specs" className="pdp-section narrow">
-            <h2 className="h2 center">Specs</h2>
-            {story.specs ? (
-              <div className="spec-groups">
-                {story.specs.map((g) => (
-                  <details key={g.group}>
-                    <summary>{g.group}</summary>
-                    <table className="spec-table"><tbody>{g.rows.map(([k, v]) => <tr key={k}><th>{k}</th><td>{v}</td></tr>)}</tbody></table>
-                  </details>
-                ))}
-              </div>
-            ) : (
-              <table className="spec-table"><tbody>
-                <tr><th>Best for</th><td>{product.bestFor}</td></tr>
-                {Object.entries(product.specs).map(([k, v]) => <tr key={k}><th>{k}</th><td>{v}</td></tr>)}
-              </tbody></table>
-            )}
-          </section>
-        )}
-
-        {!isMachine && (
-          <section className="pdp-section narrow">
-            <h2 className="h2 center">Overview</h2>
-            <p className="pdp-desc">{product.description}{product.description.length >= 1500 ? "…" : ""}</p>
-          </section>
-        )}
-
-        <section id="pdp-faq" className="pdp-section narrow">
-          <h2 className="h2 center">Let's Answer Your Questions</h2>
-          {questions.map(([q, a]) => <details key={q} className="faq"><summary>{q}</summary><p>{a}</p></details>)}
+          </div>
         </section>
-      </div>
+      )}
 
-      <div className="sticky-buy">
-        <div className="wrap">
-          <div><b>{product.name}</b><Price product={product} variant={{ ...variant, price: total, compareAt: addOnTotal ? null : variant.compareAt }} /></div>
-          {buyButtons}
+      {!isMachine && (
+        <section className="pdp-section">
+          <h2>Overview</h2>
+          <p className="overview-text">{product.description}{product.description.length >= 1500 ? "…" : ""}</p>
+        </section>
+      )}
+
+      <section id="pdp-faq" className="pdp-section">
+        <h2>Let's Answer Your Questions</h2>
+        <div className="faq">{questions.map(([q, a]) => <details key={q}><summary>{q}</summary><p>{a}</p></details>)}</div>
+      </section>
+
+      <div className="sticky-bar">
+        <div className="sticky-delivery"><strong>Estimated delivery time</strong><span>Shown at checkout by address</span></div>
+        <div className="sticky-purchase">
+          <span className="sticky-price">{usd(total)} USD</span>
+          <div className="sticky-actions">{buttons}</div>
         </div>
       </div>
     </div>
