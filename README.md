@@ -2,6 +2,8 @@
 
 **预览链接：** https://yonge6.github.io/onelaser-store/
 
+**团队协作仓库：** `Hydrax91129/OneLaser-Shopify` 的 `store-redesign` 分支（私有）。预览由公开镜像 `Yonge6/onelaser-store` 的 `main` 分支自动发布。
+
 这是 1laser.com 购物站的重设计初稿（静态原型，不是线上店铺，不会产生真实订单）。
 
 - **结构**：照 [DJI Store](https://us.store.dji.com/) + [Bambu Lab Store](https://us.store.bambulab.com/) 的购物框架；参考 [GoPro](https://gopro.com/en/us/)（Why shop / 应用场景）和 [ComMarker](https://store.commarker.com/)（机型对比）。
@@ -27,7 +29,7 @@
 | 颜色、字号、间距、响应式 | `src/styles.css`（顶部 `:root` 是设计变量） |
 | 各页面结构 | `src/pages/*.jsx`，公共头尾和购物车在 `src/components/` |
 
-协作流程：从 `main` 开分支 → 改 → 提 Pull Request → 合并到 `main` 后 GitHub Actions 自动发布到预览链接（约 1–2 分钟）。
+协作流程：在公司仓库从 `store-redesign` 开分支 → 改 → 提 Pull Request 合并回 `store-redesign` → 同步到 `Yonge6/onelaser-store` 的 `main` 后，GitHub Actions 自动发布到预览链接（约 1–2 分钟）。公司仓库的 `main` 留给 Shopify 主题代码，不要把原型推到那里。
 
 ```bash
 npm install
