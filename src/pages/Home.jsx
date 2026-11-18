@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useCart } from "../cart.jsx";
 import { t } from "../i18n.js";
 import { asset, byHandle, img, money, products } from "../lib.js";
-import { heroSlides, homeFaq, homeProof, homeReviews, homeStandard, homeTabs, homeVideos, newHandles, promo, shortSlogans } from "../data/site.js";
+import { heroSlides, homeFaq, homeProof, homeReviews, homeStandard, homeTabs, homeVideos, trustpilot, newHandles, promo, shortSlogans } from "../data/site.js";
 import { Countdown, Icon, Link } from "../components/ui.jsx";
 import FinderCard, { FinderHelp } from "../components/Finder.jsx";
 
@@ -216,7 +216,50 @@ function Videos() {
   );
 }
 
+/** "Read all reviews": the Trustpilot profile figures and a selection of reviews in a dialog, so the visitor stays on the page. */
+function ReviewsDialog({ onClose }) {
+  useEffect(() => {
+    const onKey = (e) => e.key === "Escape" && onClose();
+    window.addEventListener("keydown", onKey);
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => { window.removeEventListener("keydown", onKey); document.body.style.overflow = prev; };
+  }, [onClose]);
+  const tp = trustpilot;
+  const Stars = ({ n }) => <span className="tp-stars" aria-label={`${n} / 5`}>{[1, 2, 3, 4, 5].map((k) => <i key={k} className={k <= n ? "on" : ""}>★</i>)}</span>;
+  return (
+    <div className="tp-scrim" onClick={onClose}>
+      <div className="tp-dialog" role="dialog" aria-modal="true" aria-label={t("Reviews on Trustpilot")} onClick={(e) => e.stopPropagation()}>
+        <button type="button" className="tp-close" aria-label={t("Close")} onClick={onClose}><Icon name="close" size={22} /></button>
+        <header className="tp-head">
+          <div>
+            <p className="tp-kicker">{t("Reviews on Trustpilot")}</p>
+            <p className="tp-score"><b>{tp.score}</b><span>/ 5</span><Stars n={Math.round(Number(tp.score))} /></p>
+            <p className="tp-count">{t("TrustScore")} · {tp.count} {t("reviews")} · {tp.asOf}</p>
+          </div>
+          <ul className="tp-bars">
+            {tp.stars.map(([n, c]) => <li key={n}><span>{n}★</span><i><b style={{ width: `${(c / tp.count) * 100}%` }} /></i><em>{c}</em></li>)}
+          </ul>
+        </header>
+        <p className="tp-note">{t("Showing a selection of our 4 and 5-star reviews.")}</p>
+        <div className="tp-list">
+          {tp.items.map((r) => (
+            <article key={r.name}>
+              <Stars n={r.rating} />
+              <h3>{r.title}</h3>
+              <p>{r.text}</p>
+              <footer><b>{r.name}</b><span>{r.verified && <><Icon name="check" size={13} />{t("Verified")} · </>}{r.date}</span></footer>
+            </article>
+          ))}
+        </div>
+        <p className="tp-foot"><Link href={tp.url}>{t("See all reviews on Trustpilot")} ↗</Link></p>
+      </div>
+    </div>
+  );
+}
+
 export default function Home() {
+  const [reviewsOpen, setReviewsOpen] = useState(false);
   return (
     <div className="ih">
       <Hero />
@@ -257,7 +300,8 @@ export default function Home() {
               </figure>
             ))}
           </div>
-          <p className="fd-links"><Link href={homeReviews.url}>{t("Read all reviews")} ›</Link></p>
+          <p className="fd-links"><button type="button" onClick={() => setReviewsOpen(true)}>{t("Read all reviews")} ›</button></p>
+          {reviewsOpen && <ReviewsDialog onClose={() => setReviewsOpen(false)} />}
         </div>
       </section>
 

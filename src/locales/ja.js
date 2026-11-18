@@ -432,4 +432,10 @@ export default {
   "Performance Rotary Laser for Drinkware": "ドリンクウェア向け高性能ロータリーレーザー",
   "1-on-1 Support": "1対1サポート",
   "Contact Support": "サポートに問い合わせる",
+  "Reviews on Trustpilot": "Trustpilot のレビュー",
+  "TrustScore": "TrustScore",
+  "reviews": "件のレビュー",
+  "Showing a selection of our 4 and 5-star reviews.": "星4つ・星5つのレビューから抜粋して表示しています。",
+  "Verified": "確認済み",
+  "See all reviews on Trustpilot": "Trustpilot ですべてのレビューを見る",
 };

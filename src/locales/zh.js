@@ -432,4 +432,10 @@ export default {
   "Performance Rotary Laser for Drinkware": "高性能杯具旋转激光机",
   "1-on-1 Support": "一对一支持",
   "Contact Support": "联系支持",
+  "Reviews on Trustpilot": "Trustpilot 上的评价",
+  "TrustScore": "TrustScore 评分",
+  "reviews": "条评价",
+  "Showing a selection of our 4 and 5-star reviews.": "以下为精选的四星和五星评价。",
+  "Verified": "已验证",
+  "See all reviews on Trustpilot": "在 Trustpilot 查看全部评价",
 };

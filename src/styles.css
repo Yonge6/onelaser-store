@@ -1388,6 +1388,44 @@ ul { list-style: none; }
   .ist-points { grid-template-columns: 1fr; margin-top: 24px; } .ist-points li, .ist-points li + li { padding: 20px 0 4px; border-left: 0; } .ist-points li + li { border-top: 1px solid #e6e8ee; }
 }
 
+/* ================= Reviews dialog (Trustpilot figures and selected reviews, shown in place) ================= */
+.fd-links button { font-size: 16px; line-height: 24px; font-weight: 500; color: var(--accent-ink); transition: color .2s; }
+.fd-links button:hover { color: var(--accent-dark); text-decoration: underline; text-underline-offset: 4px; }
+.tp-scrim { position: fixed; inset: 0; z-index: 120; background: rgba(0, 0, 0, 0.55); display: grid; place-items: center; padding: 32px 20px; animation: tp-in .2s ease; }
+@keyframes tp-in { from { opacity: 0; } }
+.tp-dialog { position: relative; width: 960px; max-width: 100%; max-height: 100%; overflow-y: auto; overscroll-behavior: contain; background: #fff; border-radius: 24px; padding: 40px 40px 28px; color: #262629; animation: tp-up .28s cubic-bezier(.2, .7, .2, 1); }
+@keyframes tp-up { from { transform: translateY(16px); } }
+.tp-close { position: sticky; float: right; top: 0; margin: -16px -16px 0 0; width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; background: #f4f4f5; color: #515157; z-index: 2; }
+.tp-close:hover { background: #e6e6e9; color: #1d1d1f; }
+.tp-head { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 320px); gap: 32px; align-items: center; padding-right: 48px; }
+.tp-kicker { font-size: 13px; line-height: 18px; font-weight: 600; letter-spacing: 1.2px; text-transform: uppercase; color: #76767f; }
+.tp-score { display: flex; align-items: baseline; gap: 10px; margin-top: 8px; }
+.tp-score b { font-size: 56px; line-height: 60px; font-weight: 600; }
+.tp-score > span:nth-child(2) { font-size: 20px; color: #76767f; }
+.tp-stars { display: inline-flex; gap: 3px; } .tp-stars i { width: 22px; height: 22px; display: grid; place-items: center; font-style: normal; font-size: 14px; line-height: 1; color: #fff; background: #dcdce6; }
+.tp-stars i.on { background: #00b67a; }
+.tp-score .tp-stars { align-self: center; margin-left: 6px; } .tp-score .tp-stars i { width: 28px; height: 28px; font-size: 18px; }
+.tp-count { margin-top: 6px; font-size: 14px; line-height: 20px; color: #76767f; }
+.tp-bars { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.tp-bars li { display: grid; grid-template-columns: 28px minmax(0, 1fr) 28px; align-items: center; gap: 10px; font-size: 13px; line-height: 16px; color: #515157; }
+.tp-bars i { display: block; height: 8px; border-radius: 8px; background: #edeff2; overflow: hidden; } .tp-bars i b { display: block; height: 100%; border-radius: 8px; background: #00b67a; }
+.tp-bars em { font-style: normal; text-align: right; color: #76767f; }
+.tp-note { margin-top: 24px; padding-top: 20px; border-top: 1px solid #ececf0; font-size: 13px; line-height: 18px; color: #76767f; }
+.tp-list { margin-top: 16px; columns: 2; column-gap: 16px; }
+.tp-list article { break-inside: avoid; margin-bottom: 16px; padding: 24px; background: #f8f9fc; border-radius: 16px; }
+.tp-list h3 { margin-top: 12px; font-size: 16px; line-height: 22px; font-weight: 600; }
+.tp-list p { margin-top: 6px; font-size: 14px; line-height: 22px; color: #3f3f46; }
+.tp-list footer { margin-top: 14px; display: grid; gap: 2px; }
+.tp-list footer b { font-size: 14px; line-height: 20px; font-weight: 600; }
+.tp-list footer span { display: flex; align-items: center; gap: 4px; font-size: 12px; line-height: 16px; color: #76767f; } .tp-list footer svg { color: #00b67a; }
+.tp-foot { margin-top: 8px; text-align: center; }
+.tp-foot a { font-size: 15px; line-height: 22px; font-weight: 500; color: var(--accent-ink); } .tp-foot a:hover { text-decoration: underline; text-underline-offset: 4px; }
+@media (max-width: 860px) {
+  .tp-scrim { padding: 0; place-items: stretch; } .tp-dialog { border-radius: 0; padding: 28px 20px 24px; }
+  .tp-close { margin: -8px -4px 0 0; } .tp-head { grid-template-columns: 1fr; gap: 20px; padding-right: 0; } .tp-score b { font-size: 44px; line-height: 48px; }
+  .tp-list { columns: 1; } .tp-list article { padding: 20px; }
+}
+
 /* ================= Home machine finder card (questions after thunderlaserusa.com, drawn as an Insta360 product card) ================= */
 .ih-card.fc { align-items: stretch; text-align: left; padding: 32px 32px 28px; background: linear-gradient(180deg, var(--accent-soft) 0%, #f8f9fc 46%); box-shadow: inset 0 0 0 1px var(--accent-tint); }
 .fc-kicker { display: flex; align-items: center; gap: 6px; font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: 1.4px; text-transform: uppercase; color: var(--accent-ink); }

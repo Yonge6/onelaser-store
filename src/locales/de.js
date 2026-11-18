@@ -432,4 +432,10 @@ export default {
   "Performance Rotary Laser for Drinkware": "Leistungsstarker Rotationslaser für Trinkgefäße",
   "1-on-1 Support": "1-zu-1-Support",
   "Contact Support": "Support kontaktieren",
+  "Reviews on Trustpilot": "Bewertungen auf Trustpilot",
+  "TrustScore": "TrustScore",
+  "reviews": "Bewertungen",
+  "Showing a selection of our 4 and 5-star reviews.": "Auswahl unserer 4- und 5-Sterne-Bewertungen.",
+  "Verified": "Verifiziert",
+  "See all reviews on Trustpilot": "Alle Bewertungen auf Trustpilot ansehen",
 };

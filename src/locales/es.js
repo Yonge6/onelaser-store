@@ -432,4 +432,10 @@ export default {
   "Performance Rotary Laser for Drinkware": "Láser rotativo de alto rendimiento para vasos y termos",
   "1-on-1 Support": "Soporte 1 a 1",
   "Contact Support": "Contactar con soporte",
+  "Reviews on Trustpilot": "Reseñas en Trustpilot",
+  "TrustScore": "TrustScore",
+  "reviews": "reseñas",
+  "Showing a selection of our 4 and 5-star reviews.": "Mostramos una selección de nuestras reseñas de 4 y 5 estrellas.",
+  "Verified": "Verificada",
+  "See all reviews on Trustpilot": "Ver todas las reseñas en Trustpilot",
 };

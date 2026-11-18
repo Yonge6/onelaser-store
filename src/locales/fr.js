@@ -432,4 +432,10 @@ export default {
   "Performance Rotary Laser for Drinkware": "Laser rotatif haute performance pour gobelets",
   "1-on-1 Support": "Assistance individuelle",
   "Contact Support": "Contacter l'assistance",
+  "Reviews on Trustpilot": "Avis sur Trustpilot",
+  "TrustScore": "TrustScore",
+  "reviews": "avis",
+  "Showing a selection of our 4 and 5-star reviews.": "Sélection de nos avis 4 et 5 étoiles.",
+  "Verified": "Vérifié",
+  "See all reviews on Trustpilot": "Voir tous les avis sur Trustpilot",
 };
