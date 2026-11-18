@@ -345,11 +345,12 @@ ul { list-style: none; }
 .footer-pill { display: inline-flex; align-items: center; justify-content: center; height: 48px; padding: 0 32px; border-radius: 999px; background: var(--brand); color: #fff; font-size: 14px; line-height: 20px; font-weight: 600; white-space: nowrap; transition: background .2s, transform .2s; }
 .footer-pill:hover { background: #c9280a; transform: translateY(-1px); }
 .footer-rep .footer-pill { margin-top: 24px; }
-.footer-field { margin-top: 24px; display: flex; gap: 12px; }
-.footer-field input { flex: 1; min-width: 0; height: 48px; padding: 0 22px; border-radius: 999px; border: 1px solid transparent; background: #fff; color: #000; font: inherit; font-size: 15px; outline: none; transition: box-shadow .2s; }
+.footer-field { margin-top: 24px; display: flex; gap: 12px; min-width: 0; max-width: 100%; }
+.footer-field .footer-pill { flex: none; }
+.footer-field input { flex: 1 1 0; min-width: 0; width: 0; height: 48px; padding: 0 22px; border-radius: 999px; border: 1px solid transparent; background: #fff; color: #000; font: inherit; font-size: 15px; outline: none; transition: box-shadow .2s; }
 .footer-field input:focus { box-shadow: 0 0 0 3px rgba(231, 49, 14, 0.45); }
 .footer-news small { display: block; margin-top: 12px; font-size: 11px; line-height: 16px; color: #999; }
-@media (max-width: 860px) { .footer-cta { grid-template-columns: 1fr; gap: 36px; margin-bottom: 36px; padding-bottom: 36px; } .footer-cta h2 { font-size: 24px; line-height: 32px; } .footer-field { margin-top: 16px; gap: 8px; } .footer-field .footer-pill { padding: 0 20px; } .footer-rep .footer-pill { margin-top: 16px; height: 44px; } .footer-cta h2 + p { font-size: 14px; line-height: 20px; margin-top: 4px; } }
+@media (max-width: 860px) { .footer-cta { grid-template-columns: minmax(0, 1fr); gap: 36px; margin-bottom: 36px; padding-bottom: 36px; } .footer-cta h2 { font-size: 24px; line-height: 32px; } .footer-field { margin-top: 16px; gap: 8px; } .footer-field .footer-pill { padding: 0 20px; } .footer-rep .footer-pill { margin-top: 16px; height: 44px; } .footer-cta h2 + p { font-size: 14px; line-height: 20px; margin-top: 4px; } }
 .footer-top { max-width: 1312px; margin: 0 auto; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)) minmax(0, 1.35fr); gap: 40px 32px; }
 .footer-col h3 button { all: unset; display: block; cursor: default; } .footer-col h3 button svg { display: none; }
 .footer-col h3 { font-size: 16px; line-height: 24px; font-weight: 600; color: #fff; margin-bottom: 14px; }
@@ -1637,7 +1638,8 @@ ul { list-style: none; }
 }
 @media (max-width: 860px) {
   .ih-card.fc { height: auto; min-height: 434px; padding: 24px 20px 20px; border-radius: 16px; }
-  .fc-q h3 { font-size: 20px; line-height: 26px; } .fc-options button { min-height: 44px; font-size: 14px; }
+  .fc-q h3 { font-size: 20px; line-height: 26px; } .fc-options button { min-height: 40px; font-size: 14px; }
+  .ih-card.fc .fc-options { gap: 5px; margin-top: 12px; } .ih-card.fc .fc-bar { margin-top: 12px; } .ih-card.fc .fc-nav { min-height: 32px; margin-top: 8px; }
   .ih-card.fc-done { padding: 32px 24px 18px; }
   .fd-links { gap: 8px 24px; margin-top: 24px; } .fd-links a { font-size: 14px; }
   .fd-help { flex-direction: column; align-items: flex-start; gap: 16px; padding: 20px; margin-top: 20px; border-radius: 16px; } .fd-help h3 { font-size: 20px; } .fd-help .ih-btn { width: 100%; }
@@ -2147,4 +2149,20 @@ ul { list-style: none; }
   .promo-bar .countdown small { font-size: 8px; line-height: 10px; } .promo-bar .countdown > span + span::before { left: -8px; top: 3px; font-size: 12px; }
   .promo-bar-close { right: 10px; } .header-phone { display: none; }
   .store-btn { width: 32px; padding: 0; justify-content: center; } .store-btn svg { display: block; } .store-btn span { display: none; }
+}
+
+/* Mobile spacing pass: tighter cards, links and section gaps */
+@media (max-width: 860px) {
+  .ih-block { margin-top: 48px; }
+  .ih-card { height: 440px; padding: 32px 20px 20px; }
+  .ih-grid { padding-top: 16px; }
+  .ih-grid > .ih-card { height: auto; min-height: 440px; }
+  .ih-viewall { margin-top: 16px; }
+  .ih-products .fd-links { margin-top: 12px; }
+  .fd-help { margin-top: 16px; }
+  .irv-row blockquote { -webkit-line-clamp: 6; }
+  .irv-row figcaption { padding-top: 16px; }
+  .irv .fd-links { margin-top: 16px; }
+  .ist .fd-links { margin-top: 16px; }
+  .footer-cta { gap: 28px; margin-bottom: 28px; padding-bottom: 28px; }
 }
