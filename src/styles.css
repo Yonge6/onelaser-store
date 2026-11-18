@@ -72,10 +72,6 @@ ul { list-style: none; }
 .mobile-nav details > a { display: block; padding: 10px 12px; color: #555; font-size: 14px; }
 
 /* Language selector, after insta360.com: globe + 12/16 label in the bar; "Choose Your Country or Region" dialog */
-.lang-btn { display: inline-flex; align-items: center; gap: 0; height: 36px; margin-left: -12px; color: inherit; }
-.lang-btn svg { width: 36px; height: 36px; padding: 7px; flex: none; }
-.lang-btn span { font-size: 12px; line-height: 16px; font-weight: 400; white-space: nowrap; margin-left: 2px; }
-.lang-btn:hover span { text-decoration: underline; }
 .lang-scrim { position: fixed; inset: 0; z-index: 120; background: rgba(0, 0, 0, 0.5); display: grid; place-items: center; padding: 45px 20px; overflow-y: auto; animation: lang-in .2s ease; }
 @keyframes lang-in { from { opacity: 0; } }
 .lang-dialog { position: relative; width: 1000px; max-width: 100%; min-height: min(520px, 100%); background: #fff; border-radius: 4px; padding: 80px 80px 64px; color: #000; }
@@ -1118,7 +1114,7 @@ ul { list-style: none; }
 .ih-entry svg:last-child { display: none; }
 
 @media (max-width: 1180px) {
-  .site-nav a { padding: 0 10px; } .lang-btn span { display: none; } .lang-btn { margin-left: -8px; } .site-header-bar { padding: 0 24px; } .site-header-bar > .brand { margin-right: 20px; } .site-header .brand span { display: none; }
+  .site-nav a { padding: 0 10px; } .site-header-bar { padding: 0 24px; } .site-header-bar > .brand { margin-right: 20px; } .site-header .brand span { display: none; }
   .ih-card { height: 480px; padding: 44px 24px 28px; }
   .ih-card h3 { font-size: 22px; line-height: 28px; }
   .ih-card-info p { font-size: 16px; }

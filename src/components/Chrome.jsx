@@ -46,7 +46,7 @@ export function Header({ path }) {
             <button type="button" className="icon-btn" aria-label={t("Search")} onClick={() => setSearch((s) => !s)}><Icon name="search" size={22} /></button>
             <Link href="https://www.1laser.com/account/login" className="icon-btn hide-mobile" aria-label={t("Account")}><Icon name="user" size={22} /></Link>
             <Link to="/cart" className="icon-btn cart-btn" aria-label={`Cart, ${count} items`}><Icon name="cart" size={22} />{count > 0 && <em>{count}</em>}</Link>
-            <button type="button" className="lang-btn hide-mobile" aria-haspopup="dialog" aria-label={t("Choose your language")} onClick={() => setLangOpen(true)}><Icon name="globe" size={22} /><span>{current.region} ({current.label})</span></button>
+            <button type="button" className="icon-btn lang-btn hide-mobile" aria-haspopup="dialog" aria-label={t("Choose your language")} title={`${current.region} (${current.label})`} onClick={() => setLangOpen(true)}><Icon name="globe" size={22} /></button>
           </div>
         </div>
         {nav.filter((n) => n.label === open).map((n) => (
