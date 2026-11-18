@@ -1446,7 +1446,7 @@ ul { list-style: none; }
 
 /* ================= Home owner videos ("made with OneLaser") ================= */
 /* one full-bleed row that scrolls sideways; the first card lines up with the page content */
-.iu .ist-kicker { margin-top: 0; } .iu .ip2-head { margin-top: 8px; }
+.iu .ist-kicker { margin-top: 0; } .iu .ip2-head { margin-top: 8px; } .iu .ip2-head h2 { max-width: none; flex-basis: 100%; }
 .iu-bar { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-top: 28px; }
 /* pill switch as on 1laser.com: grey track, white active pill */
 .iu-seg { display: flex; gap: 4px; padding: 5px; border-radius: 999px; background: #eaeaec; }
