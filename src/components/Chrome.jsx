@@ -6,12 +6,6 @@ import { nav, promo, benefits, contact, footer } from "../data/site.js";
 import { Countdown, Icon, Link, usd } from "./ui.jsx";
 
 const hasMenu = (n) => !!(n.series || n.cards);
-/** Flat [label, url] list of a menu, for the mobile drawer. */
-const menuLinks = (n) =>
-  n.series
-    ? [...n.series.flatMap((g) => g.items.map((h) => [byHandle[h]?.name || h, `/products/${h}`])), ...n.more.map(([l, u]) => [t(l), u])]
-    : n.cards ? [...n.cards, ...n.links].map(([l, u]) => [t(l), u]) : [];
-
 /** Internal store route or external official-site URL. */
 const Go = ({ url, children, ...rest }) => (/^(https?:|mailto:|tel:)/.test(url) ? <Link href={url} {...rest}>{children}</Link> : <Link to={url} {...rest}>{children}</Link>);
 
@@ -31,7 +25,7 @@ export function Header({ path }) {
   }, [promoOn]);
   // "Help me choose": go to the home page and bring the machine finder card into view.
   const openFinder = () => {
-    setOpen(null);
+    setOpen(null); setMobile(false);
     go("/");
     let tries = 0;
     const seek = () => {
@@ -158,19 +152,53 @@ export function Header({ path }) {
       <button type="button" className={`to-top${far ? " show" : ""}`} aria-label={t("Back to top")} title={t("Back to top")} onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}><Icon name="chevron" size={20} /></button>
       {mobile && (
         <div className="drawer-scrim" onClick={() => setMobile(false)}>
+          {/* Mobile menu after thunderlaserusa.com: accordion sections; Machines lists every series as a row with thumbnail,
+              one-line description and starting price, then a full-width compare button. */}
           <aside className="drawer" onClick={(e) => e.stopPropagation()} aria-label={t("Menu")}>
-            <div className="drawer-head"><b>{t("Menu")}</b><button type="button" className="icon-btn" aria-label={t("Close")} onClick={() => setMobile(false)}><Icon name="close" /></button></div>
-            <details className="drawer-lang">
-              <summary><Icon name="globe" size={20} /><span>{current.label}</span><Icon name="chevron" size={16} /></summary>
-              {LANGS.map((l) => <button key={l.code} type="button" lang={l.code === "zh" ? "zh-CN" : l.code} className={l.code === current.code ? "on" : ""} onClick={() => { setLang(l.code); setMobile(false); }}>{l.label}</button>)}
-            </details>
+            <div className="drawer-head">
+              <Link to="/" className="brand"><img src={asset("onelaser-logo-transparent.svg")} alt="OneLaser" /></Link>
+              <button type="button" className="icon-btn" aria-label={t("Close")} onClick={() => setMobile(false)}><Icon name="close" /></button>
+            </div>
             <div className="mobile-nav">
-              {nav.map((n) => (
-                <details key={n.label}>
-                  <summary>{hasMenu(n) ? t(n.label) : <Link to={n.to} href={n.href}>{t(n.label)}</Link>}</summary>
-                  {menuLinks(n).map(([label, url]) => <Go key={url + label} url={url}>{label}</Go>)}
+              {nav.map((n, k) => !hasMenu(n) ? (
+                <Link key={n.label} to={n.to} href={n.href} className={`mnav-link${n.hot ? " hot" : ""}`}>{t(n.label)}<Icon name="chevron" size={16} /></Link>
+              ) : (
+                <details key={n.label} open={k === 0}>
+                  <summary>{t(n.label)}<Icon name="chevron" size={18} /></summary>
+                  {n.series ? (
+                    <div className="mnav-machines">
+                      {n.series.map((g) => {
+                        const list = g.items.map((h) => byHandle[h]).filter(Boolean);
+                        if (!list.length) return null;
+                        return (
+                          <article key={g.title}>
+                            <Go url={g.to} className="mnav-row">
+                              <span className="mnav-thumb"><img src={img(list[0].images[0], 200)} alt="" /></span>
+                              <span className="mnav-text"><b>{t(g.title)}</b><em>{t(g.desc)}</em></span>
+                              <strong>{t("From")} {usd(Math.min(...list.map((p) => p.price))).replace(".00", "")}</strong>
+                            </Go>
+                            {list.length > 1 && <p className="mega-models"><span>{t("Models")}</span>{list.map((p) => <Link key={p.handle} to={`/products/${p.handle}`} title={p.name}>{(p.name.match(/\d+/) || [p.name])[0]}</Link>)}</p>}
+                          </article>
+                        );
+                      })}
+                      <Link to="/compare" className="mnav-soft">{t("Compare all machines")}</Link>
+                      <button type="button" className="mnav-soft" onClick={openFinder}>{t("Help me choose")}</button>
+                    </div>
+                  ) : (
+                    <div className="mnav-links">
+                      {[...n.cards, ...n.links].map(([label, url]) => <Go key={label} url={url}>{t(label)}<Icon name="chevron" size={14} /></Go>)}
+                    </div>
+                  )}
                 </details>
               ))}
+            </div>
+            <div className="drawer-foot">
+              <Link href={contact.call} className="store-btn"><Icon name="calendar" size={16} /><span>{t("Schedule a Sales Call")}</span></Link>
+              <Link href={`tel:${contact.tel}`} className="drawer-phone"><Icon name="phone" size={16} />{contact.phone}</Link>
+              <details className="drawer-lang">
+                <summary><Icon name="globe" size={20} /><span>{current.label}</span><Icon name="chevron" size={16} /></summary>
+                {LANGS.map((l) => <button key={l.code} type="button" lang={l.code === "zh" ? "zh-CN" : l.code} className={l.code === current.code ? "on" : ""} onClick={() => { setLang(l.code); setMobile(false); }}>{l.label}</button>)}
+              </details>
             </div>
           </aside>
         </div>

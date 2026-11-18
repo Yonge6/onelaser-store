@@ -446,4 +446,5 @@ export default {
   "All laser machines": "全部激光机",
   "Help me choose": "帮我选机",
   "Models": "型号",
+  "Compare all machines": "对比全部机型",
 };

@@ -446,4 +446,5 @@ export default {
   "All laser machines": "Todas las máquinas láser",
   "Help me choose": "Ayúdame a elegir",
   "Models": "Modelos",
+  "Compare all machines": "Comparar todas las máquinas",
 };

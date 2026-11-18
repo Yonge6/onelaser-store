@@ -446,4 +446,5 @@ export default {
   "All laser machines": "すべてのレーザー加工機",
   "Help me choose": "選び方を相談する",
   "Models": "モデル",
+  "Compare all machines": "すべてのマシンを比較",
 };
