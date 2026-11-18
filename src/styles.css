@@ -2,8 +2,9 @@
    Typeface is Poppins, the face Insta360 serves as "Poppins Num". Only the brand red is OneLaser's own. */
 
 :root {
-  /* Secondary colour: cobalt blue. Red stays for price, sale and primary actions; blue marks information, guidance and proof. */
-  --accent: #1a56e8; --accent-dark: #1243bd; --accent-soft: #e8f0ff; --accent-tint: rgba(26, 86, 232, 0.2);
+  /* Secondary colour: sky blue (the blue of the NEW tag supplied by the team). It is used as a fill with dark text; --accent-ink is the
+     same hue darkened so small text and figures on white stay readable. Red stays for price, sale and primary actions. */
+  --accent: #38bdf8; --accent-ink: #0b7fc0; --accent-dark: #0a6aa1; --accent-soft: #e6f6fe; --accent-tint: rgba(56, 189, 248, 0.45);
   --brand: #e7310e; --brand-dark: #c9290b; --brand-tint: rgba(231, 49, 14, 0.13); --brand-soft: #fff1ed;
   --text: #1a1a1a; --title: #1d1d1f; --muted: #6e6e73; --line: #e3e5e7; --page: #f5f5f7; --surface: #f6f8f9; --tile: #f7f8f9;
   --radius: 8px;
@@ -1055,7 +1056,7 @@ ul { list-style: none; }
 .ih-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 32px; padding-top: 16px; animation: panel-in .35s ease; }
 .ih-card { position: relative; min-width: 0; height: 554px; padding: 52px 40px 40px; background: #f8f9fc; border-radius: 24px; display: flex; flex-direction: column; align-items: center; text-align: center; }
 .ih-card-info { position: relative; width: 100%; }
-.ih-new { position: absolute; left: 0; right: 0; top: -28px; font-size: 16px; line-height: 24px; font-weight: 500; color: var(--accent); }
+.ih-new { position: absolute; left: 50%; top: -30px; transform: translateX(-50%); padding: 0 12px; border-radius: 12px 3px 12px 3px; background: var(--accent); color: #0b0f18; font-size: 12px; line-height: 22px; font-weight: 800; letter-spacing: .6px; text-transform: uppercase; white-space: nowrap; }
 .ih-card h3 { font-size: 28px; line-height: 32px; font-weight: 600; color: #262629; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .ih-card-info p { font-size: 20px; line-height: 22px; color: #76767f; margin-top: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .ih-card-media { flex: 1; min-height: 0; width: 100%; display: grid; place-items: center; padding: 16px 0; }
@@ -1065,7 +1066,7 @@ ul { list-style: none; }
 .ih-card:hover { background: #f2f4f9; }
 .ih-card-price { width: 100%; display: flex; align-items: baseline; justify-content: center; flex-wrap: wrap; gap: 4px 8px; margin: 0 0 4px; font-size: 14px; line-height: 24px; color: #76767f; }
 .ih-card-monthly { margin: 0 0 14px; font-size: 13px; line-height: 20px; color: #76767f; }
-.ih-card-monthly b { font-weight: 600; color: var(--accent); }
+.ih-card-monthly b { font-weight: 600; color: var(--accent-ink); }
 .ih-card-price:has(+ .ih-card-btns) { margin-bottom: 16px; }
 .ih-card-price b { font-size: 20px; line-height: 24px; font-weight: 600; color: #262629; }
 .ih-card-price s { font-size: 14px; color: #a1a1aa; }
@@ -1194,7 +1195,7 @@ ul { list-style: none; }
   .ih-tabs button { height: 36px; padding: 0 16px; font-size: 14px; line-height: 36px; }
   .ih-grid { grid-template-columns: minmax(0, 1fr); gap: 12px; padding-top: 24px; }
   .ih-card { height: 434px; padding: 48px 32px 32px; border-radius: 16px; }
-  .ih-new { font-size: 14px; line-height: 22px; top: -26px; }
+  .ih-new { font-size: 11px; line-height: 20px; top: -26px; }
   .ih-card h3 { font-size: 24px; line-height: 28px; }
   .ih-card-info p { font-size: 20px; line-height: 28px; margin-top: 4px; }
   .ih-card-media img { width: 240px; max-height: 240px; }
@@ -1296,7 +1297,7 @@ ul { list-style: none; }
 .ip2-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; margin-top: 32px; }
 .ip2-grid article { padding: 36px 36px 40px; background: #f8f9fc; border-radius: 24px; transition: background .25s, transform .25s; }
 .ip2-grid article:hover { background: #f1f3f8; transform: translateY(-3px); }
-.ip2-grid b { display: block; font-size: 44px; line-height: 50px; font-weight: 600; color: var(--accent); letter-spacing: -0.01em; white-space: nowrap; }
+.ip2-grid b { display: block; font-size: 44px; line-height: 50px; font-weight: 600; color: var(--accent-ink); letter-spacing: -0.01em; white-space: nowrap; }
 .ip2-grid h3 { margin-top: 14px; font-size: 20px; line-height: 26px; font-weight: 600; color: #262629; }
 .ip2-grid p { margin-top: 8px; font-size: 15px; line-height: 23px; color: #76767f; }
 .ifq .iw-faq { margin-top: 32px; }
@@ -1316,7 +1317,7 @@ ul { list-style: none; }
 .irv-score { display: flex; align-items: baseline; gap: 10px; margin-bottom: 6px; }
 .irv-score b { font-size: 28px; line-height: 32px; font-weight: 600; color: #262629; }
 .irv-score em { font-style: normal; font-size: 14px; line-height: 20px; color: #76767f; }
-.irv-score:hover em { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; }
+.irv-score:hover em { color: var(--accent-ink); text-decoration: underline; text-underline-offset: 3px; }
 .irv-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; margin-top: 32px; }
 .irv-grid figure { display: flex; flex-direction: column; margin: 0; padding: 32px; background: #f8f9fc; border-radius: 24px; transition: background .25s, transform .25s; }
 .irv-grid figure:hover { background: #f1f3f8; transform: translateY(-3px); }
@@ -1324,7 +1325,7 @@ ul { list-style: none; }
 .irv-grid figcaption { margin-top: auto; padding-top: 20px; display: grid; gap: 2px; }
 .irv-grid figcaption b { font-size: 15px; line-height: 22px; font-weight: 600; color: #262629; }
 .irv-grid figcaption span { display: flex; align-items: center; flex-wrap: wrap; gap: 4px; font-size: 13px; line-height: 18px; color: #76767f; }
-.irv-grid figcaption svg { color: var(--accent); }
+.irv-grid figcaption svg { color: var(--accent-ink); }
 .irv .fd-links { margin-top: 32px; }
 @media (max-width: 1180px) { .irv-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; } .irv-grid figure { padding: 24px; } }
 @media (max-width: 860px) {
@@ -1342,7 +1343,7 @@ ul { list-style: none; }
 .ist-text { margin-top: 12px; max-width: 820px; font-size: 16px; line-height: 26px; color: #76767f; }
 .ist-points { list-style: none; margin: 40px 0 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-top: 1px solid #e6e8ee; }
 .ist-points li { padding: 28px 28px 8px 0; } .ist-points li + li { padding-left: 28px; border-left: 1px solid #e6e8ee; }
-.ist-points i { font-style: normal; font-size: 13px; line-height: 18px; font-weight: 600; color: var(--accent); }
+.ist-points i { font-style: normal; font-size: 13px; line-height: 18px; font-weight: 600; color: var(--accent-ink); }
 .ist-points h3 { margin-top: 14px; font-size: 18px; line-height: 24px; font-weight: 600; color: #262629; }
 .ist-points p { margin-top: 8px; font-size: 14px; line-height: 22px; color: #76767f; }
 .ist .fd-links { justify-content: flex-start; margin-top: 28px; }
@@ -1354,7 +1355,7 @@ ul { list-style: none; }
 
 /* ================= Home machine finder card (questions after thunderlaserusa.com, drawn as an Insta360 product card) ================= */
 .ih-card.fc { align-items: stretch; text-align: left; padding: 32px 32px 28px; background: linear-gradient(180deg, var(--accent-soft) 0%, #f8f9fc 46%); box-shadow: inset 0 0 0 1px var(--accent-tint); }
-.fc-kicker { display: flex; align-items: center; gap: 6px; font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: 1.4px; text-transform: uppercase; color: var(--accent); }
+.fc-kicker { display: flex; align-items: center; gap: 6px; font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: 1.4px; text-transform: uppercase; color: var(--accent-ink); }
 .fc-bar { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-top: 14px; }
 .fc-bar i { height: 3px; border-radius: 10px; background: rgba(38, 38, 41, 0.12); transition: background .3s; }
 .fc-bar i.done { background: var(--accent); } .fc-bar i.on { background: var(--accent); opacity: .45; }
@@ -1367,26 +1368,26 @@ ul { list-style: none; }
 .fc-options button:hover { box-shadow: inset 0 0 0 1px var(--accent); transform: translateX(2px); }
 .fc-options i { flex: none; width: 20px; height: 20px; border-radius: 50%; display: grid; place-items: center; box-shadow: inset 0 0 0 1px #cfd3da; color: transparent; transition: background .18s, color .18s, box-shadow .18s; }
 .fc-options button.on { background: var(--accent-soft); box-shadow: inset 0 0 0 2px var(--accent); }
-.fc-options button.on i { background: var(--accent); color: #fff; box-shadow: none; }
+.fc-options button.on i { background: var(--accent); color: #0b0f18; box-shadow: none; }
 .fc-nav { display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 40px; margin-top: 12px; }
 .fc-link, .fc-count { font-size: 13px; line-height: 18px; font-weight: 500; color: #76767f; white-space: nowrap; }
 .fc-link:hover { color: #1d1d1f; }
 .fc-peek { flex: 1; min-width: 0; text-align: center; font-size: 12px; line-height: 16px; color: #76767f; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.fc-peek b { font-weight: 600; color: var(--accent); }
+.fc-peek b { font-weight: 600; color: var(--accent-ink); }
 .fc-nav .ih-btn.sm { height: 36px; padding: 0 16px; font-size: 13px; line-height: 36px; }
 .ih-card.fc-done { align-items: center; text-align: center; padding: 36px 40px 22px; animation: fc-pop .4s ease; }
 @keyframes fc-pop { from { opacity: 0; transform: scale(.985); } }
-.fc-done .ih-new { background: var(--accent); color: #fff; border-radius: 50px; padding: 4px 12px; font-size: 12px; line-height: 16px; font-weight: 600; margin-bottom: 8px; display: inline-block; width: fit-content; align-self: center; }
+.fc-done .ih-new { position: static; transform: none; background: var(--accent); color: #0b0f18; border-radius: 50px; padding: 4px 12px; font-size: 12px; line-height: 16px; font-weight: 600; margin-bottom: 8px; display: inline-block; width: fit-content; align-self: center; }
 .fc-reasons { list-style: none; margin: 8px 0 0; padding: 0; display: grid; gap: 4px; justify-items: center; }
 .fc-reasons li { display: flex; gap: 6px; align-items: flex-start; font-size: 13px; line-height: 18px; color: #515157; }
-.fc-reasons svg { flex: none; margin-top: 2px; color: var(--accent); }
+.fc-reasons svg { flex: none; margin-top: 2px; color: var(--accent-ink); }
 .fc-done .ih-card-media { padding: 4px 0; } .fc-done .ih-card-price { margin-bottom: 2px; } .fc-done .ih-card-monthly { margin-bottom: 10px; }
 .fc-foot { width: 100%; display: flex; justify-content: space-between; gap: 12px; margin-top: 10px; font-size: 12px; line-height: 16px; }
 .fc-foot button, .fc-foot a { color: #76767f; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
-.fc-foot button { flex: none; } .fc-foot button:hover, .fc-foot a:hover { color: var(--accent); }
+.fc-foot button { flex: none; } .fc-foot button:hover, .fc-foot a:hover { color: var(--accent-ink); }
 .fd-links { display: flex; justify-content: center; flex-wrap: wrap; gap: 12px 40px; margin: 40px 0 0; }
 .fd-links a { font-size: 16px; line-height: 24px; font-weight: 500; color: #262629; transition: color .2s; }
-.fd-links a { color: var(--accent); }
+.fd-links a { color: var(--accent-ink); }
 .fd-links a:hover { color: var(--accent-dark); text-decoration: underline; text-underline-offset: 4px; }
 .fd-help { margin-top: 32px; padding: 28px 40px; display: flex; align-items: center; gap: 24px; background: #f8f9fc; border-radius: 24px; }
 .fd-help > svg { flex: none; width: 72px; height: 72px; }
