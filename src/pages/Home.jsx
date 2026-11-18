@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { t } from "../i18n.js";
 import { asset, byHandle, img, products } from "../lib.js";
-import { heroSlides, homeFeature, homeStories, homeTabs, interests, newHandles, promo, shortSlogans } from "../data/site.js";
+import { heroSlides, homeStories, homeTabs, interests, newHandles, promo, shortSlogans } from "../data/site.js";
 import { Countdown, Icon, Link } from "../components/ui.jsx";
 import { BenefitArt } from "../components/Chrome.jsx";
 
@@ -167,24 +167,10 @@ const SUPPORT = [
 ];
 
 export default function Home() {
-  const f = homeFeature;
   return (
     <div className="ih">
       <Hero />
       <ProductBlock />
-
-      <section className="ih-block">
-        <div className="ih-wrap">
-          <Link to={f.to} className="ih-feature">
-            <img src={asset(f.image)} alt="" loading="lazy" />
-            <span className="ih-feature-copy">
-              <b>{t(f.title)}</b>
-              <em>{f.text.map((l) => <span key={l}>{t(l)}</span>)}</em>
-              <span className="ih-feature-btns"><span className="ih-link lg">{t("Learn more")}</span><span className="ih-btn dark wide">{t("Buy now")}</span></span>
-            </span>
-          </Link>
-        </div>
-      </section>
 
       <Interests />
 
