@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useCart } from "../cart.jsx";
 import { t } from "../i18n.js";
 import { asset, byHandle, img, money, products } from "../lib.js";
-import { heroSlides, homeStories, homeTabs, interests, newHandles, promo, shortSlogans } from "../data/site.js";
+import { heroSlides, homeStories, homeTabs, newHandles, promo, shortSlogans } from "../data/site.js";
 import { Countdown, Icon, Link } from "../components/ui.jsx";
 import { BenefitArt } from "../components/Chrome.jsx";
 import FinderCard, { FinderHelp } from "../components/Finder.jsx";
@@ -14,13 +14,6 @@ import FinderCard, { FinderHelp } from "../components/Finder.jsx";
    Typeface is Poppins, as on Insta360. Only the brand red is OneLaser's own (Insta360 uses yellow). */
 
 const SLIDE_MS = 10000;
-
-/** Product family shot built from the official renders (percent = height of the stage), each standing on a soft floor shadow. */
-const Lineup = ({ items }) => (
-  <div className="ih-lineup" aria-hidden="true">
-    {items.map(([h, pct]) => <span key={h} style={{ height: `${pct}%` }}><img src={img(byHandle[h].images[0], 700)} alt="" loading="lazy" /></span>)}
-  </div>
-);
 
 /* Insta360's hero has "Buy now" + "Learn more", both leading to the same page. Here the second button does something else:
    a product slide adds that product to the cart (first available option, stays on the page); a series slide opens the comparison. */
@@ -164,31 +157,6 @@ function useScroller() {
   return [ref, by];
 }
 
-function Interests() {
-  const [ref, by] = useScroller();
-  return (
-    <section className="ih-block">
-      <div className="ih-wrap">
-        <div className="ih-head-row">
-          <h2 className="ih-h2">{t("Shop by project")}</h2>
-          <div className="ih-arrows">
-            <button type="button" aria-label={t("Previous")} onClick={() => by(-1)}><Icon name="chevron" size={18} /></button>
-            <button type="button" aria-label={t("Next")} onClick={() => by(1)}><Icon name="chevron" size={18} /></button>
-          </div>
-        </div>
-      </div>
-      <div className="ih-scroller ih-interests" ref={ref}>
-        {interests.map(([label, image, to]) => (
-          <Link key={label} to={to} className="ih-interest">
-            <img src={asset(image)} alt="" loading="lazy" />
-            <span><b>{t(label)}</b><Icon name="chevron" size={20} /></span>
-          </Link>
-        ))}
-      </div>
-    </section>
-  );
-}
-
 function Stories() {
   const [ref] = useScroller();
   const [at, setAt] = useState(0);
@@ -229,25 +197,6 @@ export default function Home() {
     <div className="ih">
       <Hero />
       <ProductBlock />
-
-      <Interests />
-
-      <section className="ih-block">
-        <div className="ih-wrap ih-halves">
-          <article className="ih-half">
-            <p>{t("Machine finder")}</p>
-            <h3>{t("Find your perfect laser with a side-by-side comparison.")}</h3>
-            <div className="ih-half-btns"><Link to="/compare" className="ih-btn dark">{t("Compare")}</Link><Link href="https://www.1laser.com/pages/sales-consultation" className="ih-link lg">{t("Talk to sales")}</Link></div>
-            <Lineup items={[["hydra-9-gen-2-70w-rf-co2-dual-laser-machine", 88], ["cobra-10-100w-co2-laser-engraver-cutter", 78], ["onelaser-xrf-desktop-laser-machine", 46], ["vertigo-vertical-laser-engraver", 44]]} />
-          </article>
-          <article className="ih-half">
-            <p>{t("Accessories")}</p>
-            <h3>{t("Level up your laser with official OneLaser gear.")}</h3>
-            <div className="ih-half-btns"><Link to="/collections/accessories" className="ih-btn dark">{t("Shop now")}</Link></div>
-            <Lineup items={[["onelaser-industrial-chiller-for-hydra-laser-engraver", 62], ["piburn-omni-for-onelaser", 70], ["filtrabox-micro", 78], ["onelaser-x-series-riser-base", 48]]} />
-          </article>
-        </div>
-      </section>
 
       <section className="ih-block">
         <div className="ih-wrap">
