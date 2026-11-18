@@ -403,7 +403,7 @@ export default function Home() {
       <section className="ih-block">
         <div className="ih-wrap">
           <Link href={promo.link} className="ih-banner">
-            <img src={asset("home-bf.jpg")} alt="" loading="lazy" />
+            <img src={asset("home-bf-lineup.jpg")} alt="" loading="lazy" />
             <span className="ih-banner-copy">
               <small>{t(promo.label)}</small>
               <b>{t(promo.headline)}</b>

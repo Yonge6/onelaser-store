@@ -1190,9 +1190,11 @@ ul { list-style: none; }
 .ih-half:hover .ih-lineup span:nth-child(2) { transition-delay: .05s; } .ih-half:hover .ih-lineup span:nth-child(3) { transition-delay: .1s; } .ih-half:hover .ih-lineup span:nth-child(4) { transition-delay: .15s; }
 .ih-half { background: linear-gradient(180deg, #f8f9fc 0%, #eceff4 100%) !important; }
 
-.ih-banner { background: #111; color: #fff; }
-.ih-banner > img { object-position: 50% 46%; }
-.ih-banner::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(0, 0, 0, 0.72), rgba(0, 0, 0, 0.2) 55%, rgba(0, 0, 0, 0)); }
+.ih-banner { background: #120302; color: #fff; }
+/* The line-up photo sits in the right 80% so the machines clear the copy; the left edge fades into the banner colour. */
+.ih-banner > img { left: auto; right: 0; width: 73%; object-position: 50% 58%; transition: transform 1.2s cubic-bezier(.2, .7, .2, 1); }
+.ih-banner:hover > img { transform: scale(1.03); }
+.ih-banner::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, #120302 0%, #120302 27%, rgba(18, 3, 2, 0.8) 36%, rgba(18, 3, 2, 0.2) 48%, rgba(18, 3, 2, 0) 58%); }
 .ih-banner-copy { position: absolute; z-index: 1; left: 120px; top: 0; bottom: 0; width: 520px; display: flex; flex-direction: column; justify-content: center; align-items: flex-start; }
 .ih-banner-copy > small { font-size: 20px; line-height: 28px; color: rgba(255, 255, 255, 0.8); max-width: 330px; }
 .ih .countdown > span { background: rgba(255, 255, 255, 0.16); backdrop-filter: blur(6px); }
@@ -1294,6 +1296,8 @@ ul { list-style: none; }
   .ih-lineup { height: 230px; left: 0; right: 0; bottom: 0; }
   .ih-lineup span { margin: 0 -26px; }
   .ih-banner { height: 500px; border-radius: 16px; }
+  .ih-banner > img { left: 0; right: 0; top: auto; bottom: 0; width: 100%; height: 60%; object-position: 58% 60%; }
+  .ih-banner::after { background: linear-gradient(180deg, #120302 0%, #120302 38%, rgba(18, 3, 2, 0.6) 48%, rgba(18, 3, 2, 0) 62%); }
   .ih-banner-copy { left: 32px; right: 32px; width: auto; justify-content: flex-start; padding-top: 40px; }
   .ih-banner-copy > small { font-size: 16px; line-height: 24px; }
   .ih-banner-copy b { font-size: 28px; line-height: 34px; }
