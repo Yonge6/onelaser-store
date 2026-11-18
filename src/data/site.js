@@ -230,3 +230,17 @@ export const homeFaq = [
   ["How does support work after I buy?", "You talk to U.S.-based engineers who have built, tuned and repaired these machines. Contact them from the Support page."],
   ["How much is shipping?", "The shipping rate and delivery estimate are shown at checkout once you enter your address. See the Shipping Policy for details."],
 ];
+
+// Home owner reviews. Real reviews copied word for word (shortened only with "…") from the Judge.me widget on
+// https://www.1laser.com/products/onelaser-xrf-desktop-laser-machine on 2026-11-18. verified = Judge.me "verified buyer" flag.
+export const homeReviews = {
+  average: "4.94", count: 49, product: "XRF 38W", url: "https://www.1laser.com/products/onelaser-xrf-desktop-laser-machine#Reviews",
+  items: [
+    { name: "Thomas M Eichhorn", date: "May 2026", verified: true, text: "I absolutely love this laser. And for the record, I have four other lasers, none of which are OneLasers. If I had the funds, I would replace several of the other lasers I have with OneLasers. Tech support is fantastic and quick to respond, material quality is great." },
+    { name: "Chantal Dowling", date: "May 2026", verified: false, text: "My husband and I own a tumbler engraving business. We decided to give OneLaser XRF a try. A tumbler that took 2 hours to engrave with the Xtool only took 43 minutes with the XRF. It has been a learning curve but support has been patient and wonderful." },
+    { name: "James Kirk", date: "Jun 2026", verified: true, text: "I started out with a Full Spectrum K40 style, upgraded to a GlowForge, dabbled with some blue diode lasers, but the XRF is amazing. Smooth, solid, relatively quiet, accurate. I love it! Puts the joy back into creating." },
+    { name: "Jeff Kerns", date: "Nov 2026", verified: true, text: "It is a beast! It has done everything promised. The XRF has been very reliable for me. Set up took some time with the shipping getting it out of alignment. But once dialed in it has been easy to use." },
+    { name: "Brent Schaffer", date: "Jun 2025", verified: true, text: "After considering several Lasers, I settled on 1/One Laser. I picked this for the power, speed, features, and cost. Being a beginner in CO2 Lasers, I will say the customer support was prompt and helpful. … The riser was easy to assemble and the machine worked right out of the box." },
+    { name: "Tyler Reed", date: "Apr 2025", verified: false, text: "Was able to knock out a few signs for some of my friends today … So far this thing amazes me at the intricate cutting ability and incredible detailed edges of engraving." },
+  ],
+};

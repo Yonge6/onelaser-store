@@ -372,4 +372,9 @@ export default {
   "You talk to U.S.-based engineers who have built, tuned and repaired these machines. Contact them from the Support page.": "你将与美国本土工程师沟通，他们亲手制造、调校并维修过这些机器。可通过支持页面联系他们。",
   "How much is shipping?": "运费是多少？",
   "The shipping rate and delivery estimate are shown at checkout once you enter your address. See the Shipping Policy for details.": "输入地址后，结账时会显示运费和预计送达时间。详情请见配送政策。",
+  "Owners say it better.": "听听机主怎么说。",
+  "out of 5": "分（满分 5 分）",
+  "reviews of the": "条评价，机型",
+  "Verified buyer": "已验证买家",
+  "Read all reviews": "查看全部评价",
 };

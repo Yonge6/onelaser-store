@@ -372,4 +372,9 @@ export default {
   "You talk to U.S.-based engineers who have built, tuned and repaired these machines. Contact them from the Support page.": "Hablas con ingenieros en EE. UU. que han construido, ajustado y reparado estas máquinas. Contáctalos desde la página de Soporte.",
   "How much is shipping?": "¿Cuánto cuesta el envío?",
   "The shipping rate and delivery estimate are shown at checkout once you enter your address. See the Shipping Policy for details.": "La tarifa de envío y la fecha estimada de entrega se muestran al pagar, una vez que ingresas tu dirección. Consulta la Política de envíos para más detalles.",
+  "Owners say it better.": "Los dueños lo cuentan mejor.",
+  "out of 5": "de 5",
+  "reviews of the": "reseñas de",
+  "Verified buyer": "Comprador verificado",
+  "Read all reviews": "Leer todas las reseñas",
 };

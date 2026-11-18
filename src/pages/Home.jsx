@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useCart } from "../cart.jsx";
 import { t } from "../i18n.js";
 import { asset, byHandle, img, money, products } from "../lib.js";
-import { heroSlides, homeFaq, homeProof, homeTabs, homeVideos, newHandles, promo, shortSlogans } from "../data/site.js";
+import { heroSlides, homeFaq, homeProof, homeReviews, homeTabs, homeVideos, newHandles, promo, shortSlogans } from "../data/site.js";
 import { Countdown, Icon, Link } from "../components/ui.jsx";
 import FinderCard, { FinderHelp } from "../components/Finder.jsx";
 
@@ -219,6 +219,29 @@ export default function Home() {
               <article key={figure}><b>{figure}</b><h3>{t(title)}</h3><p>{t(text)}</p></article>
             ))}
           </div>
+        </div>
+      </section>
+
+      <section className="ih-block irv">
+        <div className="ih-wrap">
+          <div className="irv-head">
+            <h2 className="ih-h2">{t("Owners say it better.")}</h2>
+            <Link href={homeReviews.url} className="irv-score">
+              <span className="irv-stars" aria-hidden="true">★★★★★</span>
+              <b>{homeReviews.average}</b>
+              <em>{t("out of 5")} · {homeReviews.count} {t("reviews of the")} {homeReviews.product}</em>
+            </Link>
+          </div>
+          <div className="irv-grid">
+            {homeReviews.items.map((r) => (
+              <figure key={r.name}>
+                <span className="irv-stars" aria-label="5 / 5">★★★★★</span>
+                <blockquote>“{r.text}”</blockquote>
+                <figcaption><b>{r.name}</b><span>{r.verified && <><Icon name="check" size={13} />{t("Verified buyer")} · </>}{homeReviews.product} · {r.date}</span></figcaption>
+              </figure>
+            ))}
+          </div>
+          <p className="fd-links"><Link href={homeReviews.url}>{t("Read all reviews")} ›</Link></p>
         </div>
       </section>
 

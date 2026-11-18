@@ -2,8 +2,8 @@
    Typeface is Poppins, the face Insta360 serves as "Poppins Num". Only the brand red is OneLaser's own. */
 
 :root {
-  /* Secondary colour: deep teal. Red stays for price, sale and primary actions; teal marks information, guidance and proof. */
-  --accent: #0c6b78; --accent-dark: #09525c; --accent-soft: #e7f3f4; --accent-tint: rgba(12, 107, 120, 0.16);
+  /* Secondary colour: deep navy. Red stays for price, sale and primary actions; navy marks information, guidance and proof. */
+  --accent: #14306b; --accent-dark: #0d2250; --accent-soft: #eaeff8; --accent-tint: rgba(20, 48, 107, 0.16);
   --brand: #e7310e; --brand-dark: #c9290b; --brand-tint: rgba(231, 49, 14, 0.13); --brand-soft: #fff1ed;
   --text: #1a1a1a; --title: #1d1d1f; --muted: #6e6e73; --line: #e3e5e7; --page: #f5f5f7; --surface: #f6f8f9; --tile: #f7f8f9;
   --radius: 8px;
@@ -1281,6 +1281,29 @@ ul { list-style: none; }
   .ip2-grid { grid-template-columns: 1fr; gap: 12px; margin-top: 20px; } .ip2-grid article { padding: 24px 20px; border-radius: 16px; }
   .ip2-grid b { font-size: 32px; line-height: 38px; } .ip2-grid h3 { font-size: 18px; margin-top: 8px; } .ip2-grid p { font-size: 14px; line-height: 21px; }
   .ifq .iw-faq { margin-top: 16px; } .ifq .iw-faq summary span { font-size: 15px; line-height: 22px; }
+}
+
+/* ================= Home owner reviews (after "Owners say it better." on thunderlaserusa.com) ================= */
+.irv-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px 40px; flex-wrap: wrap; }
+.irv-stars { color: #f5a623; letter-spacing: 2px; font-size: 16px; line-height: 20px; }
+.irv-score { display: flex; align-items: baseline; gap: 10px; margin-bottom: 6px; }
+.irv-score b { font-size: 28px; line-height: 32px; font-weight: 600; color: #262629; }
+.irv-score em { font-style: normal; font-size: 14px; line-height: 20px; color: #76767f; }
+.irv-score:hover em { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; }
+.irv-grid { columns: 3; column-gap: 24px; margin-top: 32px; }
+.irv-grid figure { break-inside: avoid; margin: 0 0 24px; padding: 32px; background: #f8f9fc; border-radius: 24px; transition: background .25s, transform .25s; }
+.irv-grid figure:hover { background: #f1f3f8; transform: translateY(-3px); }
+.irv-grid blockquote { margin: 14px 0 0; font-size: 16px; line-height: 26px; color: #262629; }
+.irv-grid figcaption { margin-top: 20px; display: grid; gap: 2px; }
+.irv-grid figcaption b { font-size: 15px; line-height: 22px; font-weight: 600; color: #262629; }
+.irv-grid figcaption span { display: flex; align-items: center; flex-wrap: wrap; gap: 4px; font-size: 13px; line-height: 18px; color: #76767f; }
+.irv-grid figcaption svg { color: var(--accent); }
+.irv .fd-links { margin-top: 16px; }
+@media (max-width: 1180px) { .irv-grid { columns: 2; column-gap: 16px; } .irv-grid figure { margin-bottom: 16px; padding: 24px; } }
+@media (max-width: 860px) {
+  .irv-score { margin: 0; } .irv-score b { font-size: 22px; line-height: 28px; }
+  .irv-grid { columns: 1; margin-top: 20px; } .irv-grid figure { margin-bottom: 12px; padding: 20px; border-radius: 16px; }
+  .irv-grid blockquote { font-size: 15px; line-height: 24px; }
 }
 
 /* ================= Home machine finder card (questions after thunderlaserusa.com, drawn as an Insta360 product card) ================= */

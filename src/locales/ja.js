@@ -372,4 +372,9 @@ export default {
   "You talk to U.S.-based engineers who have built, tuned and repaired these machines. Contact them from the Support page.": "これらのマシンを製作、調整、修理してきた米国拠点のエンジニアに直接相談できます。サポートページからご連絡ください。",
   "How much is shipping?": "送料はいくらですか？",
   "The shipping rate and delivery estimate are shown at checkout once you enter your address. See the Shipping Policy for details.": "送料とお届け予定は、住所を入力するとチェックアウトで表示されます。詳細は配送ポリシーをご覧ください。",
+  "Owners say it better.": "オーナーの声をご覧ください。",
+  "out of 5": "（5点満点）",
+  "reviews of the": "件のレビュー：",
+  "Verified buyer": "購入確認済み",
+  "Read all reviews": "すべてのレビューを見る",
 };
