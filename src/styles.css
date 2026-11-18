@@ -1374,7 +1374,7 @@ ul { list-style: none; }
 }
 /* ================= Product page below the buy area, Insta360 Store layout (measured 1440 + 390) ================= */
 .im-menu { position: sticky; top: 64px; z-index: 20; margin: 0; padding: 0; height: 49px; background: #fff; border-bottom: 1px solid #ebebeb; }
-.im-menu > div { height: 48px; padding: 0 64px; display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+.im-menu > div { height: 48px; max-width: 1440px; margin: 0 auto; padding: 0 64px; display: flex; align-items: center; justify-content: space-between; gap: 24px; }
 .im-menu b { font-size: 14px; line-height: 48px; font-weight: 700; color: #262629; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
 .im-menu ul { display: flex; gap: 40px; flex: none; }
 .im-menu button { font-size: 13px; line-height: 48px; font-weight: 700; color: #76767f; white-space: nowrap; transition: color .2s; }
