@@ -49,8 +49,8 @@ ul { list-style: none; }
 .brand { display: inline-flex; align-items: center; }
 .brand img { height: 20px; width: auto; }
 .brand span { font-size: 11px; line-height: 17px; letter-spacing: 1.1px; text-transform: uppercase; color: var(--muted); margin-left: 8px; }
-.site-nav { display: flex; gap: 0; font-size: 13px; line-height: 64px; font-weight: 400; }
-.site-nav a { padding: 0 20px; color: #515157; transition: color .2s; }
+.site-nav { display: flex; flex: none; gap: 0; font-size: 13px; line-height: 64px; font-weight: 400; }
+.site-nav a { padding: 0 20px; color: #515157; transition: color .2s; white-space: nowrap; }
 .site-nav a:hover, .site-nav a.hot { color: var(--brand); }
 .site-actions { margin-left: auto; display: flex; align-items: center; gap: 12px; }
 .site-actions .icon-btn { width: 36px; height: 36px; }
@@ -1080,7 +1080,7 @@ ul { list-style: none; }
 .ih-entry svg:last-child { display: none; }
 
 @media (max-width: 1180px) {
-  .site-nav a { padding: 0 12px; }
+  .site-nav a { padding: 0 10px; } .site-header-bar { padding: 0 24px; } .site-header-bar > .brand { margin-right: 20px; } .site-header .brand span { display: none; }
   .ih-card { height: 480px; padding: 44px 24px 28px; }
   .ih-card h3 { font-size: 22px; line-height: 28px; }
   .ih-card-info p { font-size: 16px; }
