@@ -424,4 +424,5 @@ export default {
   "Headquarters": "Sede central",
   "All rights reserved.": "Todos los derechos reservados.",
   "Back to top": "Volver arriba",
+  "machine reviews": "reseñas de máquinas",
 };

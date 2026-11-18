@@ -245,7 +245,7 @@ export default function Home() {
             <Link href={homeReviews.url} className="irv-score">
               <span className="irv-stars" aria-hidden="true">★★★★★</span>
               <b>{homeReviews.average}</b>
-              <em>{t("out of 5")} · {homeReviews.count} {t("reviews of the")} {homeReviews.product}</em>
+              <em>{t("out of 5")} · {homeReviews.count} {t("machine reviews")}</em>
             </Link>
           </div>
           <div className="irv-grid">
@@ -253,7 +253,7 @@ export default function Home() {
               <figure key={r.name}>
                 <span className="irv-stars" aria-label="5 / 5">★★★★★</span>
                 <blockquote>“{r.text}”</blockquote>
-                <figcaption><b>{r.name}</b><span>{r.verified && <><Icon name="check" size={13} />{t("Verified buyer")} · </>}{homeReviews.product} · {r.date}</span></figcaption>
+                <figcaption><b>{r.name}</b><span>{r.verified && <><Icon name="check" size={13} />{t("Verified buyer")} · </>}{r.product} · {r.date}</span></figcaption>
               </figure>
             ))}
           </div>

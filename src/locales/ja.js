@@ -424,4 +424,5 @@ export default {
   "Headquarters": "本社",
   "All rights reserved.": "無断転載を禁じます。",
   "Back to top": "トップへ戻る",
+  "machine reviews": "件のマシンレビュー",
 };

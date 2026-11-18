@@ -269,16 +269,17 @@ export const homeFaq = [
   ["How much is shipping?", "The shipping rate and delivery estimate are shown at checkout once you enter your address. See the Shipping Policy for details."],
 ];
 
-// Home owner reviews. Real reviews copied word for word (shortened only with "…") from the Judge.me widget on
-// https://www.1laser.com/products/onelaser-xrf-desktop-laser-machine on 2026-11-18. verified = Judge.me "verified buyer" flag.
+// Home owner reviews. Real reviews copied word for word (shortened only with "…") from the Judge.me widgets on the 1laser.com
+// product pages, read 2026-11-18. verified = Judge.me "verified buyer" flag. Rating = review-weighted average of the four machines
+// that have reviews: XRF 4.94 (49), Hydra 9 4.89 (19), XT 4.89 (18), Hydra 16 5.00 (4). The Gen2, Cobra and VertiGo pages have none yet.
 export const homeReviews = {
-  average: "4.94", count: 49, product: "XRF 38W", url: "https://www.1laser.com/products/onelaser-xrf-desktop-laser-machine#Reviews",
+  average: "4.92", count: 90, url: "https://www.1laser.com/pages/testimonials",
   items: [
-    { name: "Thomas M Eichhorn", date: "May 2026", verified: true, text: "I absolutely love this laser. And for the record, I have four other lasers, none of which are OneLasers. If I had the funds, I would replace several of the other lasers I have with OneLasers. Tech support is fantastic and quick to respond, material quality is great." },
-    { name: "Chantal Dowling", date: "May 2026", verified: false, text: "My husband and I own a tumbler engraving business. We decided to give OneLaser XRF a try. A tumbler that took 2 hours to engrave with the Xtool only took 43 minutes with the XRF. It has been a learning curve but support has been patient and wonderful." },
-    { name: "James Kirk", date: "Jun 2026", verified: true, text: "I started out with a Full Spectrum K40 style, upgraded to a GlowForge, dabbled with some blue diode lasers, but the XRF is amazing. Smooth, solid, relatively quiet, accurate. I love it! Puts the joy back into creating." },
-    { name: "Jeff Kerns", date: "Nov 2026", verified: true, text: "It is a beast! It has done everything promised. The XRF has been very reliable for me. Set up took some time with the shipping getting it out of alignment. But once dialed in it has been easy to use." },
-    { name: "Brent Schaffer", date: "Jun 2025", verified: true, text: "After considering several Lasers, I settled on 1/One Laser. I picked this for the power, speed, features, and cost. Being a beginner in CO2 Lasers, I will say the customer support was prompt and helpful. … The riser was easy to assemble and the machine worked right out of the box." },
-    { name: "Tyler Reed", date: "Apr 2025", verified: false, text: "Was able to knock out a few signs for some of my friends today … So far this thing amazes me at the intricate cutting ability and incredible detailed edges of engraving." },
+    { name: "Thomas M Eichhorn", product: "XRF 38W", date: "May 2026", verified: true, text: "I absolutely love this laser. And for the record, I have four other lasers, none of which are OneLasers. If I had the funds, I would replace several of the other lasers I have with OneLasers. Tech support is fantastic and quick to respond, material quality is great." },
+    { name: "Chris Vaughn", product: "Hydra 9", date: "May 2025", verified: false, text: "Finally got to use my glass tube (100w) in my Hydra 9 today! Man what a difference it makes when cutting! So much faster and reliable to cut! Really stoked on my purchase with this machine" },
+    { name: "James Kirk", product: "XRF 38W", date: "Jun 2026", verified: true, text: "I started out with a Full Spectrum K40 style, upgraded to a GlowForge, dabbled with some blue diode lasers, but the XRF is amazing. Smooth, solid, relatively quiet, accurate. I love it! Puts the joy back into creating." },
+    { name: "Emily R.", product: "Hydra 16", date: "Mar 2025", verified: false, text: "Needed a laser that could keep up with my growing business, and this one delivers. The airflow control makes a huge difference, no more annoying burn marks. Super happy with it!" },
+    { name: "Chantal Dowling", product: "XRF 38W", date: "May 2026", verified: false, text: "My husband and I own a tumbler engraving business. We decided to give OneLaser XRF a try. A tumbler that took 2 hours to engrave with the Xtool only took 43 minutes with the XRF. It has been a learning curve but support has been patient and wonderful." },
+    { name: "Jack Anderson", product: "XT", date: "Mar 2025", verified: false, text: "The magnetic lens assembly is a lifesaver! Cleaning the lens takes seconds, and the autofocus nails precision every time. The 12x24\" bed handles large plywood cuts smoothly. Perfect for small shops needing pro results without the hassle!" },
   ],
 };

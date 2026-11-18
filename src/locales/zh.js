@@ -424,4 +424,5 @@ export default {
   "Headquarters": "总部",
   "All rights reserved.": "版权所有。",
   "Back to top": "返回顶部",
+  "machine reviews": "条机器评价",
 };
