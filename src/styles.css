@@ -1097,7 +1097,8 @@ ul { list-style: none; }
 .ih-link.lg { font-size: 16px; letter-spacing: .16px; }
 .ih-link:hover { color: #000; }
 
-.ih-hero { position: relative; height: max(660px, 45.8333vw); background: #111; overflow: hidden; }
+.ih-hero { position: relative; height: max(660px, 45.8333vw); background: #111; overflow: hidden; touch-action: pan-y; }
+.ih-slide video, .ih-yt { pointer-events: none; } /* background media must not swallow the swipe */
 .ih-slide { position: absolute; inset: 0; opacity: 0; visibility: hidden; transition: opacity .8s, visibility .8s; }
 .ih-slide.on { opacity: 1; visibility: visible; }
 .ih-slide > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transform: scale(1.001); }

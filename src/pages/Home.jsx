@@ -80,8 +80,18 @@ function Hero() {
     const t = setTimeout(() => setI((n) => (n + 1) % heroSlides.length), SLIDE_MS);
     return () => clearTimeout(t);
   }, [i, paused]);
+  // Finger swipe (phones and tablets): a mostly horizontal move of 40px or more changes the slide; vertical moves still scroll the page.
+  const touch = useRef(null);
+  const n = heroSlides.length;
+  const onTouchStart = (e) => { const p = e.touches[0]; touch.current = { x: p.clientX, y: p.clientY }; setPaused(true); };
+  const onTouchEnd = (e) => {
+    const s = touch.current; touch.current = null; setPaused(false);
+    if (!s) return;
+    const p = e.changedTouches[0]; const dx = p.clientX - s.x; const dy = p.clientY - s.y;
+    if (Math.abs(dx) >= 40 && Math.abs(dx) > Math.abs(dy) * 1.2) setI((k) => (k + (dx < 0 ? 1 : n - 1)) % n);
+  };
   return (
-    <section className="ih-hero" onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)} aria-roledescription="carousel">
+    <section className="ih-hero" onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)} onTouchStart={onTouchStart} onTouchEnd={onTouchEnd} onTouchCancel={() => { touch.current = null; setPaused(false); }} aria-roledescription="carousel">
       {heroSlides.map((s, n) => (
         <article key={s.title} className={`ih-slide${n === i ? " on" : ""}`} aria-hidden={n !== i}>
           <img src={asset(s.image)} alt="" />
