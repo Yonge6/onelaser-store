@@ -425,4 +425,11 @@ export default {
   "All rights reserved.": "版权所有。",
   "Back to top": "返回顶部",
   "machine reviews": "条机器评价",
+  "Performance Desktop Laser Engraver (38W RF)": "高性能桌面激光雕刻机（38W RF）",
+  "Workshop Essential Laser Engraver/Cutter": "工坊必备激光雕刻切割机",
+  "Industrial RF Laser Engraver (70W RF)": "工业级 RF 激光雕刻机（70W RF）",
+  "CO₂ Glass/RF Industrial Hybrid Laser": "CO₂ 玻璃管/RF 工业混合激光机",
+  "Performance Rotary Laser for Drinkware": "高性能杯具旋转激光机",
+  "1-on-1 Support": "一对一支持",
+  "Contact Support": "联系支持",
 };

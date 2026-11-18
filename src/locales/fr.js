@@ -425,4 +425,11 @@ export default {
   "All rights reserved.": "Tous droits réservés.",
   "Back to top": "Retour en haut",
   "machine reviews": "avis sur nos machines",
+  "Performance Desktop Laser Engraver (38W RF)": "Graveur laser de bureau haute performance (RF 38W)",
+  "Workshop Essential Laser Engraver/Cutter": "Graveur/découpeur laser essentiel pour l'atelier",
+  "Industrial RF Laser Engraver (70W RF)": "Graveur laser RF industriel (RF 70W)",
+  "CO₂ Glass/RF Industrial Hybrid Laser": "Laser hybride industriel CO₂ verre/RF",
+  "Performance Rotary Laser for Drinkware": "Laser rotatif haute performance pour gobelets",
+  "1-on-1 Support": "Assistance individuelle",
+  "Contact Support": "Contacter l'assistance",
 };

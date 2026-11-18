@@ -5,6 +5,13 @@ import { useCart } from "../cart.jsx";
 import { nav, promo, benefits, contact, footer } from "../data/site.js";
 import { Countdown, Icon, Link, usd } from "./ui.jsx";
 
+const hasMenu = (n) => !!(n.series || n.cards);
+/** Flat [label, url] list of a menu, for the mobile drawer. */
+const menuLinks = (n) =>
+  n.series
+    ? [...n.series.flatMap((g) => g.items.map(([h]) => [byHandle[h]?.name || h, `/products/${h}`])), ...n.more.map(([l, u]) => [t(l), u])]
+    : n.cards ? [...n.cards, ...n.links].map(([l, u]) => [t(l), u]) : [];
+
 /** Internal store route or external official-site URL. */
 const Go = ({ url, children, ...rest }) => (/^(https?:|mailto:|tel:)/.test(url) ? <Link href={url} {...rest}>{children}</Link> : <Link to={url} {...rest}>{children}</Link>);
 
@@ -15,6 +22,8 @@ export function Header({ path }) {
   const [search, setSearch] = useState(false);
   const [q, setQ] = useState("");
   const [langOpen, setLangOpen] = useState(false);
+  const [series, setSeries] = useState(0);
+  const [far, setFar] = useState(false);
   const [promoOn, setPromoOn] = useState(() => { try { return sessionStorage.getItem("onelaser-promo-closed") !== "1"; } catch { return true; } });
   useEffect(() => {
     document.documentElement.classList.toggle("has-promo", promoOn);
@@ -27,7 +36,7 @@ export function Header({ path }) {
     setOpen(null); setMobile(false); setSearch(false); setLangOpen(false);
   }, [path]);
   useEffect(() => {
-    const onScroll = () => setTop(window.scrollY < 8);
+    const onScroll = () => { setTop(window.scrollY < 8); setFar(window.scrollY > 700); };
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
@@ -44,7 +53,7 @@ export function Header({ path }) {
       <header className={`site-header${overlay ? " overlay" : ""}`} onMouseLeave={() => setOpen(null)}>
         {promoOn && (
           <div className={`promo-bar${top ? "" : " away"}`}>
-            <Link to={promo.link} className="promo-bar-link" tabIndex={top ? 0 : -1}>
+            <Link href={promo.link} className="promo-bar-link" tabIndex={top ? 0 : -1}>
               <span className="promo-bar-copy"><small>{t(promo.label)}</small><b>{t(promo.headline)}</b></span>
               <Countdown endsAt={promo.endsAt} />
               <img src={img(promo.image, 400)} alt="" />
@@ -57,7 +66,7 @@ export function Header({ path }) {
           <Link to="/" className="brand" aria-label={t("OneLaser Store home")}><img src={asset(overlay ? "onelaser-logo-red-white.svg" : "onelaser-logo-transparent.svg")} alt="OneLaser" /></Link>
           <nav className="site-nav" aria-label={t("Primary")}>
             {nav.map((n) => (
-              <Link key={n.label} to={n.to} href={n.href} className={`${n.hot ? "hot" : ""}${n.columns ? " has-menu" : ""}`} onMouseEnter={() => setOpen(n.columns ? n.label : null)} onFocus={() => setOpen(n.columns ? n.label : null)}>{t(n.label)}{n.columns && <Icon name="chevron" size={12} />}</Link>
+              <Link key={n.label} to={n.to} href={n.href} className={`${n.hot ? "hot" : ""}${hasMenu(n) ? " has-menu" : ""}${open === n.label ? " open" : ""}`} onMouseEnter={() => { setOpen(hasMenu(n) ? n.label : null); setSeries(0); }} onFocus={() => setOpen(hasMenu(n) ? n.label : null)}>{t(n.label)}{hasMenu(n) && <Icon name="chevron" size={12} />}</Link>
             ))}
           </nav>
           <div className="site-actions">
@@ -78,11 +87,31 @@ export function Header({ path }) {
         </div>
         {nav.filter((n) => n.label === open).map((n) => (
           <div key={n.label} className="mega">
-            <div className={`mega-inner n${n.columns.length}`}>
-              {n.columns.map((c) => (
-                <div key={c.title}><h2>{t(c.title)}</h2>{c.links.map(([label, url]) => <Go key={label} url={url}>{t(label)}</Go>)}</div>
-              ))}
-            </div>
+            {n.series ? (
+              <div className="mega-machines">
+                <ul className="mega-series">
+                  {n.series.map((g, k) => (
+                    <li key={g.title}><button type="button" className={k === series ? "on" : ""} onMouseEnter={() => setSeries(k)} onFocus={() => setSeries(k)} onClick={() => setSeries(k)}>{t(g.title)}<Icon name="chevron" size={16} /></button></li>
+                  ))}
+                  {n.more.map(([label, url]) => <li key={label} className="more"><Go url={url}>{t(label)}</Go></li>)}
+                </ul>
+                <div className="mega-products" key={series}>
+                  {n.series[series].items.map(([handle, sub]) => byHandle[handle] && (
+                    <Link key={handle} to={`/products/${handle}`}>
+                      <span><b>{byHandle[handle].name}</b><em>{t(sub)}</em></span>
+                      <img src={img(byHandle[handle].images[0], 420)} alt="" />
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            ) : (
+              <div className="mega-cards">
+                {n.cards.map(([label, url, image]) => (
+                  <Go key={label} url={url} className="mega-card"><img src={img(image, 600)} alt="" /><span>{t(label)}<Icon name="chevron" size={18} /></span></Go>
+                ))}
+                <ul>{n.links.map(([label, url]) => <li key={label}><Go url={url}>{t(label)}<Icon name="chevron" size={14} /></Go></li>)}</ul>
+              </div>
+            )}
           </div>
         ))}
         {search && (
@@ -103,6 +132,7 @@ export function Header({ path }) {
         )}
       </header>
       <div className={`header-spacer${path === "/" ? " home" : ""}`} />
+      <button type="button" className={`to-top${far ? " show" : ""}`} aria-label={t("Back to top")} title={t("Back to top")} onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}><Icon name="chevron" size={20} /></button>
       {mobile && (
         <div className="drawer-scrim" onClick={() => setMobile(false)}>
           <aside className="drawer" onClick={(e) => e.stopPropagation()} aria-label={t("Menu")}>
@@ -114,8 +144,8 @@ export function Header({ path }) {
             <div className="mobile-nav">
               {nav.map((n) => (
                 <details key={n.label}>
-                  <summary>{n.columns ? t(n.label) : <Link to={n.to} href={n.href}>{t(n.label)}</Link>}</summary>
-                  {n.columns?.flatMap((c) => c.links).map(([label, url]) => <Go key={url + label} url={url}>{t(label)}</Go>)}
+                  <summary>{hasMenu(n) ? t(n.label) : <Link to={n.to} href={n.href}>{t(n.label)}</Link>}</summary>
+                  {menuLinks(n).map(([label, url]) => <Go key={url + label} url={url}>{label}</Go>)}
                 </details>
               ))}
             </div>

@@ -147,7 +147,7 @@ export default function Product({ handle }) {
           <p className="ip-sub">{[variant.title, isMachine ? product.seriesName : null, product.tagline].filter(Boolean).map((t) => <span key={t}>{t}</span>)}</p>
 
           {saved > 0 && (
-            <Link to={promo.link} className="ip-promo">
+            <Link to="/collections/deals" className="ip-promo">
               <span><img src={img(product.images[0], 240)} alt="" /></span>
               <span><b>{t("Black Friday: save")} {usd(variant.compareAt - variant.price).replace(".00", "")}</b><em>{t("Ends Cyber Monday, Nov 30. Price already applied.")}</em></span>
               <strong>{t("See all deals")}</strong>

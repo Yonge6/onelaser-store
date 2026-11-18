@@ -62,6 +62,38 @@ ul { list-style: none; }
 .site-header.overlay .header-phone svg { color: #fff; }
 .site-nav a.has-menu { display: inline-flex; align-items: center; gap: 4px; }
 .site-nav a.has-menu svg { transform: rotate(90deg); opacity: .7; }
+/* Dropdown menus as on www.1laser.com: full-width white panel; machines = series list + product cards; others = two picture cards + links */
+.mega-machines, .mega-cards { max-width: 1440px; margin: 0 auto; padding: 36px 64px 44px; display: flex; gap: 48px; animation: mega-in .22s ease; }
+@keyframes mega-in { from { opacity: 0; transform: translateY(-6px); } }
+.mega-series { flex: none; width: 220px; list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; align-content: start; }
+.mega-series button { width: 100%; display: flex; align-items: center; justify-content: space-between; height: 48px; padding: 0 12px 0 0; font-size: 18px; line-height: 26px; font-weight: 600; color: #55555a; text-align: left; transition: color .2s; }
+.mega-series button svg { opacity: 0; transform: translateX(-6px); transition: opacity .2s, transform .2s; }
+.mega-series button.on, .mega-series button:hover { color: #000; } .mega-series button.on { font-weight: 700; }
+.mega-series button.on svg { opacity: 1; transform: none; }
+.mega-series .more { margin-top: 4px; } .mega-series .more:first-of-type { margin-top: 14px; padding-top: 14px; border-top: 1px solid #ececf0; }
+.mega-series .more a { font-size: 14px; line-height: 28px; font-weight: 500; color: var(--accent-ink); } .mega-series .more a:hover { text-decoration: underline; text-underline-offset: 3px; }
+.mega-products { flex: 1; min-width: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; align-content: start; animation: mega-in .22s ease; }
+.mega-products a { display: grid; grid-template-columns: minmax(0, 1fr) 190px; align-items: center; gap: 12px; min-height: 150px; padding: 6px 12px 6px 28px; border-radius: 20px; background: #f5f5f7; transition: background .2s, transform .2s; }
+.mega-products a:hover { background: #ececf0; transform: translateY(-2px); }
+.mega-products b { display: block; font-size: 20px; line-height: 26px; font-weight: 600; color: #1d1d1f; }
+.mega-products em { display: block; margin-top: 6px; font-style: normal; font-size: 14px; line-height: 20px; color: #6e6e73; }
+.mega-products img { width: 190px; height: 138px; object-fit: contain; mix-blend-mode: multiply; transition: transform .35s; }
+.mega-products a:hover img { transform: scale(1.06); }
+.mega-card { position: relative; flex: none; width: 280px; height: 220px; border-radius: 16px; overflow: hidden; background: #111; }
+.mega-card img { width: 100%; height: 100%; object-fit: cover; transition: transform .45s; }
+.mega-card:hover img { transform: scale(1.05); }
+.mega-card span { position: absolute; left: 0; right: 0; bottom: 0; padding: 48px 18px 16px; display: flex; align-items: center; justify-content: space-between; font-size: 16px; line-height: 22px; font-weight: 500; color: #fff; background: linear-gradient(180deg, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.7)); }
+.mega-cards ul { list-style: none; margin: 0 0 0 16px; padding: 0; display: grid; gap: 4px; align-content: start; }
+.mega-cards li a { display: inline-flex; align-items: center; gap: 10px; height: 46px; font-size: 16px; line-height: 22px; font-weight: 600; color: #1d1d1f; transition: color .2s, gap .2s; }
+.mega-cards li a:hover { color: var(--brand); gap: 14px; }
+.site-nav a.has-menu svg { transition: transform .2s; } .site-nav a.has-menu.open svg { transform: rotate(-90deg); }
+/* Back to top */
+.to-top { position: fixed; right: 24px; bottom: 28px; z-index: 35; width: 48px; height: 48px; border-radius: 50%; background: #fff; color: #1d1d1f; box-shadow: 0 6px 20px rgba(0, 0, 0, 0.16), 0 0 0 1px rgba(0, 0, 0, 0.06); display: grid; place-items: center; opacity: 0; visibility: hidden; transform: translateY(10px); transition: opacity .25s, transform .25s, visibility .25s, background .2s, color .2s; }
+.to-top svg { transform: rotate(-90deg); }
+.to-top.show { opacity: 1; visibility: visible; transform: none; }
+.to-top:hover { background: #1d1d1f; color: #fff; }
+.pdp ~ .to-top, body:has(.ip-bar) .to-top { bottom: 104px; }
+@media (max-width: 860px) { .to-top { right: 14px; bottom: 18px; width: 42px; height: 42px; } body:has(.ip-bar) .to-top { bottom: 92px; } }
 .mega-inner.n1 { grid-template-columns: minmax(0, 320px); } .mega-inner.n2 { grid-template-columns: repeat(2, minmax(0, 320px)); }
 .site-header-bar { height: 64px; max-width: 1440px; margin: 0 auto; padding: 0 64px; display: flex; align-items: center; }
 .site-header-bar > .brand { margin-right: 29px; flex: none; }

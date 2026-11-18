@@ -5,7 +5,7 @@ export const promo = {
   headline: "Save up to $3,000",
   image: "https://www.1laser.com/cdn/shop/files/exec-051cb678-d9c0-4c36-b080-528914f5f413.png?v=1794186467",
   endsAt: "2026-12-01T07:59:59Z", // Nov 30, 11:59 PM PT
-  link: "/collections/deals",
+  link: "https://www.1laser.com/pages/bfcm26", // official Black Friday page
 };
 
 export const collections = {
@@ -34,28 +34,34 @@ const SITE = "https://www.1laser.com";
 export const nav = [
   {
     label: "Laser Machines", to: "/collections/machines",
-    columns: [
-      { title: "X Series", links: [["XRF Performance Desktop Laser Engraver (38W RF)", "/products/onelaser-xrf-desktop-laser-machine"]] },
-      { title: "Cobra Series", links: [["Cobra 8", "/products/cobra-8-90w-co2-laser-engraver-cutter"], ["Cobra 10", "/products/cobra-10-100w-co2-laser-engraver-cutter"], ["Cobra 14", "/products/cobra-14-130w-co2-laser-engraver-cutter"]] },
-      { title: "Hydra Series", links: [["Hydra 7 Gen2", "/products/hydra-7-gen-2-70w-rf-co2-dual-laser-machine"], ["Hydra 9 Gen2", "/products/hydra-9-gen-2-70w-rf-co2-dual-laser-machine"], ["Hydra 13 Gen2", "/products/hydra-13-gen-2-70w-rf-co2-dual-laser-machine"], ["Hydra 16 Gen2", "/products/hydra-16-gen-2-70w-rf-co2-dual-laser-machine"]] },
-      { title: "VertiGo", links: [["VertiGo", "/products/vertigo-vertical-laser-engraver"], ["Explore all machines", "/collections/machines"], ["Compare machines", "/compare"]] },
+    // Two-level menu as on 1laser.com: series on the left, that series' machines (name, descriptor, render) on the right.
+    series: [
+      { title: "X Series", items: [["onelaser-xrf-desktop-laser-machine", "Performance Desktop Laser Engraver (38W RF)"]] },
+      { title: "Cobra Series", items: [["cobra-8-90w-co2-laser-engraver-cutter", "Workshop Essential Laser Engraver/Cutter"], ["cobra-10-100w-co2-laser-engraver-cutter", "Workshop Essential Laser Engraver/Cutter"], ["cobra-14-130w-co2-laser-engraver-cutter", "Workshop Essential Laser Engraver/Cutter"]] },
+      { title: "Hydra Series", items: [["hydra-7-gen-2-70w-rf-co2-dual-laser-machine", "Industrial RF Laser Engraver (70W RF)"], ["hydra-9-gen-2-70w-rf-co2-dual-laser-machine", "CO₂ Glass/RF Industrial Hybrid Laser"], ["hydra-13-gen-2-70w-rf-co2-dual-laser-machine", "CO₂ Glass/RF Industrial Hybrid Laser"], ["hydra-16-gen-2-70w-rf-co2-dual-laser-machine", "CO₂ Glass/RF Industrial Hybrid Laser"]] },
+      { title: "VertiGo", items: [["vertigo-vertical-laser-engraver", "Performance Rotary Laser for Drinkware"]] },
     ],
+    more: [["Explore all machines", "/collections/machines"], ["Compare machines", "/compare"]],
   },
   { label: "Accessories", to: "/collections/accessories" },
   { label: "Material", to: "/collections/materials" },
   { label: "Black Friday", to: "/collections/deals", hot: true },
   {
     label: "Support", href: `${SITE}/pages/sales-consultation`,
-    columns: [
-      { title: "Support", links: [["Submit a Ticket", "https://zohodesk.1laser.com/portal/en/newticket"], ["Get a Quote", `${SITE}/products/sales-consultation-call`], ["1-on-1 Training", `${SITE}/products/engineer-1-on-1-training-support`]] },
-      { title: "Resources", links: [["Policy", `${SITE}/pages/shipping-policy`], ["Financing", `${SITE}/pages/financing`], ["Blogs", `${SITE}/blogs/topic`], ["Product Knowledge Base", "https://wiki.1laser.com"]] },
+    // Two picture cards plus a link list, as on 1laser.com.
+    cards: [
+      ["Get a Quote", `${SITE}/products/sales-consultation-call`, `${SITE}/cdn/shop/files/Consultation_Call_Session_f357d165-c36d-445e-8589-cd76cb193639.png?v=1764916744`],
+      ["1-on-1 Support", `${SITE}/products/engineer-1-on-1-training-support`, `${SITE}/cdn/shop/files/1-on-1_training.png?v=1764920272`],
     ],
+    links: [["Contact Support", "https://zohodesk.1laser.com/portal/en/newticket"], ["Financing", `${SITE}/pages/financing`], ["Policy", `${SITE}/pages/shipping-policy`], ["Blogs", `${SITE}/blogs/topic`], ["Product Knowledge Base", "https://wiki.1laser.com"]],
   },
   {
     label: "Community", href: `${SITE}/pages/laser-engraving-community`,
-    columns: [
-      { title: "Community", links: [["Become Affiliate", "https://af.uppromote.com/OneLaser/register"], ["Purchase Rewards", `${SITE}/pages/onelaser-rewards`], ["Join Community", `${SITE}/pages/laser-engraving-community`], ["Testimonials", `${SITE}/pages/testimonials`]] },
+    cards: [
+      ["Become Affiliate", "https://af.uppromote.com/OneLaser/register", `${SITE}/cdn/shop/files/3_154dd9e8-536b-43e4-9e64-5e1532331fdd.png?v=1782712883`],
+      ["Purchase Rewards", `${SITE}/pages/onelaser-rewards`, `${SITE}/cdn/shop/files/OneLaser_Forum_4979b167-4ed1-476c-a24f-bd1b496f235a.png?v=1782714101`],
     ],
+    links: [["Join Community", `${SITE}/pages/laser-engraving-community`], ["Testimonials", `${SITE}/pages/testimonials`]],
   },
   { label: "Contact", href: `${SITE}/pages/contact-us` },
 ];

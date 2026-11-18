@@ -425,4 +425,11 @@ export default {
   "All rights reserved.": "無断転載を禁じます。",
   "Back to top": "トップへ戻る",
   "machine reviews": "件のマシンレビュー",
+  "Performance Desktop Laser Engraver (38W RF)": "高性能デスクトップレーザー彫刻機（38W RF）",
+  "Workshop Essential Laser Engraver/Cutter": "工房向けレーザー彫刻・カット機",
+  "Industrial RF Laser Engraver (70W RF)": "産業用RFレーザー彫刻機（70W RF）",
+  "CO₂ Glass/RF Industrial Hybrid Laser": "CO₂ガラス管/RF 産業用ハイブリッドレーザー",
+  "Performance Rotary Laser for Drinkware": "ドリンクウェア向け高性能ロータリーレーザー",
+  "1-on-1 Support": "1対1サポート",
+  "Contact Support": "サポートに問い合わせる",
 };
