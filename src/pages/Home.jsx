@@ -357,6 +357,8 @@ export default function Home() {
         </div>
       </section>
 
+      <Makers />
+
       <section className="ih-block irv">
         <div className="ih-wrap">
           <div className="irv-head">
@@ -380,8 +382,6 @@ export default function Home() {
           {reviewsOpen && <ReviewsDialog onClose={() => setReviewsOpen(false)} />}
         </div>
       </section>
-
-      <Makers />
 
       <section className="ih-block ist">
         <div className="ih-wrap">
