@@ -4,7 +4,6 @@ import { t } from "../i18n.js";
 import { asset, byHandle, img, money, products } from "../lib.js";
 import { heroSlides, homeTabs, homeVideos, newHandles, promo, shortSlogans } from "../data/site.js";
 import { Countdown, Icon, Link } from "../components/ui.jsx";
-import { BenefitArt } from "../components/Chrome.jsx";
 import FinderCard, { FinderHelp } from "../components/Finder.jsx";
 
 /* Module order, sizes and type follow the insta360.com homepage (measured 2026-11-17 at 1440 and 375):
@@ -201,13 +200,6 @@ function Videos() {
   );
 }
 
-const SUPPORT = [
-  ["Talk to an expert", "support", "https://www.1laser.com/pages/sales-consultation"],
-  ["Easy returns", "returns", "https://www.1laser.com/pages/refund-policy"],
-  ["Financing", "payment", "https://www.1laser.com/pages/financing"],
-  ["3-2-1 Warranty", "warranty", "https://www.1laser.com/pages/warranty-policy"],
-];
-
 export default function Home() {
   return (
     <div className="ih">
@@ -227,12 +219,6 @@ export default function Home() {
               <span className="ih-btn light">{t("Learn more")}</span>
             </span>
           </Link>
-        </div>
-      </section>
-
-      <section className="ih-block ih-support">
-        <div className="ih-wrap">
-          {SUPPORT.map(([label, icon, href]) => <Link key={label} href={href} className="ih-entry"><BenefitArt name={icon} /><span>{t(label)}</span><Icon name="chevron" size={22} /></Link>)}
         </div>
       </section>
     </div>
