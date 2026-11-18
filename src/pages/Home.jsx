@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useCart } from "../cart.jsx";
 import { t } from "../i18n.js";
 import { asset, byHandle, img, money, products } from "../lib.js";
@@ -40,19 +40,19 @@ function HeroButtons({ s, tab }) {
   );
 }
 
-/** Background clip for a hero slide: loads and plays only while its slide is showing, rewinds when it leaves. */
-function HeroVideo({ src, poster, active }) {
-  const ref = useRef(null);
-  const [ready, setReady] = useState(false);
+/** Background video for a hero slide: a muted, looping YouTube embed that exists only while its slide is showing.
+    It is scaled to cover the hero (which also crops YouTube's title bar) and fades in once playback has had time to start. */
+function HeroVideo({ id, start = 0, active }) {
+  const [shown, setShown] = useState(false);
   const still = typeof window !== "undefined" && window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
-  useEffect(() => {
-    const v = ref.current;
-    if (!v || still) return;
-    if (active) v.play().catch(() => {});
-    else { v.pause(); try { v.currentTime = 0; } catch { /* not loaded yet */ } }
-  }, [active, still]);
-  if (still) return null;
-  return <video ref={ref} className={ready ? "ready" : ""} src={active || ready ? src : undefined} poster={poster} muted loop playsInline preload="none" onPlaying={() => setReady(true)} aria-hidden="true" />;
+  useEffect(() => { if (!active) setShown(false); }, [active]);
+  if (still || !active) return null;
+  const src = `https://www.youtube-nocookie.com/embed/${id}?autoplay=1&mute=1&controls=0&loop=1&playlist=${id}&start=${start}&playsinline=1&rel=0&modestbranding=1&disablekb=1&fs=0&iv_load_policy=3`;
+  return (
+    <div className={`ih-yt${shown ? " ready" : ""}`} aria-hidden="true">
+      <iframe src={src} title="" tabIndex={-1} allow="autoplay; encrypted-media" onLoad={() => setTimeout(() => setShown(true), 1800)} />
+    </div>
+  );
 }
 
 function Hero() {
@@ -68,7 +68,7 @@ function Hero() {
       {heroSlides.map((s, n) => (
         <article key={s.title} className={`ih-slide${n === i ? " on" : ""}`} aria-hidden={n !== i}>
           <img src={asset(s.image)} alt="" />
-          {s.video && <HeroVideo src={s.video} poster={asset(s.image)} active={n === i} />}
+          {s.youtube && <HeroVideo id={s.youtube} start={s.start} active={n === i} />}
           <div className="ih-slide-copy">
             <p className="ih-top">{t(s.eyebrow)}</p>
             <h1>{t(s.title)}</h1>
