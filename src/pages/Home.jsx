@@ -55,6 +55,34 @@ function HeroVideo({ src, poster, active }) {
   return <video ref={ref} className={ready ? "ready" : ""} src={active || ready ? src : undefined} poster={poster} muted loop playsInline preload="none" onPlaying={() => setReady(true)} aria-hidden="true" />;
 }
 
+/** Muted YouTube clip over a hero slide. The frame stays invisible until the player itself reports "playing" (state 1) through the
+    IFrame API messages, so a blocked or sign-in-walled player never shows; the slide's own video or image stays in view instead. */
+function HeroYouTube({ id, start = 0, active }) {
+  const ref = useRef(null);
+  const [playing, setPlaying] = useState(false);
+  const still = typeof window !== "undefined" && window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+  useEffect(() => {
+    if (!active) { setPlaying(false); return undefined; }
+    const onMessage = (e) => {
+      if (!/youtube(-nocookie)?\.com$/.test(new URL(e.origin).hostname) || e.source !== ref.current?.contentWindow) return;
+      let data;
+      try { data = typeof e.data === "string" ? JSON.parse(e.data) : e.data; } catch { return; }
+      const state = data?.info?.playerState;
+      if (state === 1) setPlaying(true);
+    };
+    window.addEventListener("message", onMessage);
+    return () => window.removeEventListener("message", onMessage);
+  }, [active]);
+  if (still || !active) return null;
+  const src = `https://www.youtube-nocookie.com/embed/${id}?autoplay=1&mute=1&controls=0&loop=1&playlist=${id}&start=${start}&playsinline=1&rel=0&modestbranding=1&disablekb=1&fs=0&iv_load_policy=3&enablejsapi=1&origin=${encodeURIComponent(window.location.origin)}`;
+  const listen = () => ref.current?.contentWindow?.postMessage(JSON.stringify({ event: "listening", id: 1, channel: "widget" }), "*");
+  return (
+    <div className={`ih-yt${playing ? " ready" : ""}`} aria-hidden="true">
+      <iframe ref={ref} src={src} title="" tabIndex={-1} allow="autoplay; encrypted-media" onLoad={() => { listen(); setTimeout(listen, 600); setTimeout(listen, 1500); }} />
+    </div>
+  );
+}
+
 function Hero() {
   const [i, setI] = useState(0);
   const [paused, setPaused] = useState(false);
@@ -69,6 +97,7 @@ function Hero() {
         <article key={s.title} className={`ih-slide${n === i ? " on" : ""}`} aria-hidden={n !== i}>
           <img src={asset(s.image)} alt="" />
           {s.video && <HeroVideo src={/^https?:/.test(s.video) ? s.video : asset(s.video)} poster={asset(s.image)} active={n === i} />}
+          {s.youtube && <HeroYouTube id={s.youtube} start={s.start} active={n === i} />}
           <div className="ih-slide-copy">
             <p className="ih-top">{t(s.eyebrow)}</p>
             <h1>{t(s.title)}</h1>
