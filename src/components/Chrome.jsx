@@ -9,7 +9,7 @@ const hasMenu = (n) => !!(n.series || n.cards);
 /** Flat [label, url] list of a menu, for the mobile drawer. */
 const menuLinks = (n) =>
   n.series
-    ? [...n.series.flatMap((g) => g.items.map(([h]) => [byHandle[h]?.name || h, `/products/${h}`])), ...n.more.map(([l, u]) => [t(l), u])]
+    ? [...n.series.flatMap((g) => g.items.map((h) => [byHandle[h]?.name || h, `/products/${h}`])), ...n.more.map(([l, u]) => [t(l), u])]
     : n.cards ? [...n.cards, ...n.links].map(([l, u]) => [t(l), u]) : [];
 
 /** Internal store route or external official-site URL. */
@@ -22,7 +22,6 @@ export function Header({ path }) {
   const [search, setSearch] = useState(false);
   const [q, setQ] = useState("");
   const [langOpen, setLangOpen] = useState(false);
-  const [series, setSeries] = useState(0);
   const [far, setFar] = useState(false);
   const [hover, setHover] = useState(false); // Insta360: the bar turns white as soon as the pointer is on it
   const [promoOn, setPromoOn] = useState(() => { try { return sessionStorage.getItem("onelaser-promo-closed") !== "1"; } catch { return true; } });
@@ -30,6 +29,18 @@ export function Header({ path }) {
     document.documentElement.classList.toggle("has-promo", promoOn);
     return () => document.documentElement.classList.remove("has-promo");
   }, [promoOn]);
+  // "Help me choose": go to the home page and bring the machine finder card into view.
+  const openFinder = () => {
+    setOpen(null);
+    go("/");
+    let tries = 0;
+    const seek = () => {
+      const el = document.querySelector(".ih-card.fc");
+      if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
+      else if (tries++ < 20) setTimeout(seek, 100);
+    };
+    setTimeout(seek, 60);
+  };
   const closePromo = () => { setPromoOn(false); try { sessionStorage.setItem("onelaser-promo-closed", "1"); } catch { /* keep it closed for this view only */ } };
   const current = LANGS.find((l) => l.code === getLang()) || LANGS[0];
   const [top, setTop] = useState(true);
@@ -67,7 +78,7 @@ export function Header({ path }) {
           <Link to="/" className="brand" aria-label={t("OneLaser Store home")}><img src={asset(overlay ? "onelaser-logo-red-white.svg" : "onelaser-logo-transparent.svg")} alt="OneLaser" /></Link>
           <nav className="site-nav" aria-label={t("Primary")}>
             {nav.map((n) => (
-              <Link key={n.label} to={n.to} href={n.href} className={`${n.hot ? "hot" : ""}${hasMenu(n) ? " has-menu" : ""}${open === n.label ? " open" : ""}`} onMouseEnter={() => { setOpen(hasMenu(n) ? n.label : null); setSeries(0); }} onFocus={() => setOpen(hasMenu(n) ? n.label : null)}>{t(n.label)}{hasMenu(n) && <Icon name="chevron" size={12} />}</Link>
+              <Link key={n.label} to={n.to} href={n.href} className={`${n.hot ? "hot" : ""}${hasMenu(n) ? " has-menu" : ""}${open === n.label ? " open" : ""}`} onMouseEnter={() => setOpen(hasMenu(n) ? n.label : null)} onFocus={() => setOpen(hasMenu(n) ? n.label : null)}>{t(n.label)}{hasMenu(n) && <Icon name="chevron" size={12} />}</Link>
             ))}
           </nav>
           <div className="site-actions">
@@ -90,19 +101,30 @@ export function Header({ path }) {
           <div key={n.label} className="mega">
             {n.series ? (
               <div className="mega-machines">
-                <ul className="mega-series">
-                  {n.series.map((g, k) => (
-                    <li key={g.title}><button type="button" className={k === series ? "on" : ""} onMouseEnter={() => setSeries(k)} onFocus={() => setSeries(k)} onClick={() => setSeries(k)}>{t(g.title)}<Icon name="chevron" size={16} /></button></li>
-                  ))}
-                  {n.more.map(([label, url]) => <li key={label} className="more"><Go url={url}>{t(label)}</Go></li>)}
-                </ul>
-                <div className="mega-products" key={series}>
-                  {n.series[series].items.map(([handle, sub]) => byHandle[handle] && (
-                    <Link key={handle} to={`/products/${handle}`}>
-                      <span><b>{byHandle[handle].name}</b><em>{t(sub)}</em></span>
-                      <img src={img(byHandle[handle].images[0], 420)} alt="" />
-                    </Link>
-                  ))}
+                <div className="mega-series">
+                  {n.series.map((g) => {
+                    const list = g.items.map((h) => byHandle[h]).filter(Boolean);
+                    if (!list.length) return null;
+                    const from = Math.min(...list.map((p) => p.price));
+                    return (
+                      <article key={g.title}>
+                        <Go url={g.to} className="mega-series-main">
+                          <span className="mega-series-img"><img src={img(list[0].images[0], 520)} alt="" /></span>
+                          <b>{t(g.title)}</b>
+                          <em>{t(g.desc)}</em>
+                          <strong>{t("From")} {usd(from)}</strong>
+                        </Go>
+                        {list.length > 1 && (
+                          <p className="mega-models"><span>{t("Models")}</span>{list.map((p) => <Link key={p.handle} to={`/products/${p.handle}`} title={p.name}>{(p.name.match(/\d+/) || [p.name])[0]}</Link>)}</p>
+                        )}
+                      </article>
+                    );
+                  })}
+                </div>
+                <div className="mega-more">
+                  <p>{t("More")}</p>
+                  <ul>{n.more.map(([label, url]) => <li key={label}><Go url={url}>{t(label)}<Icon name="chevron" size={16} /></Go></li>)}</ul>
+                  <button type="button" className="mega-help" onClick={openFinder}>{t("Help me choose")}</button>
                 </div>
               </div>
             ) : (

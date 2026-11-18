@@ -438,4 +438,12 @@ export default {
   "Showing a selection of our 4 and 5-star reviews.": "Mostramos una selección de nuestras reseñas de 4 y 5 estrellas.",
   "Verified": "Verificada",
   "See all reviews on Trustpilot": "Ver todas las reseñas en Trustpilot",
+  "Compact 38W RF desktop engraving": "Grabado RF de 38W compacto para escritorio",
+  "90W–130W CO₂ glass laser cutters": "Cortadoras láser CO₂ de vidrio de 90W–130W",
+  "RF and hybrid lasers for larger projects": "Láseres RF e híbridos para proyectos grandes",
+  "Vertical 38W RF engraving for drinkware": "Grabado RF vertical de 38W para vasos y termos",
+  "More": "Más",
+  "All laser machines": "Todas las máquinas láser",
+  "Help me choose": "Ayúdame a elegir",
+  "Models": "Modelos",
 };

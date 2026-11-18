@@ -34,14 +34,15 @@ const SITE = "https://www.1laser.com";
 export const nav = [
   {
     label: "Laser Machines", to: "/collections/machines",
-    // Two-level menu as on 1laser.com: series on the left, that series' machines (name, descriptor, render) on the right.
+    // Series cards as in the new 1laser.com theme preview (render, name, one-line description, starting price) plus a "More" column.
+    // Added here: each card lists its models as direct links, and "Help me choose" opens the machine finder on the home page.
     series: [
-      { title: "X Series", items: [["onelaser-xrf-desktop-laser-machine", "Performance Desktop Laser Engraver (38W RF)"]] },
-      { title: "Cobra Series", items: [["cobra-8-90w-co2-laser-engraver-cutter", "Workshop Essential Laser Engraver/Cutter"], ["cobra-10-100w-co2-laser-engraver-cutter", "Workshop Essential Laser Engraver/Cutter"], ["cobra-14-130w-co2-laser-engraver-cutter", "Workshop Essential Laser Engraver/Cutter"]] },
-      { title: "Hydra Series", items: [["hydra-7-gen-2-70w-rf-co2-dual-laser-machine", "Industrial RF Laser Engraver (70W RF)"], ["hydra-9-gen-2-70w-rf-co2-dual-laser-machine", "CO₂ Glass/RF Industrial Hybrid Laser"], ["hydra-13-gen-2-70w-rf-co2-dual-laser-machine", "CO₂ Glass/RF Industrial Hybrid Laser"], ["hydra-16-gen-2-70w-rf-co2-dual-laser-machine", "CO₂ Glass/RF Industrial Hybrid Laser"]] },
-      { title: "VertiGo", items: [["vertigo-vertical-laser-engraver", "Performance Rotary Laser for Drinkware"]] },
+      { title: "X Series", to: "/collections/xrf-series", desc: "Compact 38W RF desktop engraving", items: ["onelaser-xrf-desktop-laser-machine"] },
+      { title: "Cobra Series", to: "/collections/cobra-series", desc: "90W–130W CO₂ glass laser cutters", items: ["cobra-8-90w-co2-laser-engraver-cutter", "cobra-10-100w-co2-laser-engraver-cutter", "cobra-14-130w-co2-laser-engraver-cutter"] },
+      { title: "Hydra Series", to: "/collections/hydra-gen2", desc: "RF and hybrid lasers for larger projects", items: ["hydra-7-gen-2-70w-rf-co2-dual-laser-machine", "hydra-9-gen-2-70w-rf-co2-dual-laser-machine", "hydra-13-gen-2-70w-rf-co2-dual-laser-machine", "hydra-16-gen-2-70w-rf-co2-dual-laser-machine"] },
+      { title: "VertiGo", to: "/products/vertigo-vertical-laser-engraver", desc: "Vertical 38W RF engraving for drinkware", items: ["vertigo-vertical-laser-engraver"] },
     ],
-    more: [["Explore all machines", "/collections/machines"], ["Compare machines", "/compare"]],
+    more: [["All laser machines", "/collections/machines"], ["Accessories", "/collections/accessories"], ["Compare machines", "/compare"]],
   },
   { label: "Accessories", to: "/collections/accessories" },
   { label: "Material", to: "/collections/materials" },

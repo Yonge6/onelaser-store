@@ -438,4 +438,12 @@ export default {
   "Showing a selection of our 4 and 5-star reviews.": "星4つ・星5つのレビューから抜粋して表示しています。",
   "Verified": "確認済み",
   "See all reviews on Trustpilot": "Trustpilot ですべてのレビューを見る",
+  "Compact 38W RF desktop engraving": "コンパクトな38W RFデスクトップ彫刻",
+  "90W–130W CO₂ glass laser cutters": "90W–130W CO₂ガラス管レーザーカッター",
+  "RF and hybrid lasers for larger projects": "大型作品向けのRF・ハイブリッドレーザー",
+  "Vertical 38W RF engraving for drinkware": "ドリンクウェア向け縦型38W RF彫刻",
+  "More": "その他",
+  "All laser machines": "すべてのレーザー加工機",
+  "Help me choose": "選び方を相談する",
+  "Models": "モデル",
 };

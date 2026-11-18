@@ -438,4 +438,12 @@ export default {
   "Showing a selection of our 4 and 5-star reviews.": "以下为精选的四星和五星评价。",
   "Verified": "已验证",
   "See all reviews on Trustpilot": "在 Trustpilot 查看全部评价",
+  "Compact 38W RF desktop engraving": "紧凑型 38W RF 桌面雕刻",
+  "90W–130W CO₂ glass laser cutters": "90W–130W CO₂ 玻璃管激光切割机",
+  "RF and hybrid lasers for larger projects": "适合大幅面项目的 RF 与混合激光机",
+  "Vertical 38W RF engraving for drinkware": "面向杯具的立式 38W RF 雕刻",
+  "More": "更多",
+  "All laser machines": "全部激光机",
+  "Help me choose": "帮我选机",
+  "Models": "型号",
 };

@@ -65,20 +65,30 @@ ul { list-style: none; }
 /* Dropdown menus as on www.1laser.com: full-width white panel; machines = series list + product cards; others = two picture cards + links */
 .mega-machines, .mega-cards { max-width: 1440px; margin: 0 auto; padding: 36px 64px 44px; display: flex; gap: 48px; animation: mega-in .22s ease; }
 @keyframes mega-in { from { opacity: 0; transform: translateY(-6px); } }
-.mega-series { flex: none; width: 220px; list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; align-content: start; }
-.mega-series button { width: 100%; display: flex; align-items: center; justify-content: space-between; height: 48px; padding: 0 12px 0 0; font-size: 18px; line-height: 26px; font-weight: 600; color: #55555a; text-align: left; transition: color .2s; }
-.mega-series button svg { opacity: 0; transform: translateX(-6px); transition: opacity .2s, transform .2s; }
-.mega-series button.on, .mega-series button:hover { color: #000; } .mega-series button.on { font-weight: 700; }
-.mega-series button.on svg { opacity: 1; transform: none; }
-.mega-series .more { margin-top: 4px; } .mega-series .more:first-of-type { margin-top: 14px; padding-top: 14px; border-top: 1px solid #ececf0; }
-.mega-series .more a { font-size: 14px; line-height: 28px; font-weight: 500; color: var(--accent-ink); } .mega-series .more a:hover { text-decoration: underline; text-underline-offset: 3px; }
-.mega-products { flex: 1; min-width: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; align-content: start; animation: mega-in .22s ease; }
-.mega-products a { display: grid; grid-template-columns: minmax(0, 1fr) 190px; align-items: center; gap: 12px; min-height: 150px; padding: 6px 12px 6px 28px; border-radius: 20px; background: #f5f5f7; transition: background .2s, transform .2s; }
-.mega-products a:hover { background: #ececf0; transform: translateY(-2px); }
-.mega-products b { display: block; font-size: 20px; line-height: 26px; font-weight: 600; color: #1d1d1f; }
-.mega-products em { display: block; margin-top: 6px; font-style: normal; font-size: 14px; line-height: 20px; color: #6e6e73; }
-.mega-products img { width: 190px; height: 138px; object-fit: contain; mix-blend-mode: multiply; transition: transform .35s; }
-.mega-products a:hover img { transform: scale(1.06); }
+.mega-machines { gap: 0; align-items: stretch; }
+.mega-series { flex: 1; min-width: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+.mega-series article { display: flex; flex-direction: column; padding: 14px 14px 16px; border-radius: 20px; box-shadow: inset 0 0 0 1px #e6e8ee; background: #fff; transition: box-shadow .2s, transform .2s; }
+.mega-series article:hover { box-shadow: inset 0 0 0 1px #1d1d1f, 0 10px 28px rgba(0, 0, 0, 0.08); transform: translateY(-2px); }
+.mega-series-main { display: flex; flex-direction: column; flex: 1; }
+.mega-series-img { display: grid; place-items: center; aspect-ratio: 3 / 2; border-radius: 14px; background: #f5f5f7; overflow: hidden; }
+.mega-series-img img { width: 86%; height: 86%; object-fit: contain; mix-blend-mode: multiply; transition: transform .4s cubic-bezier(.2, .7, .2, 1); }
+.mega-series article:hover .mega-series-img img { transform: scale(1.07); }
+.mega-series b { margin-top: 14px; font-size: 18px; line-height: 24px; font-weight: 600; color: #1d1d1f; }
+.mega-series em { margin-top: 6px; font-style: normal; font-size: 14px; line-height: 20px; color: #6e6e73; min-height: 40px; }
+.mega-series strong { margin-top: 8px; font-size: 15px; line-height: 22px; font-weight: 600; color: var(--brand); }
+.mega-models { display: flex; align-items: center; flex-wrap: wrap; gap: 6px; margin-top: 10px; padding-top: 10px; border-top: 1px solid #ececf0; }
+.mega-models span { font-size: 12px; line-height: 26px; color: #76767f; margin-right: 2px; }
+.mega-models a { min-width: 34px; text-align: center; height: 26px; padding: 0 10px; border-radius: 50px; background: #f5f5f7; font-size: 12px; line-height: 26px; font-weight: 500; color: #515157; white-space: nowrap; transition: background .2s, color .2s; }
+.mega-models a:hover { background: #1d1d1f; color: #fff; }
+.mega-more { flex: none; width: 300px; margin-left: 32px; padding-left: 32px; border-left: 1px solid #e6e8ee; display: flex; flex-direction: column; }
+.mega-more > p { font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: 1.6px; text-transform: uppercase; color: #76767f; margin-bottom: 6px; }
+.mega-more ul { list-style: none; margin: 0; padding: 0; }
+.mega-more li a { display: flex; align-items: center; justify-content: space-between; height: 48px; font-size: 17px; line-height: 24px; font-weight: 500; color: #1d1d1f; transition: color .2s, padding .2s; }
+.mega-more li a svg { color: #a1a1aa; transition: transform .2s, color .2s; }
+.mega-more li a:hover { color: var(--brand); } .mega-more li a:hover svg { color: var(--brand); transform: translateX(4px); }
+.mega-help { margin-top: auto; height: 48px; border-radius: 12px; background: var(--brand); color: #fff; font-size: 16px; line-height: 48px; font-weight: 600; transition: background .2s, transform .2s, box-shadow .2s; }
+.mega-help:hover { background: var(--brand-dark); transform: translateY(-2px); box-shadow: 0 8px 18px rgba(231, 49, 14, 0.28); }
+@media (max-width: 1280px) { .mega-more { width: 220px; margin-left: 20px; padding-left: 20px; } .mega-series { gap: 10px; } .mega-series b { font-size: 16px; } }
 .mega-card { position: relative; flex: none; width: 280px; height: 220px; border-radius: 16px; overflow: hidden; background: #111; }
 .mega-card img { width: 100%; height: 100%; object-fit: cover; transition: transform .45s; }
 .mega-card:hover img { transform: scale(1.05); }
