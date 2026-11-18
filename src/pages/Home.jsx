@@ -1,10 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import { useCart } from "../cart.jsx";
 import { t } from "../i18n.js";
-import { asset, byHandle, img, money, products } from "../lib.js";
-import { heroSlides, homeStories, homeTabs, interests, newHandles, promo, shortSlogans } from "../data/site.js";
+import { asset, byHandle, img } from "../lib.js";
+import { heroSlides, homeStories, interests, promo } from "../data/site.js";
 import { Countdown, Icon, Link } from "../components/ui.jsx";
 import { BenefitArt } from "../components/Chrome.jsx";
+import Finder from "../components/Finder.jsx";
 
 /* Module order, sizes and type follow the insta360.com homepage (measured 2026-11-17 at 1440 and 375):
    full-bleed hero 660 with segmented progress → headline + sticky pill tabs + 3-column product cards (416×554, radius 24)
@@ -86,74 +87,6 @@ function Hero() {
   );
 }
 
-/* Insta360's card has "Learn more" + "Buy now", both leading to the product page. Here the left control adds to the cart instead:
-   it adds the first available option (the one the product page preselects), stays on the page and confirms for a moment. */
-// Monthly figure = price ÷ 24, the same "24-month payment" 1laser.com shows on its product pages ($4,399 → $183.29/mo.).
-// It is an illustration, not an offer: the real rate and term depend on the lender's approval.
-const FINANCE_MONTHS = 24;
-
-function HomeCard({ p }) {
-  const { add } = useCart();
-  const [added, setAdded] = useState(false);
-  const variant = p.variants.find((v) => v.available) || p.variants[0];
-  const addNow = () => {
-    add(p.handle, variant.id, 1);
-    setAdded(true);
-    setTimeout(() => setAdded(false), 1800);
-  };
-  return (
-    <article className="ih-card">
-      <div className="ih-card-info">
-        {newHandles.includes(p.handle) && <span className="ih-new">{t("NEW")}</span>}
-        <h3><Link to={`/products/${p.handle}`}>{p.name}</Link></h3>
-        <p>{t(shortSlogans[p.handle] || p.tagline)}</p>
-      </div>
-      <Link to={`/products/${p.handle}`} className="ih-card-media" tabIndex={-1} aria-hidden="true"><img src={img(p.images[0], 700)} alt="" loading="lazy" /></Link>
-      <p className="ih-card-price">
-        {p.priceVaries && <span>{t("From")}</span>}
-        <b>{money(p.price)}</b>
-        {p.compareAt > p.price && <s>{money(p.compareAt)}</s>}
-        {p.compareAt > p.price && <em>{t("Save")} {money(p.compareAt - p.price)}</em>}
-      </p>
-      {p.kind === "machine" && (
-        <p className="ih-card-monthly">{t("or")} <b>${(p.price / FINANCE_MONTHS).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</b>{t("/mo for 24 months")}</p>
-      )}
-      <div className="ih-card-btns">
-        <button type="button" className={`ih-btn line sm${added ? " added" : ""}`} disabled={!p.available} onClick={addNow} aria-live="polite">
-          {added ? <><Icon name="check" size={16} />{t("Added")}</> : !p.available ? t("Sold Out") : <><Icon name="cart" size={16} />{t("Add to cart")}</>}
-        </button>
-        <Link to={`/products/${p.handle}`} className="ih-btn dark sm">{t("Buy now")}</Link>
-      </div>
-    </article>
-  );
-}
-
-function ProductBlock() {
-  const [ti, setTi] = useState(0);
-  const tab = homeTabs[ti];
-  const list = (tab.picks ? tab.picks.map((h) => byHandle[h]) : products.filter((p) => p.category === tab.collection || (tab.collection === "materials" && p.kind === "material"))).filter(Boolean).slice(0, 6);
-  return (
-    <section className="ih-products">
-      <div className="ih-wrap"><h2 className="ih-h2 narrow">{t("Laser machines for makers and growing businesses.")}</h2></div>
-      <div className="ih-sticky">
-        <div className="ih-wrap">
-          <div className="ih-tabs" role="tablist">
-            {homeTabs.map((x, n) => <button key={x.label} type="button" role="tab" aria-selected={n === ti} className={n === ti ? "on" : ""} onClick={() => setTi(n)}>{t(x.label)}</button>)}
-          </div>
-        </div>
-      </div>
-      <div className="ih-wrap">
-        <div className="ih-grid" key={ti}>
-          {list.map((p) => (
-            <HomeCard key={p.handle} p={p} />
-          ))}
-        </div>
-        <div className="ih-viewall"><Link to={tab.all}>{t("View all")}</Link></div>
-      </div>
-    </section>
-  );
-}
-
 /** Horizontal scroller with Insta360's round arrow buttons in the heading row. */
 function useScroller() {
   const ref = useRef(null);
@@ -225,7 +158,7 @@ export default function Home() {
   return (
     <div className="ih">
       <Hero />
-      <ProductBlock />
+      <Finder />
 
       <Interests />
 
