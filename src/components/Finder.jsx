@@ -51,8 +51,16 @@ const STEPS = [
     ],
   },
   {
+    id: "round", label: "Round items", title: "Any round items, like tumblers, pens or bottles?", hint: "Round items need a rotary attachment.",
+    options: [["flat", "No, all flat"], ["some", "Yes, some round items"], ["most", "Mostly round items"]],
+  },
+  {
     id: "shop", label: "Your shop", title: "How much will it run?", hint: "Pick where you are today, plus a little room to grow.",
     options: [["side", "Side business or just starting"], ["full", "Full-time shop"], ["high", "High volume, every day"]],
+  },
+  {
+    id: "vent", label: "Ventilation", title: "Can you vent fumes outside?", hint: "A window or wall vent works. If not, we will point you to an indoor filter.",
+    options: [["out", "Yes, through a wall or window"], ["in", "No, it has to stay indoors"]],
   },
 ];
 const NEED = { s: 12, m: 24, l: 36, xl: 51, xxl: 63 };
@@ -60,16 +68,17 @@ const NEED = { s: 12, m: 24, l: 36, xl: 51, xxl: 63 };
 /** Score every machine against the answers. Returns [{ key, score, reasons }] best first. */
 function rank(a) {
   const mats = a.material || [];
-  const onlyDrinkware = mats.length === 1 && mats[0] === "drinkware";
+  const onlyDrinkware = (mats.length === 1 && mats[0] === "drinkware") || a.round === "most";
+  const round = mats.includes("drinkware") || a.round === "some" || a.round === "most";
   return Object.entries(M)
     .map(([key, m]) => {
       let score = 0;
       const reasons = [];
       const add = (n, why) => { score += n; if (why && n > 0) reasons.push([n, why]); };
-      if (mats.includes("drinkware")) {
+      if (round) {
         if (key === "vertigo") add(onlyDrinkware ? 9 : 4, "Built-in vertical rotary for drinkware");
         else add(0.5, "Takes a rotary attachment for round items");
-      } else if (key === "vertigo" && mats.length) score -= 100; // drinkware machine: only offered when drinkware is picked
+      } else if (key === "vertigo" && (mats.length || a.round === "flat")) score -= 100; // drinkware machine: only offered for round work
       if (mats.includes("photo") || mats.includes("stone") || mats.includes("coated")) {
         if (m.tube !== "glass") add(2, "RF tube for fine detail and photo engraving");
       }
@@ -97,6 +106,15 @@ function rank(a) {
     .sort((x, y) => y.score - x.score);
 }
 
+/** Accessories the answers call for: a rotary for round items (not for VertiGo, which has one built in) and an indoor fume filter. */
+function addOnsFor(a, key) {
+  const out = [];
+  const round = (a.material || []).includes("drinkware") || a.round === "some" || a.round === "most";
+  if (round && key !== "vertigo") out.push(["Rotary attachment", "piburn-omni-for-onelaser"]);
+  if (a.vent === "in") out.push(["Indoor fume filter", M[key].tier === 1 ? "filtrabox-micro" : "filtrabox-compact-x"]);
+  return out.filter(([, h]) => byHandle[h]);
+}
+
 const FINANCE_MONTHS = 24; // same illustration as 1laser.com's "24-month payment": price ÷ 24
 const monthly = (p) => (p.price / FINANCE_MONTHS).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
@@ -113,6 +131,7 @@ export default function FinderCard() {
   const answered = Object.values(answers).some((v) => (Array.isArray(v) ? v.length : v));
   const top = ranked[0] && byHandle[M[ranked[0].key].handle];
   const next = ranked[1] && byHandle[M[ranked[1].key].handle];
+  const extras = ranked[0] ? addOnsFor(answers, ranked[0].key) : [];
   const has = (s) => (s.multi ? (answers[s.id] || []).length > 0 : !!answers[s.id]);
   const pick = (id) => {
     if (cur.multi) {
@@ -143,6 +162,9 @@ export default function FinderCard() {
           <span className="ih-new">{t("Best match")}</span>
           <h3><Link to={`/products/${top.handle}`}>{top.name}</Link></h3>
           <ul className="fc-reasons">{(answered ? ranked[0].reasons : []).slice(0, 2).map((r) => <li key={r}><Icon name="check" size={14} />{t(r)}</li>)}</ul>
+          {extras.length > 0 && (
+            <p className="fc-addons"><span>{t("Add")}</span>{extras.map(([label, h]) => <Link key={h} to={`/products/${h}`}>+ {t(label)}</Link>)}</p>
+          )}
         </div>
         <Link to={`/products/${top.handle}`} className="ih-card-media" tabIndex={-1} aria-hidden="true"><img src={img(top.images[0], 700)} alt="" /></Link>
         <p className="ih-card-price">
