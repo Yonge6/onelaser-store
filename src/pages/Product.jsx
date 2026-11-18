@@ -1,22 +1,20 @@
 import { useEffect, useMemo, useState } from "react";
-import { byHandle, go, img, machines, money } from "../lib.js";
+import { byHandle, go, img, machines, products } from "../lib.js";
 import { useCart } from "../cart.jsx";
 import { addOns, faq, promo } from "../data/site.js";
 import { Icon, Link, QtyStepper, usd } from "../components/ui.jsx";
 import stories from "../data/stories.json";
-import Story from "../components/Story.jsx";
+import Story, { Look } from "../components/Story.jsx";
 
-/* Buy area follows the Insta360 Store product page (store.insta360.com/product/x5, measured 2026-11-17 at 1440):
+/* The whole page follows the Insta360 Store product page (store.insta360.com/product/x5, measured 2026-11-17 at 1440 and 390):
    full-bleed gray stage on the left (sticky) | 464px column: 32px title, option summary line, promo card, info card with icon rows,
-   bordered option cards (72px image, selected card expands), "Frequently bought together" add-ons, gray order summary,
-   shipping notes; fixed 80px bottom bar with name, 24px price and 56px pill buttons.
-   The long story, specs and FAQ below are kept from the earlier version (Insta360 keeps those on its brand site).
-   Earlier note — structure followed the Bambu Lab and ComMarker store product pages (studied 2026-11-16):
-   breadcrumbs → sticky gallery with thumbnail row and trust icons | long buy column (title, red price + typical price + save pill,
-   tagline, Product Features bullets, sale countdown bar, bundle cards, help rows, add-on accessories, quantity + buy, order info, payment)
-   → sticky anchor nav → overview banner → Highlights at a Glance → feature stories → applications → Find Your Perfect machine
-   → Technical Specifications → FAQ, with a fixed bottom buy bar. Sizes and type stay on the DJI scale used by the rest of the store.
-   Reviews and "What's in the box" are omitted: 1laser.com has no data for them. */
+   bordered option cards (72px image, selected card expands), "Frequently bought together" add-ons, gray order summary, shipping notes
+   → sticky 49px white menu (product name left; Overview, Compare, Specs, FAQ, Accessories right, 13px bold)
+   → black overview (intro image, "Take a closer look", stat row, feature sections — see components/Story.jsx)
+   → "Compare models" (64px title, 250px columns, sticky name/price row, 22px values) → "Specs" (44px title, 28px groups, 240px labels)
+   → white FAQ (32px title, numbered 16px rows) → white "You might also like" (288×534 cards, 128×40 pill)
+   → fixed 80px bottom bar with name, 24px price and 56px pill buttons.
+   Left out because OneLaser has no data or service for them: Reviews, Trade-In, coverage plans, cloud service, Insta360 Gold. */
 
 function addOnsFor(product) {
   if (product.kind !== "machine") return [];
@@ -37,7 +35,7 @@ function useStory(handle) {
     }
     // Round-robin across sections so the grid shows one headline feature per topic first.
     const highlights = [];
-    for (let i = 0; highlights.length < 7 && cards.some((c) => c[i]); i++) cards.forEach((c) => c[i] && highlights.length < 7 && highlights.push(c[i]));
+    for (let i = 0; highlights.length < 8 && cards.some((c) => c[i]); i++) cards.forEach((c) => c[i] && highlights.length < 8 && highlights.push(c[i]));
     if (!cases.length) cases = (story.blocks.find((b) => b.kind === "gallery")?.items || []).slice(0, 5).map((i) => ({ ...i, eyebrow: i.title, text: "" }));
     return {
       highlights, cases,
@@ -50,28 +48,13 @@ function useStory(handle) {
   }, [handle]);
 }
 
-// eslint-disable-next-line no-unused-vars
-function UseCases({ cases }) {
-  const [i, setI] = useState(0);
-  const c = cases[i] || cases[0];
-  return (
-    <>
-      <div className="usecase-media"><img src={img(c.img, 1600)} alt={c.title} loading="lazy" /></div>
-      <div className="usecase-tabs" role="tablist">
-        {cases.map((x, n) => <button key={n} type="button" role="tab" aria-selected={n === i} className={n === i ? "on" : ""} onClick={() => setI(n)}>{x.eyebrow || x.title}</button>)}
-      </div>
-      {c.text && <p className="usecase-description">{c.text}</p>}
-    </>
-  );
-}
-
 const COMPARE_ROWS = ["Laser source", "Work area", "Max engraving speed", "Acceleration", "Positioning accuracy", "Max resolution"];
 function compareSet(product) {
   const current = machines.filter((m) => m.series !== "legacy");
   const same = current.filter((m) => m.series === product.series && m.handle !== product.handle);
   const others = current.filter((m) => m.series !== product.series);
   const flagship = ["onelaser-xrf-desktop-laser-machine", "cobra-10-100w-co2-laser-engraver-cutter", "hydra-9-gen-2-70w-rf-co2-dual-laser-machine"].map((h) => byHandle[h]).filter((m) => others.includes(m));
-  return [product, ...[...same, ...flagship, ...others].filter((m, i, a) => a.indexOf(m) === i).slice(0, 2)];
+  return [product, ...[...same, ...flagship, ...others].filter((m, i, a) => a.indexOf(m) === i).slice(0, 3)];
 }
 
 export default function Product({ handle }) {
@@ -81,15 +64,15 @@ export default function Product({ handle }) {
   const [photo, setPhoto] = useState(0);
   const [picked, setPicked] = useState({});
   const qty = 1;
-  const [allSpecs, setAllSpecs] = useState(false);
   const [details, setDetails] = useState(null);
   const [active, setActive] = useState("overview");
+  const [added, setAdded] = useState(null);
   useEffect(() => {
-    setVariantId(null); setPhoto(0); setPicked({}); setAllSpecs(false); setDetails(null); setActive("overview");
+    setVariantId(null); setPhoto(0); setPicked({}); setDetails(null); setActive("overview");
   }, [handle]);
   useEffect(() => {
     const spy = () => {
-      const ids = ["overview", "highlights", "cases", "compare", "specs", "faq"];
+      const ids = ["overview", "compare", "specs", "faq", "accessories"];
       let current = "overview";
       for (const id of ids) {
         const el = document.getElementById(`pdp-${id}`);
@@ -125,10 +108,10 @@ export default function Product({ handle }) {
   const questions = [...story.qa, ...faq];
   const specGroups = story.specs || (product.specs ? [{ group: "Key specifications", rows: [["Best for", product.bestFor], ...Object.entries(product.specs)] }] : null);
   const bullets = story.bullets || (product.specs ? Object.entries(product.specs).slice(0, 6).map(([k, v]) => `${k}: ${v}`) : [product.tagline]);
-  const hasGallery = story.blocks.some((b) => b.kind === "gallery");
-  const glance = isMachine && product.specs ? Object.entries(product.specs).slice(0, 6) : [];
-  const home = product.kind === "machine" ? ["machines", "Laser Machines"] : product.kind === "material" ? ["materials", "Materials"] : ["accessories", "Accessories"];
-  const sections = [["overview", "Overview"], story.blocks.length && ["highlights", "Features"], hasGallery && ["cases", "Applications"], compare.length && ["compare", "Compare"], specGroups && ["specs", "Specs"], ["faq", "FAQ"]].filter(Boolean);
+  const closer = story.highlights.slice(0, story.highlights.length >= 8 ? 8 : 4).map(({ title, text, img: src, video }) => ({ title, text, img: src, video }));
+  const stats = isMachine && product.specs ? ["Max engraving speed", "Positioning accuracy", "Max resolution"].filter((k) => product.specs[k]).map((k) => [k, product.specs[k]]) : [];
+  const likes = (isMachine ? [...options, ...products.filter((p) => p.kind === "accessory" && p.available && !options.includes(p))] : products.filter((p) => p.kind === product.kind && p.handle !== product.handle && p.available)).slice(0, 4);
+  const sections = [["overview", "Overview"], compare.length > 1 && ["compare", "Compare"], specGroups && ["specs", "Specs"], ["faq", "FAQ"], likes.length && ["accessories", "Accessories"]].filter(Boolean);
   const jump = (id) => {
     setActive(id);
     document.getElementById(`pdp-${id}`)?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -231,75 +214,90 @@ export default function Product({ handle }) {
         </div>
       </section>
 
-      <nav className="anchor-nav" aria-label="Product sections">
-        <div>{sections.map(([id, label]) => <button key={id} type="button" className={active === id ? "on" : ""} onClick={() => jump(id)}>{label}</button>)}</div>
-      </nav>
-
-      <section id="pdp-overview" className="pdp-overview">
-        <img src={img(product.images[0], 1400)} alt="" loading="lazy" />
+      <menu className="im-menu">
         <div>
-          <p>{isMachine ? product.seriesName : "OneLaser Store"}</p>
-          <h2>{product.name}</h2>
-          <span>{product.tagline}</span>
+          <b>{product.name}</b>
+          <ul>{sections.map(([id, label]) => <li key={id}><button type="button" className={active === id ? "on" : ""} onClick={() => jump(id)}>{label}</button></li>)}</ul>
         </div>
+      </menu>
+
+      <div className="is" id="pdp-overview">
+        {story.blocks.length > 0 ? (
+          <>
+            <Story key={`${handle}-a`} blocks={story.blocks.slice(0, 1)} />
+            {closer.length >= 4 && <Look title="Take a closer look" items={closer} />}
+            {stats.length === 3 && (
+              <section className="is-stats">
+                <h2>{product.name} at a glance</h2>
+                <ul>{stats.map(([k, v]) => <li key={k}><b>{v}</b><span>{k}</span></li>)}</ul>
+              </section>
+            )}
+            <Story key={`${handle}-b`} blocks={story.blocks.slice(1)} />
+          </>
+        ) : (
+          <section className="is-feature">
+            <header className="is-head wide">
+              <h4>{isMachine ? product.seriesName : "OneLaser Store"}</h4>
+              <h2>{product.name}</h2>
+              <p>{product.description}{product.description.length >= 1500 ? "…" : ""}</p>
+            </header>
+            <div className="is-media contain"><img src={img(product.images[1] || product.images[0], 1600)} alt="" loading="lazy" /></div>
+          </section>
+        )}
+
+        {compare.length > 1 && (
+          <section id="pdp-compare" className="is-compare">
+            <h2>Compare models</h2>
+            <div className="is-compare-scroll">
+              <div className={`is-compare-grid n${compare.length}`}>
+                {compare.map((m) => <Link key={m.handle} to={`/products/${m.handle}`} className="is-compare-img"><img src={img(m.images[0], 500)} alt="" loading="lazy" /></Link>)}
+                {compare.map((m, n) => (
+                  <div key={m.handle} className="is-compare-head">
+                    <b>{m.name}</b>
+                    <strong>{usd(m.price).replace(".00", "")}</strong>
+                    {n === 0 ? <span>Now Viewing</span> : <Link to={`/products/${m.handle}`}>Learn more</Link>}
+                  </div>
+                ))}
+                {COMPARE_ROWS.map((r) => compare.map((m) => <div key={r + m.handle} className="is-compare-cell"><b>{m.specs[r]}</b><span>{r}</span></div>))}
+              </div>
+            </div>
+          </section>
+        )}
+
+        {specGroups && (
+          <section id="pdp-specs" className="is-specs">
+            <h3>Specs</h3>
+            {specGroups.map((g) => (
+              <div key={g.group}>
+                <h4>{g.group}</h4>
+                <dl>{g.rows.map(([k, v]) => <div key={k}><dt>{k}</dt><dd>{v}</dd></div>)}</dl>
+              </div>
+            ))}
+          </section>
+        )}
+      </div>
+
+      <section id="pdp-faq" className="iw">
+        <h2>FAQ</h2>
+        <ul className="iw-faq">{questions.map(([q, a], n) => <li key={n}><details><summary><span>{n + 1} . {q}</span><Icon name="chevron" size={16} /></summary><p>{a}</p></details></li>)}</ul>
       </section>
 
-      {glance.length > 0 && (
-        <section className="pdp-glance">
-          <h2>Highlights at a Glance</h2>
-          <div className="glance">{glance.map(([k, v]) => <div key={k}><strong>{v}</strong><span>{k}</span></div>)}</div>
-        </section>
-      )}
-
-      {story.blocks.length > 0 && <Story key={handle} blocks={story.blocks} firstId="pdp-highlights" galleryId="pdp-cases" />}
-
-      {compare.length > 0 && (
-        <section id="pdp-compare" className="pdp-section">
-          <h2>Find Your Perfect Machine</h2>
-          <div className="compare-scroll">
-            <div className="compare-products">
-              {compare.map((m) => (
-                <article key={m.handle}>
-                  <Link to={`/products/${m.handle}`} className="compare-media"><img src={img(m.images[0], 600)} alt="" loading="lazy" /></Link>
-                  <h3>{m.name}</h3>
-                  <p className="compare-subtitle">{m.tagline}</p>
-                  <p className="compare-price">From USD {money(m.price)}</p>
-                  <Link to={`/products/${m.handle}`} className="compare-btn">Buy Now</Link>
-                </article>
-              ))}
-            </div>
-            <div className="compare-specs">
-              {COMPARE_ROWS.map((r) => (
-                <div key={r} className="compare-row">{compare.map((m) => <div key={m.handle} className="compare-cell"><strong>{m.specs[r]}</strong><span>{r}</span></div>)}</div>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
-
-      {!isMachine && (
-        <section className="pdp-section">
-          <h2>Overview</h2>
-          <p className="overview-text">{product.description}{product.description.length >= 1500 ? "…" : ""}</p>
-        </section>
-      )}
-
-      {specGroups && (
-        <section id="pdp-specs" className="pdp-section">
-          <h2>Technical Specifications</h2>
-          <div className={`spec-table${allSpecs ? " open" : ""}`}>
-            {specGroups.map((g) => (
-              <div key={g.group} className="spec-group"><h3>{g.group}</h3><dl>{g.rows.map(([k, v]) => <div key={k}><dt>{k}</dt><dd>{v}</dd></div>)}</dl></div>
+      {likes.length > 0 && (
+        <section id="pdp-accessories" className="iw like">
+          <h2>You might also like</h2>
+          <div className="iw-like">
+            {likes.map((a) => (
+              <article key={a.handle}>
+                <Link to={`/products/${a.handle}`}><img src={img(a.images[0], 600)} alt="" loading="lazy" /><b>{a.name}</b></Link>
+                <p>{a.variants.length > 1 ? "From " : ""}{usd(a.price)}</p>
+                {!a.available ? <button type="button" disabled>Out of stock</button>
+                  : a.variants.length > 1 ? <Link to={`/products/${a.handle}`} className="btn">Select options</Link>
+                  : <button type="button" onClick={() => { add(a.handle, a.variants[0].id, 1); setAdded(a.handle); }}>{added === a.handle ? "Added" : "Add to cart"}</button>}
+              </article>
             ))}
           </div>
-          {specGroups.length > 2 && <button type="button" className="spec-more" onClick={() => setAllSpecs(!allSpecs)}>{allSpecs ? "Show fewer specs" : "Show all specs"}</button>}
         </section>
       )}
-
-      <section id="pdp-faq" className="pdp-section">
-        <h2>Frequently Asked Questions</h2>
-        <div className="faq">{questions.map(([q, a], n) => <details key={n}><summary>{q}</summary><p>{a}</p></details>)}</div>
-      </section>
 
       <div className="ip-bar">
         <div className="ip-bar-name"><strong>{product.name}</strong><span>{variant.title || product.tagline}</span></div>

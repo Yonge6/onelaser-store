@@ -2,9 +2,14 @@ import { useEffect, useRef, useState } from "react";
 import { img } from "../lib.js";
 import { Icon } from "./ui.jsx";
 
-/* Long-form product story, in the dark cinematic style of the Bambu Lab and ComMarker product pages.
+/* Product overview, laid out after the black overview on the Insta360 Store product page
+   (store.insta360.com/product/x5, measured 2026-11-17 at 1440):
+   centered feature = 18/21.6 bold accent eyebrow, 44/50.6 bold title, 560-wide 16/24 gray text, 800×450 media with 24px radius;
+   side feature = 620×349 media + 420 copy, padding 80/170;
+   tab feature = 800×450 slides 20px apart with the neighbours showing, 48px round arrows, pill tab bar on #1a1a1a, 640-wide text;
+   "closer look" = four columns of 302×170 thumbs (10px radius), 20/24 bold title, 14/19.6 gray text.
    Blocks come from src/data/stories.json (scraped from the 1laser.com product pages), in the official order.
-   Specs and FAQ blocks are rendered by the product page itself, in the light sections after the story. */
+   Specs and FAQ blocks are rendered by the product page itself. */
 
 const ytId = (url) => (url.match(/embed\/([\w-]+)/) || url.match(/[?&]v=([\w-]+)/) || [])[1];
 
@@ -13,109 +18,129 @@ function Reveal({ as: Tag = "section", className = "", children, ...rest }) {
   useEffect(() => {
     const el = ref.current;
     if (!el || !("IntersectionObserver" in window)) return el?.classList.add("in");
-    const io = new IntersectionObserver(([e]) => e.isIntersecting && (el.classList.add("in"), io.disconnect()), { rootMargin: "0px 0px -12% 0px" });
+    const io = new IntersectionObserver(([e]) => e.isIntersecting && (el.classList.add("in"), io.disconnect()), { rootMargin: "0px 0px -10% 0px" });
     io.observe(el);
     return () => io.disconnect();
   }, []);
-  return <Tag ref={ref} className={`ls-reveal ${className}`} {...rest}>{children}</Tag>;
+  return <Tag ref={ref} className={`is-reveal ${className}`} {...rest}>{children}</Tag>;
 }
 
-const Head = ({ b, left = false }) =>
+const Head = ({ b }) =>
   b.title || b.eyebrow ? (
-    <header className={`ls-head${left ? " left" : ""}`}>
-      {b.eyebrow && <p className="ls-eyebrow">{b.eyebrow}</p>}
+    <header className="is-head">
+      {b.eyebrow && <h4>{b.eyebrow}</h4>}
       {b.title && <h2>{b.title}</h2>}
-      {b.intro && <p className="ls-intro">{b.intro}</p>}
+      {b.intro && <p>{b.intro}</p>}
     </header>
   ) : null;
 
-const Media = ({ item, width = 1400 }) =>
+const Media = ({ item, width = 1600 }) =>
   item.video && !/youtube/.test(item.video) ? (
     <video src={item.video} poster={img(item.img || item.image, width)} muted loop playsInline autoPlay preload="none" />
   ) : (
     <img src={img(item.img || item.image, width)} alt={item.title || ""} loading="lazy" />
   );
 
-const Proof = ({ text }) => (text ? <ul className="ls-proof">{text.split(" · ").map((t) => <li key={t}>{t}</li>)}</ul> : null);
+const hasMedia = (x) => !!(x.img || x.video);
+const Notes = ({ text }) => (text ? <p className="is-notes">{text}</p> : null);
 
-function Tabs({ b, id }) {
-  const [i, setI] = useState(0);
-  const item = b.items[i] || b.items[0];
+/** Insta360 "closer look" grid: also used for text-only feature cards. */
+export function Look({ title, items, cols = 4 }) {
   return (
-    <Reveal className="ls-block" id={id}>
+    <Reveal className="is-look">
+      {title && <h2>{title}</h2>}
+      <ul className={`n${cols}`}>
+        {items.map((it, n) => (
+          <li key={n}>
+            {hasMedia(it) && <div className="is-thumb"><Media item={it} width={700} /></div>}
+            {it.eyebrow && <span>{it.eyebrow}</span>}
+            <h4>{it.title}</h4>
+            {it.text && <p>{it.text}</p>}
+          </li>
+        ))}
+      </ul>
+    </Reveal>
+  );
+}
+
+function Slides({ b, items }) {
+  const [i, setI] = useState(0);
+  const item = items[i] || items[0];
+  const n = items.length;
+  return (
+    <Reveal className="is-slides">
       <Head b={b} />
-      <div className="ls-tabs" role="tablist">
-        {b.items.map((it, n) => <button key={n} type="button" role="tab" aria-selected={n === i} className={n === i ? "on" : ""} onClick={() => setI(n)}>{it.eyebrow || it.title}</button>)}
+      <div className="is-track-wrap">
+        <ul className="is-track" style={{ "--i": i }}>
+          {items.map((it, k) => (
+            <li key={k} className={k === i ? "on" : ""} onClick={() => setI(k)}><Media item={it} /></li>
+          ))}
+        </ul>
+        {n > 1 && (
+          <>
+            <button type="button" className="is-arrow prev" aria-label="Previous" disabled={i === 0} onClick={() => setI(i - 1)}><Icon name="chevron" size={18} /></button>
+            <button type="button" className="is-arrow next" aria-label="Next" disabled={i === n - 1} onClick={() => setI(i + 1)}><Icon name="chevron" size={18} /></button>
+          </>
+        )}
       </div>
-      <div className={`ls-panel${item.img || item.video ? "" : " text-only"}`} key={i}>
-        {(item.img || item.video) && <div className="ls-panel-media"><Media item={item} /></div>}
-        <div className="ls-panel-copy">
-          {item.eyebrow && <p className="ls-eyebrow">{item.eyebrow}</p>}
-          <h3>{item.title}</h3>
-          <p>{item.text}</p>
-          <Proof text={item.footer} />
-        </div>
+      <div className="is-pills" role="tablist">
+        {items.map((it, k) => <button key={k} type="button" role="tab" aria-selected={k === i} className={k === i ? "on" : ""} onClick={() => setI(k)}>{it.eyebrow || it.title}</button>)}
+      </div>
+      <div className="is-slide-text" key={i}>
+        {item.eyebrow && item.title && <h3>{item.title}</h3>}
+        {item.text && <p>{item.text}</p>}
+        <Notes text={item.footer} />
       </div>
     </Reveal>
   );
 }
 
-function Features({ b, id }) {
-  const lead = b.items.find((x) => x.img || x.video) || (b.image ? { title: "", text: "", img: b.image, tags: [] } : null);
-  const cards = b.items.filter((x) => x !== lead);
+function Feature({ b }) {
+  const media = b.items.filter(hasMedia);
+  const text = b.items.filter((x) => !hasMedia(x));
+  if (!media.length && b.image) media.push({ img: b.image, title: "", text: "" });
   return (
-    <Reveal className="ls-block" id={id}>
-      <Head b={b} />
-      {lead && (
-        <article className="ls-lead">
-          <Media item={lead} width={1800} />
-          {lead.title && (
-            <div>
-              {lead.eyebrow && <p className="ls-eyebrow">{lead.eyebrow}</p>}
-              <h3>{lead.title}</h3>
-              {lead.text !== b.intro && <p>{lead.text}</p>}
-              <Proof text={lead.footer} />
+    <>
+      {media.length >= 2 ? (
+        <Slides b={b} items={media} />
+      ) : (
+        <Reveal className="is-feature">
+          <Head b={b} />
+          {media[0] && <div className="is-media"><Media item={media[0]} /></div>}
+          {media[0]?.title && (
+            <div className="is-slide-text">
+              <h3>{media[0].title}</h3>
+              {media[0].text && media[0].text !== b.intro && <p>{media[0].text}</p>}
+              <Notes text={media[0].footer} />
             </div>
           )}
-        </article>
+        </Reveal>
       )}
-      {cards.length > 0 && (
-        <div className={`ls-cards n${Math.min(cards.length, 3)}`}>
-          {cards.map((c, n) => (
-            <article key={n}>
-              {(c.img || c.video) && <div className="ls-card-media"><Media item={c} width={900} /></div>}
-              <div>
-                {c.eyebrow && <p className="ls-eyebrow">{c.eyebrow}</p>}
-                <h3>{c.title}</h3>
-                <p>{c.text}</p>
-                <Proof text={c.footer} />
-              </div>
-            </article>
-          ))}
-        </div>
+      {text.length > 0 && <Look items={text} cols={Math.min(Math.max(text.length, 2), 4)} />}
+      {b.stats?.length > 0 && (
+        <Reveal className="is-stats"><ul>{b.stats.slice(0, 4).map(([v, l]) => <li key={v + l}><b>{v}</b><span>{l}</span></li>)}</ul></Reveal>
       )}
-      {b.stats?.length > 0 && <div className="ls-stats">{b.stats.map(([v, l]) => <div key={v + l}><strong>{v}</strong><span>{l}</span></div>)}</div>}
-    </Reveal>
+    </>
   );
 }
 
-function Gallery({ b, id }) {
+function Gallery({ b }) {
   const [all, setAll] = useState(false);
   const items = all ? b.items : b.items.slice(0, 8);
   return (
-    <Reveal className="ls-block" id={id}>
+    <Reveal className="is-look">
       <Head b={b} />
-      <div className="ls-gallery">
-        {items.map((it, n) => <figure key={n}><img src={img(it.img, 700)} alt="" loading="lazy" /><figcaption>{it.title}</figcaption></figure>)}
-      </div>
-      {b.items.length > 8 && !all && <button type="button" className="ls-more" onClick={() => setAll(true)}>Show all {b.items.length} ideas</button>}
+      <ul className="n4 photos">
+        {items.map((it, n) => <li key={n}><div className="is-thumb"><img src={img(it.img, 700)} alt="" loading="lazy" /></div><h4>{it.title}</h4></li>)}
+      </ul>
+      {b.items.length > 8 && !all && <button type="button" className="is-more" onClick={() => setAll(true)}>Show all {b.items.length}</button>}
     </Reveal>
   );
 }
 
 const PROMISE_ICONS = ["refresh", "shield", "headset"];
 
-export default function Story({ blocks, firstId, galleryId }) {
+export default function Story({ blocks }) {
   const [video, setVideo] = useState(null);
   useEffect(() => {
     if (!video) return undefined;
@@ -123,57 +148,53 @@ export default function Story({ blocks, firstId, galleryId }) {
     window.addEventListener("keydown", close);
     return () => window.removeEventListener("keydown", close);
   }, [video]);
-  let firstUsed = false;
-  let galleryUsed = false;
   let splits = 0;
-  const first = () => (firstUsed ? undefined : ((firstUsed = true), firstId));
-  const Play = ({ id, thumb, big }) => (
-    <button type="button" className={`ls-video${big ? " big" : ""}`} onClick={() => setVideo(id)} aria-label="Play video">
-      <img src={thumb ? img(thumb, big ? 1400 : 700) : `https://i.ytimg.com/vi/${id}/hqdefault.jpg`} alt="" loading="lazy" />
+  const Play = ({ id, thumb }) => (
+    <button type="button" className="is-video" onClick={() => setVideo(id)} aria-label="Play video">
+      <img src={thumb ? img(thumb, 1400) : `https://i.ytimg.com/vi/${id}/hqdefault.jpg`} alt="" loading="lazy" />
       <span aria-hidden="true" />
     </button>
   );
   return (
-    <div className="ls">
+    <>
       {blocks.map((b, i) => {
         switch (b.kind) {
           case "banner":
             return (
-              <Reveal as="div" className="ls-banner" key={i}>
+              <Reveal as="div" className="is-banner" key={i}>
                 <picture>
                   {b.mobile && <source media="(max-width: 640px)" srcSet={img(b.mobile, 900)} />}
-                  <img src={img(b.image, 2000)} alt="" loading="lazy" />
+                  <img src={img(b.image, 2400)} alt="" loading="lazy" />
                 </picture>
               </Reveal>
             );
           case "split":
             return (
-              <Reveal className={`ls-block ls-split${splits++ % 2 ? " flip" : ""}`} key={i} id={first()}>
-                <div className="ls-split-media">{b.video && ytId(b.video) ? <Play id={ytId(b.video)} thumb={b.image} big /> : <Media item={b} />}</div>
-                <Head b={b} left />
+              <Reveal className={`is-split${splits++ % 2 ? " flip" : ""}`} key={i}>
+                <div className="is-media">{b.video && ytId(b.video) ? <Play id={ytId(b.video)} thumb={b.image} /> : <Media item={b} />}</div>
+                <Head b={b} />
               </Reveal>
             );
           case "tabs":
-            return <Tabs b={b} key={i} id={first()} />;
           case "features":
-            return <Features b={b} key={i} id={first()} />;
+            return <Feature b={b} key={i} />;
           case "gallery":
-            return <Gallery b={b} key={i} id={galleryUsed ? undefined : ((galleryUsed = true), galleryId)} />;
+            return <Gallery b={b} key={i} />;
           case "videos":
             return (
-              <Reveal className="ls-block" key={i}>
+              <Reveal className="is-videos" key={i}>
                 <Head b={b} />
-                <div className={`ls-videos n${Math.min(b.videos.length, 5)}`}>{b.videos.map((v, n) => <Play key={v.id} id={v.id} thumb={v.img} big={n === 0} />)}</div>
+                <ul>{b.videos.map((v) => <li key={v.id}><Play id={v.id} thumb={v.img} /></li>)}</ul>
               </Reveal>
             );
           case "table":
             return (
-              <Reveal className="ls-block" key={i}>
+              <Reveal className="is-feature" key={i}>
                 <Head b={b} />
-                {b.video && ytId(b.video) && <div className="ls-table-video"><Play id={ytId(b.video)} big /></div>}
+                {b.video && ytId(b.video) && <div className="is-media"><Play id={ytId(b.video)} /></div>}
                 {b.rows?.length > 1 && (
-                  <div className="ls-table-scroll">
-                    <table className="ls-table">
+                  <div className="is-table-scroll">
+                    <table className="is-table">
                       <thead><tr>{b.rows[0].map((c, n) => <th key={n}>{c}</th>)}</tr></thead>
                       <tbody>{b.rows.slice(1).map((r, n) => <tr key={n}>{r.map((c, k) => (k ? <td key={k}>{c}</td> : <th key={k}>{c}</th>))}</tr>)}</tbody>
                     </table>
@@ -183,10 +204,10 @@ export default function Story({ blocks, firstId, galleryId }) {
             );
           case "promise":
             return (
-              <Reveal className="ls-block" key={i}>
-                <div className="ls-promise">
-                  {b.items.map((it, n) => <article key={n}><Icon name={PROMISE_ICONS[n % 3]} size={32} /><h3>{it.title}</h3><p>{it.text}</p></article>)}
-                </div>
+              <Reveal className="is-look" key={i}>
+                <ul className="n3 promise">
+                  {b.items.map((it, n) => <li key={n}><Icon name={PROMISE_ICONS[n % 3]} size={32} /><h4>{it.title}</h4><p>{it.text}</p></li>)}
+                </ul>
               </Reveal>
             );
           default:
@@ -194,13 +215,13 @@ export default function Story({ blocks, firstId, galleryId }) {
         }
       })}
       {video && (
-        <div className="ls-modal" role="dialog" aria-modal="true" aria-label="Video" onClick={() => setVideo(null)}>
+        <div className="is-modal" role="dialog" aria-modal="true" aria-label="Video" onClick={() => setVideo(null)}>
           <button type="button" aria-label="Close video">×</button>
           <div onClick={(e) => e.stopPropagation()}>
             <iframe src={`https://www.youtube-nocookie.com/embed/${video}?autoplay=1&rel=0`} title="Video" allow="autoplay; encrypted-media; picture-in-picture" allowFullScreen />
           </div>
         </div>
       )}
-    </div>
+    </>
   );
 }

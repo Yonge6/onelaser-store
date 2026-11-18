@@ -8,7 +8,7 @@ import { BenefitArt } from "../components/Chrome.jsx";
    full-bleed hero 660 with segmented progress → headline + sticky pill tabs + 3-column product cards (416×554, radius 24)
    → feature banner 480 → Shop by interest (310×480 tiles) → two half cards 640×480 → image banner 480
    → story carousel (864×486) → business band 376 → four support tiles 240. 64px gutters, 64px between blocks.
-   Kept from OneLaser: Certia typeface and brand red (Insta360 uses Poppins and yellow). */
+   Typeface is Poppins, as on Insta360. Only the brand red is OneLaser's own (Insta360 uses yellow). */
 
 const SLIDE_MS = 6000;
 
