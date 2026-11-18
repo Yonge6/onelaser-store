@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { useCart } from "../cart.jsx";
 import { t } from "../i18n.js";
 import { asset, byHandle, img, products } from "../lib.js";
 import { heroSlides, homeStories, homeTabs, interests, newHandles, promo, shortSlogans } from "../data/site.js";
@@ -62,6 +63,35 @@ function Hero() {
   );
 }
 
+/* Insta360's card has "Learn more" + "Buy now", both leading to the product page. Here the left control adds to the cart instead:
+   it adds the first available option (the one the product page preselects), stays on the page and confirms for a moment. */
+function HomeCard({ p }) {
+  const { add } = useCart();
+  const [added, setAdded] = useState(false);
+  const variant = p.variants.find((v) => v.available) || p.variants[0];
+  const addNow = () => {
+    add(p.handle, variant.id, 1);
+    setAdded(true);
+    setTimeout(() => setAdded(false), 1800);
+  };
+  return (
+    <article className="ih-card">
+      <div className="ih-card-info">
+        {newHandles.includes(p.handle) && <span className="ih-new">{t("NEW")}</span>}
+        <h3><Link to={`/products/${p.handle}`}>{p.name}</Link></h3>
+        <p>{t(shortSlogans[p.handle] || p.tagline)}</p>
+      </div>
+      <Link to={`/products/${p.handle}`} className="ih-card-media" tabIndex={-1} aria-hidden="true"><img src={img(p.images[0], 700)} alt="" loading="lazy" /></Link>
+      <div className="ih-card-btns">
+        <button type="button" className={`ih-btn line sm${added ? " added" : ""}`} disabled={!p.available} onClick={addNow} aria-live="polite">
+          {added ? <><Icon name="check" size={16} />{t("Added")}</> : !p.available ? t("Sold Out") : <><Icon name="cart" size={16} />{t("Add to cart")}</>}
+        </button>
+        <Link to={`/products/${p.handle}`} className="ih-btn dark sm">{t("Buy now")}</Link>
+      </div>
+    </article>
+  );
+}
+
 function ProductBlock() {
   const [ti, setTi] = useState(0);
   const tab = homeTabs[ti];
@@ -77,20 +107,9 @@ function ProductBlock() {
         </div>
       </div>
       <div className="ih-wrap">
-        <div className="ih-grid" key={t}>
+        <div className="ih-grid" key={ti}>
           {list.map((p) => (
-            <article key={p.handle} className="ih-card">
-              <div className="ih-card-info">
-                {newHandles.includes(p.handle) && <span className="ih-new">{t("NEW")}</span>}
-                <h3><Link to={`/products/${p.handle}`}>{p.name}</Link></h3>
-                <p>{t(shortSlogans[p.handle] || p.tagline)}</p>
-              </div>
-              <Link to={`/products/${p.handle}`} className="ih-card-media" tabIndex={-1} aria-hidden="true"><img src={img(p.images[0], 700)} alt="" loading="lazy" /></Link>
-              <div className="ih-card-btns">
-                <Link to={`/products/${p.handle}`} className="ih-link">{t("Learn more")}</Link>
-                <Link to={`/products/${p.handle}`} className="ih-btn dark sm">{t("Buy now")}</Link>
-              </div>
-            </article>
+            <HomeCard key={p.handle} p={p} />
           ))}
         </div>
         <div className="ih-viewall"><Link to={tab.all}>{t("View all")}</Link></div>
