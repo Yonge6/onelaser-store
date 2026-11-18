@@ -248,6 +248,8 @@ function Videos() {
 /* Owner videos: what people make and sell with their machines. Cards open the video in a dialog on this page. */
 function Makers() {
   const [open, setOpen] = useState(null);
+  const row = useRef(null);
+  const slide = (dir) => row.current?.scrollBy({ left: dir * row.current.clientWidth * 0.8, behavior: "smooth" });
   useEffect(() => {
     if (!open) return undefined;
     const onKey = (e) => e.key === "Escape" && setOpen(null);
@@ -262,8 +264,13 @@ function Makers() {
         <div className="ip2-head">
           <h2 className="ih-h2">{t("Made with OneLaser. Sold by makers.")}</h2>
           <p>{t("Real shops showing the products they make and sell.")}</p>
+          <div className="ih-arrows">
+            <button type="button" aria-label={t("Previous")} onClick={() => slide(-1)}><Icon name="chevron" size={18} /></button>
+            <button type="button" aria-label={t("Next")} onClick={() => slide(1)}><Icon name="chevron" size={18} /></button>
+          </div>
         </div>
-        <div className="iu-grid">
+      </div>
+      <div className="ih-scroller iu-row" ref={row}>
           {homeMakers.map(([id, title, channel, what, machine]) => (
             <button key={id} type="button" className="iu-card" onClick={() => setOpen([id, title])} aria-label={`${t("Play video")}: ${title}`}>
               <span className="iu-thumb">
@@ -276,7 +283,6 @@ function Makers() {
               <small>{channel}</small>
             </button>
           ))}
-        </div>
       </div>
       {open && (
         <div className="is-modal" role="dialog" aria-modal="true" aria-label={open[1]} onClick={() => setOpen(null)}>
