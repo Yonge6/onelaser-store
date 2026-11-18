@@ -1,7 +1,11 @@
-import { go, img, money } from "../lib.js";
+import { img, money } from "../lib.js";
 import { useCart } from "../cart.jsx";
-import { ServiceStrip } from "../components/Chrome.jsx";
-import { Icon, Link, QtyStepper } from "../components/ui.jsx";
+import { Icon, Link } from "../components/ui.jsx";
+
+/* Layout, sizes and type follow the Insta360 Store cart (store.insta360.com/cart, measured 2026-11-17 at 1440):
+   gray page #F8F9FC, "Shopping cart" 32px bold, left column 800 of white cards (radius 16, padding 32/40) with one line per item
+   (120px image, 20/24 bold name, tag pill, 24px steppers, price right), right 480 card "Order details" (20px bold) with
+   16px rows, 24px extra-bold total, 56px pill Check out and service notes. */
 
 export function OrderSummary({ children, shipping }) {
   const { items, subtotal, savings } = useCart();
@@ -12,68 +16,68 @@ export function OrderSummary({ children, shipping }) {
       <div className="row"><span>Subtotal ({items.reduce((s, i) => s + i.qty, 0)} items)</span><b>{money(subtotal)}</b></div>
       {savings > 0 && <div className="row save"><span>Savings</span><b>−{money(savings)}</b></div>}
       <div className="row"><span>Shipping</span><span className="muted">{shipping || "Calculated at checkout"}</span></div>
-      <div className="row"><span>Estimated tax</span><span className="muted">Calculated at checkout</span></div>
       <div className="row total"><span>Total</span><b>USD {money(subtotal)}</b></div>
     </aside>
   );
 }
 
-/* Layout, sizes and type follow the DJI Store cart (measured 2026-11-16):
-   726/150/150/150/24 table → notes left (600) + totals right (500) → Continue Shopping / Check Out → service strip. */
 export default function Cart() {
   const { items, setQty, subtotal, savings } = useCart();
+  if (!items.length)
+    return (
+      <section className="ic">
+        <div className="ic-wrap">
+          <h1>Shopping cart</h1>
+          <div className="ic-card ic-empty"><Icon name="cart" size={40} /><b>Your cart is empty</b><Link to="/collections/machines" className="ic-checkout">Shop laser machines</Link></div>
+        </div>
+      </section>
+    );
   return (
-    <section className="cart">
-      <div className="cart-notice"><p className="container">Large machines ship by freight. Delivery timing is confirmed after checkout.</p></div>
-      <div className="cart-article">
-        <div className="container">
-          <h1>My Shopping Cart</h1>
-          {!items.length ? (
-            <div className="cart-empty">
-              <b>Your cart is empty</b>
-              <p>Explore OneLaser products and add your favorite gear to get started.</p>
-              <Link to="/collections/machines" className="btn-primary">Continue Shopping</Link>
+    <section className="ic">
+      <div className="ic-wrap">
+        <h1>Shopping cart</h1>
+        <div className="ic-layout">
+          <div className="ic-left">
+            <div className="ic-card ic-note"><Icon name="truck" size={22} /><p><b>Delivery by address.</b> Estimate and shipping rate are shown at checkout.<br />30-day easy returns on every order.</p></div>
+            <div className="ic-card ic-lines">
+              {items.map((i) => (
+                <article key={i.variantId} className="ic-line">
+                  <Link to={`/products/${i.product.handle}`} className="ic-line-media"><img src={img(i.variant.image || i.product.images[0], 300)} alt="" /></Link>
+                  <div className="ic-line-info">
+                    <h2><Link to={`/products/${i.product.handle}`}>{i.product.name}</Link></h2>
+                    <span className="ic-tag">30-Day Returns</span>
+                    {i.variant.title && <p>{i.variant.title}</p>}
+                  </div>
+                  <div className="ic-qty">
+                    <button type="button" aria-label="Decrease quantity" onClick={() => setQty(i.variantId, i.qty - 1)}>−</button>
+                    <span aria-live="polite">{i.qty}</span>
+                    <button type="button" aria-label="Increase quantity" onClick={() => setQty(i.variantId, i.qty + 1)}>+</button>
+                  </div>
+                  <div className="ic-line-price">{money(i.total)}{i.variant.compareAt && <s>{money(i.variant.compareAt * i.qty)}</s>}</div>
+                  <button type="button" className="ic-remove" aria-label={`Remove ${i.product.name}`} onClick={() => setQty(i.variantId, 0)}><Icon name="trash" size={18} /></button>
+                </article>
+              ))}
             </div>
-          ) : (
-            <>
-              <div className="cart-table">
-                <div className="cart-head"><span>Item</span><span>Item Price</span><span>Quantity</span><span>Price</span><span /></div>
-                {items.map((i) => (
-                  <article key={i.variantId} className="cart-line">
-                    <div className="cart-product">
-                      <Link to={`/products/${i.handle}`} className="cart-media"><img src={img(i.variant.image || i.product.images[0], 300)} alt="" /></Link>
-                      <div><Link to={`/products/${i.handle}`} className="cart-title">{i.product.name}</Link>{i.variant.title && <small>{i.variant.title}</small>}</div>
-                    </div>
-                    <div data-label="Item Price">USD {money(i.variant.price)}</div>
-                    <div data-label="Quantity"><QtyStepper value={i.qty} min={1} onChange={(n) => setQty(i.variantId, n)} /></div>
-                    <div data-label="Price">USD {money(i.total)}</div>
-                    <button type="button" className="cart-remove" aria-label={`Remove ${i.product.name}`} onClick={() => setQty(i.variantId, 0)}><Icon name="trash" size={18} /></button>
-                  </article>
-                ))}
-              </div>
-              <div className="cart-summary">
-                <div className="cart-benefits">
-                  <p>30-Day Easy Returns · 3-2-1 Warranty on XRF and Hydra · U.S.-Based Support.</p>
-                  <Link href="https://www.1laser.com/pages/financing">Learn more about financing ›</Link>
-                  <p>Have a Coupon Code?</p>
-                  <p className="coupon-text">Proceed to checkout to use coupons and gift cards.</p>
-                </div>
-                <div className="cart-totals">
-                  <div className="subtotal"><span>CART SUBTOTAL:</span><strong>USD {money(subtotal)}</strong></div>
-                  {savings > 0 && <div><span>You save:</span><span>USD {money(savings)}</span></div>}
-                  <div><span>Tax:</span><span>Calculated at checkout</span></div>
-                  <div><span>Shipping:</span><span>Calculated at checkout</span></div>
-                </div>
-              </div>
-              <div className="cart-actions">
-                <Link to="/collections/machines" className="btn-soft">Continue Shopping</Link>
-                <button type="button" className="btn-primary" onClick={() => go("/checkout")}>Check Out</button>
-              </div>
-            </>
-          )}
+          </div>
+          <aside className="ic-card ic-details">
+            <h2>Order details</h2>
+            <p><span>Price :</span><span>{money(subtotal + savings)}</span></p>
+            {savings > 0 && <p className="save"><span>Savings :</span><span>−{money(savings)}</span></p>}
+            <p><span>Shipping :</span><span>Calculated at checkout</span></p>
+            <p><span>Tax :</span><span>Calculated at checkout</span></p>
+            <p className="total"><span>Estimated total</span><b>{money(subtotal)}</b></p>
+            <Link to="/checkout" className="ic-checkout">Check out</Link>
+            <Link to="/collections/machines" className="ic-continue">Continue shopping</Link>
+            <h3>Shipped by OneLaser</h3>
+            <ul>
+              <li><Icon name="truck" size={20} /><span><b>Delivery by address</b>All items ship according to the item with the latest shipping date.</span></li>
+              <li><Icon name="refresh" size={20} /><span><b>30-day return period</b>Terms and conditions apply.</span></li>
+              <li><Icon name="headset" size={20} /><span><b>U.S.-based support</b>Talk to real laser engineers.</span></li>
+              <li><Icon name="lock" size={20} /><span><b>Pay your way</b>Card, PayPal, Shop Pay or financing.</span></li>
+            </ul>
+          </aside>
         </div>
       </div>
-      <ServiceStrip />
     </section>
   );
 }

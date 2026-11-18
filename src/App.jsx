@@ -1,6 +1,6 @@
 import { CartProvider } from "./cart.jsx";
 import { useRoute } from "./lib.js";
-import { Footer, Header, MiniHeader } from "./components/Chrome.jsx";
+import { Footer, Header } from "./components/Chrome.jsx";
 import Home from "./pages/Home.jsx";
 import Collection from "./pages/Collection.jsx";
 import Product from "./pages/Product.jsx";
@@ -14,6 +14,7 @@ function Page({ path, query }) {
   if (section === "products" && handle) return <Product handle={handle} />;
   if (section === "search") return <Collection key={`s-${query.get("q")}`} search={query.get("q") || ""} />;
   if (section === "compare") return <Compare />;
+  if (section === "cart") return <Cart />;
   return <Home />;
 }
 
@@ -23,11 +24,6 @@ export default function App() {
     <CartProvider>
       {path === "/checkout" ? (
         <Checkout />
-      ) : path === "/cart" ? (
-        <>
-          <MiniHeader />
-          <main><Cart /></main>
-        </>
       ) : (
         <>
           <Header path={path} />

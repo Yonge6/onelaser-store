@@ -14,10 +14,10 @@
 | 页面 | 地址 | 模块（自上而下） |
 | --- | --- | --- |
 | 首页 | `#/` | **照 insta360.com 首页**（2026-11-17 实测 1440 和 375）：透明悬浮页头 64 → 全屏轮播 660（底部分段进度条）→ 大标题 + 吸顶胶囊标签 + 三列产品卡 416×554 圆角 24 → 480 高主推横幅 → Shop by project 卡片 310×480 → 两张半宽卡 640×480 → 480 高图片横幅 → 动态轮播 864×486 → 企业灰色条 376 → 四个支持入口 240 → 白色页脚。左右留白 64，模块间距 64。数据在 `src/data/site.js` 的 `homeTabs / interests / homeStories` |
-| 列表页 | `#/collections/machines` 等 | 面包屑 → 居中标题 → 272 筛选栏（品类树、筛选、Reset）→ 件数 + 排序 → 3 列卡片 331×414 |
-| 商品详情 | `#/products/:handle` | 照 Bambu Lab + ComMarker：面包屑 → 左侧吸顶图库（缩略图行、四个保障图标）/ 右侧长购买栏（红色价格+划线价+省多少、卖点列表、黑五倒计时条、套餐卡、选购帮助行、配件加购、数量+加购/立即购买、订单说明、支付方式）→ 吸顶锚点导航 → 深色产品总览 → Highlights at a Glance → 官网完整卖点长叙事（`src/components/Story.jsx`，深色：横幅、图文、切换式卖点、视频弹窗、作品墙、对比表、保障卡，滚动渐显）→ 机型对比 → 完整参数表 → FAQ；底部固定购买条 |
-| 购物车 | `#/cart` | 极简页头 → 提示条 → 表格 726/150/150/150/24 → 左备注 600、右合计 500 → Continue Shopping / Check Out → 服务条 |
-| 结算 | `#/checkout` | 照 DJI 结算页：65 页头 → 左 500 表单 / 右 400 订单摘要（灰底 #F5F5F5）→ 提示条、快捷支付、Contact、Delivery、Shipping method、Payment 单选列表、Pay now；手机端摘要折叠在顶部（仅演示，支付栏已禁用） |
+| 列表 | `#/collections/:handle` | 照 **Insta360 商城列表页**（实测 1440）：灰底页面 → 吸顶白色分类条（124×148 图块）→ 左侧 240 筛选栏（Offers / Category）+ 三列白色卡片 316×395 圆角 16（191 图、18/24 标题、14 号价格、36 高深色胶囊按钮） |
+| 商品详情 | `#/products/:handle` | 购买区照 **Insta360 商城商品页**（实测 1440）：左侧通栏灰色大图区（吸顶，599 高）+ 胶囊缩略图 / 右侧 464 宽栏（32 号标题、选项摘要行、黑五卡、图标信息卡、带图选项卡、Frequently bought together、灰底订单小结、配送说明）；底部固定 80 高购买条（24 号价格、180×56 胶囊按钮）。下方保留官网完整卖点长叙事、参数表、FAQ（`src/components/Story.jsx`） |
+| 购物车 | `#/cart` | 照 **Insta360 商城购物车**：灰底、Shopping cart 32 号粗体、左 800 白卡（商品行：图、20/24 粗体名称、标签、数量、价格）+ 右 480 白卡 Order details（24 号加粗合计、56 高胶囊 Check out、服务说明） |
+| 结算 | `#/checkout` | 照 **Insta360 商城结算页**：64 页头带 Secure、Check out as guest 28 号粗体、左 742 白卡（Contact info、Shipping details，56 高输入框圆角 8，Save 胶囊按钮；Shipping method / Billing address / Payment method 逐步展开）+ 右 434 白卡 Order summary（优惠码、合计、Place order）。仅演示，不保存不提交 |
 
 **UI 规范（取自 DJI 实测值）**
 
