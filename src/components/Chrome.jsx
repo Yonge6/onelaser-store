@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { LANGS, getLang, setLang, t } from "../i18n.js";
 import { asset, byHandle, go, img, products } from "../lib.js";
 import { useCart } from "../cart.jsx";
 import { nav, promo, benefits } from "../data/site.js";
@@ -10,6 +11,8 @@ export function Header({ path }) {
   const [mobile, setMobile] = useState(false);
   const [search, setSearch] = useState(false);
   const [q, setQ] = useState("");
+  const [langOpen, setLangOpen] = useState(false);
+  const current = LANGS.find((l) => l.code === getLang()) || LANGS[0];
   const [top, setTop] = useState(true);
   useEffect(() => {
     setOpen(null); setMobile(false); setSearch(false);
@@ -31,25 +34,26 @@ export function Header({ path }) {
     <>
       <header className={`site-header${overlay ? " overlay" : ""}`} onMouseLeave={() => setOpen(null)}>
         <div className="site-header-bar">
-          <button type="button" className="icon-btn only-mobile" aria-label="Menu" onClick={() => setMobile(true)}><Icon name="menu" /></button>
-          <Link to="/" className="brand" aria-label="OneLaser Store home"><img src={asset("onelaser-logo-transparent.svg")} alt="OneLaser" /></Link>
-          <nav className="site-nav" aria-label="Primary">
+          <button type="button" className="icon-btn only-mobile" aria-label={t("Menu")} onClick={() => setMobile(true)}><Icon name="menu" /></button>
+          <Link to="/" className="brand" aria-label={t("OneLaser Store home")}><img src={asset(overlay ? "onelaser-logo-red-white.svg" : "onelaser-logo-transparent.svg")} alt="OneLaser" /></Link>
+          <nav className="site-nav" aria-label={t("Primary")}>
             {nav.map((n) => (
-              <Link key={n.label} to={n.to} href={n.href} className={n.hot ? "hot" : ""} onMouseEnter={() => setOpen(n.columns ? n.label : null)} onFocus={() => setOpen(n.columns ? n.label : null)}>{n.label}</Link>
+              <Link key={n.label} to={n.to} href={n.href} className={n.hot ? "hot" : ""} onMouseEnter={() => setOpen(n.columns ? n.label : null)} onFocus={() => setOpen(n.columns ? n.label : null)}>{t(n.label)}</Link>
             ))}
           </nav>
           <div className="site-actions">
-            <Link to="/collections/deals" className="store-btn"><Icon name="cart" size={16} /><span>Deals</span></Link>
-            <button type="button" className="icon-btn" aria-label="Search" onClick={() => setSearch((s) => !s)}><Icon name="search" size={22} /></button>
-            <Link href="https://www.1laser.com/account/login" className="icon-btn hide-mobile" aria-label="Account"><Icon name="user" size={22} /></Link>
+            <Link to="/collections/deals" className="store-btn"><Icon name="cart" size={16} /><span>{t("Deals")}</span></Link>
+            <button type="button" className="icon-btn" aria-label={t("Search")} onClick={() => setSearch((s) => !s)}><Icon name="search" size={22} /></button>
+            <Link href="https://www.1laser.com/account/login" className="icon-btn hide-mobile" aria-label={t("Account")}><Icon name="user" size={22} /></Link>
             <Link to="/cart" className="icon-btn cart-btn" aria-label={`Cart, ${count} items`}><Icon name="cart" size={22} />{count > 0 && <em>{count}</em>}</Link>
+            <button type="button" className="lang-btn hide-mobile" aria-haspopup="dialog" aria-label={t("Choose your language")} onClick={() => setLangOpen(true)}><Icon name="globe" size={22} /><span>{current.region} ({current.label})</span></button>
           </div>
         </div>
         {nav.filter((n) => n.label === open).map((n) => (
           <div key={n.label} className="mega">
             <div className="mega-inner">
               {n.columns.map((c) => (
-                <div key={c.title}><h2>{c.title}</h2>{c.links.map(([label, to]) => <Link key={to} to={to}>{label}</Link>)}</div>
+                <div key={c.title}><h2>{t(c.title)}</h2>{c.links.map(([label, to]) => <Link key={to} to={to}>{t(label)}</Link>)}</div>
               ))}
             </div>
           </div>
@@ -59,8 +63,8 @@ export function Header({ path }) {
             <form className="mega-inner" onSubmit={submit}>
               <div className="search-field">
                 <Icon name="search" />
-                <input autoFocus value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search machines, accessories, materials" aria-label="Search" />
-                <button type="button" className="icon-btn" aria-label="Close search" onClick={() => setSearch(false)}><Icon name="close" /></button>
+                <input autoFocus value={q} onChange={(e) => setQ(e.target.value)} placeholder={t("Search machines, accessories, materials")} aria-label={t("Search")} />
+                <button type="button" className="icon-btn" aria-label={t("Close search")} onClick={() => setSearch(false)}><Icon name="close" /></button>
               </div>
               {hits.length > 0 && (
                 <ul className="search-hits">
@@ -72,15 +76,17 @@ export function Header({ path }) {
         )}
       </header>
       {path !== "/" && <div className="header-spacer" />}
+      {langOpen && <LangDialog current={current.code} onClose={() => setLangOpen(false)} />}
       {mobile && (
         <div className="drawer-scrim" onClick={() => setMobile(false)}>
-          <aside className="drawer" onClick={(e) => e.stopPropagation()} aria-label="Menu">
-            <div className="drawer-head"><b>Menu</b><button type="button" className="icon-btn" aria-label="Close" onClick={() => setMobile(false)}><Icon name="close" /></button></div>
+          <aside className="drawer" onClick={(e) => e.stopPropagation()} aria-label={t("Menu")}>
+            <div className="drawer-head"><b>{t("Menu")}</b><button type="button" className="icon-btn" aria-label={t("Close")} onClick={() => setMobile(false)}><Icon name="close" /></button></div>
+            <button type="button" className="drawer-lang" onClick={() => { setMobile(false); setLangOpen(true); }}><Icon name="globe" size={20} /><span>{current.region} ({current.label})</span><Icon name="chevron" size={16} /></button>
             <div className="mobile-nav">
               {nav.map((n) => (
                 <details key={n.label}>
-                  <summary>{n.columns ? n.label : <Link to={n.to} href={n.href}>{n.label}</Link>}</summary>
-                  {n.columns?.flatMap((c) => c.links).map(([label, to]) => <Link key={to + label} to={to}>{label}</Link>)}
+                  <summary>{n.columns ? t(n.label) : <Link to={n.to} href={n.href}>{t(n.label)}</Link>}</summary>
+                  {n.columns?.flatMap((c) => c.links).map(([label, to]) => <Link key={to + label} to={to}>{t(label)}</Link>)}
                 </details>
               ))}
             </div>
@@ -91,13 +97,46 @@ export function Header({ path }) {
   );
 }
 
+/** Language dialog, after insta360.com's "Choose Your Country or Region": 1000px white panel (4px radius, 80px top padding),
+    40/48 title, 840×48 search field, 20/28 group titles, 273×40 gray tiles with the region on the left and the language on the right. */
+function LangDialog({ current, onClose }) {
+  const [q, setQ] = useState("");
+  useEffect(() => {
+    const onKey = (e) => e.key === "Escape" && onClose();
+    window.addEventListener("keydown", onKey);
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => { window.removeEventListener("keydown", onKey); document.body.style.overflow = prev; };
+  }, [onClose]);
+  const list = LANGS.filter((l) => `${l.region} ${l.label} ${l.code}`.toLowerCase().includes(q.trim().toLowerCase()));
+  return (
+    <div className="lang-scrim" onClick={onClose}>
+      <div className="lang-dialog" role="dialog" aria-modal="true" aria-label={t("Choose your language")} onClick={(e) => e.stopPropagation()}>
+        <button type="button" className="lang-close" aria-label={t("Close")} onClick={onClose}><Icon name="close" size={28} /></button>
+        <h3>{t("Choose your language")}</h3>
+        <label className="lang-search"><Icon name="search" size={18} /><input value={q} onChange={(e) => setQ(e.target.value)} placeholder={t("Search")} aria-label={t("Search")} /></label>
+        <h4>{t("Languages")}</h4>
+        <div className="lang-list">
+          {list.map((l) => (
+            <button key={l.code} type="button" lang={l.code === "zh" ? "zh-CN" : l.code} className={l.code === current ? "on" : ""} aria-pressed={l.code === current} onClick={() => { setLang(l.code); onClose(); }}>
+              <span>{l.region}</span><em>{l.label}</em>
+            </button>
+          ))}
+          {!list.length && <p>{t("No match")}</p>}
+        </div>
+        <p className="lang-note">{t("Menus, buttons and checkout are translated. Product names, descriptions and specifications stay in English.")}</p>
+      </div>
+    </div>
+  );
+}
+
 /** Minimal header for cart and checkout (DJI cart-v2 store header). */
 export function MiniHeader() {
   return (
     <header className="store-header">
       <div className="container">
-        <Link to="/" className="brand" aria-label="OneLaser Store home"><img src={asset("onelaser-logo-transparent.svg")} alt="OneLaser" /><span>Store</span></Link>
-        <Link href="https://www.1laser.com/account/login">Sign In</Link>
+        <Link to="/" className="brand" aria-label={t("OneLaser Store home")}><img src={asset("onelaser-logo-transparent.svg")} alt="OneLaser" /><span>{t("Store")}</span></Link>
+        <Link href="https://www.1laser.com/account/login">{t("Sign In")}</Link>
       </div>
     </header>
   );
@@ -167,7 +206,7 @@ export function Benefits() {
   return (
     <section className="module">
       <div className="page">
-        <h2>Why shop with OneLaser Store</h2>
+        <h2>{t("Why shop with OneLaser Store")}</h2>
         <div className="benefits">
           <div className="benefits-col a">{[returns, support].map(tile)}</div>
           <div className="benefits-col b">{[warranty, payment].map(tile)}</div>
@@ -181,9 +220,9 @@ export function Benefits() {
 export const ServiceStrip = () => (
   <div className="service-strip">
     <div className="page">
-      <div><Icon name="truck" size={40} /><p>Shipping Options at Checkout<br />Delivery Estimated by Address</p></div>
-      <div><Icon name="card" size={40} /><p>We accept credit cards, PayPal<br />and financing</p></div>
-      <div><Icon name="headset" size={40} /><p>U.S.-Based Support: <Link href="https://www.1laser.com/pages/contact-us">Contact Us</Link></p></div>
+      <div><Icon name="truck" size={40} /><p>{t("Shipping Options at Checkout")}<br />{t("Delivery Estimated by Address")}</p></div>
+      <div><Icon name="card" size={40} /><p>{t("We accept credit cards, PayPal")}<br />and financing</p></div>
+      <div><Icon name="headset" size={40} /><p>{t("U.S.-Based Support:")} <Link href="https://www.1laser.com/pages/contact-us">{t("Contact Us")}</Link></p></div>
     </div>
   </div>
 );
@@ -205,24 +244,24 @@ export function Footer() {
         <div className="footer-groups">
           {groups.map(([title, links]) => (
             <div key={title}>
-              <h3>{title}</h3>
-              {links.map(([l, to]) => (to.startsWith("http") ? <Link key={l} href={to}>{l}</Link> : <Link key={l} to={to}>{l}</Link>))}
+              <h3>{t(title)}</h3>
+              {links.map(([l, to]) => (to.startsWith("http") ? <Link key={l} href={to}>{t(l)}</Link> : <Link key={l} to={to}>{t(l)}</Link>))}
             </div>
           ))}
         </div>
         <div className="footer-subscribe">
-          <h3>Subscribe</h3>
-          <p>Get the latest news from OneLaser</p>
+          <h3>{t("Subscribe")}</h3>
+          <p>{t("Get the latest news from OneLaser")}</p>
           <form onSubmit={(e) => e.preventDefault()}>
-            <input type="email" placeholder="Enter Your Email" aria-label="Email address" disabled />
-            <button disabled aria-label="Subscribe"><Icon name="chevron" size={14} /></button>
+            <input type="email" placeholder={t("Enter Your Email")} aria-label={t("Email address")} disabled />
+            <button disabled aria-label={t("Subscribe")}><Icon name="chevron" size={14} /></button>
           </form>
-          <small>Newsletter sign-up is disabled in this design draft.</small>
+          <small>{t("Newsletter sign-up is disabled in this design draft.")}</small>
         </div>
       </div>
       <div className="footer-bottom">
-        <p>Design draft for internal review — not the live store. Content and prices from 1laser.com.</p>
-        <p>Copyright © 2026 OneLaser. All rights reserved.</p>
+        <p>{t("Design draft for internal review — not the live store. Content and prices from 1laser.com.")}</p>
+        <p>{t("Copyright © 2026 OneLaser. All rights reserved.")}</p>
       </div>
     </footer>
   );

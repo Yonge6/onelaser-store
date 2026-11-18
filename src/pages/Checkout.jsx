@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { t } from "../i18n.js";
 import { asset, img, money } from "../lib.js";
 import { useCart } from "../cart.jsx";
 import { Icon, Link } from "../components/ui.jsx";
@@ -25,80 +26,80 @@ export default function Checkout() {
   const [method, setMethod] = useState("card");
   const head = (
     <header className="ik-header">
-      <div><Link to="/" className="brand"><img src={asset("onelaser-logo-transparent.svg")} alt="OneLaser" /><span>Store</span></Link><span className="ik-secure"><Icon name="shield" size={18} />Secure</span></div>
+      <div><Link to="/" className="brand"><img src={asset("onelaser-logo-transparent.svg")} alt="OneLaser" /><span>{t("Store")}</span></Link><span className="ik-secure"><Icon name="shield" size={18} />{t("Secure")}</span></div>
     </header>
   );
   if (done)
     return (
       <div className="ik">{head}
-        <div className="ik-done"><span><Icon name="check" size={34} /></span><h1>Thank you — this is a demo order</h1><p>Confirmation page layout. No order was placed and no payment was taken. Demo total: {money(done)}.</p><Link to="/" className="ik-pill">Back to store</Link></div>
+        <div className="ik-done"><span><Icon name="check" size={34} /></span><h1>{t("Thank you — this is a demo order")}</h1><p>{t("Confirmation page layout. No order was placed and no payment was taken. Demo total:")} {money(done)}.</p><Link to="/" className="ik-pill">{t("Back to store")}</Link></div>
       </div>
     );
   if (!items.length)
-    return <div className="ik">{head}<div className="ik-done"><h1>Nothing to check out</h1><Link to="/collections/machines" className="ik-pill">Shop laser machines</Link></div></div>;
+    return <div className="ik">{head}<div className="ik-done"><h1>{t("Nothing to check out")}</h1><Link to="/collections/machines" className="ik-pill">{t("Shop laser machines")}</Link></div></div>;
   const place = () => { setDone(subtotal); clear(); window.scrollTo(0, 0); };
   return (
     <div className="ik">
       {head}
       <div className="ik-wrap">
-        <h1>Check out as guest</h1>
+        <h1>{t("Check out as guest")}</h1>
         <div className="ik-layout">
           <div className="ik-left">
             <section className="ik-card">
-              <h2>Contact info</h2>
-              <Field label="Email Address" type="email" />
-              <p className="ik-hint">Design draft — do not enter real details. Nothing here is saved or sent. <Link href="https://www.1laser.com/account/login">LOG IN</Link></p>
-              <h2 className="ik-divided">Shipping details</h2>
+              <h2>{t("Contact info")}</h2>
+              <Field label={t("Email Address")} type="email" />
+              <p className="ik-hint">{t("Design draft — do not enter real details. Nothing here is saved or sent.")} <Link href="https://www.1laser.com/account/login">{t("LOG IN")}</Link></p>
+              <h2 className="ik-divided">{t("Shipping details")}</h2>
               {step === 0 ? (
                 <div className="ik-grid">
-                  <label className="ik-field ik-static c2"><span>Country/Region<i> *</i></span><b>United States</b></label>
-                  <Field label="First name" /><Field label="Last name" />
-                  <Field label="Mobile number" type="tel" className="c2" />
-                  <Field label="Street address" className="c2" />
-                  <Field label="Apt, Suite, Building (Optional)" required={false} className="c2" />
+                  <label className="ik-field ik-static c2"><span>{t("Country/Region")}<i> *</i></span><b>{t("United States")}</b></label>
+                  <Field label={t("First name")} /><Field label={t("Last name")} />
+                  <Field label={t("Mobile number")} type="tel" className="c2" />
+                  <Field label={t("Street address")} className="c2" />
+                  <Field label={t("Apt, Suite, Building (Optional)")} required={false} className="c2" />
                   <p className="ik-note c2">* The address should be in the country or region you have selected.<br />* To facilitate delivery, please do not enter a P.O. Box, FPO, APO address, or remote area.</p>
-                  <Field label="City" />
+                  <Field label={t("City")} />
                   <label className="ik-field ik-select"><select defaultValue=""><option value="" disabled>State/Province/Region *</option>{STATES.map((s) => <option key={s}>{s}</option>)}</select><Icon name="chevron" size={14} /></label>
-                  <Field label="ZIP" className="c2" />
-                  <div className="ik-actions c2"><button type="button" className="ik-pill" onClick={() => setStep(1)}>Save</button></div>
+                  <Field label={t("ZIP")} className="c2" />
+                  <div className="ik-actions c2"><button type="button" className="ik-pill" onClick={() => setStep(1)}>{t("Save")}</button></div>
                 </div>
               ) : (
-                <p className="ik-saved"><span>Address saved for this demo.</span><button type="button" onClick={() => setStep(0)}>Edit</button></p>
+                <p className="ik-saved"><span>{t("Address saved for this demo.")}</span><button type="button" onClick={() => setStep(0)}>{t("Edit")}</button></p>
               )}
             </section>
             <section className={`ik-card${step < 1 ? " off" : ""}`}>
-              <h2>Shipping method</h2>
+              <h2>{t("Shipping method")}</h2>
               {step === 1 && (
                 <>
-                  <label className="ik-choice on"><input type="radio" name="ship" defaultChecked /><span><b>Freight delivery</b><em>Rate and delivery estimate confirmed after address review</em></span><i>—</i></label>
-                  <div className="ik-actions"><button type="button" className="ik-pill" onClick={() => setStep(2)}>Continue</button></div>
+                  <label className="ik-choice on"><input type="radio" name="ship" defaultChecked /><span><b>{t("Freight delivery")}</b><em>{t("Rate and delivery estimate confirmed after address review")}</em></span><i>—</i></label>
+                  <div className="ik-actions"><button type="button" className="ik-pill" onClick={() => setStep(2)}>{t("Continue")}</button></div>
                 </>
               )}
-              {step > 1 && <p className="ik-saved"><span>Freight delivery</span><button type="button" onClick={() => setStep(1)}>Edit</button></p>}
+              {step > 1 && <p className="ik-saved"><span>{t("Freight delivery")}</span><button type="button" onClick={() => setStep(1)}>{t("Edit")}</button></p>}
             </section>
             <section className={`ik-card${step < 2 ? " off" : ""}`}>
-              <h2>Billing address</h2>
-              {step === 2 && <label className="ik-check"><input type="checkbox" defaultChecked /><span>Same as shipping address</span></label>}
+              <h2>{t("Billing address")}</h2>
+              {step === 2 && <label className="ik-check"><input type="checkbox" defaultChecked /><span>{t("Same as shipping address")}</span></label>}
             </section>
             <section className={`ik-card${step < 2 ? " off" : ""}`}>
-              <h2>Payment method</h2>
+              <h2>{t("Payment method")}</h2>
               {step === 2 && (
                 <>
                   {[["card", "Credit / debit card"], ["paypal", "PayPal"], ["shop", "Shop Pay"], ["finance", "Pay over time (financing)"]].map(([id, label]) => (
-                    <label key={id} className={`ik-choice${method === id ? " on" : ""}`}><input type="radio" name="pay" checked={method === id} onChange={() => setMethod(id)} /><span><b>{label}</b></span></label>
+                    <label key={id} className={`ik-choice${method === id ? " on" : ""}`}><input type="radio" name="pay" checked={method === id} onChange={() => setMethod(id)} /><span><b>{t(label)}</b></span></label>
                   ))}
                   {method === "card" && (
                     <div className="ik-grid ik-cardfields">
-                      <Field label="Card number" className="c2" disabled /><Field label="Expiration (MM / YY)" disabled /><Field label="Security code" disabled />
+                      <Field label={t("Card number")} className="c2" disabled /><Field label={t("Expiration (MM / YY)")} disabled /><Field label={t("Security code")} disabled />
                     </div>
                   )}
-                  <p className="ik-hint">Payment fields are disabled in this design draft.</p>
+                  <p className="ik-hint">{t("Payment fields are disabled in this design draft.")}</p>
                 </>
               )}
             </section>
           </div>
           <aside className="ik-card ik-summary">
-            <div className="ik-summary-head"><h2>Order summary</h2><Link to="/cart">Edit cart</Link></div>
+            <div className="ik-summary-head"><h2>{t("Order summary")}</h2><Link to="/cart">{t("Edit cart")}</Link></div>
             <ul className="ik-lines">
               {items.map((i) => (
                 <li key={i.variantId}>
@@ -108,15 +109,15 @@ export default function Checkout() {
                 </li>
               ))}
             </ul>
-            <h3>Coupon code</h3>
-            <div className="ik-coupon"><input placeholder="Enter your coupon code" aria-label="Coupon code" disabled /><button type="button" disabled aria-label="Apply"><Icon name="arrow" size={18} /></button></div>
+            <h3>{t("Coupon code")}</h3>
+            <div className="ik-coupon"><input placeholder={t("Enter your coupon code")} aria-label={t("Coupon code")} disabled /><button type="button" disabled aria-label={t("Apply")}><Icon name="arrow" size={18} /></button></div>
             <dl>
-              <div><dt>Subtotal :</dt><dd>{money(subtotal)}</dd></div>
-              <div><dt>Shipping :</dt><dd>Calculated after address</dd></div>
-              <div><dt>Tax :</dt><dd>Calculated after address</dd></div>
-              <div className="total"><dt>Total :</dt><dd>{money(subtotal)}</dd></div>
+              <div><dt>{t("Subtotal :")}</dt><dd>{money(subtotal)}</dd></div>
+              <div><dt>{t("Shipping :")}</dt><dd>{t("Calculated after address")}</dd></div>
+              <div><dt>{t("Tax :")}</dt><dd>{t("Calculated after address")}</dd></div>
+              <div className="total"><dt>{t("Total :")}</dt><dd>{money(subtotal)}</dd></div>
             </dl>
-            <button type="button" className="ik-pill wide" disabled={step < 2} onClick={place}>Place order</button>
+            <button type="button" className="ik-pill wide" disabled={step < 2} onClick={place}>{t("Place order")}</button>
             <p className="ik-legal">Demo only — no charge, no order. By clicking "Place order" on the live store you would accept the OneLaser sales and privacy policies.</p>
           </aside>
         </div>

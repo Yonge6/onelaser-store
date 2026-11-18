@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { t } from "../i18n.js";
 import { asset, byHandle, img, products } from "../lib.js";
 import { heroSlides, homeFeature, homeStories, homeTabs, interests, newHandles, promo, shortSlogans } from "../data/site.js";
 import { Countdown, Icon, Link } from "../components/ui.jsx";
@@ -33,26 +34,26 @@ function Hero() {
         <article key={s.title} className={`ih-slide${n === i ? " on" : ""}`} aria-hidden={n !== i}>
           <img src={asset(s.image)} alt="" />
           <div className="ih-slide-copy">
-            <p className="ih-top">{s.eyebrow}</p>
-            <h1>{s.title}</h1>
-            <p className="ih-slogan">{s.text}</p>
+            <p className="ih-top">{t(s.eyebrow)}</p>
+            <h1>{t(s.title)}</h1>
+            <p className="ih-slogan">{t(s.text)}</p>
             <div className="ih-btns">
-              <Link to={s.to} className="ih-btn light" tabIndex={n === i ? 0 : -1}>Buy now</Link>
-              <Link to={s.to} className="ih-btn ghost" tabIndex={n === i ? 0 : -1}>Learn more</Link>
+              <Link to={s.to} className="ih-btn light" tabIndex={n === i ? 0 : -1}>{t("Buy now")}</Link>
+              <Link to={s.to} className="ih-btn ghost" tabIndex={n === i ? 0 : -1}>{t("Learn more")}</Link>
             </div>
           </div>
         </article>
       ))}
-      <button type="button" className="ih-hero-arrow prev" aria-label="Previous slide" onClick={() => setI((i + heroSlides.length - 1) % heroSlides.length)}>
+      <button type="button" className="ih-hero-arrow prev" aria-label={t("Previous slide")} onClick={() => setI((i + heroSlides.length - 1) % heroSlides.length)}>
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M16 5L9 12L16 19" stroke="white" strokeWidth="2.5" strokeLinejoin="round" /></svg>
       </button>
-      <button type="button" className="ih-hero-arrow next" aria-label="Next slide" onClick={() => setI((i + 1) % heroSlides.length)}>
+      <button type="button" className="ih-hero-arrow next" aria-label={t("Next slide")} onClick={() => setI((i + 1) % heroSlides.length)}>
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M8 5L15 12L8 19" stroke="white" strokeWidth="2.5" strokeLinejoin="round" /></svg>
       </button>
       <div className="ih-pages">
         {heroSlides.map((s, n) => (
           <button key={s.title} type="button" aria-label={`Slide ${n + 1}: ${s.title}`} className={n === i ? "on" : ""} onClick={() => setI(n)}>
-            <em>{s.title}</em>
+            <em>{t(s.title)}</em>
             <i><span style={n === i ? { animationDuration: `${SLIDE_MS}ms`, animationPlayState: paused ? "paused" : "running" } : undefined} /></i>
           </button>
         ))}
@@ -62,16 +63,16 @@ function Hero() {
 }
 
 function ProductBlock() {
-  const [t, setT] = useState(0);
-  const tab = homeTabs[t];
+  const [ti, setTi] = useState(0);
+  const tab = homeTabs[ti];
   const list = (tab.picks ? tab.picks.map((h) => byHandle[h]) : products.filter((p) => p.category === tab.collection || (tab.collection === "materials" && p.kind === "material"))).filter(Boolean).slice(0, 6);
   return (
     <section className="ih-products">
-      <div className="ih-wrap"><h2 className="ih-h2 narrow">Laser machines for makers and growing businesses.</h2></div>
+      <div className="ih-wrap"><h2 className="ih-h2 narrow">{t("Laser machines for makers and growing businesses.")}</h2></div>
       <div className="ih-sticky">
         <div className="ih-wrap">
           <div className="ih-tabs" role="tablist">
-            {homeTabs.map((x, n) => <button key={x.label} type="button" role="tab" aria-selected={n === t} className={n === t ? "on" : ""} onClick={() => setT(n)}>{x.label}</button>)}
+            {homeTabs.map((x, n) => <button key={x.label} type="button" role="tab" aria-selected={n === ti} className={n === ti ? "on" : ""} onClick={() => setTi(n)}>{t(x.label)}</button>)}
           </div>
         </div>
       </div>
@@ -80,19 +81,19 @@ function ProductBlock() {
           {list.map((p) => (
             <article key={p.handle} className="ih-card">
               <div className="ih-card-info">
-                {newHandles.includes(p.handle) && <span className="ih-new">NEW</span>}
+                {newHandles.includes(p.handle) && <span className="ih-new">{t("NEW")}</span>}
                 <h3><Link to={`/products/${p.handle}`}>{p.name}</Link></h3>
-                <p>{shortSlogans[p.handle] || p.tagline}</p>
+                <p>{t(shortSlogans[p.handle] || p.tagline)}</p>
               </div>
               <Link to={`/products/${p.handle}`} className="ih-card-media" tabIndex={-1} aria-hidden="true"><img src={img(p.images[0], 700)} alt="" loading="lazy" /></Link>
               <div className="ih-card-btns">
-                <Link to={`/products/${p.handle}`} className="ih-link">Learn more</Link>
-                <Link to={`/products/${p.handle}`} className="ih-btn dark sm">Buy now</Link>
+                <Link to={`/products/${p.handle}`} className="ih-link">{t("Learn more")}</Link>
+                <Link to={`/products/${p.handle}`} className="ih-btn dark sm">{t("Buy now")}</Link>
               </div>
             </article>
           ))}
         </div>
-        <div className="ih-viewall"><Link to={tab.all}>View all</Link></div>
+        <div className="ih-viewall"><Link to={tab.all}>{t("View all")}</Link></div>
       </div>
     </section>
   );
@@ -111,10 +112,10 @@ function Interests() {
     <section className="ih-block">
       <div className="ih-wrap">
         <div className="ih-head-row">
-          <h2 className="ih-h2">Shop by project</h2>
+          <h2 className="ih-h2">{t("Shop by project")}</h2>
           <div className="ih-arrows">
-            <button type="button" aria-label="Previous" onClick={() => by(-1)}><Icon name="chevron" size={18} /></button>
-            <button type="button" aria-label="Next" onClick={() => by(1)}><Icon name="chevron" size={18} /></button>
+            <button type="button" aria-label={t("Previous")} onClick={() => by(-1)}><Icon name="chevron" size={18} /></button>
+            <button type="button" aria-label={t("Next")} onClick={() => by(1)}><Icon name="chevron" size={18} /></button>
           </div>
         </div>
       </div>
@@ -122,7 +123,7 @@ function Interests() {
         {interests.map(([label, image, to]) => (
           <Link key={label} to={to} className="ih-interest">
             <img src={asset(image)} alt="" loading="lazy" />
-            <span><b>{label}</b><Icon name="chevron" size={20} /></span>
+            <span><b>{t(label)}</b><Icon name="chevron" size={20} /></span>
           </Link>
         ))}
       </div>
@@ -144,12 +145,12 @@ function Stories() {
   };
   return (
     <section className="ih-block">
-      <div className="ih-wrap"><h2 className="ih-h2">See what OneLaser is up to</h2></div>
+      <div className="ih-wrap"><h2 className="ih-h2">{t("See what OneLaser is up to")}</h2></div>
       <div className="ih-scroller ih-stories" ref={ref} onScroll={onScroll}>
         {homeStories.map(([title, text, image, to]) => (
           <Link key={title} to={to} className="ih-story">
             <img src={asset(image)} alt="" loading="lazy" />
-            <span><b>{title}</b><em>{text}</em></span>
+            <span><b>{t(title)}</b><em>{t(text)}</em></span>
           </Link>
         ))}
       </div>
@@ -177,9 +178,9 @@ export default function Home() {
           <Link to={f.to} className="ih-feature">
             <img src={asset(f.image)} alt="" loading="lazy" />
             <span className="ih-feature-copy">
-              <b>{f.title}</b>
-              <em>{f.text.map((l) => <span key={l}>{l}</span>)}</em>
-              <span className="ih-feature-btns"><span className="ih-link lg">Learn more</span><span className="ih-btn dark wide">Buy now</span></span>
+              <b>{t(f.title)}</b>
+              <em>{f.text.map((l) => <span key={l}>{t(l)}</span>)}</em>
+              <span className="ih-feature-btns"><span className="ih-link lg">{t("Learn more")}</span><span className="ih-btn dark wide">{t("Buy now")}</span></span>
             </span>
           </Link>
         </div>
@@ -190,15 +191,15 @@ export default function Home() {
       <section className="ih-block">
         <div className="ih-wrap ih-halves">
           <article className="ih-half">
-            <p>Machine finder</p>
-            <h3>Find your perfect laser with a side-by-side comparison.</h3>
-            <div className="ih-half-btns"><Link to="/compare" className="ih-btn dark">Compare</Link><Link href="https://www.1laser.com/pages/sales-consultation" className="ih-link lg">Talk to sales</Link></div>
+            <p>{t("Machine finder")}</p>
+            <h3>{t("Find your perfect laser with a side-by-side comparison.")}</h3>
+            <div className="ih-half-btns"><Link to="/compare" className="ih-btn dark">{t("Compare")}</Link><Link href="https://www.1laser.com/pages/sales-consultation" className="ih-link lg">{t("Talk to sales")}</Link></div>
             <Lineup items={[["hydra-9-gen-2-70w-rf-co2-dual-laser-machine", 88], ["cobra-10-100w-co2-laser-engraver-cutter", 78], ["onelaser-xrf-desktop-laser-machine", 46], ["vertigo-vertical-laser-engraver", 44]]} />
           </article>
           <article className="ih-half">
-            <p>Accessories</p>
-            <h3>Level up your laser with official OneLaser gear.</h3>
-            <div className="ih-half-btns"><Link to="/collections/accessories" className="ih-btn dark">Shop now</Link></div>
+            <p>{t("Accessories")}</p>
+            <h3>{t("Level up your laser with official OneLaser gear.")}</h3>
+            <div className="ih-half-btns"><Link to="/collections/accessories" className="ih-btn dark">{t("Shop now")}</Link></div>
             <Lineup items={[["onelaser-industrial-chiller-for-hydra-laser-engraver", 62], ["piburn-omni-for-onelaser", 70], ["filtrabox-micro", 78], ["onelaser-x-series-riser-base", 48]]} />
           </article>
         </div>
@@ -209,10 +210,10 @@ export default function Home() {
           <Link to="/collections/deals" className="ih-banner">
             <img src={asset("home-bf.jpg")} alt="" loading="lazy" />
             <span className="ih-banner-copy">
-              <small>{promo.label}</small>
-              <b>{promo.headline}</b>
+              <small>{t(promo.label)}</small>
+              <b>{t(promo.headline)}</b>
               <Countdown endsAt={promo.endsAt} />
-              <span className="ih-btn light">Learn more</span>
+              <span className="ih-btn light">{t("Learn more")}</span>
             </span>
           </Link>
         </div>
@@ -222,7 +223,7 @@ export default function Home() {
 
       <Link href="https://www.1laser.com/pages/sales-consultation" className="ih-business">
         <span className="ih-wrap">
-          <span className="ih-business-copy"><small>OneLaser for Business</small><b>Machines that mean business.</b><span className="ih-btn dark">Learn more</span></span>
+          <span className="ih-business-copy"><small>{t("OneLaser for Business")}</small><b>{t("Machines that mean business.")}</b><span className="ih-btn dark">{t("Learn more")}</span></span>
           <span className="ih-business-art">
             <img src={asset("home-product-cobra-scene.webp")} alt="" loading="lazy" />
             <img src={asset("home-project-large-acrylic-sign.webp")} alt="" loading="lazy" />
@@ -234,7 +235,7 @@ export default function Home() {
 
       <section className="ih-block ih-support">
         <div className="ih-wrap">
-          {SUPPORT.map(([label, icon, href]) => <Link key={label} href={href} className="ih-entry"><BenefitArt name={icon} /><span>{label}</span><Icon name="chevron" size={22} /></Link>)}
+          {SUPPORT.map(([label, icon, href]) => <Link key={label} href={href} className="ih-entry"><BenefitArt name={icon} /><span>{t(label)}</span><Icon name="chevron" size={22} /></Link>)}
         </div>
       </section>
     </div>

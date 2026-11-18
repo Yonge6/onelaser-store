@@ -1,5 +1,6 @@
 import { CartProvider } from "./cart.jsx";
 import { useRoute } from "./lib.js";
+import { useLang } from "./i18n.js";
 import { Footer, Header } from "./components/Chrome.jsx";
 import Home from "./pages/Home.jsx";
 import Collection from "./pages/Collection.jsx";
@@ -20,15 +21,16 @@ function Page({ path, query }) {
 
 export default function App() {
   const { path, query } = useRoute();
+  const lang = useLang(); // every t() call re-reads the language on re-render
   return (
     <CartProvider>
       {path === "/checkout" ? (
-        <Checkout />
+        <Checkout key={lang} />
       ) : (
         <>
-          <Header path={path} />
-          <main><Page path={path} query={query} /></main>
-          <Footer />
+          <Header path={path} lang={lang} />
+          <main key={`main-${lang}`}><Page path={path} query={query} /></main>
+          <Footer key={`footer-${lang}`} />
         </>
       )}
     </CartProvider>

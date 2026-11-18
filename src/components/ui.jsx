@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { t } from "../i18n.js";
 import { img, money } from "../lib.js";
 import { useCart } from "../cart.jsx";
 
@@ -28,6 +29,7 @@ export const Icon = ({ name, size = 22 }) => {
     lock: <><rect x="5" y="11" width="14" height="9" rx="2" /><path d="M8 11V8a4 4 0 0 1 8 0v3" /></>,
     card: <><rect x="3" y="6" width="18" height="12" rx="2" /><path d="M3 10h18" /></>,
     filter: <path d="M4 6h16l-6 7v5l-4 2v-7z" />,
+    globe: <><circle cx="12" cy="12" r="8.5" /><path d="M3.5 12h17M12 3.5c2.6 2.4 3.9 5.2 3.9 8.5s-1.3 6.1-3.9 8.5c-2.6-2.4-3.9-5.2-3.9-8.5s1.3-6.1 3.9-8.5z" /></>,
   };
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -53,9 +55,9 @@ export function Price({ product, variant, from = false }) {
 export function QtyStepper({ value, onChange, min = 0 }) {
   return (
     <span className="qty">
-      <button type="button" aria-label="Decrease quantity" disabled={value <= min} onClick={() => onChange(Math.max(min, value - 1))}>−</button>
+      <button type="button" aria-label={t("Decrease quantity")} disabled={value <= min} onClick={() => onChange(Math.max(min, value - 1))}>−</button>
       <span aria-live="polite">{value}</span>
-      <button type="button" aria-label="Increase quantity" onClick={() => onChange(value + 1)}>+</button>
+      <button type="button" aria-label={t("Increase quantity")} onClick={() => onChange(value + 1)}>+</button>
     </span>
   );
 }
@@ -93,27 +95,27 @@ export function CollectionCard({ product }) {
   return (
     <article className={`ccard${quick ? " quick" : ""}`}>
       <Link to={`/products/${product.handle}`} className="ccard-link">
-        {product.compareAt && <span className="ccard-tag">Sale</span>}
-        {!product.available && <span className="ccard-tag muted">Sold out</span>}
+        {product.compareAt && <span className="ccard-tag">{t("Sale")}</span>}
+        {!product.available && <span className="ccard-tag muted">{t("Sold out")}</span>}
         <span className="ccard-media"><img src={img(product.images[0], 700)} alt="" loading="lazy" /></span>
         <span className="ccard-content">
           <span className="ccard-details">
             <span className="ccard-title">{product.name}</span>
             <span className="ccard-price">{product.priceVaries && "From "}USD <b>{money(product.price)}</b>{product.compareAt && <s>USD {money(product.compareAt)}</s>}</span>
           </span>
-          {!quick && <span className="ccard-action"><span>Shop</span><Icon name="arrow" size={18} /></span>}
+          {!quick && <span className="ccard-action"><span>{t("Shop")}</span><Icon name="arrow" size={18} /></span>}
         </span>
       </Link>
       {quick && (
         <div className="ccard-buy">
           {!product.available ? (
-            <button type="button" disabled>Sold Out</button>
+            <button type="button" disabled>{t("Sold Out")}</button>
           ) : single ? (
             <button type="button" className={added ? "added" : ""} onClick={addNow} aria-live="polite">
               <Icon name={added ? "check" : "cart"} size={18} />{added ? "Added to Cart" : "Add to Cart"}
             </button>
           ) : (
-            <Link to={`/products/${product.handle}`}>Select Options<Icon name="arrow" size={16} /></Link>
+            <Link to={`/products/${product.handle}`}>{t("Select Options")}<Icon name="arrow" size={16} /></Link>
           )}
         </div>
       )}
@@ -135,7 +137,7 @@ export function Countdown({ endsAt }) {
   return (
     <div className="countdown" role="timer">
       {parts.map(([label, n]) => (
-        <span key={label}><strong>{String(n).padStart(2, "0")}</strong><small>{label}</small></span>
+        <span key={label}><strong>{String(n).padStart(2, "0")}</strong><small>{t(label)}</small></span>
       ))}
     </div>
   );
@@ -149,9 +151,9 @@ export function Rail({ children, label, className = "" }) {
   };
   return (
     <div className={`rail ${className}`} aria-label={label}>
-      <button type="button" className="slider-arrow prev" aria-label="Previous" onClick={(e) => scroll(e, -1)}>‹</button>
+      <button type="button" className="slider-arrow prev" aria-label={t("Previous")} onClick={(e) => scroll(e, -1)}>‹</button>
       <div className="rail-track">{children}</div>
-      <button type="button" className="slider-arrow next" aria-label="Next" onClick={(e) => scroll(e, 1)}>›</button>
+      <button type="button" className="slider-arrow next" aria-label={t("Next")} onClick={(e) => scroll(e, 1)}>›</button>
     </div>
   );
 }

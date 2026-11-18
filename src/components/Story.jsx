@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { t } from "../i18n.js";
 import { img } from "../lib.js";
 import { Icon } from "./ui.jsx";
 
@@ -78,8 +79,8 @@ function Slides({ b, items }) {
         </ul>
         {n > 1 && (
           <>
-            <button type="button" className="is-arrow prev" aria-label="Previous" disabled={i === 0} onClick={() => setI(i - 1)}><Icon name="chevron" size={18} /></button>
-            <button type="button" className="is-arrow next" aria-label="Next" disabled={i === n - 1} onClick={() => setI(i + 1)}><Icon name="chevron" size={18} /></button>
+            <button type="button" className="is-arrow prev" aria-label={t("Previous")} disabled={i === 0} onClick={() => setI(i - 1)}><Icon name="chevron" size={18} /></button>
+            <button type="button" className="is-arrow next" aria-label={t("Next")} disabled={i === n - 1} onClick={() => setI(i + 1)}><Icon name="chevron" size={18} /></button>
           </>
         )}
       </div>
@@ -133,7 +134,7 @@ function Gallery({ b }) {
       <ul className="n4 photos">
         {items.map((it, n) => <li key={n}><div className="is-thumb"><img src={img(it.img, 700)} alt="" loading="lazy" /></div><h4>{it.title}</h4></li>)}
       </ul>
-      {b.items.length > 8 && !all && <button type="button" className="is-more" onClick={() => setAll(true)}>Show all {b.items.length}</button>}
+      {b.items.length > 8 && !all && <button type="button" className="is-more" onClick={() => setAll(true)}>{t("Show all")} {b.items.length}</button>}
     </Reveal>
   );
 }
@@ -150,7 +151,7 @@ export default function Story({ blocks }) {
   }, [video]);
   let splits = 0;
   const Play = ({ id, thumb }) => (
-    <button type="button" className="is-video" onClick={() => setVideo(id)} aria-label="Play video">
+    <button type="button" className="is-video" onClick={() => setVideo(id)} aria-label={t("Play video")}>
       <img src={thumb ? img(thumb, 1400) : `https://i.ytimg.com/vi/${id}/hqdefault.jpg`} alt="" loading="lazy" />
       <span aria-hidden="true" />
     </button>
@@ -215,10 +216,10 @@ export default function Story({ blocks }) {
         }
       })}
       {video && (
-        <div className="is-modal" role="dialog" aria-modal="true" aria-label="Video" onClick={() => setVideo(null)}>
-          <button type="button" aria-label="Close video">×</button>
+        <div className="is-modal" role="dialog" aria-modal="true" aria-label={t("Video")} onClick={() => setVideo(null)}>
+          <button type="button" aria-label={t("Close video")}>×</button>
           <div onClick={(e) => e.stopPropagation()}>
-            <iframe src={`https://www.youtube-nocookie.com/embed/${video}?autoplay=1&rel=0`} title="Video" allow="autoplay; encrypted-media; picture-in-picture" allowFullScreen />
+            <iframe src={`https://www.youtube-nocookie.com/embed/${video}?autoplay=1&rel=0`} title={t("Video")} allow="autoplay; encrypted-media; picture-in-picture" allowFullScreen />
           </div>
         </div>
       )}

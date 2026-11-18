@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { t } from "../i18n.js";
 import { byHandle, go, img, machines, products } from "../lib.js";
 import { useCart } from "../cart.jsx";
 import { addOns, faq, promo } from "../data/site.js";
@@ -85,7 +86,7 @@ export default function Product({ handle }) {
   }, [handle]);
   const options = useMemo(() => addOnsFor(product || {}), [product]);
   const story = useStory(handle);
-  if (!product) return <div className="container section-pad"><h1>Product not found</h1><Link to="/">Back to store</Link></div>;
+  if (!product) return <div className="container section-pad"><h1>{t("Product not found")}</h1><Link to="/">{t("Back to store")}</Link></div>;
 
   const variant = product.variants.find((v) => v.id === variantId) || product.variants.find((v) => v.available) || product.variants[0];
   const gallery = variant.image && !product.images.includes(variant.image) ? [variant.image, ...product.images] : product.images;
@@ -118,8 +119,8 @@ export default function Product({ handle }) {
   };
   const buttons = (
     <>
-      <button type="button" className="buy" disabled={!variant.available} onClick={() => commit(false)}>{variant.available ? "Add to Cart" : "Sold Out"}</button>
-      <button type="button" className="buy-now" disabled={!variant.available} onClick={() => commit(true)}>Buy Now</button>
+      <button type="button" className="buy" disabled={!variant.available} onClick={() => commit(false)}>{variant.available ? t("Add to Cart") : t("Sold Out")}</button>
+      <button type="button" className="buy-now" disabled={!variant.available} onClick={() => commit(true)}>{t("Buy Now")}</button>
     </>
   );
 
@@ -131,8 +132,8 @@ export default function Product({ handle }) {
             <img src={img(gallery[photo] || gallery[0], 1400)} alt={product.name} />
             {gallery.length > 1 && (
               <>
-                <button type="button" className="ip-arrow prev" aria-label="Previous image" onClick={() => setPhoto((photo + gallery.length - 1) % gallery.length)}><Icon name="chevron" size={18} /></button>
-                <button type="button" className="ip-arrow next" aria-label="Next image" onClick={() => setPhoto((photo + 1) % gallery.length)}><Icon name="chevron" size={18} /></button>
+                <button type="button" className="ip-arrow prev" aria-label={t("Previous image")} onClick={() => setPhoto((photo + gallery.length - 1) % gallery.length)}><Icon name="chevron" size={18} /></button>
+                <button type="button" className="ip-arrow next" aria-label={t("Next image")} onClick={() => setPhoto((photo + 1) % gallery.length)}><Icon name="chevron" size={18} /></button>
               </>
             )}
           </div>
@@ -148,18 +149,18 @@ export default function Product({ handle }) {
           {saved > 0 && (
             <Link to={promo.link} className="ip-promo">
               <span><img src={img(product.images[0], 240)} alt="" /></span>
-              <span><b>Black Friday: save {usd(variant.compareAt - variant.price).replace(".00", "")}</b><em>Ends Cyber Monday, Nov 30. Price already applied.</em></span>
-              <strong>See all deals</strong>
+              <span><b>{t("Black Friday: save")} {usd(variant.compareAt - variant.price).replace(".00", "")}</b><em>{t("Ends Cyber Monday, Nov 30. Price already applied.")}</em></span>
+              <strong>{t("See all deals")}</strong>
             </Link>
           )}
 
           <div className="ip-info">
-            <div><Icon name="truck" size={20} /><ul><li>Delivery estimate and rate shown at checkout</li><li>30-day easy returns{isMachine && " | 3-2-1 warranty"}</li><li>U.S.-based support from laser engineers</li></ul></div>
-            <div><Icon name="check" size={20} /><ul>{bullets.slice(0, 4).map((b) => <li key={b}>{b}</li>)}{product.fit && <li>Fits: {product.fit}</li>}</ul></div>
-            <div><Icon name="card" size={20} /><ul><li>Financing available at checkout — <a href="https://www.1laser.com/pages/financing" target="_blank" rel="noreferrer">learn more</a></li></ul></div>
+            <div><Icon name="truck" size={20} /><ul><li>{t("Delivery estimate and rate shown at checkout")}</li><li>{t("30-day easy returns")}{isMachine && ` | ${t("3-2-1 warranty")}`}</li><li>{t("U.S.-based support from laser engineers")}</li></ul></div>
+            <div><Icon name="check" size={20} /><ul>{bullets.slice(0, 4).map((b) => <li key={b}>{b}</li>)}{product.fit && <li>{t("Fits:")} {product.fit}</li>}</ul></div>
+            <div><Icon name="card" size={20} /><ul><li>{t("Financing available at checkout")} — <a href="https://www.1laser.com/pages/financing" target="_blank" rel="noreferrer">{t("learn more")}</a></li></ul></div>
           </div>
 
-          <div className="ip-label"><span>Select {product.optionName ? product.optionName.toLowerCase() : "option"}</span>{isMachine && <Link to="/compare">Compare machines</Link>}</div>
+          <div className="ip-label"><span>{t("Select option")}</span>{isMachine && <Link to="/compare">{t("Compare machines")}</Link>}</div>
           {many ? (
             <select className="variant-select" value={variant.id} onChange={(e) => pickVariant(product.variants.find((v) => v.id === e.target.value))}>
               {product.variants.map((v) => <option key={v.id} value={v.id} disabled={!v.available}>{v.title} — {usd(v.price)}{v.available ? "" : " (sold out)"}</option>)}
@@ -168,12 +169,12 @@ export default function Product({ handle }) {
             <div className="ip-options">
               {product.variants.map((v) => (
                 <button key={v.id} type="button" className={`ip-option${v.id === variant.id ? " on" : ""}`} disabled={!v.available} onClick={() => pickVariant(v)}>
-                  {v.compareAt && <em>Save {usd(v.compareAt - v.price).replace(".00", "")}</em>}
+                  {v.compareAt && <em>{t("Save")} {usd(v.compareAt - v.price).replace(".00", "")}</em>}
                   <span className="ip-option-head">
                     <img src={img(v.image || product.images[0], 200)} alt="" />
                     <span><b>{v.title || product.name}{!v.available && " (Sold out)"}</b><i>{usd(v.price)}{v.compareAt && <s>{usd(v.compareAt)}</s>}</i></span>
                   </span>
-                  {v.id === variant.id && <span className="ip-option-body"><span>{product.tagline}</span>{product.bestFor && <span>Best for: {product.bestFor}</span>}</span>}
+                  {v.id === variant.id && <span className="ip-option-body"><span>{product.tagline}</span>{product.bestFor && <span>{t("Best for")}: {product.bestFor}</span>}</span>}
                 </button>
               ))}
             </div>
@@ -181,7 +182,7 @@ export default function Product({ handle }) {
 
           {options.length > 0 && (
             <>
-              <div className="ip-label"><span>Frequently bought together</span></div>
+              <div className="ip-label"><span>{t("Frequently bought together")}</span></div>
               <div className="ip-addons">
                 {options.map((a) => (
                   <article key={a.handle} className={picked[a.handle] ? "on" : ""}>
@@ -189,7 +190,7 @@ export default function Product({ handle }) {
                     <img src={img(a.images[0], 200)} alt="" loading="lazy" />
                     <div><h3>{a.name}</h3><p>{usd(a.price)}</p></div>
                     <QtyStepper value={picked[a.handle] || 0} onChange={(n) => setPicked((s) => ({ ...s, [a.handle]: n }))} />
-                    <p className="ip-addon-text">{a.tagline} <Link to={`/products/${a.handle}`}>Learn more</Link></p>
+                    <p className="ip-addon-text">{a.tagline} <Link to={`/products/${a.handle}`}>{t("Learn more")}</Link></p>
                   </article>
                 ))}
               </div>
@@ -200,16 +201,16 @@ export default function Product({ handle }) {
             <h2>{product.name}</h2>
             <p>{variant.title || product.tagline}</p>
             {options.filter((a) => picked[a.handle]).map((a) => <p key={a.handle} className="ip-summary-line"><span>{a.name} × {picked[a.handle]}</span><span>{usd(a.price * picked[a.handle])}</span></p>)}
-            <p className="ip-summary-total"><span>Total</span><b>{usd(total)}</b></p>
-            {saved > 0 && <p className="ip-summary-save">You save {usd(saved)}</p>}
+            <p className="ip-summary-total"><span>{t("Total")}</span><b>{usd(total)}</b></p>
+            {saved > 0 && <p className="ip-summary-save">{t("You save")} {usd(saved)}</p>}
             <div className="buy-group">{buttons}</div>
           </div>
 
           <div className="ip-ship">
-            <h2>Shipped by OneLaser</h2>
-            <p><Icon name="truck" size={20} /><span><b>Delivery by address</b>Estimate and shipping rate are shown at checkout. See the <a href="https://www.1laser.com/pages/shipping-policy" target="_blank" rel="noreferrer">Shipping Policy</a>.</span></p>
-            <p><Icon name="refresh" size={20} /><span><b>30-day return period</b>See the <a href="https://www.1laser.com/pages/refund-policy" target="_blank" rel="noreferrer">Refund Policy</a> for conditions.</span></p>
-            <p><Icon name="lock" size={20} /><span><b>Pay your way</b>Card, PayPal, Shop Pay or financing.</span></p>
+            <h2>{t("Shipped by OneLaser")}</h2>
+            <p><Icon name="truck" size={20} /><span><b>{t("Delivery by address")}</b>{t("Estimate and shipping rate are shown at checkout. See the")} <a href="https://www.1laser.com/pages/shipping-policy" target="_blank" rel="noreferrer">{t("Shipping Policy")}</a>.</span></p>
+            <p><Icon name="refresh" size={20} /><span><b>30-day return period</b>{t("See the")} <a href="https://www.1laser.com/pages/refund-policy" target="_blank" rel="noreferrer">{t("Refund Policy")}</a> for conditions.</span></p>
+            <p><Icon name="lock" size={20} /><span><b>{t("Pay your way")}</b>{t("Card, PayPal, Shop Pay or financing.")}</span></p>
           </div>
         </div>
       </section>
@@ -217,7 +218,7 @@ export default function Product({ handle }) {
       <menu className="im-menu">
         <div>
           <b>{product.name}</b>
-          <ul>{sections.map(([id, label]) => <li key={id}><button type="button" className={active === id ? "on" : ""} onClick={() => jump(id)}>{label}</button></li>)}</ul>
+          <ul>{sections.map(([id, label]) => <li key={id}><button type="button" className={active === id ? "on" : ""} onClick={() => jump(id)}>{t(label)}</button></li>)}</ul>
         </div>
       </menu>
 
@@ -225,11 +226,11 @@ export default function Product({ handle }) {
         {story.blocks.length > 0 ? (
           <>
             <Story key={`${handle}-a`} blocks={story.blocks.slice(0, 1)} />
-            {closer.length >= 4 && <Look title="Take a closer look" items={closer} />}
+            {closer.length >= 4 && <Look title={t("Take a closer look")} items={closer} />}
             {stats.length === 3 && (
               <section className="is-stats">
-                <h2>{product.name} at a glance</h2>
-                <ul>{stats.map(([k, v]) => <li key={k}><b>{v}</b><span>{k}</span></li>)}</ul>
+                <h2>{product.name} {t("at a glance")}</h2>
+                <ul>{stats.map(([k, v]) => <li key={k}><b>{v}</b><span>{t(k)}</span></li>)}</ul>
               </section>
             )}
             <Story key={`${handle}-b`} blocks={story.blocks.slice(1)} />
@@ -247,7 +248,7 @@ export default function Product({ handle }) {
 
         {compare.length > 1 && (
           <section id="pdp-compare" className="is-compare">
-            <h2>Compare models</h2>
+            <h2>{t("Compare models")}</h2>
             <div className="is-compare-scroll">
               <div className={`is-compare-grid n${compare.length}`}>
                 {compare.map((m) => <Link key={m.handle} to={`/products/${m.handle}`} className="is-compare-img"><img src={img(m.images[0], 500)} alt="" loading="lazy" /></Link>)}
@@ -255,10 +256,10 @@ export default function Product({ handle }) {
                   <div key={m.handle} className="is-compare-head">
                     <b>{m.name}</b>
                     <strong>{usd(m.price).replace(".00", "")}</strong>
-                    {n === 0 ? <span>Now Viewing</span> : <Link to={`/products/${m.handle}`}>Learn more</Link>}
+                    {n === 0 ? <span>{t("Now Viewing")}</span> : <Link to={`/products/${m.handle}`}>{t("Learn more")}</Link>}
                   </div>
                 ))}
-                {COMPARE_ROWS.map((r) => compare.map((m) => <div key={r + m.handle} className="is-compare-cell"><b>{m.specs[r]}</b><span>{r}</span></div>))}
+                {COMPARE_ROWS.map((r) => compare.map((m) => <div key={r + m.handle} className="is-compare-cell"><b>{m.specs[r]}</b><span>{t(r)}</span></div>))}
               </div>
             </div>
           </section>
@@ -266,7 +267,7 @@ export default function Product({ handle }) {
 
         {specGroups && (
           <section id="pdp-specs" className="is-specs">
-            <h3>Specs</h3>
+            <h3>{t("Specs")}</h3>
             {specGroups.map((g) => (
               <div key={g.group}>
                 <h4>{g.group}</h4>
@@ -278,21 +279,21 @@ export default function Product({ handle }) {
       </div>
 
       <section id="pdp-faq" className="iw">
-        <h2>FAQ</h2>
-        <ul className="iw-faq">{questions.map(([q, a], n) => <li key={n}><details><summary><span>{n + 1} . {q}</span><Icon name="chevron" size={16} /></summary><p>{a}</p></details></li>)}</ul>
+        <h2>{t("FAQ")}</h2>
+        <ul className="iw-faq">{questions.map(([q, a], n) => <li key={n}><details><summary><span>{n + 1} . {t(q)}</span><Icon name="chevron" size={16} /></summary><p>{t(a)}</p></details></li>)}</ul>
       </section>
 
       {likes.length > 0 && (
         <section id="pdp-accessories" className="iw like">
-          <h2>You might also like</h2>
+          <h2>{t("You might also like")}</h2>
           <div className="iw-like">
             {likes.map((a) => (
               <article key={a.handle}>
                 <Link to={`/products/${a.handle}`}><img src={img(a.images[0], 600)} alt="" loading="lazy" /><b>{a.name}</b></Link>
-                <p>{a.variants.length > 1 ? "From " : ""}{usd(a.price)}</p>
-                {!a.available ? <button type="button" disabled>Out of stock</button>
-                  : a.variants.length > 1 ? <Link to={`/products/${a.handle}`} className="btn">Select options</Link>
-                  : <button type="button" onClick={() => { add(a.handle, a.variants[0].id, 1); setAdded(a.handle); }}>{added === a.handle ? "Added" : "Add to cart"}</button>}
+                <p>{a.variants.length > 1 ? `${t("From")} ` : ""}{usd(a.price)}</p>
+                {!a.available ? <button type="button" disabled>{t("Out of stock")}</button>
+                  : a.variants.length > 1 ? <Link to={`/products/${a.handle}`} className="btn">{t("Select options")}</Link>
+                  : <button type="button" onClick={() => { add(a.handle, a.variants[0].id, 1); setAdded(a.handle); }}>{added === a.handle ? t("Added") : t("Add to cart")}</button>}
               </article>
             ))}
           </div>
@@ -301,7 +302,7 @@ export default function Product({ handle }) {
 
       <div className="ip-bar">
         <div className="ip-bar-name"><strong>{product.name}</strong><span>{variant.title || product.tagline}</span></div>
-        <div className="ip-bar-price"><b>{usd(total)}</b>{saved > 0 && <small>Save {usd(saved)}</small>}</div>
+        <div className="ip-bar-price"><b>{usd(total)}</b>{saved > 0 && <small>{t("Save")} {usd(saved)}</small>}</div>
         <div className="ip-bar-btns">{buttons}</div>
       </div>
     </div>
