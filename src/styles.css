@@ -15,6 +15,11 @@
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; }
 body { margin: 0; background: #fff; font-size: 16px; line-height: 24px; -webkit-font-smoothing: antialiased; }
+/* Phones: the page itself never moves sideways. clip (unlike hidden) keeps position: sticky working;
+   overscroll-behavior stops a swipe that reaches the end of a card row from dragging the whole page with it (iOS rubber band). */
+html, body { overflow-x: clip; overscroll-behavior-x: none; }
+@supports not (overflow-x: clip) { body { overflow-x: hidden; } }
+.ih-tabs, .ih-scroller, .ih-grid, .iv-list, .ip2-grid, .ist-points, .il-strip > div, .ip-thumbs, .is-pills, .is-videos ul, .im-menu ul, .is-table-scroll, .is-compare-scroll, .compare-scroll { overscroll-behavior-x: contain; }
 img { max-width: 100%; display: block; }
 a { color: inherit; text-decoration: none; }
 button, input, select { font: inherit; color: inherit; }
