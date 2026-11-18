@@ -377,11 +377,11 @@ export default function Home() {
           </div>
         </div>
         <div className="ih-scroller irv-row" ref={rv}>
-            {homeReviews.items.map((r) => (
-              <figure key={r.name}>
-                <span className="irv-stars" aria-label="5 / 5">★★★★★</span>
+            {[...homeReviews.items, ...trustpilot.items.map((r) => ({ ...r, product: "Trustpilot" }))].map((r) => (
+              <figure key={r.product + r.name}>
+                <span className="irv-stars" aria-label={`${r.rating || 5} / 5`}>{"★".repeat(r.rating || 5)}</span>
                 <blockquote>“{r.text}”</blockquote>
-                <figcaption><b>{r.name}</b><span>{r.verified && <><Icon name="check" size={13} />{t("Verified buyer")} · </>}{r.product} · {r.date}</span></figcaption>
+                <figcaption><b>{r.name}</b><span>{r.verified && <><Icon name="check" size={13} />{t(r.product === "Trustpilot" ? "Verified" : "Verified buyer")} · </>}{r.product} · {r.date}</span></figcaption>
               </figure>
             ))}
         </div>
