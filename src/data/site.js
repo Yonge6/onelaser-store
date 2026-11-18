@@ -223,8 +223,8 @@ export const shortSlogans = {
 // Home video module. Lists supplied by the team on 2026-11-18; titles and channels read from YouTube. [id, title, channel]
 export const homeVideos = [
   { label: "OneLaser", items: [
-    ["seseyuxIZt4", "OneLaser Laser Engravers As Seen on FOX & Discovery | Product Showcase", "OneLaser"],
     ["_dv0xXmHSiA", "Engineered in the USA: What Makes OneLaser Different", "OneLaser"],
+    ["seseyuxIZt4", "OneLaser Laser Engravers As Seen on FOX & Discovery | Product Showcase", "OneLaser"],
     ["KAtO7_wkmMk", "OneLaser at APA Show | International Personalization Expo 2025 Recap", "OneLaser"],
     ["waBw5gDMPIM", "I Tested the New OneLaser Machines at the Next Level Maker Conference...", "OneLaser"],
   ] },
