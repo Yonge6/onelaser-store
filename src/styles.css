@@ -1034,6 +1034,10 @@ ul { list-style: none; }
 .ih-card:hover .ih-card-media img { transform: scale(1.2); }
 .ih-card { transition: background .25s; }
 .ih-card:hover { background: #f2f4f9; }
+.ih-card-price { width: 100%; display: flex; align-items: baseline; justify-content: center; flex-wrap: wrap; gap: 4px 8px; margin: 0 0 16px; font-size: 14px; line-height: 24px; color: #76767f; }
+.ih-card-price b { font-size: 20px; line-height: 24px; font-weight: 600; color: #262629; }
+.ih-card-price s { font-size: 14px; color: #a1a1aa; }
+.ih-card-price em { font-style: normal; font-size: 12px; line-height: 20px; font-weight: 600; color: var(--brand); background: var(--brand-soft); border-radius: 4px; padding: 0 8px; align-self: center; }
 .ih-card-btns { width: 100%; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
 .ih-card-btns .ih-btn.sm { height: 44px; padding: 0 12px; font-size: 14px; line-height: 44px; letter-spacing: .3px; min-width: 0; }
 .ih-viewall { display: flex; justify-content: center; margin-top: 24px; }

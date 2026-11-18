@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useCart } from "../cart.jsx";
 import { t } from "../i18n.js";
-import { asset, byHandle, img, products } from "../lib.js";
+import { asset, byHandle, img, money, products } from "../lib.js";
 import { heroSlides, homeStories, homeTabs, interests, newHandles, promo, shortSlogans } from "../data/site.js";
 import { Countdown, Icon, Link } from "../components/ui.jsx";
 import { BenefitArt } from "../components/Chrome.jsx";
@@ -105,6 +105,12 @@ function HomeCard({ p }) {
         <p>{t(shortSlogans[p.handle] || p.tagline)}</p>
       </div>
       <Link to={`/products/${p.handle}`} className="ih-card-media" tabIndex={-1} aria-hidden="true"><img src={img(p.images[0], 700)} alt="" loading="lazy" /></Link>
+      <p className="ih-card-price">
+        {p.priceVaries && <span>{t("From")}</span>}
+        <b>{money(p.price)}</b>
+        {p.compareAt > p.price && <s>{money(p.compareAt)}</s>}
+        {p.compareAt > p.price && <em>{t("Save")} {money(p.compareAt - p.price)}</em>}
+      </p>
       <div className="ih-card-btns">
         <button type="button" className={`ih-btn line sm${added ? " added" : ""}`} disabled={!p.available} onClick={addNow} aria-live="polite">
           {added ? <><Icon name="check" size={16} />{t("Added")}</> : !p.available ? t("Sold Out") : <><Icon name="cart" size={16} />{t("Add to cart")}</>}
