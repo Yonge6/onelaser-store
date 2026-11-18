@@ -208,3 +208,25 @@ export const homeVideos = [
     ["UxN-bVOpAKg", "I Spent 10 Years Evaluating Lasers—Here's Why I Chose the Cobra", "OneLaser"],
   ] },
 ];
+
+// Home "Why OneLaser" proof points (after the Build quality + Support blocks on thunderlaserusa.com).
+// Every figure is taken from the official product pages on 1laser.com (see src/data/stories.json). [figure, title, text]
+export const homeProof = [
+  ["30,000 h", "RF tube life, air-cooled", "XRF and Hydra Gen2 run sealed RF metal tubes rated for up to 30,000 hours. No water chiller for the RF source."],
+  ["2,000 mm/s", "Production speed", "Hydra Gen2 engraves at up to 2,000 mm/s with 4G acceleration, so a full bed finishes sooner."],
+  ["0.07 mm", "Laser dot for fine detail", "Up to 2,000 DPI with ≤ 0.01 mm repeat positioning for small text, photos and logos."],
+  ["12 MP", "Camera and autofocus", "A top-cover camera and XFocus™ autofocus show where the job will land before you press start."],
+  ["3-2-1", "Warranty", "3-year mechanical, 2-year electrical and 1-year optics coverage on XRF and Hydra machines."],
+  ["5+ yrs", "U.S.-based engineers", "Call OneLaser and you talk to a U.S.-based engineer with more than five years of laser experience on average."],
+];
+
+// Home buying FAQ (after "Questions? Answers." on thunderlaserusa.com). Answers restate the policies and pages on 1laser.com.
+export const homeFaq = [
+  ["Which machine is right for me?", "Answer the four questions in “Find your machine” above, compare every model side by side, or schedule a call with a OneLaser engineer."],
+  ["What warranty is included?", "The 3-2-1 warranty covers XRF and Hydra machines: 3-year mechanical, 2-year electrical and 1-year optics. Other products follow the official warranty policy."],
+  ["Can I return a machine?", "OneLaser offers 30-day easy returns. See the Refund Policy on 1laser.com for conditions."],
+  ["Is financing available?", "Yes. OneLaser works with Shop Pay Installments, Affirm and ClickLease. Rates and terms depend on the lender's approval."],
+  ["Which software does it work with?", "OneLaser machines work with LightBurn, MakerBoost AI and RDWorks on Windows and macOS."],
+  ["How does support work after I buy?", "You talk to U.S.-based engineers who have built, tuned and repaired these machines. Contact them from the Support page."],
+  ["How much is shipping?", "The shipping rate and delivery estimate are shown at checkout once you enter your address. See the Shipping Policy for details."],
+];

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useCart } from "../cart.jsx";
 import { t } from "../i18n.js";
 import { asset, byHandle, img, money, products } from "../lib.js";
-import { heroSlides, homeTabs, homeVideos, newHandles, promo, shortSlogans } from "../data/site.js";
+import { heroSlides, homeFaq, homeProof, homeTabs, homeVideos, newHandles, promo, shortSlogans } from "../data/site.js";
 import { Countdown, Icon, Link } from "../components/ui.jsx";
 import FinderCard, { FinderHelp } from "../components/Finder.jsx";
 
@@ -208,6 +208,20 @@ export default function Home() {
 
       <Videos />
 
+      <section className="ih-block ip2">
+        <div className="ih-wrap">
+          <div className="ip2-head">
+            <h2 className="ih-h2">{t("Built for the thousandth job, not just the first.")}</h2>
+            <p>{t("The numbers that decide how long a laser earns its keep.")}</p>
+          </div>
+          <div className="ip2-grid">
+            {homeProof.map(([figure, title, text]) => (
+              <article key={figure}><b>{figure}</b><h3>{t(title)}</h3><p>{t(text)}</p></article>
+            ))}
+          </div>
+        </div>
+      </section>
+
       <section className="ih-block">
         <div className="ih-wrap">
           <Link to="/collections/deals" className="ih-banner">
@@ -219,6 +233,17 @@ export default function Home() {
               <span className="ih-btn light">{t("Learn more")}</span>
             </span>
           </Link>
+        </div>
+      </section>
+
+      <section className="ih-block ifq">
+        <div className="ih-wrap">
+          <h2 className="ih-h2">{t("Questions? Answers.")}</h2>
+          <ul className="iw-faq">
+            {homeFaq.map(([q, ans], n) => (
+              <li key={q}><details open={n === 0}><summary><span>{t(q)}</span><Icon name="chevron" size={16} /></summary><p>{t(ans)}</p></details></li>
+            ))}
+          </ul>
         </div>
       </section>
     </div>
