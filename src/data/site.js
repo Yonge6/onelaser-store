@@ -53,7 +53,7 @@ export const nav = [
 ];
 
 export const heroSlides = [
-  { eyebrow: "Black Friday · Ends Nov 30", title: "XRF 38W", text: "All-in-one RF desktop laser — $1,000 off", image: "home-banner-xrf-desktop.webp", to: "/products/onelaser-xrf-desktop-laser-machine", dark: true, countdown: true, masked: true },
+  { eyebrow: "Black Friday · Ends Nov 30", title: "XRF 38W", text: "All-in-one RF desktop laser — $1,000 off", image: "home-hero-xrf.jpg", to: "/products/onelaser-xrf-desktop-laser-machine", dark: true, countdown: true },
   { eyebrow: "Industrial RF", title: "Hydra Gen2", text: "70W RF and hybrid dual-laser systems. Save up to $3,000.", image: "home-product-hydra-gen2-scene.webp", to: "/collections/hydra-gen2", dark: true },
   { eyebrow: "Workshop Essential", title: "Cobra Series", text: "Glass CO₂ cutting power from $3,999.", image: "home-product-cobra-scene.webp", to: "/collections/cobra-series", dark: true },
   { eyebrow: "Built for drinkware", title: "VertiGo", text: "Built-in vertical rotary. No setup, no alignment.", image: "home-product-vertigo-scene.webp", to: "/products/vertigo-vertical-laser-engraver", dark: true },
@@ -153,10 +153,11 @@ export const interests = [
 ];
 // TODO(team): replace with real customer stories and links once marketing supplies them.
 export const homeStories = [
-  ["Black Friday: save up to $3,000", "Every machine and accessory currently on sale, in one place.", "home-product-hydra-gen2-scene.webp", "/collections/deals"],
-  ["XRF 38W: an RF laser for the desktop", "Air-cooled RF, true 3G acceleration and a 0.07 mm laser spot.", "home-product-xrf-scene.webp", "/products/onelaser-xrf-desktop-laser-machine"],
-  ["Cobra Series: workshop cutting power", "90W to 130W glass CO₂ for wood, acrylic and leather.", "home-product-cobra-scene.webp", "/collections/cobra-series"],
-  ["VertiGo: built for drinkware", "Built-in vertical rotary. No setup, no alignment.", "home-product-vertigo-scene.webp", "/products/vertigo-vertical-laser-engraver"],
+  ["XRF 38W: an RF laser for the desktop", "Air-cooled RF, true 3G acceleration and a 0.07 mm laser spot.", "hot-xrf.jpg", "/products/onelaser-xrf-desktop-laser-machine"],
+  ["Hydra Gen2: RF precision at industrial scale", "70W RF Pro or 38W RF + glass-tube Hybrid configurations.", "hot-hydra7.jpg", "/collections/hydra-gen2"],
+  ["Cobra Series: workshop cutting power", "90W to 130W glass CO₂ for wood, acrylic and leather.", "hot-cobra8.jpg", "/collections/cobra-series"],
+  ["VertiGo: built for drinkware", "Built-in vertical rotary. No setup, no alignment.", "hot-vertigo.jpg", "/products/vertigo-vertical-laser-engraver"],
+  ["PiBurn OMNI: rotary engraving", "Roller and chuck modes with two drive systems and two motors.", "hot-piburn.jpg", "/products/piburn-omni-for-onelaser"],
 ];
 
 // One-line card slogans (Insta360 cards carry a single short line). Facts come from the product names and specs.

@@ -149,7 +149,7 @@ const ART = {
     </>
   ),
 };
-const BenefitArt = ({ name }) => <svg className="benefit-art" viewBox="0 0 140 104" fill="none" aria-hidden="true">{ART[name]}</svg>;
+export const BenefitArt = ({ name }) => <svg className="benefit-art" viewBox="0 0 140 104" fill="none" aria-hidden="true">{ART[name]}</svg>;
 
 /** "Why shop" bento (DJI figma-benefits): three columns, tiles 178+266 / 222+222 / 460. */
 export function Benefits() {

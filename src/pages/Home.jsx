@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { asset, byHandle, img, products } from "../lib.js";
 import { heroSlides, homeFeature, homeStories, homeTabs, interests, newHandles, promo, shortSlogans } from "../data/site.js";
 import { Countdown, Icon, Link } from "../components/ui.jsx";
+import { BenefitArt } from "../components/Chrome.jsx";
 
 /* Module order, sizes and type follow the insta360.com homepage (measured 2026-11-17 at 1440 and 375):
    full-bleed hero 660 with segmented progress → headline + sticky pill tabs + 3-column product cards (416×554, radius 24)
@@ -10,6 +11,13 @@ import { Countdown, Icon, Link } from "../components/ui.jsx";
    Kept from OneLaser: Certia typeface and brand red (Insta360 uses Poppins and yellow). */
 
 const SLIDE_MS = 6000;
+
+/** Product family shot built from the official renders (percent = height of the stage), each standing on a soft floor shadow. */
+const Lineup = ({ items }) => (
+  <div className="ih-lineup" aria-hidden="true">
+    {items.map(([h, pct]) => <span key={h} style={{ height: `${pct}%` }}><img src={img(byHandle[h].images[0], 700)} alt="" loading="lazy" /></span>)}
+  </div>
+);
 
 function Hero() {
   const [i, setI] = useState(0);
@@ -145,10 +153,10 @@ function Stories() {
 }
 
 const SUPPORT = [
-  ["Talk to an expert", "headset", "https://www.1laser.com/pages/sales-consultation"],
-  ["Product support", "refresh", "https://www.1laser.com/pages/contact-us"],
-  ["Financing", "card", "https://www.1laser.com/pages/financing"],
-  ["3-2-1 Warranty", "shield", "https://www.1laser.com/pages/warranty-policy"],
+  ["Talk to an expert", "support", "https://www.1laser.com/pages/sales-consultation"],
+  ["Easy returns", "returns", "https://www.1laser.com/pages/refund-policy"],
+  ["Financing", "payment", "https://www.1laser.com/pages/financing"],
+  ["3-2-1 Warranty", "warranty", "https://www.1laser.com/pages/warranty-policy"],
 ];
 
 export default function Home() {
@@ -179,17 +187,13 @@ export default function Home() {
             <p>Machine finder</p>
             <h3>Find your perfect laser with a side-by-side comparison.</h3>
             <div className="ih-half-btns"><Link to="/compare" className="ih-btn dark">Compare</Link><Link href="https://www.1laser.com/pages/sales-consultation" className="ih-link lg">Talk to sales</Link></div>
-            <div className="ih-half-art">
-              {["cobra-10-100w-co2-laser-engraver-cutter", "onelaser-xrf-desktop-laser-machine", "hydra-9-gen-2-70w-rf-co2-dual-laser-machine", "vertigo-vertical-laser-engraver"].map((h) => <img key={h} src={img(byHandle[h].images[0], 500)} alt="" loading="lazy" />)}
-            </div>
+            <Lineup items={[["hydra-9-gen-2-70w-rf-co2-dual-laser-machine", 88], ["cobra-10-100w-co2-laser-engraver-cutter", 78], ["onelaser-xrf-desktop-laser-machine", 46], ["vertigo-vertical-laser-engraver", 44]]} />
           </article>
           <article className="ih-half">
             <p>Accessories</p>
             <h3>Level up your laser with official OneLaser gear.</h3>
             <div className="ih-half-btns"><Link to="/collections/accessories" className="ih-btn dark">Shop now</Link></div>
-            <div className="ih-half-art">
-              {["piburn-omni-for-onelaser", "filtrabox-micro", "onelaser-x-series-riser-base", "onelaser-industrial-chiller-for-hydra-laser-engraver"].map((h) => <img key={h} src={img(byHandle[h].images[0], 500)} alt="" loading="lazy" />)}
-            </div>
+            <Lineup items={[["onelaser-industrial-chiller-for-hydra-laser-engraver", 62], ["piburn-omni-for-onelaser", 70], ["filtrabox-micro", 78], ["onelaser-x-series-riser-base", 48]]} />
           </article>
         </div>
       </section>
@@ -197,7 +201,7 @@ export default function Home() {
       <section className="ih-block">
         <div className="ih-wrap">
           <Link to="/collections/deals" className="ih-banner">
-            <img src={asset("home-product-hydra-gen2-scene.webp")} alt="" loading="lazy" />
+            <img src={asset("home-bf.jpg")} alt="" loading="lazy" />
             <span className="ih-banner-copy">
               <small>{promo.label}</small>
               <b>{promo.headline}</b>
@@ -224,7 +228,7 @@ export default function Home() {
 
       <section className="ih-block ih-support">
         <div className="ih-wrap">
-          {SUPPORT.map(([label, icon, href]) => <Link key={label} href={href} className="ih-entry"><Icon name={icon} size={64} /><span>{label}</span><Icon name="chevron" size={22} /></Link>)}
+          {SUPPORT.map(([label, icon, href]) => <Link key={label} href={href} className="ih-entry"><BenefitArt name={icon} /><span>{label}</span><Icon name="chevron" size={22} /></Link>)}
         </div>
       </section>
     </div>
