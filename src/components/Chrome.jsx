@@ -314,8 +314,25 @@ const SOCIAL = {
 
 /** Footer content and grouping follow www.1laser.com: Community, Machines, Support, Policy, Contact Us, social links, legal line. */
 export function Footer() {
+  const [sent, setSent] = useState(false);
   return (
     <footer className="site-footer">
+      <div className="footer-cta">
+        <div className="footer-rep">
+          <h2>{t("Talk to a Rep")}</h2>
+          <p>{t("Have questions or need help?")}</p>
+          <Link href="https://www.1laser.com/pages/sales-consultation" className="footer-pill">{t("Book A Free Call")}</Link>
+        </div>
+        <form className="footer-news" onSubmit={(e) => { e.preventDefault(); setSent(true); }}>
+          <h2>{t("Unlock Exclusive Updates & Savings!")}</h2>
+          <p>{t("Receive tips, promotions, and project inspiration.")}</p>
+          <div className="footer-field">
+            <input type="email" required placeholder={t("Email")} aria-label={t("Email")} onChange={() => sent && setSent(false)} />
+            <button type="submit" className="footer-pill">{t("Subscribe")}</button>
+          </div>
+          <small role="status">{sent ? t("Design draft — sign-up is not connected yet. Nothing was sent.") : t("By submitting, you agree to receive follow-ups from the OneLaser team (human or AI) by email, phone, or text regarding your inquiry.")}</small>
+        </form>
+      </div>
       <div className="footer-top">
         {footer.groups.map(([title, links]) => (
           <div key={title} className="footer-col">
@@ -325,8 +342,8 @@ export function Footer() {
         ))}
         <div className="footer-col footer-contact">
           <h3>{t("Contact Us")}</h3>
-          {footer.contact.map(([label, value, url]) => <p key={label}>{t(label)}: <Go url={url}>{value}</Go></p>)}
-          <p>{t("Headquarters")}: {footer.address}</p>
+          {footer.contact.map(([label, value, url]) => <p key={label}><Icon name={/^tel:/.test(url) ? "phone" : "mail"} size={16} /><span>{t(label)}: <Go url={url}>{value}</Go></span></p>)}
+          <p><Icon name="pin" size={16} /><span>{t("Headquarters")}: {footer.address}</span></p>
           <div className="footer-social">
             {footer.social.map(([name, url]) => (
               <Link key={name} href={url} aria-label={name} title={name}>

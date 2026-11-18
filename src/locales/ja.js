@@ -500,4 +500,12 @@ export default {
   "Choose an option": "オプションを選択",
   "Sold out": "売り切れ",
   "options": "オプション",
+  "Talk to a Rep": "担当者に相談",
+  "Have questions or need help?": "ご質問やお困りごとはありますか？",
+  "Book A Free Call": "無料通話を予約",
+  "Unlock Exclusive Updates & Savings!": "限定の最新情報と特典を受け取る",
+  "Receive tips, promotions, and project inspiration.": "ヒント、キャンペーン、作品のアイデアをお届けします。",
+  "Email": "メールアドレス",
+  "Design draft — sign-up is not connected yet. Nothing was sent.": "デザイン案：登録機能は未接続です。何も送信されていません。",
+  "By submitting, you agree to receive follow-ups from the OneLaser team (human or AI) by email, phone, or text regarding your inquiry.": "送信すると、お問い合わせについて OneLaser チーム（担当者または AI）からメール、電話、SMS で連絡を受けることに同意したものとみなされます。",
 };

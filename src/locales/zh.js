@@ -500,4 +500,12 @@ export default {
   "Choose an option": "请选择一项",
   "Sold out": "已售罄",
   "options": "个选项",
+  "Talk to a Rep": "联系销售顾问",
+  "Have questions or need help?": "有疑问或需要帮助？",
+  "Book A Free Call": "预约免费通话",
+  "Unlock Exclusive Updates & Savings!": "解锁专属资讯与优惠！",
+  "Receive tips, promotions, and project inspiration.": "获取使用技巧、促销信息和项目灵感。",
+  "Email": "邮箱",
+  "Design draft — sign-up is not connected yet. Nothing was sent.": "设计稿：订阅功能尚未接入，未发送任何信息。",
+  "By submitting, you agree to receive follow-ups from the OneLaser team (human or AI) by email, phone, or text regarding your inquiry.": "提交即表示您同意 OneLaser 团队（人工或 AI）通过邮件、电话或短信就您的咨询与您联系。",
 };

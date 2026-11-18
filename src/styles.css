@@ -328,11 +328,22 @@ ul { list-style: none; }
 .service-strip a { text-decoration: underline; }
 /* Footer: black, five columns, contact lines and social icons, as on www.1laser.com */
 .site-footer { background: #000; padding: 64px 64px 32px; color: rgba(255, 255, 255, 0.75); }
+.footer-cta { max-width: 1312px; margin: 0 auto 56px; padding-bottom: 56px; border-bottom: 1px solid rgba(255, 255, 255, 0.14); display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.9fr); gap: 40px 80px; align-items: start; }
+.footer-cta h2 { font-size: 32px; line-height: 40px; font-weight: 700; color: #fff; letter-spacing: -0.01em; }
+.footer-cta h2 + p { margin-top: 8px; font-size: 16px; line-height: 24px; color: #a4a4aa; }
+.footer-pill { display: inline-flex; align-items: center; justify-content: center; height: 48px; padding: 0 32px; border-radius: 999px; background: var(--brand); color: #fff; font-size: 14px; line-height: 20px; font-weight: 600; white-space: nowrap; transition: background .2s, transform .2s; }
+.footer-pill:hover { background: #c9280a; transform: translateY(-1px); }
+.footer-rep .footer-pill { margin-top: 24px; }
+.footer-field { margin-top: 24px; display: flex; gap: 12px; }
+.footer-field input { flex: 1; min-width: 0; height: 48px; padding: 0 22px; border-radius: 999px; border: 1px solid transparent; background: #fff; color: #000; font: inherit; font-size: 15px; outline: none; transition: box-shadow .2s; }
+.footer-field input:focus { box-shadow: 0 0 0 3px rgba(231, 49, 14, 0.45); }
+.footer-news small { display: block; margin-top: 12px; font-size: 11px; line-height: 16px; color: #999; }
+@media (max-width: 860px) { .footer-cta { grid-template-columns: 1fr; gap: 36px; margin-bottom: 36px; padding-bottom: 36px; } .footer-cta h2 { font-size: 24px; line-height: 32px; } .footer-field { flex-direction: column; } .footer-field input { flex: none; width: 100%; } .footer-rep .footer-pill, .footer-field .footer-pill { width: 100%; } }
 .footer-top { max-width: 1312px; margin: 0 auto; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)) minmax(0, 1.35fr); gap: 40px 32px; }
 .footer-col h3 { font-size: 16px; line-height: 24px; font-weight: 600; color: #fff; margin-bottom: 14px; }
 .footer-col > a { display: block; width: fit-content; font-size: 14px; line-height: 32px; color: rgba(255, 255, 255, 0.75); transition: color .2s; }
 .footer-col a:hover { color: #fff; text-decoration: underline; text-underline-offset: 3px; }
-.footer-contact p { font-size: 14px; line-height: 22px; margin-bottom: 8px; }
+.footer-contact p { display: flex; gap: 10px; font-size: 14px; line-height: 22px; margin-bottom: 8px; } .footer-contact p svg { flex: none; margin-top: 3px; color: rgba(255, 255, 255, 0.6); }
 .footer-contact p a { color: #fff; }
 .footer-social { display: flex; gap: 10px; margin-top: 18px; }
 .footer-social a { width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; color: #fff; background: rgba(255, 255, 255, 0.1); transition: background .2s, transform .2s; }

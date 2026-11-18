@@ -500,4 +500,12 @@ export default {
   "Choose an option": "Choisissez une option",
   "Sold out": "Épuisé",
   "options": "options",
+  "Talk to a Rep": "Parlez à un conseiller",
+  "Have questions or need help?": "Des questions ou besoin d'aide ?",
+  "Book A Free Call": "Réserver un appel gratuit",
+  "Unlock Exclusive Updates & Savings!": "Nouveautés et offres exclusives !",
+  "Receive tips, promotions, and project inspiration.": "Recevez conseils, promotions et idées de projets.",
+  "Email": "E-mail",
+  "Design draft — sign-up is not connected yet. Nothing was sent.": "Maquette : l'inscription n'est pas encore connectée. Rien n'a été envoyé.",
+  "By submitting, you agree to receive follow-ups from the OneLaser team (human or AI) by email, phone, or text regarding your inquiry.": "En envoyant, vous acceptez d'être recontacté par l'équipe OneLaser (humain ou IA) par e-mail, téléphone ou SMS au sujet de votre demande.",
 };
