@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useCart } from "../cart.jsx";
 import { t } from "../i18n.js";
 import { asset, byHandle, img, money, products } from "../lib.js";
-import { heroSlides, homeFaq, homeProof, homeReviews, homeStandard, homeTabs, homeVideos, trustpilot, newHandles, promo, shortSlogans } from "../data/site.js";
+import { heroSlides, homeFaq, homeMakers, homeProof, homeReviews, homeStandard, homeTabs, homeVideos, trustpilot, newHandles, promo, shortSlogans } from "../data/site.js";
 import { Countdown, Icon, Link } from "../components/ui.jsx";
 import FinderCard, { FinderHelp } from "../components/Finder.jsx";
 
@@ -245,6 +245,51 @@ function Videos() {
   );
 }
 
+/* Owner videos: what people make and sell with their machines. Cards open the video in a dialog on this page. */
+function Makers() {
+  const [open, setOpen] = useState(null);
+  useEffect(() => {
+    if (!open) return undefined;
+    const onKey = (e) => e.key === "Escape" && setOpen(null);
+    window.addEventListener("keydown", onKey);
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => { window.removeEventListener("keydown", onKey); document.body.style.overflow = prev; };
+  }, [open]);
+  return (
+    <section className="ih-block iu">
+      <div className="ih-wrap">
+        <div className="ip2-head">
+          <h2 className="ih-h2">{t("Made with OneLaser. Sold by makers.")}</h2>
+          <p>{t("Real shops showing the products they make and sell.")}</p>
+        </div>
+        <div className="iu-grid">
+          {homeMakers.map(([id, title, channel, what, machine]) => (
+            <button key={id} type="button" className="iu-card" onClick={() => setOpen([id, title])} aria-label={`${t("Play video")}: ${title}`}>
+              <span className="iu-thumb">
+                <img src={thumb(id)} onError={(e) => thumbFallback(e, id)} alt="" loading="lazy" />
+                <i aria-hidden="true" />
+                <em>{machine}</em>
+              </span>
+              <span className="iu-what">{t(what)}</span>
+              <b>{title}</b>
+              <small>{channel}</small>
+            </button>
+          ))}
+        </div>
+      </div>
+      {open && (
+        <div className="is-modal" role="dialog" aria-modal="true" aria-label={open[1]} onClick={() => setOpen(null)}>
+          <button type="button" aria-label={t("Close video")}>×</button>
+          <div onClick={(e) => e.stopPropagation()}>
+            <iframe src={`https://www.youtube-nocookie.com/embed/${open[0]}?autoplay=1&rel=0`} title={open[1]} allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowFullScreen />
+          </div>
+        </div>
+      )}
+    </section>
+  );
+}
+
 /** "Read all reviews": the Trustpilot profile figures and a selection of reviews in a dialog, so the visitor stays on the page. */
 function ReviewsDialog({ onClose }) {
   useEffect(() => {
@@ -333,6 +378,8 @@ export default function Home() {
           {reviewsOpen && <ReviewsDialog onClose={() => setReviewsOpen(false)} />}
         </div>
       </section>
+
+      <Makers />
 
       <section className="ih-block ist">
         <div className="ih-wrap">

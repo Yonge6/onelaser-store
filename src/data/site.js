@@ -315,3 +315,17 @@ export const trustpilot = {
     { name: "Josia Timothy", rating: 5, date: "Apr 20, 2026", verified: false, title: "Highly recommended", text: "The customer service was great and being able to chat to someone before buying was even better!" },
   ],
 };
+
+// Home "made with OneLaser" videos: owners showing what they make and sell, not machine introductions.
+// Found on YouTube on 2026-11-18 (search: OneLaser + business / projects); titles and channels as published.
+// [id, title, channel, what they make, machine]
+export const homeMakers = [
+  ["WD5has9K3IY", "This Firefighter Made A Six Figure Business With A Laser", "OneLaser", "Six-figure laser business", "OneLaser"],
+  ["godnvdc7raE", "Making 5' Store Signs with the OneLaser Hydra 16", "Maker Foundry", "Store signs", "Hydra 16"],
+  ["0gGxQMZZhOs", "How To Make Leather Patch Hats", "Wrico Goods", "Leather patch hats", "Hydra 9"],
+  ["sk-OcNSGa1o", "Running Small Production of Tumblers on the OneLaser Hydra 7", "Woodwork by Allan", "Tumbler production", "Hydra 7"],
+  ["vBxXG9vpgIQ", "Laser ideas to make and sell online", "Peachy Creations", "Products to sell online", "XRF"],
+  ["27nhcSEJkso", "Laser Engraving Multicam American Flag Patches", "Us2a Apparel", "Flag patches", "XRF"],
+  ["wdxvI3lI0Bg", "How VertiGo™ Pays for Itself — ROI Explained", "LensDigital", "Tumbler business ROI", "VertiGo"],
+  ["LG3wz6y-tOE", "Engraving Bamboo Cutting Board in the OneLaser XRF 38W", "Peachy Creations", "Cutting boards", "XRF"],
+];
