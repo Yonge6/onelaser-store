@@ -1150,6 +1150,11 @@ ul { list-style: none; }
 .ih-card-media { flex: 1; min-height: 0; width: 100%; display: grid; place-items: center; padding: 16px 0; }
 .ih-card-media img { width: 300px; max-width: 100%; height: 100%; max-height: 300px; object-fit: contain; mix-blend-mode: multiply; transform: scale(1.14); transition: transform .45s cubic-bezier(.2, .7, .2, 1); }
 .ih-card:hover .ih-card-media img { transform: scale(1.2); }
+/* product cards: one fixed square picture box, whatever the price block needs */
+.ih-card:not(.fc) { --mh: 250px; }
+.ih-card:not(.fc) .ih-card-media { flex: none; height: var(--mh); margin: auto 0; padding: 0; }
+.ih-card:not(.fc) .ih-card-media img { width: var(--mh); height: var(--mh); max-height: none; transform: none; }
+.ih-card:not(.fc):hover .ih-card-media img { transform: scale(1.06); }
 .ih-card { transition: background .25s; }
 .ih-card:hover { background: #f2f4f9; }
 .ih-card-price { width: 100%; display: flex; align-items: baseline; justify-content: center; flex-wrap: wrap; gap: 4px 8px; margin: 0 0 4px; font-size: 14px; line-height: 24px; color: #76767f; }
@@ -1246,6 +1251,7 @@ ul { list-style: none; }
 @media (max-width: 1180px) {
   .site-nav a { padding: 0 8px; } .header-phone span { display: none; } .store-btn span { display: none; } .store-btn { padding: 0 10px; } .promo-bar-link { padding: 0 56px 0 24px; gap: 24px; } .promo-bar img { display: none; } .site-header-bar { padding: 0 24px; } .site-header-bar > .brand { margin-right: 20px; } .site-header .brand span { display: none; }
   .ih-card { height: 480px; padding: 44px 24px 28px; }
+  .ih-card:not(.fc) { --mh: 204px; }
   .ih-card h3 { font-size: 22px; line-height: 28px; }
   .ih-card-info p { font-size: 16px; }
   .ih-feature-copy { left: 48px; }
@@ -1284,7 +1290,8 @@ ul { list-style: none; }
   .ih-tabs { gap: 16px; padding: 8px 0; }
   .ih-tabs button { height: 36px; padding: 0 16px; font-size: 14px; line-height: 36px; }
   .ih-grid { grid-template-columns: minmax(0, 1fr); gap: 12px; padding-top: 24px; }
-  .ih-card { height: 434px; padding: 48px 32px 32px; border-radius: 16px; }
+  .ih-card { height: 468px; padding: 48px 32px 32px; border-radius: 16px; }
+  .ih-card:not(.fc) { --mh: 200px; }
   .ih-new { font-size: 11px; line-height: 20px; top: -26px; }
   .ih-card h3 { font-size: 24px; line-height: 28px; }
   .ih-card-info p { font-size: 20px; line-height: 28px; margin-top: 4px; }
