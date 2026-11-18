@@ -21,6 +21,32 @@ const Lineup = ({ items }) => (
   </div>
 );
 
+/* Insta360's hero has "Buy now" + "Learn more", both leading to the same page. Here the second button does something else:
+   a product slide adds that product to the cart (first available option, stays on the page); a series slide opens the comparison. */
+function HeroButtons({ s, tab }) {
+  const { add } = useCart();
+  const [added, setAdded] = useState(false);
+  const product = s.to.startsWith("/products/") ? byHandle[s.to.slice(10)] : null;
+  const variant = product && (product.variants.find((v) => v.available) || product.variants[0]);
+  const addNow = () => {
+    add(product.handle, variant.id, 1);
+    setAdded(true);
+    setTimeout(() => setAdded(false), 1800);
+  };
+  return (
+    <div className="ih-btns">
+      <Link to={s.to} className="ih-btn light" tabIndex={tab}>{product ? t("Buy now") : t("Shop now")}</Link>
+      {product && product.available ? (
+        <button type="button" className={`ih-btn ghost${added ? " added" : ""}`} tabIndex={tab} onClick={addNow} aria-live="polite">
+          <Icon name={added ? "check" : "cart"} size={18} />{added ? t("Added") : t("Add to cart")}
+        </button>
+      ) : (
+        <Link to="/compare" className="ih-btn ghost" tabIndex={tab}>{t("Compare models")}</Link>
+      )}
+    </div>
+  );
+}
+
 function Hero() {
   const [i, setI] = useState(0);
   const [paused, setPaused] = useState(false);
@@ -38,10 +64,7 @@ function Hero() {
             <p className="ih-top">{t(s.eyebrow)}</p>
             <h1>{t(s.title)}</h1>
             <p className="ih-slogan">{t(s.text)}</p>
-            <div className="ih-btns">
-              <Link to={s.to} className="ih-btn light" tabIndex={n === i ? 0 : -1}>{t("Buy now")}</Link>
-              <Link to={s.to} className="ih-btn ghost" tabIndex={n === i ? 0 : -1}>{t("Learn more")}</Link>
-            </div>
+            <HeroButtons s={s} tab={n === i ? 0 : -1} />
           </div>
         </article>
       ))}
