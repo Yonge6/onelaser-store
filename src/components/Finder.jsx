@@ -1,9 +1,8 @@
 import { useMemo, useState } from "react";
 import { t } from "../i18n.js";
-import { byHandle, img, money } from "../lib.js";
+import { asset, byHandle, img, money } from "../lib.js";
 import { useCart } from "../cart.jsx";
 import { Icon, Link } from "./ui.jsx";
-import { BenefitArt } from "./Chrome.jsx";
 
 /* "Find your machine": a compact card in the last cell of the home product grid.
    The questions follow the four-step finder on thunderlaserusa.com (material → work → pieces → shop → machine), adapted to the
@@ -204,7 +203,7 @@ export function FinderHelp() {
         <Link href="https://www.1laser.com/pages/financing">{t("Pricing and financing")} ›</Link>
       </p>
       <div className="fd-help">
-        <BenefitArt name="support" />
+        <span className="fd-faces" aria-hidden="true">{[1, 2, 3].map((n) => <img key={n} src={asset(`team-${n}.jpg`)} alt="" loading="lazy" />)}</span>
         <div>
           <h3>{t("Not sure which one fits?")}</h3>
           <p>{t("Talk it through with a OneLaser laser engineer. Tell us what you make and we'll point you to the right machine.")}</p>

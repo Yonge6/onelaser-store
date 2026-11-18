@@ -1505,6 +1505,11 @@ ul { list-style: none; }
 .fd-links a:hover { color: var(--accent-dark); text-decoration: underline; text-underline-offset: 4px; }
 .fd-help { margin-top: 32px; padding: 28px 40px; display: flex; align-items: center; gap: 24px; background: #f8f9fc; border-radius: 24px; }
 .fd-help > svg { flex: none; width: 72px; height: 72px; }
+/* Three overlapping round portraits with a white ring, as in the "Not sure which one fits?" card on thunderlaserusa.com */
+.fd-faces { flex: none; display: flex; padding-left: 4px; }
+.fd-faces img { width: 76px; height: 76px; border-radius: 50%; object-fit: cover; box-shadow: 0 0 0 4px #fff, 0 6px 16px rgba(0, 0, 0, 0.12); background: var(--accent-soft); transition: transform .25s; }
+.fd-faces img + img { margin-left: -18px; }
+.fd-help:hover .fd-faces img:nth-child(1) { transform: translateX(-4px); } .fd-help:hover .fd-faces img:nth-child(3) { transform: translateX(4px); }
 .fd-help > div { flex: 1; min-width: 0; }
 .fd-help h3 { font-size: 22px; line-height: 28px; font-weight: 600; color: #262629; }
 .fd-help p { margin-top: 4px; font-size: 15px; line-height: 22px; color: #76767f; max-width: 640px; }
@@ -1518,6 +1523,7 @@ ul { list-style: none; }
   .ih-card.fc-done { padding: 32px 24px 18px; }
   .fd-links { gap: 8px 24px; margin-top: 24px; } .fd-links a { font-size: 14px; }
   .fd-help { flex-direction: column; align-items: flex-start; gap: 16px; padding: 20px; margin-top: 20px; border-radius: 16px; } .fd-help h3 { font-size: 20px; } .fd-help .ih-btn { width: 100%; }
+  .fd-faces img { width: 60px; height: 60px; } .fd-faces img + img { margin-left: -14px; }
 }
 
 /* ================= Listing, Insta360 Store layout (measured 1440) ================= */
