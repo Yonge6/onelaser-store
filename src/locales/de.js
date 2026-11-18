@@ -345,4 +345,5 @@ export default {
   "Talk it through with a OneLaser laser engineer. Tell us what you make and we'll point you to the right machine.": "Sprich mit einem OneLaser-Laseringenieur. Sag uns, was du herstellst, und wir empfehlen dir die passende Maschine.",
   "Schedule a call": "Anruf vereinbaren",
   "Find your machine": "Finde deine Maschine",
+  "Watch OneLaser in action": "OneLaser in Aktion",
 };

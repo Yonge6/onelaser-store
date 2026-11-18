@@ -172,3 +172,39 @@ export const shortSlogans = {
   "hydra-13-gen-2-70w-rf-co2-dual-laser-machine": "Large-format dual-laser system.",
   "hydra-16-gen-2-70w-rf-co2-dual-laser-machine": "Our largest dual-laser system.",
 };
+
+// Home video module. Lists supplied by the team on 2026-11-18; titles and channels read from YouTube. [id, title, channel]
+export const homeVideos = [
+  { label: "XRF", items: [
+    ["8tn7O69iCnQ", "Fox News Introduces ONELASER As Best Holiday DIY Gift!", "OneLaser"],
+    ["RxgWwJg5kAk", "Behind The Maker Ep. 001 | Holly Whiteside", "OneLaser"],
+    ["jNaj50MkKiE", "I Was Wrong About the One Laser X Desktop Laser", "Make or Break Shop"],
+    ["zHtW_nGm19U", "Pro Desktop Laser at a Budget Price - OneLaser X Series Review", "Make or Break Shop"],
+    ["r5m8As2oOJ4", "Hobby Laser vs. OneLaser XRF: Does Speed Actually Matter?", "OneLaser"],
+    ["j0WL-yfH3wE", "OneLaser XRF Overview | The Best Budget Friendly Desktop RF Laser", "ESENTL LASERHYDE"],
+  ] },
+  { label: "Hydra", items: [
+    ["y0YUu-4rx7A", "Should You Get an Industrial Size Laser?", "Make or Break Shop"],
+    ["HhpgAgg2ZCs", "My Biggest Regret After a Year With the OneLaser Hydra...", "OneLaser"],
+    ["HdP62cQVzs0", "The Machine Behind His Best-Selling Maps | OneLaser Hydra 16 Testimonial", "OneLaser"],
+    ["Fqtlsk_NsKM", "Is the OneLaser Hydra 13 Worth It? A Pottery Owner's Honest Review", "OneLaser"],
+    ["mUyYcwdeC1g", "Year review ONELaser Hydra 9", "Ash&Ember Woodshop"],
+    ["vf5KO_kGgmU", "How We Built The Fast & Furious Supra Interior (And How We Do It Now)", "OneLaser"],
+    ["sJx0-QZcXWo", "Onelaser Hydra 9 | Ultimate Setup Guide", "Rise N Grind Workshop"],
+  ] },
+  { label: "VertiGo", items: [
+    ["CwMCGw1aPTA", "Vertigo is the World's BEST Tumbler Machine", "LensDigital"],
+    ["G9fXsZAbUXs", "If You Sell Tumblers, Buy This Laser", "Make or Break Shop"],
+  ] },
+  { label: "Cobra", items: [
+    ["fdmr7l_crhI", "Perfecting Leatherette Hat Patches with the OneLaser Cobra 10 & XRF RF Tube", "ESENTL LASERHYDE"],
+    ["F1ZJvoeANgk", "Meet the COBRA™: Official Product Tour & Launch Announcement", "OneLaser"],
+    ["UxN-bVOpAKg", "I Spent 10 Years Evaluating Lasers—Here's Why I Chose the Cobra", "OneLaser"],
+  ] },
+  { label: "OneLaser", items: [
+    ["seseyuxIZt4", "OneLaser Laser Engravers As Seen on FOX & Discovery | Product Showcase", "OneLaser"],
+    ["_dv0xXmHSiA", "Engineered in the USA: What Makes OneLaser Different", "OneLaser"],
+    ["KAtO7_wkmMk", "OneLaser at APA Show | International Personalization Expo 2025 Recap", "OneLaser"],
+    ["waBw5gDMPIM", "I Tested the New OneLaser Machines at the Next Level Maker Conference...", "OneLaser"],
+  ] },
+];

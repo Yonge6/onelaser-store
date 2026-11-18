@@ -345,4 +345,5 @@ export default {
   "Talk it through with a OneLaser laser engineer. Tell us what you make and we'll point you to the right machine.": "与 OneLaser 激光工程师聊聊。告诉我们你做什么，我们会为你推荐合适的机型。",
   "Schedule a call": "预约通话",
   "Find your machine": "帮你选机",
+  "Watch OneLaser in action": "看 OneLaser 实拍",
 };

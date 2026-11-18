@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useCart } from "../cart.jsx";
 import { t } from "../i18n.js";
 import { asset, byHandle, img, money, products } from "../lib.js";
-import { heroSlides, homeStories, homeTabs, newHandles, promo, shortSlogans } from "../data/site.js";
+import { heroSlides, homeStories, homeTabs, homeVideos, newHandles, promo, shortSlogans } from "../data/site.js";
 import { Countdown, Icon, Link } from "../components/ui.jsx";
 import { BenefitArt } from "../components/Chrome.jsx";
 import FinderCard, { FinderHelp } from "../components/Finder.jsx";
@@ -157,6 +157,57 @@ function useScroller() {
   return [ref, by];
 }
 
+/* Video module: pill tabs per product line, one large player on the left and the rest of the list on the right.
+   Clicking a row loads it into the player; nothing from YouTube loads until a video is played (privacy-enhanced embed). */
+const thumb = (id) => `https://i.ytimg.com/vi/${id}/hq720.jpg`;
+const thumbFallback = (e, id) => { if (!e.target.dataset.fb) { e.target.dataset.fb = 1; e.target.src = `https://i.ytimg.com/vi/${id}/hqdefault.jpg`; } };
+
+function Videos() {
+  const [tab, setTab] = useState(0);
+  const [cur, setCur] = useState(0);
+  const [playing, setPlaying] = useState(false);
+  const items = homeVideos[tab].items;
+  const [id, title, channel] = items[cur] || items[0];
+  const choose = (n, play) => { setCur(n); setPlaying(play); };
+  return (
+    <section className="ih-block iv">
+      <div className="ih-wrap">
+        <div className="iv-head">
+          <h2 className="ih-h2">{t("Watch OneLaser in action")}</h2>
+          <div className="ih-tabs" role="tablist">
+            {homeVideos.map((g, n) => <button key={g.label} type="button" role="tab" aria-selected={n === tab} className={n === tab ? "on" : ""} onClick={() => { setTab(n); choose(0, false); }}>{g.label}</button>)}
+          </div>
+        </div>
+        <div className="iv-grid" key={tab}>
+          <div className="iv-main">
+            <div className="iv-player">
+              {playing ? (
+                <iframe key={id} src={`https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0`} title={title} allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowFullScreen />
+              ) : (
+                <button type="button" onClick={() => setPlaying(true)} aria-label={`${t("Play video")}: ${title}`}>
+                  <img key={id} src={thumb(id)} onError={(e) => thumbFallback(e, id)} alt="" loading="lazy" />
+                  <span aria-hidden="true" />
+                </button>
+              )}
+            </div>
+            <div className="iv-meta"><b>{title}</b><span>{channel}</span></div>
+          </div>
+          <ul className="iv-list">
+            {items.map(([vid, vt, vc], n) => (
+              <li key={vid}>
+                <button type="button" className={n === cur ? "on" : ""} aria-current={n === cur} onClick={() => choose(n, true)}>
+                  <span className="iv-thumb"><img src={thumb(vid)} onError={(e) => thumbFallback(e, vid)} alt="" loading="lazy" /><i aria-hidden="true" /></span>
+                  <span className="iv-text"><b>{vt}</b><em>{vc}</em></span>
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function Stories() {
   const [ref] = useScroller();
   const [at, setAt] = useState(0);
@@ -197,6 +248,8 @@ export default function Home() {
     <div className="ih">
       <Hero />
       <ProductBlock />
+
+      <Videos />
 
       <section className="ih-block">
         <div className="ih-wrap">

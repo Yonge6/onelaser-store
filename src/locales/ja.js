@@ -345,4 +345,5 @@ export default {
   "Talk it through with a OneLaser laser engineer. Tell us what you make and we'll point you to the right machine.": "OneLaser のレーザーエンジニアにご相談ください。制作内容をお聞かせいただければ、最適な機種をご案内します。",
   "Schedule a call": "通話を予約",
   "Find your machine": "マシンを探す",
+  "Watch OneLaser in action": "OneLaser の実力を動画で",
 };
