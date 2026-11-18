@@ -10,7 +10,7 @@ import { BenefitArt } from "../components/Chrome.jsx";
    → story carousel (864×486) → business band 376 → four support tiles 240. 64px gutters, 64px between blocks.
    Typeface is Poppins, as on Insta360. Only the brand red is OneLaser's own (Insta360 uses yellow). */
 
-const SLIDE_MS = 6000;
+const SLIDE_MS = 10000;
 
 /** Product family shot built from the official renders (percent = height of the stage), each standing on a soft floor shadow. */
 const Lineup = ({ items }) => (
@@ -36,7 +36,6 @@ function Hero() {
             <p className="ih-top">{s.eyebrow}</p>
             <h1>{s.title}</h1>
             <p className="ih-slogan">{s.text}</p>
-            {s.countdown && <Countdown endsAt={promo.endsAt} />}
             <div className="ih-btns">
               <Link to={s.to} className="ih-btn light" tabIndex={n === i ? 0 : -1}>Buy now</Link>
               <Link to={s.to} className="ih-btn ghost" tabIndex={n === i ? 0 : -1}>Learn more</Link>
@@ -44,10 +43,17 @@ function Hero() {
           </div>
         </article>
       ))}
+      <button type="button" className="ih-hero-arrow prev" aria-label="Previous slide" onClick={() => setI((i + heroSlides.length - 1) % heroSlides.length)}>
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M16 5L9 12L16 19" stroke="white" strokeWidth="2.5" strokeLinejoin="round" /></svg>
+      </button>
+      <button type="button" className="ih-hero-arrow next" aria-label="Next slide" onClick={() => setI((i + 1) % heroSlides.length)}>
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M8 5L15 12L8 19" stroke="white" strokeWidth="2.5" strokeLinejoin="round" /></svg>
+      </button>
       <div className="ih-pages">
         {heroSlides.map((s, n) => (
-          <button key={s.title} type="button" aria-label={`Slide ${n + 1}`} className={n === i ? "on" : n < i ? "done" : ""} onClick={() => setI(n)}>
-            <span style={n === i ? { animationDuration: `${SLIDE_MS}ms`, animationPlayState: paused ? "paused" : "running" } : undefined} />
+          <button key={s.title} type="button" aria-label={`Slide ${n + 1}: ${s.title}`} className={n === i ? "on" : ""} onClick={() => setI(n)}>
+            <em>{s.title}</em>
+            <i><span style={n === i ? { animationDuration: `${SLIDE_MS}ms`, animationPlayState: paused ? "paused" : "running" } : undefined} /></i>
           </button>
         ))}
       </div>

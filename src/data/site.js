@@ -54,7 +54,7 @@ export const nav = [
 
 export const heroSlides = [
   { eyebrow: "Black Friday · Ends Nov 30", title: "XRF 38W", text: "All-in-one RF desktop laser — $1,000 off", image: "home-hero-xrf.jpg", to: "/products/onelaser-xrf-desktop-laser-machine", dark: true, countdown: true },
-  { eyebrow: "Industrial RF", title: "Hydra Gen2", text: "70W RF and hybrid dual-laser systems. Save up to $3,000.", image: "home-product-hydra-gen2-scene.webp", to: "/collections/hydra-gen2", dark: true },
+  { eyebrow: "Industrial RF", title: "Hydra Gen2", text: "RF and hybrid dual-laser systems.", image: "home-product-hydra-gen2-scene.webp", to: "/collections/hydra-gen2", dark: true },
   { eyebrow: "Workshop Essential", title: "Cobra Series", text: "Glass CO₂ cutting power from $3,999.", image: "home-product-cobra-scene.webp", to: "/collections/cobra-series", dark: true },
   { eyebrow: "Built for drinkware", title: "VertiGo", text: "Built-in vertical rotary. No setup, no alignment.", image: "home-product-vertigo-scene.webp", to: "/products/vertigo-vertical-laser-engraver", dark: true },
 ];

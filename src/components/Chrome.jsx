@@ -32,7 +32,7 @@ export function Header({ path }) {
       <header className={`site-header${overlay ? " overlay" : ""}`} onMouseLeave={() => setOpen(null)}>
         <div className="site-header-bar">
           <button type="button" className="icon-btn only-mobile" aria-label="Menu" onClick={() => setMobile(true)}><Icon name="menu" /></button>
-          <Link to="/" className="brand" aria-label="OneLaser Store home"><img src={asset("onelaser-logo-transparent.svg")} alt="OneLaser" /><span>Store</span></Link>
+          <Link to="/" className="brand" aria-label="OneLaser Store home"><img src={asset("onelaser-logo-transparent.svg")} alt="OneLaser" /></Link>
           <nav className="site-nav" aria-label="Primary">
             {nav.map((n) => (
               <Link key={n.label} to={n.to} href={n.href} className={n.hot ? "hot" : ""} onMouseEnter={() => setOpen(n.columns ? n.label : null)} onFocus={() => setOpen(n.columns ? n.label : null)}>{n.label}</Link>
