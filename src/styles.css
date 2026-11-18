@@ -1417,20 +1417,22 @@ ul { list-style: none; }
 .irv-score b { font-size: 28px; line-height: 32px; font-weight: 600; color: #262629; }
 .irv-score em { font-style: normal; font-size: 14px; line-height: 20px; color: #76767f; }
 .irv-score:hover em { color: var(--accent-ink); text-decoration: underline; text-underline-offset: 3px; }
-.irv-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); grid-auto-rows: 1fr; gap: 24px; margin-top: 32px; }
-.irv-grid figure { display: flex; flex-direction: column; margin: 0; padding: 32px; background: #f8f9fc; border-radius: 24px; transition: background .25s, transform .25s; }
-.irv-grid figure:hover { background: #f1f3f8; transform: translateY(-3px); }
-.irv-grid blockquote { margin: 14px 0 0; font-size: 16px; line-height: 26px; color: #262629; }
-.irv-grid figcaption { margin-top: auto; padding-top: 20px; display: grid; gap: 2px; }
-.irv-grid figcaption b { font-size: 15px; line-height: 22px; font-weight: 600; color: #262629; }
-.irv-grid figcaption span { display: flex; align-items: center; flex-wrap: wrap; gap: 4px; font-size: 13px; line-height: 18px; color: #76767f; }
-.irv-grid figcaption svg { color: var(--accent-ink); }
+.irv-row { gap: 24px; align-items: stretch; padding-bottom: 6px; padding-top: 4px; }
+.irv-row figure { flex: none; width: 416px; scroll-snap-align: start; }
+.irv-head .ih-arrows { margin-left: auto; margin-bottom: 4px; } .irv-head .irv-score { margin-left: auto; } .irv-head .irv-score + .ih-arrows { margin-left: 0; }
+.irv-row figure { display: flex; flex-direction: column; margin: 0; padding: 32px; background: #f8f9fc; border-radius: 24px; transition: background .25s, transform .25s; }
+.irv-row figure:hover { background: #f1f3f8; transform: translateY(-3px); }
+.irv-row blockquote { margin: 14px 0 0; font-size: 16px; line-height: 26px; color: #262629; }
+.irv-row figcaption { margin-top: auto; padding-top: 20px; display: grid; gap: 2px; }
+.irv-row figcaption b { font-size: 15px; line-height: 22px; font-weight: 600; color: #262629; }
+.irv-row figcaption span { display: flex; align-items: center; flex-wrap: wrap; gap: 4px; font-size: 13px; line-height: 18px; color: #76767f; }
+.irv-row figcaption svg { color: var(--accent-ink); }
 .irv .fd-links { margin-top: 32px; }
-@media (max-width: 1180px) { .irv-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; } .irv-grid figure { padding: 24px; } }
+@media (max-width: 1180px) { .irv-row { gap: 16px; } .irv-row figure { width: 340px; padding: 24px; } }
 @media (max-width: 860px) {
   .irv-score { margin: 0; } .irv-score b { font-size: 22px; line-height: 28px; }
-  .irv-grid { grid-template-columns: 1fr; gap: 12px; margin-top: 20px; } .irv-grid figure { padding: 20px; border-radius: 16px; }
-  .irv-grid blockquote { font-size: 15px; line-height: 24px; }
+  .irv-row { gap: 12px; margin-top: 20px; } .irv-row figure { width: 82%; padding: 20px; border-radius: 16px; }
+  .irv-row blockquote { font-size: 15px; line-height: 24px; }
 }
 
 /* ================= Home "The OneLaser Standard" with the headquarters photo (content from www.1laser.com) ================= */
@@ -1505,7 +1507,7 @@ ul { list-style: none; }
 .addbtn-menu button em s { font-size: 12px; line-height: 14px; font-weight: 400; color: #a1a1aa; }
 .addbtn-menu button:disabled { cursor: default; } .addbtn-menu button:disabled span, .addbtn-menu button:disabled em { color: #a1a1aa; font-weight: 400; }
 .ih-btns .addbtn { display: inline-block; }
-.ih-tabs, .iu-row { cursor: grab; } .ih-tabs.dragging, .iu-row.dragging { cursor: grabbing; scroll-snap-type: none; user-select: none; }
+.ih-tabs, .iu-row, .irv-row { cursor: grab; } .ih-tabs.dragging, .iu-row.dragging, .irv-row.dragging { cursor: grabbing; scroll-snap-type: none; user-select: none; }
 .ih-tabs.dragging button, .iu-row.dragging > * { pointer-events: none; }
 
 /* ================= Reviews dialog (Trustpilot figures and selected reviews, shown in place) ================= */

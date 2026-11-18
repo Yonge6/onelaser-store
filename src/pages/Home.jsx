@@ -336,6 +336,8 @@ function ReviewsDialog({ onClose }) {
 
 export default function Home() {
   const [reviewsOpen, setReviewsOpen] = useState(false);
+  const rv = useDragScroll();
+  const rvSlide = (dir) => rv.current?.scrollBy({ left: dir * rv.current.clientWidth * 0.8, behavior: "smooth" });
   return (
     <div className="ih">
       <Hero />
@@ -368,8 +370,13 @@ export default function Home() {
               <b>{homeReviews.average}</b>
               <em>{t("out of 5")} · {homeReviews.count} {t("machine reviews")}</em>
             </Link>
+            <div className="ih-arrows">
+              <button type="button" aria-label={t("Previous")} onClick={() => rvSlide(-1)}><Icon name="chevron" size={16} /></button>
+              <button type="button" aria-label={t("Next")} onClick={() => rvSlide(1)}><Icon name="chevron" size={16} /></button>
+            </div>
           </div>
-          <div className="irv-grid">
+        </div>
+        <div className="ih-scroller irv-row" ref={rv}>
             {homeReviews.items.map((r) => (
               <figure key={r.name}>
                 <span className="irv-stars" aria-label="5 / 5">★★★★★</span>
@@ -377,7 +384,8 @@ export default function Home() {
                 <figcaption><b>{r.name}</b><span>{r.verified && <><Icon name="check" size={13} />{t("Verified buyer")} · </>}{r.product} · {r.date}</span></figcaption>
               </figure>
             ))}
-          </div>
+        </div>
+        <div className="ih-wrap">
           <p className="fd-links"><button type="button" onClick={() => setReviewsOpen(true)}>{t("Read all reviews")} ›</button></p>
           {reviewsOpen && <ReviewsDialog onClose={() => setReviewsOpen(false)} />}
         </div>
