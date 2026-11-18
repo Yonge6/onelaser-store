@@ -338,8 +338,9 @@ ul { list-style: none; }
 .footer-field input { flex: 1; min-width: 0; height: 48px; padding: 0 22px; border-radius: 999px; border: 1px solid transparent; background: #fff; color: #000; font: inherit; font-size: 15px; outline: none; transition: box-shadow .2s; }
 .footer-field input:focus { box-shadow: 0 0 0 3px rgba(231, 49, 14, 0.45); }
 .footer-news small { display: block; margin-top: 12px; font-size: 11px; line-height: 16px; color: #999; }
-@media (max-width: 860px) { .footer-cta { grid-template-columns: 1fr; gap: 36px; margin-bottom: 36px; padding-bottom: 36px; } .footer-cta h2 { font-size: 24px; line-height: 32px; } .footer-field { flex-direction: column; } .footer-field input { flex: none; width: 100%; } .footer-rep .footer-pill, .footer-field .footer-pill { width: 100%; } }
+@media (max-width: 860px) { .footer-cta { grid-template-columns: 1fr; gap: 36px; margin-bottom: 36px; padding-bottom: 36px; } .footer-cta h2 { font-size: 24px; line-height: 32px; } .footer-field { margin-top: 16px; gap: 8px; } .footer-field .footer-pill { padding: 0 20px; } .footer-rep .footer-pill { margin-top: 16px; height: 44px; } .footer-cta h2 + p { font-size: 14px; line-height: 20px; margin-top: 4px; } }
 .footer-top { max-width: 1312px; margin: 0 auto; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)) minmax(0, 1.35fr); gap: 40px 32px; }
+.footer-col h3 button { all: unset; display: block; cursor: default; } .footer-col h3 button svg { display: none; }
 .footer-col h3 { font-size: 16px; line-height: 24px; font-weight: 600; color: #fff; margin-bottom: 14px; }
 .footer-col > a { display: block; width: fit-content; font-size: 14px; line-height: 32px; color: rgba(255, 255, 255, 0.75); transition: color .2s; }
 .footer-col a:hover { color: #fff; text-decoration: underline; text-underline-offset: 3px; }
@@ -352,6 +353,18 @@ ul { list-style: none; }
 .footer-bottom p:nth-child(2) { display: flex; gap: 24px; flex-wrap: wrap; }
 .footer-bottom a, .footer-bottom button { color: rgba(255, 255, 255, 0.75); font-size: 13px; }
 .footer-bottom a:hover, .footer-bottom button:hover { color: #fff; }
+@media (max-width: 860px) {
+  .site-footer .footer-top { grid-template-columns: 1fr; gap: 0; }
+  .site-footer .footer-contact { grid-column: auto; }
+  .footer-col:not(.footer-contact) { border-bottom: 1px solid rgba(255, 255, 255, 0.14); }
+  .footer-col:not(.footer-contact) h3 { margin: 0; }
+  .footer-col h3 button { display: flex; align-items: center; justify-content: space-between; width: 100%; height: 52px; cursor: pointer; }
+  .footer-col h3 button svg { display: block; transform: rotate(90deg); transition: transform .2s; color: rgba(255, 255, 255, 0.6); }
+  .footer-col.open h3 button svg { transform: rotate(-90deg); }
+  .footer-col:not(.footer-contact):not(.open) > a { display: none; }
+  .footer-col.open { padding-bottom: 12px; }
+  .footer-contact { margin-top: 28px; }
+}
 .footer-bottom small { flex-basis: 100%; font-size: 12px; line-height: 18px; color: rgba(255, 255, 255, 0.4); }
 @media (max-width: 1180px) { .footer-top { grid-template-columns: repeat(3, minmax(0, 1fr)); } .site-footer { padding: 48px 24px 28px; } }
 @media (max-width: 860px) { .footer-top { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 32px 16px; } .footer-contact { grid-column: 1 / -1; } .site-footer { padding: 40px 20px 110px; } .footer-bottom { margin-top: 32px; } }
@@ -1290,7 +1303,10 @@ ul { list-style: none; }
   .ih-sticky { top: 49px; margin-top: 16px; }
   .ih-tabs { gap: 16px; padding: 8px 0; }
   .ih-tabs button { height: 36px; padding: 0 16px; font-size: 14px; line-height: 36px; }
-  .ih-grid { grid-template-columns: minmax(0, 1fr); gap: 12px; padding-top: 24px; }
+  /* phones: product cards in one swipe row (next card peeks) instead of a 6-card stack */
+  .ih-grid { display: flex; gap: 12px; padding: 24px 24px 4px; margin: 0 -24px; overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding-left: 24px; scrollbar-width: none; }
+  .ih-grid::-webkit-scrollbar { display: none; }
+  .ih-grid > .ih-card { flex: none; width: 84%; scroll-snap-align: start; }
   .ih-card { height: 468px; padding: 48px 32px 32px; border-radius: 16px; }
   .ih-card:not(.fc) { --mh: 200px; }
   .ih-new { font-size: 11px; line-height: 20px; top: -26px; }
@@ -1406,7 +1422,7 @@ ul { list-style: none; }
 @media (max-width: 1180px) { .ip2-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; } .ip2-grid article { padding: 28px; } .ip2-grid b { font-size: 36px; line-height: 42px; } }
 @media (max-width: 860px) {
   .ip2-head p { font-size: 14px; line-height: 20px; margin: 0; }
-  .ip2-grid { grid-template-columns: 1fr; gap: 12px; margin-top: 20px; } .ip2-grid article { padding: 24px 20px; border-radius: 16px; }
+  .ip2-grid { display: flex; gap: 12px; margin: 20px -24px 0; padding: 0 24px 4px; overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding-left: 24px; scrollbar-width: none; } .ip2-grid::-webkit-scrollbar { display: none; } .ip2-grid article { flex: none; width: 76%; scroll-snap-align: start; } .ip2-grid article { padding: 24px 20px; border-radius: 16px; }
   .ip2-grid b { font-size: 32px; line-height: 38px; } .ip2-grid h3 { font-size: 18px; margin-top: 8px; } .ip2-grid p { font-size: 14px; line-height: 21px; }
   .ifq .iw-faq { margin-top: 16px; } .ifq .iw-faq summary span { font-size: 15px; line-height: 22px; }
 }
@@ -1453,7 +1469,12 @@ ul { list-style: none; }
 @media (max-width: 1180px) { .ist-points { grid-template-columns: repeat(2, minmax(0, 1fr)); } .ist-points li:nth-child(3) { padding-left: 0; border-left: 0; } .ist-points li:nth-child(n + 3) { border-top: 1px solid #e6e8ee; } }
 @media (max-width: 860px) {
   .ist-photo { aspect-ratio: 16 / 10; border-radius: 16px; } .ist-kicker { margin-top: 24px; } .ist-text { font-size: 14px; line-height: 22px; }
-  .ist-points { grid-template-columns: 1fr; margin-top: 24px; } .ist-points li, .ist-points li + li { padding: 20px 0 4px; border-left: 0; } .ist-points li + li { border-top: 1px solid #e6e8ee; }
+  /* phones: the four points become one swipe row of cards (≈170px tall instead of ≈580px stacked), next card peeking in */
+  .ist-points { display: flex; gap: 12px; margin: 20px -24px 0; padding: 0 24px 4px; border-top: 0; overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding-left: 24px; scrollbar-width: none; }
+  .ist-points::-webkit-scrollbar { display: none; }
+  .ist-points li, .ist-points li + li, .ist-points li:nth-child(n + 3) { flex: none; width: 76%; scroll-snap-align: start; padding: 18px 18px 20px; border: 0; border-radius: 16px; background: #f8f9fc; }
+  .ist-points h3 { margin-top: 8px; font-size: 16px; line-height: 22px; } .ist-points p { margin-top: 6px; font-size: 13px; line-height: 20px; }
+  .ist .fd-links { margin-top: 20px; }
 }
 
 /* ================= Home owner videos ("made with OneLaser") ================= */

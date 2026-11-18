@@ -324,6 +324,7 @@ const SOCIAL = {
 /** Footer content and grouping follow www.1laser.com: Community, Machines, Support, Policy, Contact Us, social links, legal line. */
 export function Footer() {
   const [sent, setSent] = useState(false);
+  const [col, setCol] = useState(null); // phones: which link group is open
   return (
     <footer className="site-footer">
       <div className="footer-cta">
@@ -344,8 +345,8 @@ export function Footer() {
       </div>
       <div className="footer-top">
         {footer.groups.map(([title, links]) => (
-          <div key={title} className="footer-col">
-            <h3>{t(title)}</h3>
+          <div key={title} className={`footer-col${col === title ? " open" : ""}`}>
+            <h3><button type="button" aria-expanded={col === title} onClick={() => setCol(col === title ? null : title)}>{t(title)}<Icon name="chevron" size={16} /></button></h3>
             {links.map(([l, url]) => <Go key={l} url={url}>{t(l)}</Go>)}
           </div>
         ))}
