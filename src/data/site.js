@@ -175,6 +175,12 @@ export const shortSlogans = {
 
 // Home video module. Lists supplied by the team on 2026-11-18; titles and channels read from YouTube. [id, title, channel]
 export const homeVideos = [
+  { label: "OneLaser", items: [
+    ["seseyuxIZt4", "OneLaser Laser Engravers As Seen on FOX & Discovery | Product Showcase", "OneLaser"],
+    ["_dv0xXmHSiA", "Engineered in the USA: What Makes OneLaser Different", "OneLaser"],
+    ["KAtO7_wkmMk", "OneLaser at APA Show | International Personalization Expo 2025 Recap", "OneLaser"],
+    ["waBw5gDMPIM", "I Tested the New OneLaser Machines at the Next Level Maker Conference...", "OneLaser"],
+  ] },
   { label: "XRF", items: [
     ["8tn7O69iCnQ", "Fox News Introduces ONELASER As Best Holiday DIY Gift!", "OneLaser"],
     ["RxgWwJg5kAk", "Behind The Maker Ep. 001 | Holly Whiteside", "OneLaser"],
@@ -200,11 +206,5 @@ export const homeVideos = [
     ["fdmr7l_crhI", "Perfecting Leatherette Hat Patches with the OneLaser Cobra 10 & XRF RF Tube", "ESENTL LASERHYDE"],
     ["F1ZJvoeANgk", "Meet the COBRA™: Official Product Tour & Launch Announcement", "OneLaser"],
     ["UxN-bVOpAKg", "I Spent 10 Years Evaluating Lasers—Here's Why I Chose the Cobra", "OneLaser"],
-  ] },
-  { label: "OneLaser", items: [
-    ["seseyuxIZt4", "OneLaser Laser Engravers As Seen on FOX & Discovery | Product Showcase", "OneLaser"],
-    ["_dv0xXmHSiA", "Engineered in the USA: What Makes OneLaser Different", "OneLaser"],
-    ["KAtO7_wkmMk", "OneLaser at APA Show | International Personalization Expo 2025 Recap", "OneLaser"],
-    ["waBw5gDMPIM", "I Tested the New OneLaser Machines at the Next Level Maker Conference...", "OneLaser"],
   ] },
 ];
