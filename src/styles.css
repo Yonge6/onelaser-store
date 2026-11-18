@@ -1075,7 +1075,8 @@ ul { list-style: none; }
 .ih-btn.ghost { border: 1px solid #fff; color: #fff; line-height: 46px; }
 .ih-btn.ghost:hover { background: rgba(255, 255, 255, 0.16); }
 .ih-btns .ih-btn { min-width: 176px; gap: 8px; }
-.ih-btns .ih-btn.light { font-weight: 600; box-shadow: 0 6px 20px rgba(0, 0, 0, 0.18); }
+.ih-btns .ih-btn.light { font-weight: 600; background: var(--brand); color: #fff; box-shadow: 0 6px 20px rgba(0, 0, 0, 0.18); }
+.ih-btns .ih-btn.light:hover { background: #c9280a; box-shadow: 0 10px 24px rgba(231, 49, 14, 0.4); }
 .ih-btns .ih-btn.ghost { background: rgba(255, 255, 255, 0.12); border-color: rgba(255, 255, 255, 0.7); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
 .ih-btns .ih-btn.ghost:hover { background: rgba(255, 255, 255, 0.24); border-color: #fff; }
 .ih-btns .ih-btn.ghost.added { background: #fff; color: #1d1d1f; border-color: #fff; }
