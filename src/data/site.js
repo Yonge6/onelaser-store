@@ -134,11 +134,11 @@ export const homeTabs = [
   { label: "Desktop Lasers", all: "/collections/machines", picks: ["onelaser-xrf-desktop-laser-machine", "vertigo-vertical-laser-engraver"] },
   { label: "Cobra Series", all: "/collections/cobra-series", picks: ["cobra-8-90w-co2-laser-engraver-cutter", "cobra-10-100w-co2-laser-engraver-cutter", "cobra-14-130w-co2-laser-engraver-cutter"] },
   { label: "Hydra Gen2", all: "/collections/hydra-gen2", picks: ["hydra-7-gen-2-70w-rf-co2-dual-laser-machine", "hydra-9-gen-2-70w-rf-co2-dual-laser-machine", "hydra-13-gen-2-70w-rf-co2-dual-laser-machine", "hydra-16-gen-2-70w-rf-co2-dual-laser-machine"] },
+  { label: "Materials", all: "/collections/materials", collection: "materials" },
   { label: "Rotary Attachments", all: "/collections/rotary", collection: "rotary" },
   { label: "Fume Extractors", all: "/collections/fume", collection: "fume" },
   { label: "Chillers", all: "/collections/cooling", collection: "cooling" },
   { label: "Lens & Optics", all: "/collections/optics", collection: "optics" },
-  { label: "Materials", all: "/collections/materials", collection: "materials" },
 ];
 export const newHandles = ["onelaser-xrf-desktop-laser-machine", "vertigo-vertical-laser-engraver"];
 export const homeFeature = { title: "Hydra 9 Gen2", text: ["70W RF + CO₂ dual laser.", "Save up to $3,000 this Black Friday."], image: "promo-hydra9.jpg", to: "/products/hydra-9-gen-2-70w-rf-co2-dual-laser-machine" };
