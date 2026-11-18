@@ -1,8 +1,8 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useCart } from "../cart.jsx";
 import { t } from "../i18n.js";
 import { asset, byHandle, img, money, products } from "../lib.js";
-import { heroSlides, homeStories, homeTabs, homeVideos, newHandles, promo, shortSlogans } from "../data/site.js";
+import { heroSlides, homeTabs, homeVideos, newHandles, promo, shortSlogans } from "../data/site.js";
 import { Countdown, Icon, Link } from "../components/ui.jsx";
 import { BenefitArt } from "../components/Chrome.jsx";
 import FinderCard, { FinderHelp } from "../components/Finder.jsx";
@@ -150,13 +150,6 @@ function ProductBlock() {
   );
 }
 
-/** Horizontal scroller with Insta360's round arrow buttons in the heading row. */
-function useScroller() {
-  const ref = useRef(null);
-  const by = (dir) => ref.current?.scrollBy({ left: dir * ref.current.clientWidth * 0.8, behavior: "smooth" });
-  return [ref, by];
-}
-
 /* Video module: pill tabs per product line, one large player on the left and the rest of the list on the right.
    Clicking a row loads it into the player; nothing from YouTube loads until a video is played (privacy-enhanced embed). */
 const thumb = (id) => `https://i.ytimg.com/vi/${id}/hq720.jpg`;
@@ -208,34 +201,6 @@ function Videos() {
   );
 }
 
-function Stories() {
-  const [ref] = useScroller();
-  const [at, setAt] = useState(0);
-  const onScroll = () => {
-    const el = ref.current;
-    const card = el?.firstElementChild;
-    if (card) setAt(Math.round(el.scrollLeft / (card.getBoundingClientRect().width + parseFloat(getComputedStyle(el).columnGap || 0))));
-  };
-  const go = (n) => {
-    const el = ref.current;
-    el?.children[n]?.scrollIntoView({ behavior: "smooth", inline: "start", block: "nearest" });
-  };
-  return (
-    <section className="ih-block">
-      <div className="ih-wrap"><h2 className="ih-h2">{t("See what OneLaser is up to")}</h2></div>
-      <div className="ih-scroller ih-stories" ref={ref} onScroll={onScroll}>
-        {homeStories.map(([title, text, image, to]) => (
-          <Link key={title} to={to} className="ih-story">
-            <img src={asset(image)} alt="" loading="lazy" />
-            <span><b>{t(title)}</b><em>{t(text)}</em></span>
-          </Link>
-        ))}
-      </div>
-      <div className="ih-dashes">{homeStories.map((s, n) => <button key={n} type="button" aria-label={`Story ${n + 1}`} className={n === at ? "on" : ""} onClick={() => go(n)} />)}</div>
-    </section>
-  );
-}
-
 const SUPPORT = [
   ["Talk to an expert", "support", "https://www.1laser.com/pages/sales-consultation"],
   ["Easy returns", "returns", "https://www.1laser.com/pages/refund-policy"],
@@ -264,8 +229,6 @@ export default function Home() {
           </Link>
         </div>
       </section>
-
-      <Stories />
 
       <Link href="https://www.1laser.com/pages/sales-consultation" className="ih-business">
         <span className="ih-wrap">
