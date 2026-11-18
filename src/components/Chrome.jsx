@@ -2,8 +2,11 @@ import { useEffect, useState } from "react";
 import { LANGS, getLang, setLang, t } from "../i18n.js";
 import { asset, byHandle, go, img, products } from "../lib.js";
 import { useCart } from "../cart.jsx";
-import { nav, promo, benefits } from "../data/site.js";
-import { Icon, Link, usd } from "./ui.jsx";
+import { nav, promo, benefits, contact, footer } from "../data/site.js";
+import { Countdown, Icon, Link, usd } from "./ui.jsx";
+
+/** Internal store route or external official-site URL. */
+const Go = ({ url, children, ...rest }) => (/^(https?:|mailto:|tel:)/.test(url) ? <Link href={url} {...rest}>{children}</Link> : <Link to={url} {...rest}>{children}</Link>);
 
 export function Header({ path }) {
   const { count } = useCart();
@@ -12,6 +15,12 @@ export function Header({ path }) {
   const [search, setSearch] = useState(false);
   const [q, setQ] = useState("");
   const [langOpen, setLangOpen] = useState(false);
+  const [promoOn, setPromoOn] = useState(() => { try { return sessionStorage.getItem("onelaser-promo-closed") !== "1"; } catch { return true; } });
+  useEffect(() => {
+    document.documentElement.classList.toggle("has-promo", promoOn);
+    return () => document.documentElement.classList.remove("has-promo");
+  }, [promoOn]);
+  const closePromo = () => { setPromoOn(false); try { sessionStorage.setItem("onelaser-promo-closed", "1"); } catch { /* keep it closed for this view only */ } };
   const current = LANGS.find((l) => l.code === getLang()) || LANGS[0];
   const [top, setTop] = useState(true);
   useEffect(() => {
@@ -33,16 +42,27 @@ export function Header({ path }) {
   return (
     <>
       <header className={`site-header${overlay ? " overlay" : ""}`} onMouseLeave={() => setOpen(null)}>
+        {promoOn && (
+          <div className={`promo-bar${top ? "" : " away"}`}>
+            <Link to={promo.link} className="promo-bar-link" tabIndex={top ? 0 : -1}>
+              <span className="promo-bar-copy"><small>{t(promo.label)}</small><b>{t(promo.headline)}</b></span>
+              <Countdown endsAt={promo.endsAt} />
+              <img src={img(promo.image, 400)} alt="" />
+            </Link>
+            <button type="button" className="promo-bar-close" aria-label={t("Close")} tabIndex={top ? 0 : -1} onClick={closePromo}><Icon name="close" size={16} /></button>
+          </div>
+        )}
         <div className="site-header-bar">
           <button type="button" className="icon-btn only-mobile" aria-label={t("Menu")} onClick={() => setMobile(true)}><Icon name="menu" /></button>
           <Link to="/" className="brand" aria-label={t("OneLaser Store home")}><img src={asset(overlay ? "onelaser-logo-red-white.svg" : "onelaser-logo-transparent.svg")} alt="OneLaser" /></Link>
           <nav className="site-nav" aria-label={t("Primary")}>
             {nav.map((n) => (
-              <Link key={n.label} to={n.to} href={n.href} className={n.hot ? "hot" : ""} onMouseEnter={() => setOpen(n.columns ? n.label : null)} onFocus={() => setOpen(n.columns ? n.label : null)}>{t(n.label)}</Link>
+              <Link key={n.label} to={n.to} href={n.href} className={`${n.hot ? "hot" : ""}${n.columns ? " has-menu" : ""}`} onMouseEnter={() => setOpen(n.columns ? n.label : null)} onFocus={() => setOpen(n.columns ? n.label : null)}>{t(n.label)}{n.columns && <Icon name="chevron" size={12} />}</Link>
             ))}
           </nav>
           <div className="site-actions">
-            <Link to="/collections/deals" className="store-btn"><Icon name="cart" size={16} /><span>{t("Deals")}</span></Link>
+            <Link href={`tel:${contact.tel}`} className="header-phone"><Icon name="phone" size={16} /><span>{contact.phone}</span></Link>
+            <Link href={contact.call} className="store-btn"><Icon name="calendar" size={16} /><span>{t("Schedule a Sales Call")}</span></Link>
             <button type="button" className="icon-btn" aria-label={t("Search")} onClick={() => setSearch((s) => !s)}><Icon name="search" size={22} /></button>
             <Link href="https://www.1laser.com/account/login" className="icon-btn hide-mobile" aria-label={t("Account")}><Icon name="user" size={22} /></Link>
             <Link to="/cart" className="icon-btn cart-btn" aria-label={`Cart, ${count} items`}><Icon name="cart" size={22} />{count > 0 && <em>{count}</em>}</Link>
@@ -58,9 +78,9 @@ export function Header({ path }) {
         </div>
         {nav.filter((n) => n.label === open).map((n) => (
           <div key={n.label} className="mega">
-            <div className="mega-inner">
+            <div className={`mega-inner n${n.columns.length}`}>
               {n.columns.map((c) => (
-                <div key={c.title}><h2>{t(c.title)}</h2>{c.links.map(([label, to]) => <Link key={to} to={to}>{t(label)}</Link>)}</div>
+                <div key={c.title}><h2>{t(c.title)}</h2>{c.links.map(([label, url]) => <Go key={label} url={url}>{t(label)}</Go>)}</div>
               ))}
             </div>
           </div>
@@ -82,7 +102,7 @@ export function Header({ path }) {
           </div>
         )}
       </header>
-      {path !== "/" && <div className="header-spacer" />}
+      <div className={`header-spacer${path === "/" ? " home" : ""}`} />
       {mobile && (
         <div className="drawer-scrim" onClick={() => setMobile(false)}>
           <aside className="drawer" onClick={(e) => e.stopPropagation()} aria-label={t("Menu")}>
@@ -95,7 +115,7 @@ export function Header({ path }) {
               {nav.map((n) => (
                 <details key={n.label}>
                   <summary>{n.columns ? t(n.label) : <Link to={n.to} href={n.href}>{t(n.label)}</Link>}</summary>
-                  {n.columns?.flatMap((c) => c.links).map(([label, to]) => <Link key={to + label} to={to}>{t(label)}</Link>)}
+                  {n.columns?.flatMap((c) => c.links).map(([label, url]) => <Go key={url + label} url={url}>{t(label)}</Go>)}
                 </details>
               ))}
             </div>
@@ -203,41 +223,42 @@ export const ServiceStrip = () => (
   </div>
 );
 
+const SOCIAL = {
+  Facebook: <path d="M14 8.5V7c0-.8.5-1 1-1h2V3h-3c-2.8 0-4 1.9-4 4v1.5H8V12h2v9h4v-9h2.6l.4-3.5z" fill="currentColor" stroke="none" />,
+  Instagram: <><rect x="4" y="4" width="16" height="16" rx="4.5" /><circle cx="12" cy="12" r="3.6" /><circle cx="16.8" cy="7.2" r=".9" fill="currentColor" stroke="none" /></>,
+  YouTube: <><rect x="3" y="6" width="18" height="12" rx="3.5" /><path d="m10.5 9.5 4.5 2.5-4.5 2.5z" fill="currentColor" stroke="none" /></>,
+  TikTok: <path d="M14 4v10.5a3.5 3.5 0 1 1-3.5-3.5M14 4c.4 2.4 1.9 3.9 4.5 4.2" />,
+  "X (Twitter)": <path d="M5 4l14 16M19 4 5 20" />,
+};
+
+/** Footer content and grouping follow www.1laser.com: Community, Machines, Support, Policy, Contact Us, social links, legal line. */
 export function Footer() {
-  const groups = [
-    ["Machines", [["XRF Series", "/collections/xrf-series"], ["Cobra Series", "/collections/cobra-series"], ["Hydra Gen2", "/collections/hydra-gen2"], ["VertiGo", "/collections/vertigo"], ["Previous generation", "/collections/previous-generation"], ["Compare machines", "/compare"]]],
-    ["Accessories", [["Rotary Attachments", "/collections/rotary"], ["Fume Extractors", "/collections/fume"], ["Lens, Mirrors & Tubes", "/collections/optics"], ["Chillers", "/collections/cooling"], ["Software & Training", "/collections/software"]]],
-    ["Materials", [["Acrylic Sheets", "/collections/acrylic"], ["Leatherette", "/collections/leatherette"], ["All materials", "/collections/materials"]]],
-    ["Where to buy", [["Black Friday Deals", "/collections/deals"], ["All machines", "/collections/machines"]]],
-    ["Support", [["Sales consultation", "https://www.1laser.com/pages/sales-consultation"], ["Contact Us", "https://www.1laser.com/pages/contact-us"], ["Common FAQ", "https://www.1laser.com/pages/faq"], ["Financing", "https://www.1laser.com/pages/financing"]]],
-    ["Policies", [["Shipping Policy", "https://www.1laser.com/pages/shipping-policy"], ["Refund Policy", "https://www.1laser.com/pages/refund-policy"], ["Warranty Policy", "https://www.1laser.com/pages/warranty-policy"], ["Payment Methods", "https://www.1laser.com/pages/payment-methods"]]],
-    ["About us", [["About OneLaser", "https://www.1laser.com/pages/about-us"]]],
-    ["Explore", [["Community", "https://www.1laser.com/pages/laser-engraving-community"]]],
-  ];
   return (
     <footer className="site-footer">
       <div className="footer-top">
-        <div className="footer-groups">
-          {groups.map(([title, links]) => (
-            <div key={title}>
-              <h3>{t(title)}</h3>
-              {links.map(([l, to]) => (to.startsWith("http") ? <Link key={l} href={to}>{t(l)}</Link> : <Link key={l} to={to}>{t(l)}</Link>))}
-            </div>
-          ))}
-        </div>
-        <div className="footer-subscribe">
-          <h3>{t("Subscribe")}</h3>
-          <p>{t("Get the latest news from OneLaser")}</p>
-          <form onSubmit={(e) => e.preventDefault()}>
-            <input type="email" placeholder={t("Enter Your Email")} aria-label={t("Email address")} disabled />
-            <button disabled aria-label={t("Subscribe")}><Icon name="chevron" size={14} /></button>
-          </form>
-          <small>{t("Newsletter sign-up is disabled in this design draft.")}</small>
+        {footer.groups.map(([title, links]) => (
+          <div key={title} className="footer-col">
+            <h3>{t(title)}</h3>
+            {links.map(([l, url]) => <Go key={l} url={url}>{t(l)}</Go>)}
+          </div>
+        ))}
+        <div className="footer-col footer-contact">
+          <h3>{t("Contact Us")}</h3>
+          {footer.contact.map(([label, value, url]) => <p key={label}>{t(label)}: <Go url={url}>{value}</Go></p>)}
+          <p>{t("Headquarters")}: {footer.address}</p>
+          <div className="footer-social">
+            {footer.social.map(([name, url]) => (
+              <Link key={name} href={url} aria-label={name} title={name}>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{SOCIAL[name]}</svg>
+              </Link>
+            ))}
+          </div>
         </div>
       </div>
       <div className="footer-bottom">
-        <p>{t("Design draft for internal review — not the live store. Content and prices from 1laser.com.")}</p>
-        <p>{t("Copyright © 2026 OneLaser. All rights reserved.")}</p>
+        <p>© 2026, OneLaser {t("All rights reserved.")}</p>
+        <p>{footer.legal.map(([l, url]) => <Go key={l} url={url}>{t(l)}</Go>)}<button type="button" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}>{t("Back to top")} ↑</button></p>
+        <small>{t("Design draft for internal review — not the live store. Content and prices from 1laser.com.")}</small>
       </div>
     </footer>
   );

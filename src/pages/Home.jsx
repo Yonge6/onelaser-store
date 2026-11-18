@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useCart } from "../cart.jsx";
 import { t } from "../i18n.js";
 import { asset, byHandle, img, money, products } from "../lib.js";
-import { heroSlides, homeFaq, homeProof, homeReviews, homeTabs, homeVideos, newHandles, promo, shortSlogans } from "../data/site.js";
+import { heroSlides, homeFaq, homeProof, homeReviews, homeStandard, homeTabs, homeVideos, newHandles, promo, shortSlogans } from "../data/site.js";
 import { Countdown, Icon, Link } from "../components/ui.jsx";
 import FinderCard, { FinderHelp } from "../components/Finder.jsx";
 
@@ -242,6 +242,19 @@ export default function Home() {
             ))}
           </div>
           <p className="fd-links"><Link href={homeReviews.url}>{t("Read all reviews")} ›</Link></p>
+        </div>
+      </section>
+
+      <section className="ih-block ist">
+        <div className="ih-wrap">
+          <div className="ist-photo"><img src={img(homeStandard.image, 2400)} alt="OneLaser U.S. headquarters, Lake Forest, California" loading="lazy" /></div>
+          <p className="ist-kicker">{t(homeStandard.kicker)}</p>
+          <h2 className="ih-h2">{t(homeStandard.title)}</h2>
+          <p className="ist-text">{t(homeStandard.text)}</p>
+          <ol className="ist-points">
+            {homeStandard.points.map(([title, text], n) => <li key={title}><i>{String(n + 1).padStart(2, "0")}</i><h3>{t(title)}</h3><p>{t(text)}</p></li>)}
+          </ol>
+          <p className="fd-links"><Link href={homeStandard.cta[1]}>{t(homeStandard.cta[0])} ›</Link></p>
         </div>
       </section>
 

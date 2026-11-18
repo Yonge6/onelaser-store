@@ -37,6 +37,8 @@
 
 和 Insta360 唯一有意不同的是颜色：它的黄色按钮和蓝色强调字，这里都用品牌红 `#E7310E`。
 
+**沿用官网的部分**（2026-11-18，读取自 www.1laser.com）：顶部黑五广告条（文案、倒计时、产品图，可关闭，页面下滚后收起）；导航菜单的栏目和下拉内容（Laser Machines / Accessories / Material / Black Friday / Support / Community / Contact，外加电话和 Schedule a Sales Call 按钮），商品类链接指向本店页面，服务类链接指向官网；页脚（Community / Machines / Support / Policy / Contact Us 五栏、联系方式、社交账号、版权行）；首页 “The OneLaser Standard” 模块和总部航拍照片。数据都在 `src/data/site.js` 的 `nav`、`contact`、`footer`、`homeStandard`、`promo`。本店自己加的搜索、购物车、语言选择保留在导航右侧。
+
 **多语言**：导航栏右侧只有一个地球图标，鼠标移上去（或点击）下拉出语言列表；手机端在侧边菜单顶部展开，目前有 English、Español、Français、Deutsch、简体中文、日本語。界面文字（导航、按钮、筛选、购物车、结算、FAQ、首页文案）走 `src/i18n.js` 的 `t()`，词典在 `src/locales/*.js`，以英文原文为键，缺的条目自动回退英文；全部键列在 `src/locales/_keys.json`。商品名称、描述、参数和商品页长叙事来自官网，只有英文，没有翻译。译文是机器翻译，上线前需要母语者校对。加一种语言：在 `LANGS` 里加一行，再加一个同名词典文件。
 
 购物流程：Add to Cart → 购物车页 → Check Out；Buy Now → 直接到结算。

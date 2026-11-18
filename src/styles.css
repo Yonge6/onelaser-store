@@ -38,20 +38,43 @@ ul { list-style: none; }
 .announce u { margin-left: 8px; text-underline-offset: 3px; }
 /* Insta360 nav: fixed 64px bar, 64px gutters, logo + 13px menu on the left, button and 36px icons on the right */
 .site-header { position: fixed; top: 0; left: 0; right: 0; z-index: 40; background: #fff; color: #262629; transition: background .25s, color .25s; }
-.header-spacer { height: 64px; }
+:root { --promo-h: 0px; } html.has-promo { --promo-h: 72px; }
+.header-spacer { height: calc(var(--promo-h) + 64px); } .header-spacer.home { height: var(--promo-h); }
+/* Black Friday bar above the navigation, as on www.1laser.com: dark strip, two-line offer, countdown, product shot, close button */
+.promo-bar { position: relative; height: 72px; background: #0b0f18; color: #fff; overflow: hidden; transition: height .3s ease, opacity .3s ease; }
+.promo-bar.away { height: 0; opacity: 0; }
+.promo-bar-link { height: 72px; max-width: 1440px; margin: 0 auto; padding: 0 64px; display: flex; align-items: center; justify-content: center; gap: 40px; }
+.promo-bar-copy { display: grid; gap: 2px; text-align: left; }
+.promo-bar-copy small { font-size: 13px; line-height: 18px; font-weight: 600; color: #fff; }
+.promo-bar-copy b { font-size: 22px; line-height: 26px; font-weight: 700; letter-spacing: .2px; text-transform: uppercase; color: #ff4a26; }
+.promo-bar .countdown { margin: 0; gap: 18px; }
+.promo-bar .countdown > span { position: relative; width: 44px; height: auto; padding: 0; gap: 3px; background: none; border-radius: 0; }
+.promo-bar .countdown > span + span::before { content: ":"; position: absolute; left: -12px; top: 5px; font-size: 16px; font-weight: 700; color: rgba(255, 255, 255, 0.7); }
+.promo-bar .countdown strong { width: 44px; height: 34px; border-radius: 6px; background: rgba(255, 255, 255, 0.14); font-size: 18px; line-height: 34px; text-align: center; }
+.promo-bar .countdown small { font-size: 10px; line-height: 12px; text-transform: none; color: rgba(255, 255, 255, 0.8); }
+.promo-bar img { height: 72px; width: auto; object-fit: cover; }
+.promo-bar-close { position: absolute; right: 24px; top: 50%; margin-top: -14px; width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; background: rgba(255, 255, 255, 0.14); color: #fff; }
+.promo-bar-close:hover { background: rgba(255, 255, 255, 0.28); }
+.header-phone { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; line-height: 16px; color: inherit; white-space: nowrap; margin-right: 4px; }
+@media (max-width: 1560px) { .header-phone span { display: none; } .header-phone { margin-right: 0; } }
+.header-phone svg { color: var(--brand); } .header-phone:hover span { text-decoration: underline; }
+.site-header.overlay .header-phone svg { color: #fff; }
+.site-nav a.has-menu { display: inline-flex; align-items: center; gap: 4px; }
+.site-nav a.has-menu svg { transform: rotate(90deg); opacity: .7; }
+.mega-inner.n1 { grid-template-columns: minmax(0, 320px); } .mega-inner.n2 { grid-template-columns: repeat(2, minmax(0, 320px)); }
 .site-header-bar { height: 64px; max-width: 1440px; margin: 0 auto; padding: 0 64px; display: flex; align-items: center; }
-.site-header-bar > .brand { margin-right: 52px; }
+.site-header-bar > .brand { margin-right: 29px; flex: none; }
 .site-header-bar > .brand img { height: 17px; }
 .site-header.overlay { background: transparent; color: #fff; }
 .site-header.overlay::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 160px; background: linear-gradient(0deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.03) 20%, rgba(0, 0, 0, 0.133) 40%, rgba(0, 0, 0, 0.267) 60%, rgba(0, 0, 0, 0.37) 80%, rgba(0, 0, 0, 0.4) 100%); pointer-events: none; z-index: -1; }
 .site-header.overlay .brand span, .site-header.overlay .site-nav a, .site-header.overlay .icon-btn { color: #fff; }
-.store-btn { height: 36px; padding: 0 20px 0 18px; border-radius: 4px; background: var(--brand); color: #fff; display: inline-flex; align-items: center; gap: 4px; font-size: 13px; line-height: 16px; font-weight: 500; letter-spacing: .5px; margin-right: 14px; }
+.store-btn { height: 36px; padding: 0 18px 0 16px; border-radius: 50px; white-space: nowrap; background: var(--brand); color: #fff; display: inline-flex; align-items: center; gap: 4px; font-size: 13px; line-height: 16px; font-weight: 500; letter-spacing: .5px; margin-right: 14px; }
 .store-btn:hover { background: var(--brand-dark); }
 .brand { display: inline-flex; align-items: center; }
 .brand img { height: 20px; width: auto; }
 .brand span { font-size: 11px; line-height: 17px; letter-spacing: 1.1px; text-transform: uppercase; color: var(--muted); margin-left: 8px; }
 .site-nav { display: flex; flex: none; gap: 0; font-size: 13px; line-height: 64px; font-weight: 400; }
-.site-nav a { padding: 0 20px; color: #515157; transition: color .2s; white-space: nowrap; }
+.site-nav a { padding: 0 11px; color: #515157; transition: color .2s; white-space: nowrap; }
 .site-nav a:hover, .site-nav a.hot { color: var(--brand); }
 .site-actions { margin-left: auto; display: flex; align-items: center; gap: 12px; }
 .site-actions .icon-btn { width: 36px; height: 36px; }
@@ -232,20 +255,24 @@ ul { list-style: none; }
 .service-strip .page > div { display: grid; gap: 12px; justify-items: center; padding-top: 10px; }
 .service-strip svg { color: #3b3e40; stroke-width: 1.2; }
 .service-strip a { text-decoration: underline; }
-.site-footer { background: #fff; border-top: 1px solid #f0f0f2; padding: 64px 70px 40px; color: #76767f; }
-.footer-top { display: flex; gap: 0; max-width: 1300px; margin: 0 auto; }
-.footer-groups { flex: 1; min-width: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 264px)); row-gap: 40px; }
-.footer-groups h3, .footer-subscribe h3 { font-size: 14px; line-height: 22px; font-weight: 600; color: #262629; margin-bottom: 8px; }
-.footer-groups a { display: block; width: fit-content; font-size: 13px; line-height: 30px; color: #76767f; }
-.footer-groups a:hover { color: #262629; }
-.footer-subscribe { width: 244px; flex: none; }
-.footer-subscribe p { font-size: 14px; line-height: 21px; margin-bottom: 14px; }
-.footer-subscribe form { display: flex; height: 40px; }
-.footer-subscribe input { flex: 1; min-width: 0; height: 40px; padding: 0 14px; border: 1px solid #edeff2; border-right: 0; border-radius: 6px 0 0 6px; font-size: 13px; background: #fff; }
-.footer-subscribe button { width: 40px; height: 40px; border-radius: 0 8px 8px 0; background: #edeff2; color: #76767f; display: grid; place-items: center; }
-.footer-subscribe small { display: block; margin-top: 12px; font-size: 12px; line-height: 20px; }
-.footer-bottom { max-width: 1300px; margin: 48px auto 0; padding-top: 12px; border-top: 1px solid #f0f0f2; font-size: 13px; line-height: 21px; }
-.footer-bottom p + p { font-size: 12px; color: #b0b0b8; }
+/* Footer: black, five columns, contact lines and social icons, as on www.1laser.com */
+.site-footer { background: #000; padding: 64px 64px 32px; color: rgba(255, 255, 255, 0.75); }
+.footer-top { max-width: 1312px; margin: 0 auto; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)) minmax(0, 1.35fr); gap: 40px 32px; }
+.footer-col h3 { font-size: 16px; line-height: 24px; font-weight: 600; color: #fff; margin-bottom: 14px; }
+.footer-col > a { display: block; width: fit-content; font-size: 14px; line-height: 32px; color: rgba(255, 255, 255, 0.75); transition: color .2s; }
+.footer-col a:hover { color: #fff; text-decoration: underline; text-underline-offset: 3px; }
+.footer-contact p { font-size: 14px; line-height: 22px; margin-bottom: 8px; }
+.footer-contact p a { color: #fff; }
+.footer-social { display: flex; gap: 10px; margin-top: 18px; }
+.footer-social a { width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; color: #fff; background: rgba(255, 255, 255, 0.1); transition: background .2s, transform .2s; }
+.footer-social a:hover { background: var(--brand); transform: translateY(-2px); }
+.footer-bottom { max-width: 1312px; margin: 48px auto 0; padding-top: 20px; border-top: 1px solid rgba(255, 255, 255, 0.14); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px 24px; font-size: 13px; line-height: 20px; }
+.footer-bottom p:nth-child(2) { display: flex; gap: 24px; flex-wrap: wrap; }
+.footer-bottom a, .footer-bottom button { color: rgba(255, 255, 255, 0.75); font-size: 13px; }
+.footer-bottom a:hover, .footer-bottom button:hover { color: #fff; }
+.footer-bottom small { flex-basis: 100%; font-size: 12px; line-height: 18px; color: rgba(255, 255, 255, 0.4); }
+@media (max-width: 1180px) { .footer-top { grid-template-columns: repeat(3, minmax(0, 1fr)); } .site-footer { padding: 48px 24px 28px; } }
+@media (max-width: 860px) { .footer-top { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 32px 16px; } .footer-contact { grid-column: 1 / -1; } .site-footer { padding: 40px 20px 110px; } .footer-bottom { margin-top: 32px; } }
 
 /* ---------- collection ---------- */
 .collection { background: #fff; color: #2b2b2b; }
@@ -1126,7 +1153,7 @@ ul { list-style: none; }
 .ih-entry svg:last-child { display: none; }
 
 @media (max-width: 1180px) {
-  .site-nav a { padding: 0 10px; } .site-header-bar { padding: 0 24px; } .site-header-bar > .brand { margin-right: 20px; } .site-header .brand span { display: none; }
+  .site-nav a { padding: 0 8px; } .header-phone span { display: none; } .store-btn span { display: none; } .store-btn { padding: 0 10px; } .promo-bar-link { padding: 0 56px 0 24px; gap: 24px; } .promo-bar img { display: none; } .site-header-bar { padding: 0 24px; } .site-header-bar > .brand { margin-right: 20px; } .site-header .brand span { display: none; }
   .ih-card { height: 480px; padding: 44px 24px 28px; }
   .ih-card h3 { font-size: 22px; line-height: 28px; }
   .ih-card-info p { font-size: 16px; }
@@ -1304,6 +1331,25 @@ ul { list-style: none; }
   .irv-score { margin: 0; } .irv-score b { font-size: 22px; line-height: 28px; }
   .irv-grid { grid-template-columns: 1fr; gap: 12px; margin-top: 20px; } .irv-grid figure { padding: 20px; border-radius: 16px; }
   .irv-grid blockquote { font-size: 15px; line-height: 24px; }
+}
+
+/* ================= Home "The OneLaser Standard" with the headquarters photo (content from www.1laser.com) ================= */
+.ist-photo { aspect-ratio: 1280 / 460; border-radius: 24px; overflow: hidden; background: #e9ebef; }
+.ist-photo img { width: 100%; height: 100%; object-fit: cover; transition: transform 1.2s cubic-bezier(.2, .7, .2, 1); }
+.ist-photo:hover img { transform: scale(1.03); }
+.ist-kicker { margin-top: 40px; font-size: 13px; line-height: 18px; font-weight: 600; letter-spacing: 1.4px; text-transform: uppercase; color: var(--brand); }
+.ist .ih-h2 { margin-top: 8px; }
+.ist-text { margin-top: 12px; max-width: 820px; font-size: 16px; line-height: 26px; color: #76767f; }
+.ist-points { list-style: none; margin: 40px 0 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-top: 1px solid #e6e8ee; }
+.ist-points li { padding: 28px 28px 8px 0; } .ist-points li + li { padding-left: 28px; border-left: 1px solid #e6e8ee; }
+.ist-points i { font-style: normal; font-size: 13px; line-height: 18px; font-weight: 600; color: var(--accent); }
+.ist-points h3 { margin-top: 14px; font-size: 18px; line-height: 24px; font-weight: 600; color: #262629; }
+.ist-points p { margin-top: 8px; font-size: 14px; line-height: 22px; color: #76767f; }
+.ist .fd-links { justify-content: flex-start; margin-top: 28px; }
+@media (max-width: 1180px) { .ist-points { grid-template-columns: repeat(2, minmax(0, 1fr)); } .ist-points li:nth-child(3) { padding-left: 0; border-left: 0; } .ist-points li:nth-child(n + 3) { border-top: 1px solid #e6e8ee; } }
+@media (max-width: 860px) {
+  .ist-photo { aspect-ratio: 16 / 10; border-radius: 16px; } .ist-kicker { margin-top: 24px; } .ist-text { font-size: 14px; line-height: 22px; }
+  .ist-points { grid-template-columns: 1fr; margin-top: 24px; } .ist-points li, .ist-points li + li { padding: 20px 0 4px; border-left: 0; } .ist-points li + li { border-top: 1px solid #e6e8ee; }
 }
 
 /* ================= Home machine finder card (questions after thunderlaserusa.com, drawn as an Insta360 product card) ================= */
@@ -1853,3 +1899,13 @@ ul { list-style: none; }
   .ik-actions .ik-pill { width: 100%; }
 }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; scroll-behavior: auto !important; } }
+@media (max-width: 860px) {
+  html.has-promo { --promo-h: 56px; }
+  .header-spacer { height: calc(var(--promo-h) + 49px); }
+  .promo-bar, .promo-bar-link { height: 56px; } .promo-bar-link { padding: 0 48px 0 16px; gap: 12px; justify-content: space-between; }
+  .promo-bar-copy small { font-size: 10px; line-height: 14px; font-weight: 500; } .promo-bar-copy b { font-size: 15px; line-height: 18px; }
+  .promo-bar .countdown { gap: 10px; } .promo-bar .countdown > span { width: 30px; } .promo-bar .countdown strong { width: 30px; height: 26px; font-size: 13px; line-height: 26px; }
+  .promo-bar .countdown small { font-size: 8px; line-height: 10px; } .promo-bar .countdown > span + span::before { left: -8px; top: 3px; font-size: 12px; }
+  .promo-bar-close { right: 10px; } .header-phone { display: none; }
+  .store-btn { width: 32px; padding: 0; justify-content: center; } .store-btn svg { display: block; } .store-btn span { display: none; }
+}

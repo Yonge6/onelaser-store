@@ -3,6 +3,7 @@
 export const promo = {
   label: "Black Friday deals · Ends Cyber Monday, Nov 30",
   headline: "Save up to $3,000",
+  image: "https://www.1laser.com/cdn/shop/files/exec-051cb678-d9c0-4c36-b080-528914f5f413.png?v=1794186467",
   endsAt: "2026-12-01T07:59:59Z", // Nov 30, 11:59 PM PT
   link: "/collections/deals",
 };
@@ -27,30 +28,66 @@ export const collections = {
   deals: { title: "Black Friday Deals", intro: "Every product currently on sale.", filter: (p) => p.compareAt },
 };
 
+// Top navigation: labels, order and grouping follow www.1laser.com (read 2026-11-18). Shop links point to this store's pages;
+// service links go to the official site.
+const SITE = "https://www.1laser.com";
 export const nav = [
   {
     label: "Laser Machines", to: "/collections/machines",
     columns: [
-      { title: "Desktop", links: [["XRF 38W", "/products/onelaser-xrf-desktop-laser-machine"], ["VertiGo", "/products/vertigo-vertical-laser-engraver"]] },
-      { title: "Workshop", links: [["Cobra 8", "/products/cobra-8-90w-co2-laser-engraver-cutter"], ["Cobra 10", "/products/cobra-10-100w-co2-laser-engraver-cutter"], ["Cobra 14", "/products/cobra-14-130w-co2-laser-engraver-cutter"]] },
-      { title: "Industrial", links: [["Hydra 7 Gen2", "/products/hydra-7-gen-2-70w-rf-co2-dual-laser-machine"], ["Hydra 9 Gen2", "/products/hydra-9-gen-2-70w-rf-co2-dual-laser-machine"], ["Hydra 13 Gen2", "/products/hydra-13-gen-2-70w-rf-co2-dual-laser-machine"], ["Hydra 16 Gen2", "/products/hydra-16-gen-2-70w-rf-co2-dual-laser-machine"]] },
-      { title: "Shop", links: [["All machines", "/collections/machines"], ["Compare machines", "/compare"], ["Previous generation", "/collections/previous-generation"]] },
+      { title: "X Series", links: [["XRF Performance Desktop Laser Engraver (38W RF)", "/products/onelaser-xrf-desktop-laser-machine"]] },
+      { title: "Cobra Series", links: [["Cobra 8", "/products/cobra-8-90w-co2-laser-engraver-cutter"], ["Cobra 10", "/products/cobra-10-100w-co2-laser-engraver-cutter"], ["Cobra 14", "/products/cobra-14-130w-co2-laser-engraver-cutter"]] },
+      { title: "Hydra Series", links: [["Hydra 7 Gen2", "/products/hydra-7-gen-2-70w-rf-co2-dual-laser-machine"], ["Hydra 9 Gen2", "/products/hydra-9-gen-2-70w-rf-co2-dual-laser-machine"], ["Hydra 13 Gen2", "/products/hydra-13-gen-2-70w-rf-co2-dual-laser-machine"], ["Hydra 16 Gen2", "/products/hydra-16-gen-2-70w-rf-co2-dual-laser-machine"]] },
+      { title: "VertiGo", links: [["VertiGo", "/products/vertigo-vertical-laser-engraver"], ["Explore all machines", "/collections/machines"], ["Compare machines", "/compare"]] },
     ],
   },
-  {
-    label: "Accessories", to: "/collections/accessories",
-    columns: [
-      { title: "By type", links: [["Rotary Attachments", "/collections/rotary"], ["Fume Extractors", "/collections/fume"], ["Lens, Mirrors & Tubes", "/collections/optics"], ["Chillers", "/collections/cooling"], ["Expansion", "/collections/expansion"], ["Software & Training", "/collections/software"]] },
-      { title: "Shop", links: [["All accessories", "/collections/accessories"]] },
-    ],
-  },
-  {
-    label: "Materials", to: "/collections/materials",
-    columns: [{ title: "Materials", links: [["Acrylic Sheets", "/collections/acrylic"], ["Leatherette", "/collections/leatherette"], ["All materials", "/collections/materials"]] }],
-  },
+  { label: "Accessories", to: "/collections/accessories" },
+  { label: "Material", to: "/collections/materials" },
   { label: "Black Friday", to: "/collections/deals", hot: true },
-  { label: "Support", href: "https://www.1laser.com/pages/sales-consultation" },
+  {
+    label: "Support", href: `${SITE}/pages/sales-consultation`,
+    columns: [
+      { title: "Support", links: [["Submit a Ticket", "https://zohodesk.1laser.com/portal/en/newticket"], ["Get a Quote", `${SITE}/products/sales-consultation-call`], ["1-on-1 Training", `${SITE}/products/engineer-1-on-1-training-support`]] },
+      { title: "Resources", links: [["Policy", `${SITE}/pages/shipping-policy`], ["Financing", `${SITE}/pages/financing`], ["Blogs", `${SITE}/blogs/topic`], ["Product Knowledge Base", "https://wiki.1laser.com"]] },
+    ],
+  },
+  {
+    label: "Community", href: `${SITE}/pages/laser-engraving-community`,
+    columns: [
+      { title: "Community", links: [["Become Affiliate", "https://af.uppromote.com/OneLaser/register"], ["Purchase Rewards", `${SITE}/pages/onelaser-rewards`], ["Join Community", `${SITE}/pages/laser-engraving-community`], ["Testimonials", `${SITE}/pages/testimonials`]] },
+    ],
+  },
+  { label: "Contact", href: `${SITE}/pages/contact-us` },
 ];
+export const contact = { phone: "626 800 4130", tel: "+16268004130", call: `${SITE}/pages/sales-consultation` };
+
+// Footer: columns, links, contact lines and social accounts as on www.1laser.com (read 2026-11-18).
+export const footer = {
+  groups: [
+    ["Community", [["Purchase Rewards", `${SITE}/pages/onelaser-rewards`], ["Become Affiliate", "https://af.uppromote.com/OneLaser/register"], ["Join Community", `${SITE}/pages/laser-engraving-community`], ["Testimonials", `${SITE}/pages/testimonials`]]],
+    ["Machines", [["OneLaser Machines", "/collections/machines"], ["X Series", "/collections/xrf-series"], ["Cobra Series", "/collections/cobra-series"], ["Hydra Gen2 Series", "/collections/hydra-gen2"], ["Hydra Series", "/collections/previous-generation"], ["VertiGo", "/products/vertigo-vertical-laser-engraver"], ["Laser Accessories", "/collections/accessories"]]],
+    ["Support", [["About Us", `${SITE}/pages/about-us`], ["Contact Us", `${SITE}/pages/contact-us`], ["Financing", `${SITE}/pages/financing`], ["Blog Center", `${SITE}/blogs/topic`], ["Payment Methods", `${SITE}/pages/payment-methods`], ["Common FAQ", `${SITE}/pages/faq`], ["Laser Engraving & Cutting Chart", `${SITE}/pages/laser-cutter-engraving-settings-for-different-materials`]]],
+    ["Policy", [["Shipping Policy", `${SITE}/pages/shipping-policy`], ["Privacy Policy", `${SITE}/pages/privacy-policy`], ["Refund Policy", `${SITE}/pages/refund-policy`], ["Terms of Service", `${SITE}/pages/terms-of-service`], ["Warranty Policy", `${SITE}/pages/warranty-policy`], ["Pre & Backorder Policy", `${SITE}/pages/pre-order-backorder-policy`], ["Giveaway General Terms & Conditions", `${SITE}/pages/onelaser-giveaway-general-terms-conditions`]]],
+  ],
+  contact: [["Phone", "626-800-4130", "tel:+16268004130"], ["Tech Support", "ts@1laser.com", "mailto:ts@1laser.com"], ["Customer Support", "cs@1laser.com", "mailto:cs@1laser.com"], ["Sales Consultation", "sales@1laser.com", "mailto:sales@1laser.com"]],
+  address: "20472 Crescent Bay Dr, STE 104, Lake Forest, CA 92630",
+  social: [["Facebook", "https://www.facebook.com/onelaser.official"], ["Instagram", "https://www.instagram.com/onelaser.official/"], ["YouTube", "https://www.youtube.com/@OneLaser.Official"], ["TikTok", "https://www.tiktok.com/@onelaser.official"], ["X (Twitter)", "https://x.com/OneLaserHQ"]],
+  legal: [["Privacy Policy", `${SITE}/policies/privacy-policy`], ["Terms of Service", `${SITE}/policies/terms-of-service`]],
+};
+
+// Home "The OneLaser Standard" block with the headquarters photo, copied from www.1laser.com (read 2026-11-18).
+export const homeStandard = {
+  image: `${SITE}/cdn/shop/files/onelaser-us-headquarters.webp?v=1788363337`,
+  kicker: "The OneLaser Standard", title: "Make better with one.",
+  text: "Ownership is backed by a U.S. company, local guidance, training, official policy coverage, and technical support after delivery.",
+  points: [
+    ["U.S. company and local team", "An accountable OneLaser team for sales, service, and product guidance in the U.S."],
+    ["Training that gets work moving", "One-on-one training and knowledge resources help teams move from setup to real jobs."],
+    ["Warranty and easy returns", "Official warranty coverage and a 30-day return policy provide a clearer ownership path."],
+    ["Technical support after delivery", "Support continues through real technicians, service resources, and available parts."],
+  ],
+  cta: ["Explore OneLaser support", `${SITE}/products/sales-consultation-call`],
+};
 
 export const heroSlides = [
   { eyebrow: "Black Friday · Ends Nov 30", title: "XRF 38W", text: "All-in-one RF desktop laser — $1,000 off", image: "home-hero-xrf.jpg", to: "/products/onelaser-xrf-desktop-laser-machine", dark: true, countdown: true },
