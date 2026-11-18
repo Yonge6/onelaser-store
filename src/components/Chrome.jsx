@@ -9,6 +9,15 @@ const hasMenu = (n) => !!(n.series || n.cards);
 /** Internal store route or external official-site URL. */
 const Go = ({ url, children, ...rest }) => (/^(https?:|mailto:|tel:)/.test(url) ? <Link href={url} {...rest}>{children}</Link> : <Link to={url} {...rest}>{children}</Link>);
 
+/* Places a product photo in a 3:2 tile so that the machine itself (crop box) fills 84% of the width or 78% of the height. */
+const fitCrop = (c) => {
+  if (!c) return undefined;
+  const [l, t, r, b, a] = c;
+  const size = Math.min(0.84 / (r - l), (0.78 * (2 / 3) * a) / (b - t)); // photo width in tile widths
+  const pct = (v) => `${(v * 100).toFixed(2)}%`;
+  return { width: pct(size), left: pct(0.5 - (size * (l + r)) / 2), top: pct((1 / 3 - ((size / a) * (t + b)) / 2) * 1.5) };
+};
+
 export function Header({ path }) {
   const { count } = useCart();
   const [open, setOpen] = useState(null); // mega menu label
@@ -103,7 +112,7 @@ export function Header({ path }) {
                     return (
                       <article key={g.title}>
                         <Go url={g.to} className="mega-series-main">
-                          <span className="mega-series-img"><img src={img(list[0].images[0], 520)} alt="" /></span>
+                          <span className="mega-series-img"><img src={img(list[0].images[0], 800)} alt="" style={fitCrop(g.crop)} /></span>
                           <b>{t(g.title)}</b>
                           <em>{t(g.desc)}</em>
                           <strong>{t("From")} {usd(from)}</strong>
