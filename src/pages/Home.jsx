@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useCart } from "../cart.jsx";
 import { t } from "../i18n.js";
 import { asset, byHandle, img, money, products } from "../lib.js";
@@ -40,6 +40,21 @@ function HeroButtons({ s, tab }) {
   );
 }
 
+/** Background clip for a hero slide: loads and plays only while its slide is showing, rewinds when it leaves. */
+function HeroVideo({ src, poster, active }) {
+  const ref = useRef(null);
+  const [ready, setReady] = useState(false);
+  const still = typeof window !== "undefined" && window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+  useEffect(() => {
+    const v = ref.current;
+    if (!v || still) return;
+    if (active) v.play().catch(() => {});
+    else { v.pause(); try { v.currentTime = 0; } catch { /* not loaded yet */ } }
+  }, [active, still]);
+  if (still) return null;
+  return <video ref={ref} className={ready ? "ready" : ""} src={active || ready ? src : undefined} poster={poster} muted loop playsInline preload="none" onPlaying={() => setReady(true)} aria-hidden="true" />;
+}
+
 function Hero() {
   const [i, setI] = useState(0);
   const [paused, setPaused] = useState(false);
@@ -53,6 +68,7 @@ function Hero() {
       {heroSlides.map((s, n) => (
         <article key={s.title} className={`ih-slide${n === i ? " on" : ""}`} aria-hidden={n !== i}>
           <img src={asset(s.image)} alt="" />
+          {s.video && <HeroVideo src={s.video} poster={asset(s.image)} active={n === i} />}
           <div className="ih-slide-copy">
             <p className="ih-top">{t(s.eyebrow)}</p>
             <h1>{t(s.title)}</h1>

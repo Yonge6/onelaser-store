@@ -89,10 +89,12 @@ export const homeStandard = {
   cta: ["Explore OneLaser support", `${SITE}/products/sales-consultation-call`],
 };
 
+// Hero slides. `video` (optional) is an official clip from 1laser.com; it plays muted and looped behind the copy like the hero on
+// insta360.com, with `image` as the poster and as the fallback when motion is reduced or the file cannot load.
 export const heroSlides = [
-  { eyebrow: "Black Friday · Ends Nov 30", title: "XRF 38W", text: "All-in-one RF desktop laser — $1,000 off", image: "home-hero-xrf.jpg", to: "/products/onelaser-xrf-desktop-laser-machine", dark: true, countdown: true },
-  { eyebrow: "Industrial RF", title: "Hydra Gen2", text: "RF and hybrid dual-laser systems.", image: "home-product-hydra-gen2-scene.webp", to: "/collections/hydra-gen2", dark: true },
-  { eyebrow: "Workshop Essential", title: "Cobra Series", text: "Glass CO₂ cutting power from $3,999.", image: "home-product-cobra-scene.webp", to: "/collections/cobra-series", dark: true },
+  { eyebrow: "Black Friday · Ends Nov 30", title: "XRF 38W", text: "All-in-one RF desktop laser — $1,000 off", image: "home-hero-xrf.jpg", video: "https://cdn.shopify.com/videos/c/vp/83a53061dc8c49e1a386ab106791b6a7/83a53061dc8c49e1a386ab106791b6a7.HD-720p-1.6Mbps-100665744.mp4", to: "/products/onelaser-xrf-desktop-laser-machine", dark: true, countdown: true },
+  { eyebrow: "Industrial RF", title: "Hydra Gen2", text: "RF and hybrid dual-laser systems.", image: "home-product-hydra-gen2-scene.webp", video: "https://www.1laser.com/cdn/shop/videos/c/vp/3977d55943864ca0a399b0baf55908c6/3977d55943864ca0a399b0baf55908c6.HD-1080p-4.8Mbps-97794816.mp4?v=0", to: "/collections/hydra-gen2", dark: true },
+  { eyebrow: "Workshop Essential", title: "Cobra Series", text: "Glass CO₂ cutting power from $3,999.", image: "home-product-cobra-scene.webp", video: "https://www.1laser.com/cdn/shop/videos/c/vp/3c358b3af0db43979541e8293ed489ce/3c358b3af0db43979541e8293ed489ce.HD-1080p-7.2Mbps-81776550.mp4?v=0", to: "/collections/cobra-series", dark: true },
   { eyebrow: "Built for drinkware", title: "VertiGo", text: "Built-in vertical rotary. No setup, no alignment.", image: "home-product-vertigo-scene.webp", to: "/products/vertigo-vertical-laser-engraver", dark: true },
 ];
 
@@ -246,15 +248,14 @@ export const homeVideos = [
   ] },
 ];
 
-// Home "Why OneLaser" proof points (after the Build quality + Support blocks on thunderlaserusa.com).
+// Home machine proof points (after the Build quality block on thunderlaserusa.com). Machine performance only:
+// warranty, training and support are covered by the "OneLaser Standard" block with the headquarters photo.
 // Every figure is taken from the official product pages on 1laser.com (see src/data/stories.json). [figure, title, text]
 export const homeProof = [
   ["30,000 h", "RF tube life, air-cooled", "XRF and Hydra Gen2 run sealed RF metal tubes rated for up to 30,000 hours. No water chiller for the RF source."],
   ["2,000 mm/s", "Production speed", "Hydra Gen2 engraves at up to 2,000 mm/s with 4G acceleration, so a full bed finishes sooner."],
   ["0.07 mm", "Laser dot for fine detail", "Up to 2,000 DPI with ≤ 0.01 mm repeat positioning for small text, photos and logos."],
   ["12 MP", "Camera and autofocus", "A top-cover camera and XFocus™ autofocus show where the job will land before you press start."],
-  ["3-2-1", "Warranty", "3-year mechanical, 2-year electrical and 1-year optics coverage on XRF and Hydra machines."],
-  ["5+ yrs", "U.S.-based engineers", "Call OneLaser and you talk to a U.S.-based engineer with more than five years of laser experience on average."],
 ];
 
 // Home buying FAQ (after "Questions? Answers." on thunderlaserusa.com). Answers restate the policies and pages on 1laser.com.
