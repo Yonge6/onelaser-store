@@ -67,7 +67,8 @@ ul { list-style: none; }
 .site-header-bar > .brand { margin-right: 29px; flex: none; }
 .site-header-bar > .brand img { height: 17px; }
 .site-header.overlay { background: transparent; color: #fff; }
-.site-header.overlay::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 160px; background: linear-gradient(0deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.03) 20%, rgba(0, 0, 0, 0.133) 40%, rgba(0, 0, 0, 0.267) 60%, rgba(0, 0, 0, 0.37) 80%, rgba(0, 0, 0, 0.4) 100%); pointer-events: none; z-index: -1; }
+/* Insta360 lays a 160px black fade under the transparent bar so the menu stays readable on light banners. It starts below the promo bar. */
+.site-header.overlay::before { content: ""; position: absolute; left: 0; right: 0; top: var(--promo-h); height: 160px; background: linear-gradient(0deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.04) 20%, rgba(0, 0, 0, 0.16) 40%, rgba(0, 0, 0, 0.32) 60%, rgba(0, 0, 0, 0.45) 80%, rgba(0, 0, 0, 0.52) 100%); pointer-events: none; z-index: -1; }
 .site-header.overlay .brand span, .site-header.overlay .site-nav a, .site-header.overlay .icon-btn { color: #fff; }
 .store-btn { height: 36px; padding: 0 18px 0 16px; border-radius: 50px; white-space: nowrap; background: var(--brand); color: #fff; display: inline-flex; align-items: center; gap: 4px; font-size: 13px; line-height: 16px; font-weight: 500; letter-spacing: .5px; margin-right: 14px; }
 .store-btn:hover { background: var(--brand-dark); }
