@@ -24,6 +24,7 @@ export function Header({ path }) {
   const [langOpen, setLangOpen] = useState(false);
   const [series, setSeries] = useState(0);
   const [far, setFar] = useState(false);
+  const [hover, setHover] = useState(false); // Insta360: the bar turns white as soon as the pointer is on it
   const [promoOn, setPromoOn] = useState(() => { try { return sessionStorage.getItem("onelaser-promo-closed") !== "1"; } catch { return true; } });
   useEffect(() => {
     document.documentElement.classList.toggle("has-promo", promoOn);
@@ -42,7 +43,7 @@ export function Header({ path }) {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
   // Insta360: the bar floats transparent over the home hero and turns white once the page scrolls or a menu opens.
-  const overlay = path === "/" && top && !open && !search;
+  const overlay = path === "/" && top && !open && !search && !hover;
   const hits = q.trim().length > 1 ? products.filter((p) => `${p.name} ${p.title}`.toLowerCase().includes(q.trim().toLowerCase())).slice(0, 6) : [];
   const submit = (e) => {
     e.preventDefault();
@@ -50,7 +51,7 @@ export function Header({ path }) {
   };
   return (
     <>
-      <header className={`site-header${overlay ? " overlay" : ""}`} onMouseLeave={() => setOpen(null)}>
+      <header className={`site-header${overlay ? " overlay" : ""}`} onMouseLeave={() => { setOpen(null); setHover(false); }}>
         {promoOn && (
           <div className={`promo-bar${top ? "" : " away"}`}>
             <Link href={promo.link} className="promo-bar-link" tabIndex={top ? 0 : -1}>
@@ -61,7 +62,7 @@ export function Header({ path }) {
             <button type="button" className="promo-bar-close" aria-label={t("Close")} tabIndex={top ? 0 : -1} onClick={closePromo}><Icon name="close" size={16} /></button>
           </div>
         )}
-        <div className="site-header-bar">
+        <div className="site-header-bar" onMouseEnter={() => setHover(true)}>
           <button type="button" className="icon-btn only-mobile" aria-label={t("Menu")} onClick={() => setMobile(true)}><Icon name="menu" /></button>
           <Link to="/" className="brand" aria-label={t("OneLaser Store home")}><img src={asset(overlay ? "onelaser-logo-red-white.svg" : "onelaser-logo-transparent.svg")} alt="OneLaser" /></Link>
           <nav className="site-nav" aria-label={t("Primary")}>

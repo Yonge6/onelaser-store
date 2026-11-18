@@ -95,13 +95,15 @@ export const homeStandard = {
   cta: ["Explore OneLaser support", `${SITE}/products/sales-consultation-call`],
 };
 
-// Hero slides. `youtube` is one of the videos supplied by the team (2026-11-18); it plays muted and looped behind the copy like the
-// hero on insta360.com, starting at `start` seconds to skip the intro. `image` shows first and stays as the fallback.
+// Hero slides. `video` plays muted and looped behind the copy, like the hero on insta360.com; `image` shows first and is the fallback.
+// `video` is either a full URL or a file name in public/assets (e.g. "hero-xrf.mp4": 10-20 s, 1920x1080 or 1280x720, H.264, no audio,
+// under ~4 MB). Today the clips are the files 1laser.com hosts itself. YouTube embeds were tried and removed: YouTube shows a
+// "sign in to confirm" wall to some visitors, so a hero cannot depend on it. VertiGo has no clip yet (TODO team: supply one).
 export const heroSlides = [
-  { eyebrow: "Black Friday · Ends Nov 30", title: "XRF 38W", text: "All-in-one RF desktop laser — $1,000 off", image: "home-hero-xrf.jpg", youtube: "r5m8As2oOJ4", start: 20, to: "/products/onelaser-xrf-desktop-laser-machine", dark: true, countdown: true },
-  { eyebrow: "Industrial RF", title: "Hydra Gen2", text: "RF and hybrid dual-laser systems.", image: "home-product-hydra-gen2-scene.webp", youtube: "HdP62cQVzs0", start: 8, to: "/collections/hydra-gen2", dark: true },
-  { eyebrow: "Workshop Essential", title: "Cobra Series", text: "Glass CO₂ cutting power from $3,999.", image: "home-product-cobra-scene.webp", youtube: "F1ZJvoeANgk", start: 6, to: "/collections/cobra-series", dark: true },
-  { eyebrow: "Built for drinkware", title: "VertiGo", text: "Built-in vertical rotary. No setup, no alignment.", image: "home-product-vertigo-scene.webp", youtube: "CwMCGw1aPTA", start: 15, to: "/products/vertigo-vertical-laser-engraver", dark: true },
+  { eyebrow: "Black Friday · Ends Nov 30", title: "XRF 38W", text: "All-in-one RF desktop laser — $1,000 off", image: "home-hero-xrf.jpg", video: "https://cdn.shopify.com/videos/c/vp/83a53061dc8c49e1a386ab106791b6a7/83a53061dc8c49e1a386ab106791b6a7.HD-720p-1.6Mbps-100665744.mp4", to: "/products/onelaser-xrf-desktop-laser-machine", dark: true, countdown: true },
+  { eyebrow: "Industrial RF", title: "Hydra Gen2", text: "RF and hybrid dual-laser systems.", image: "home-product-hydra-gen2-scene.webp", video: "https://www.1laser.com/cdn/shop/videos/c/vp/3977d55943864ca0a399b0baf55908c6/3977d55943864ca0a399b0baf55908c6.HD-1080p-4.8Mbps-97794816.mp4?v=0", to: "/collections/hydra-gen2", dark: true },
+  { eyebrow: "Workshop Essential", title: "Cobra Series", text: "Glass CO₂ cutting power from $3,999.", image: "home-product-cobra-scene.webp", video: "https://www.1laser.com/cdn/shop/videos/c/vp/3c358b3af0db43979541e8293ed489ce/3c358b3af0db43979541e8293ed489ce.HD-1080p-7.2Mbps-81776550.mp4?v=0", to: "/collections/cobra-series", dark: true },
+  { eyebrow: "Built for drinkware", title: "VertiGo", text: "Built-in vertical rotary. No setup, no alignment.", image: "home-product-vertigo-scene.webp", to: "/products/vertigo-vertical-laser-engraver", dark: true },
 ];
 
 export const categoryRail = [
