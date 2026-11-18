@@ -1034,7 +1034,10 @@ ul { list-style: none; }
 .ih-card:hover .ih-card-media img { transform: scale(1.2); }
 .ih-card { transition: background .25s; }
 .ih-card:hover { background: #f2f4f9; }
-.ih-card-price { width: 100%; display: flex; align-items: baseline; justify-content: center; flex-wrap: wrap; gap: 4px 8px; margin: 0 0 16px; font-size: 14px; line-height: 24px; color: #76767f; }
+.ih-card-price { width: 100%; display: flex; align-items: baseline; justify-content: center; flex-wrap: wrap; gap: 4px 8px; margin: 0 0 4px; font-size: 14px; line-height: 24px; color: #76767f; }
+.ih-card-monthly { margin: 0 0 14px; font-size: 13px; line-height: 20px; color: #76767f; }
+.ih-card-monthly b { font-weight: 600; color: #262629; }
+.ih-card-price:has(+ .ih-card-btns) { margin-bottom: 16px; }
 .ih-card-price b { font-size: 20px; line-height: 24px; font-weight: 600; color: #262629; }
 .ih-card-price s { font-size: 14px; color: #a1a1aa; }
 .ih-card-price em { font-style: normal; font-size: 12px; line-height: 20px; font-weight: 600; color: var(--brand); background: var(--brand-soft); border-radius: 4px; padding: 0 8px; align-self: center; }

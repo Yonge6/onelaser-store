@@ -274,4 +274,6 @@ export default {
   "Name: A–Z": "Nombre: A–Z",
   "Financing available at checkout": "Financiación disponible al pagar",
   "learn more": "más información",
+  "or": "o",
+  "/mo for 24 months": "/mes durante 24 meses",
 };

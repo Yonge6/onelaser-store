@@ -88,6 +88,10 @@ function Hero() {
 
 /* Insta360's card has "Learn more" + "Buy now", both leading to the product page. Here the left control adds to the cart instead:
    it adds the first available option (the one the product page preselects), stays on the page and confirms for a moment. */
+// Monthly figure = price ÷ 24, the same "24-month payment" 1laser.com shows on its product pages ($4,399 → $183.29/mo.).
+// It is an illustration, not an offer: the real rate and term depend on the lender's approval.
+const FINANCE_MONTHS = 24;
+
 function HomeCard({ p }) {
   const { add } = useCart();
   const [added, setAdded] = useState(false);
@@ -111,6 +115,9 @@ function HomeCard({ p }) {
         {p.compareAt > p.price && <s>{money(p.compareAt)}</s>}
         {p.compareAt > p.price && <em>{t("Save")} {money(p.compareAt - p.price)}</em>}
       </p>
+      {p.kind === "machine" && (
+        <p className="ih-card-monthly">{t("or")} <b>${(p.price / FINANCE_MONTHS).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</b>{t("/mo for 24 months")}</p>
+      )}
       <div className="ih-card-btns">
         <button type="button" className={`ih-btn line sm${added ? " added" : ""}`} disabled={!p.available} onClick={addNow} aria-live="polite">
           {added ? <><Icon name="check" size={16} />{t("Added")}</> : !p.available ? t("Sold Out") : <><Icon name="cart" size={16} />{t("Add to cart")}</>}

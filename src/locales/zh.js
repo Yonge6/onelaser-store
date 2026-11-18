@@ -274,4 +274,6 @@ export default {
   "Name: A–Z": "名称 A–Z",
   "Financing available at checkout": "结算时可选分期付款",
   "learn more": "了解更多",
+  "or": "或",
+  "/mo for 24 months": "/月，分 24 期",
 };

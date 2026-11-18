@@ -274,4 +274,6 @@ export default {
   "Name: A–Z": "名前順 A–Z",
   "Financing available at checkout": "購入手続きで分割払いが選べます",
   "learn more": "詳しく見る",
+  "or": "または",
+  "/mo for 24 months": "/月（24回払い）",
 };
