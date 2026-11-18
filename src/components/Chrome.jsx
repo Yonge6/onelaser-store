@@ -15,7 +15,7 @@ export function Header({ path }) {
   const current = LANGS.find((l) => l.code === getLang()) || LANGS[0];
   const [top, setTop] = useState(true);
   useEffect(() => {
-    setOpen(null); setMobile(false); setSearch(false);
+    setOpen(null); setMobile(false); setSearch(false); setLangOpen(false);
   }, [path]);
   useEffect(() => {
     const onScroll = () => setTop(window.scrollY < 8);
@@ -46,7 +46,14 @@ export function Header({ path }) {
             <button type="button" className="icon-btn" aria-label={t("Search")} onClick={() => setSearch((s) => !s)}><Icon name="search" size={22} /></button>
             <Link href="https://www.1laser.com/account/login" className="icon-btn hide-mobile" aria-label={t("Account")}><Icon name="user" size={22} /></Link>
             <Link to="/cart" className="icon-btn cart-btn" aria-label={`Cart, ${count} items`}><Icon name="cart" size={22} />{count > 0 && <em>{count}</em>}</Link>
-            <button type="button" className="icon-btn lang-btn hide-mobile" aria-haspopup="dialog" aria-label={t("Choose your language")} title={`${current.region} (${current.label})`} onClick={() => setLangOpen(true)}><Icon name="globe" size={22} /></button>
+            <div className={`lang-menu hide-mobile${langOpen ? " open" : ""}`} onMouseLeave={() => setLangOpen(false)}>
+              <button type="button" className="icon-btn lang-btn" aria-haspopup="menu" aria-expanded={langOpen} aria-label={t("Choose your language")} onClick={() => setLangOpen((v) => !v)}><Icon name="globe" size={22} /></button>
+              <ul role="menu">
+                {LANGS.map((l) => (
+                  <li key={l.code} role="none"><button type="button" role="menuitemradio" aria-checked={l.code === current.code} lang={l.code === "zh" ? "zh-CN" : l.code} className={l.code === current.code ? "on" : ""} onClick={() => { setLang(l.code); setLangOpen(false); }}><span>{l.label}</span>{l.code === current.code && <Icon name="check" size={16} />}</button></li>
+                ))}
+              </ul>
+            </div>
           </div>
         </div>
         {nav.filter((n) => n.label === open).map((n) => (
@@ -76,12 +83,14 @@ export function Header({ path }) {
         )}
       </header>
       {path !== "/" && <div className="header-spacer" />}
-      {langOpen && <LangDialog current={current.code} onClose={() => setLangOpen(false)} />}
       {mobile && (
         <div className="drawer-scrim" onClick={() => setMobile(false)}>
           <aside className="drawer" onClick={(e) => e.stopPropagation()} aria-label={t("Menu")}>
             <div className="drawer-head"><b>{t("Menu")}</b><button type="button" className="icon-btn" aria-label={t("Close")} onClick={() => setMobile(false)}><Icon name="close" /></button></div>
-            <button type="button" className="drawer-lang" onClick={() => { setMobile(false); setLangOpen(true); }}><Icon name="globe" size={20} /><span>{current.region} ({current.label})</span><Icon name="chevron" size={16} /></button>
+            <details className="drawer-lang">
+              <summary><Icon name="globe" size={20} /><span>{current.label}</span><Icon name="chevron" size={16} /></summary>
+              {LANGS.map((l) => <button key={l.code} type="button" lang={l.code === "zh" ? "zh-CN" : l.code} className={l.code === current.code ? "on" : ""} onClick={() => { setLang(l.code); setMobile(false); }}>{l.label}</button>)}
+            </details>
             <div className="mobile-nav">
               {nav.map((n) => (
                 <details key={n.label}>
@@ -94,39 +103,6 @@ export function Header({ path }) {
         </div>
       )}
     </>
-  );
-}
-
-/** Language dialog, after insta360.com's "Choose Your Country or Region": 1000px white panel (4px radius, 80px top padding),
-    40/48 title, 840×48 search field, 20/28 group titles, 273×40 gray tiles with the region on the left and the language on the right. */
-function LangDialog({ current, onClose }) {
-  const [q, setQ] = useState("");
-  useEffect(() => {
-    const onKey = (e) => e.key === "Escape" && onClose();
-    window.addEventListener("keydown", onKey);
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    return () => { window.removeEventListener("keydown", onKey); document.body.style.overflow = prev; };
-  }, [onClose]);
-  const list = LANGS.filter((l) => `${l.region} ${l.label} ${l.code}`.toLowerCase().includes(q.trim().toLowerCase()));
-  return (
-    <div className="lang-scrim" onClick={onClose}>
-      <div className="lang-dialog" role="dialog" aria-modal="true" aria-label={t("Choose your language")} onClick={(e) => e.stopPropagation()}>
-        <button type="button" className="lang-close" aria-label={t("Close")} onClick={onClose}><Icon name="close" size={28} /></button>
-        <h3>{t("Choose your language")}</h3>
-        <label className="lang-search"><Icon name="search" size={18} /><input value={q} onChange={(e) => setQ(e.target.value)} placeholder={t("Search")} aria-label={t("Search")} /></label>
-        <h4>{t("Languages")}</h4>
-        <div className="lang-list">
-          {list.map((l) => (
-            <button key={l.code} type="button" lang={l.code === "zh" ? "zh-CN" : l.code} className={l.code === current ? "on" : ""} aria-pressed={l.code === current} onClick={() => { setLang(l.code); onClose(); }}>
-              <span>{l.region}</span><em>{l.label}</em>
-            </button>
-          ))}
-          {!list.length && <p>{t("No match")}</p>}
-        </div>
-        <p className="lang-note">{t("Menus, buttons and checkout are translated. Product names, descriptions and specifications stay in English.")}</p>
-      </div>
-    </div>
   );
 }
 
