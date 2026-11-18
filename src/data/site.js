@@ -125,3 +125,49 @@ export const addOns = {
   cobra: ["onelaser-industrial-chiller-for-hydra-laser-engraver", "multi-function-rotary-axis-57-motor", "piburn-omni-for-onelaser", "filtrabox-compact-x", ...common],
   hydra: ["multi-function-rotary-axis-57-motor", "piburn-omni-for-onelaser", "filtrabox-compact-x", "2-inch-focal-lens-laser-engraver", ...common],
 };
+
+
+/* ---------- Home, Insta360-style (2026-11-17) ---------- */
+// Tabs of the product block. Each tab shows up to six cards; "all" is the View all link.
+export const homeTabs = [
+  { label: "Most Popular", all: "/collections/machines", picks: ["onelaser-xrf-desktop-laser-machine", "hydra-9-gen-2-70w-rf-co2-dual-laser-machine", "cobra-10-100w-co2-laser-engraver-cutter", "vertigo-vertical-laser-engraver", "hydra-7-gen-2-70w-rf-co2-dual-laser-machine", "cobra-8-90w-co2-laser-engraver-cutter"] },
+  { label: "Desktop Lasers", all: "/collections/machines", picks: ["onelaser-xrf-desktop-laser-machine", "vertigo-vertical-laser-engraver"] },
+  { label: "Cobra Series", all: "/collections/cobra-series", picks: ["cobra-8-90w-co2-laser-engraver-cutter", "cobra-10-100w-co2-laser-engraver-cutter", "cobra-14-130w-co2-laser-engraver-cutter"] },
+  { label: "Hydra Gen2", all: "/collections/hydra-gen2", picks: ["hydra-7-gen-2-70w-rf-co2-dual-laser-machine", "hydra-9-gen-2-70w-rf-co2-dual-laser-machine", "hydra-13-gen-2-70w-rf-co2-dual-laser-machine", "hydra-16-gen-2-70w-rf-co2-dual-laser-machine"] },
+  { label: "Rotary Attachments", all: "/collections/rotary", collection: "rotary" },
+  { label: "Fume Extractors", all: "/collections/fume", collection: "fume" },
+  { label: "Chillers", all: "/collections/cooling", collection: "cooling" },
+  { label: "Lens & Optics", all: "/collections/optics", collection: "optics" },
+  { label: "Materials", all: "/collections/materials", collection: "materials" },
+];
+export const newHandles = ["onelaser-xrf-desktop-laser-machine", "vertigo-vertical-laser-engraver"];
+export const homeFeature = { title: "Hydra 9 Gen2", text: ["70W RF + CO₂ dual laser.", "Save up to $3,000 this Black Friday."], image: "promo-hydra9.jpg", to: "/products/hydra-9-gen-2-70w-rf-co2-dual-laser-machine" };
+export const interests = [
+  ["Wood décor", "home-project-walnut-mountain-wall.webp", "/collections/hydra-gen2"],
+  ["Leather goods", "home-project-batch-leather-gifts.webp", "/collections/xrf-series"],
+  ["Acrylic signs", "home-project-large-acrylic-sign.webp", "/collections/cobra-series"],
+  ["Drinkware", "home-project-vertigo-corporate-tumbler-batch.webp", "/collections/vertigo"],
+  ["Weddings & events", "home-project-etsy-wedding-welcome-suite.webp", "/collections/machines"],
+  ["Acrylic sheets", "material-acrylic.webp", "/collections/acrylic"],
+  ["Leatherette", "material-leather.webp", "/collections/leatherette"],
+];
+// TODO(team): replace with real customer stories and links once marketing supplies them.
+export const homeStories = [
+  ["Black Friday: save up to $3,000", "Every machine and accessory currently on sale, in one place.", "home-product-hydra-gen2-scene.webp", "/collections/deals"],
+  ["XRF 38W: an RF laser for the desktop", "Air-cooled RF, true 3G acceleration and a 0.07 mm laser spot.", "home-product-xrf-scene.webp", "/products/onelaser-xrf-desktop-laser-machine"],
+  ["Cobra Series: workshop cutting power", "90W to 130W glass CO₂ for wood, acrylic and leather.", "home-product-cobra-scene.webp", "/collections/cobra-series"],
+  ["VertiGo: built for drinkware", "Built-in vertical rotary. No setup, no alignment.", "home-product-vertigo-scene.webp", "/products/vertigo-vertical-laser-engraver"],
+];
+
+// One-line card slogans (Insta360 cards carry a single short line). Facts come from the product names and specs.
+export const shortSlogans = {
+  "onelaser-xrf-desktop-laser-machine": "38W RF desktop laser.",
+  "vertigo-vertical-laser-engraver": "Vertical laser for drinkware.",
+  "cobra-8-90w-co2-laser-engraver-cutter": "90W CO₂ workshop laser.",
+  "cobra-10-100w-co2-laser-engraver-cutter": "100W CO₂ laser cutter.",
+  "cobra-14-130w-co2-laser-engraver-cutter": "130W large-format CO₂ laser.",
+  "hydra-7-gen-2-70w-rf-co2-dual-laser-machine": "Compact RF dual-laser system.",
+  "hydra-9-gen-2-70w-rf-co2-dual-laser-machine": "RF + CO₂ dual-laser system.",
+  "hydra-13-gen-2-70w-rf-co2-dual-laser-machine": "Large-format dual-laser system.",
+  "hydra-16-gen-2-70w-rf-co2-dual-laser-machine": "Our largest dual-laser system.",
+};

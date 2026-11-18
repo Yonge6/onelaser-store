@@ -10,9 +10,18 @@ export function Header({ path }) {
   const [mobile, setMobile] = useState(false);
   const [search, setSearch] = useState(false);
   const [q, setQ] = useState("");
+  const [top, setTop] = useState(true);
   useEffect(() => {
     setOpen(null); setMobile(false); setSearch(false);
   }, [path]);
+  useEffect(() => {
+    const onScroll = () => setTop(window.scrollY < 8);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+  // Insta360: the bar floats transparent over the home hero and turns white once the page scrolls or a menu opens.
+  const overlay = path === "/" && top && !open && !search;
   const hits = q.trim().length > 1 ? products.filter((p) => `${p.name} ${p.title}`.toLowerCase().includes(q.trim().toLowerCase())).slice(0, 6) : [];
   const submit = (e) => {
     e.preventDefault();
@@ -20,8 +29,7 @@ export function Header({ path }) {
   };
   return (
     <>
-      <div className="announce"><Link to={promo.link}>{promo.label} · {promo.headline} <u>Buy Now →</u></Link></div>
-      <header className="site-header" onMouseLeave={() => setOpen(null)}>
+      <header className={`site-header${overlay ? " overlay" : ""}`} onMouseLeave={() => setOpen(null)}>
         <div className="site-header-bar">
           <button type="button" className="icon-btn only-mobile" aria-label="Menu" onClick={() => setMobile(true)}><Icon name="menu" /></button>
           <Link to="/" className="brand" aria-label="OneLaser Store home"><img src={asset("onelaser-logo-transparent.svg")} alt="OneLaser" /><span>Store</span></Link>
@@ -31,9 +39,10 @@ export function Header({ path }) {
             ))}
           </nav>
           <div className="site-actions">
-            <button type="button" className="icon-btn" aria-label="Search" onClick={() => setSearch((s) => !s)}><Icon name="search" size={24} /></button>
-            <Link href="https://www.1laser.com/account/login" className="icon-btn" aria-label="Account"><Icon name="user" size={24} /></Link>
-            <Link to="/cart" className="icon-btn cart-btn" aria-label={`Cart, ${count} items`}><Icon name="cart" size={24} /><em>{count}</em></Link>
+            <Link to="/collections/deals" className="store-btn"><Icon name="cart" size={16} /><span>Deals</span></Link>
+            <button type="button" className="icon-btn" aria-label="Search" onClick={() => setSearch((s) => !s)}><Icon name="search" size={22} /></button>
+            <Link href="https://www.1laser.com/account/login" className="icon-btn hide-mobile" aria-label="Account"><Icon name="user" size={22} /></Link>
+            <Link to="/cart" className="icon-btn cart-btn" aria-label={`Cart, ${count} items`}><Icon name="cart" size={22} />{count > 0 && <em>{count}</em>}</Link>
           </div>
         </div>
         {nav.filter((n) => n.label === open).map((n) => (
@@ -62,6 +71,7 @@ export function Header({ path }) {
           </div>
         )}
       </header>
+      {path !== "/" && <div className="header-spacer" />}
       {mobile && (
         <div className="drawer-scrim" onClick={() => setMobile(false)}>
           <aside className="drawer" onClick={(e) => e.stopPropagation()} aria-label="Menu">
@@ -179,35 +189,40 @@ export const ServiceStrip = () => (
 );
 
 export function Footer() {
-  const cols = [
-    ["Shop", [["Laser Machines", "/collections/machines"], ["Accessories", "/collections/accessories"], ["Materials", "/collections/materials"], ["Black Friday Deals", "/collections/deals"], ["Compare machines", "/compare"]]],
-    ["Machines", [["XRF Series", "/collections/xrf-series"], ["Cobra Series", "/collections/cobra-series"], ["Hydra Gen2", "/collections/hydra-gen2"], ["VertiGo", "/collections/vertigo"]]],
-  ];
-  const ext = [
-    ["Support", [["Sales consultation", "https://www.1laser.com/pages/sales-consultation"], ["Contact Us", "https://www.1laser.com/pages/contact-us"], ["Common FAQ", "https://www.1laser.com/pages/faq"], ["Financing", "https://www.1laser.com/pages/financing"], ["Community", "https://www.1laser.com/pages/laser-engraving-community"]]],
-    ["Policies", [["Shipping Policy", "https://www.1laser.com/pages/shipping-policy"], ["Refund Policy", "https://www.1laser.com/pages/refund-policy"], ["Warranty Policy", "https://www.1laser.com/pages/warranty-policy"], ["Payment Methods", "https://www.1laser.com/pages/payment-methods"], ["About Us", "https://www.1laser.com/pages/about-us"]]],
+  const groups = [
+    ["Machines", [["XRF Series", "/collections/xrf-series"], ["Cobra Series", "/collections/cobra-series"], ["Hydra Gen2", "/collections/hydra-gen2"], ["VertiGo", "/collections/vertigo"], ["Previous generation", "/collections/previous-generation"], ["Compare machines", "/compare"]]],
+    ["Accessories", [["Rotary Attachments", "/collections/rotary"], ["Fume Extractors", "/collections/fume"], ["Lens, Mirrors & Tubes", "/collections/optics"], ["Chillers", "/collections/cooling"], ["Software & Training", "/collections/software"]]],
+    ["Materials", [["Acrylic Sheets", "/collections/acrylic"], ["Leatherette", "/collections/leatherette"], ["All materials", "/collections/materials"]]],
+    ["Where to buy", [["Black Friday Deals", "/collections/deals"], ["All machines", "/collections/machines"]]],
+    ["Support", [["Sales consultation", "https://www.1laser.com/pages/sales-consultation"], ["Contact Us", "https://www.1laser.com/pages/contact-us"], ["Common FAQ", "https://www.1laser.com/pages/faq"], ["Financing", "https://www.1laser.com/pages/financing"]]],
+    ["Policies", [["Shipping Policy", "https://www.1laser.com/pages/shipping-policy"], ["Refund Policy", "https://www.1laser.com/pages/refund-policy"], ["Warranty Policy", "https://www.1laser.com/pages/warranty-policy"], ["Payment Methods", "https://www.1laser.com/pages/payment-methods"]]],
+    ["About us", [["About OneLaser", "https://www.1laser.com/pages/about-us"]]],
+    ["Explore", [["Community", "https://www.1laser.com/pages/laser-engraving-community"]]],
   ];
   return (
-    <footer>
-      <ServiceStrip />
-      <div className="footer-newsletter">
-        <div className="page">
-          <h2>Be the first to know</h2>
-          <p>Subscribe for product launches, deals and project ideas from OneLaser.</p>
-          <form onSubmit={(e) => e.preventDefault()}><input type="email" placeholder="Email address" aria-label="Email address" disabled /><button disabled>Subscribe</button></form>
-          <small>Newsletter sign-up is disabled in this draft.</small>
+    <footer className="site-footer">
+      <div className="footer-top">
+        <div className="footer-groups">
+          {groups.map(([title, links]) => (
+            <div key={title}>
+              <h3>{title}</h3>
+              {links.map(([l, to]) => (to.startsWith("http") ? <Link key={l} href={to}>{l}</Link> : <Link key={l} to={to}>{l}</Link>))}
+            </div>
+          ))}
+        </div>
+        <div className="footer-subscribe">
+          <h3>Subscribe</h3>
+          <p>Get the latest news from OneLaser</p>
+          <form onSubmit={(e) => e.preventDefault()}>
+            <input type="email" placeholder="Enter Your Email" aria-label="Email address" disabled />
+            <button disabled aria-label="Subscribe"><Icon name="chevron" size={14} /></button>
+          </form>
+          <small>Newsletter sign-up is disabled in this design draft.</small>
         </div>
       </div>
-      <div className="footer-main">
-        <div className="page">
-          <div className="footer-intro">
-            <Link to="/" className="brand"><img src={asset("onelaser-logo-transparent.svg")} alt="OneLaser" /><span>Store</span></Link>
-            <p>Design draft for internal review — not the live store. Content and prices from 1laser.com (2026-11-16).</p>
-          </div>
-          {cols.map(([title, links]) => <div key={title}><h3>{title}</h3>{links.map(([l, to]) => <Link key={to} to={to}>{l}</Link>)}</div>)}
-          {ext.map(([title, links]) => <div key={title}><h3>{title}</h3>{links.map(([l, href]) => <Link key={href} href={href}>{l}</Link>)}</div>)}
-        </div>
-        <div className="page footer-legal">© 2026 OneLaser</div>
+      <div className="footer-bottom">
+        <p>Design draft for internal review — not the live store. Content and prices from 1laser.com.</p>
+        <p>Copyright © 2026 OneLaser. All rights reserved.</p>
       </div>
     </footer>
   );
