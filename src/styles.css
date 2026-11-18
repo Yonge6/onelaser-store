@@ -1214,108 +1214,56 @@ ul { list-style: none; }
   .footer-groups { grid-template-columns: 1fr 1fr; column-gap: 16px; row-gap: 28px; }
   .footer-subscribe { width: 100%; }
 }
-/* ================= Home machine finder (flow after thunderlaserusa.com, drawn in the Insta360 system) ================= */
-.fd { padding-top: 64px; }
-.fd-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; flex-wrap: wrap; }
-.fd-head p { font-size: 16px; line-height: 24px; color: #76767f; margin-bottom: 6px; }
-.fd-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 24px; margin-top: 32px; align-items: stretch; }
-.fd-quiz, .fd-match, .fd-other, .fd-help { background: #f8f9fc; border-radius: 24px; }
-.fd-quiz { padding: 40px; display: flex; flex-direction: column; min-height: 640px; }
-.fd-steps { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); list-style: none; margin: 0; padding: 0; }
-.fd-steps button { width: 100%; display: flex; flex-direction: column; align-items: center; gap: 8px; font-size: 13px; line-height: 16px; font-weight: 500; color: #a1a1aa; text-align: center; transition: color .2s; }
-.fd-steps i { width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; font-style: normal; font-size: 14px; font-weight: 600; background: #fff; box-shadow: inset 0 0 0 1px #dfe2e8; color: #a1a1aa; transition: background .25s, color .25s, box-shadow .25s, transform .25s; }
-.fd-steps li.done button { color: #515157; } .fd-steps li.done i { background: #1d1d1f; color: #fff; box-shadow: none; }
-.fd-steps li.on button { color: #1d1d1f; } .fd-steps li.on i { background: var(--brand); color: #fff; box-shadow: 0 6px 16px rgba(231, 49, 14, 0.32); transform: scale(1.08); }
-.fd-steps button:hover i { box-shadow: inset 0 0 0 1px #1d1d1f; } .fd-steps li.on button:hover i, .fd-steps li.done button:hover i { box-shadow: 0 0 0 3px rgba(29, 29, 31, 0.12); }
-.fd-bar { height: 3px; border-radius: 10px; background: #e6e8ee; margin: 20px 0 0; overflow: hidden; }
-.fd-bar span { display: block; height: 100%; border-radius: 10px; background: var(--brand); transition: width .45s cubic-bezier(.3, .7, .2, 1); }
-.fd-q { flex: 1; display: flex; flex-direction: column; padding-top: 36px; animation: fd-in .35s ease; }
-@keyframes fd-in { from { opacity: 0; transform: translateX(14px); } }
-.fd-kicker { font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: 1.6px; text-transform: uppercase; color: #76767f; }
-.fd-q h3 { font-size: 28px; line-height: 34px; font-weight: 600; color: #262629; margin: 10px 0 6px; }
-.fd-hint { font-size: 15px; line-height: 22px; color: #76767f; }
-.fd-options { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-top: 24px; }
-.fd-options.n3, .fd-options.n5 { grid-template-columns: 1fr; }
-.fd-options button { position: relative; min-height: 64px; padding: 14px 48px 14px 20px; border-radius: 12px; background: #fff; box-shadow: inset 0 0 0 1px #dfe2e8; text-align: left; display: flex; flex-direction: column; justify-content: center; gap: 2px; transition: box-shadow .2s, background .2s, transform .2s; }
-.fd-options b { font-size: 15px; line-height: 20px; font-weight: 500; color: #262629; }
-.fd-options small { font-size: 13px; line-height: 18px; color: #76767f; }
-.fd-options i { position: absolute; right: 16px; top: 50%; margin-top: -11px; width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; box-shadow: inset 0 0 0 1px #cfd3da; color: transparent; transition: background .2s, color .2s, box-shadow .2s; }
-.fd-options button:hover { box-shadow: inset 0 0 0 1px #1d1d1f; transform: translateY(-1px); }
-.fd-options button.on { background: #fff6f3; box-shadow: inset 0 0 0 2px var(--brand); }
-.fd-options button.on i { background: var(--brand); color: #fff; box-shadow: none; }
-.fd-peek { display: none; }
-.fd-nav { margin-top: auto; padding-top: 24px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
-.fd-back, .fd-skip { font-size: 14px; line-height: 20px; font-weight: 500; color: #76767f; transition: color .2s; }
-.fd-back:hover, .fd-skip:hover { color: #1d1d1f; }
-.fd-summary ul { list-style: none; margin: 20px 0 0; padding: 0; }
-.fd-summary li { display: grid; grid-template-columns: 120px minmax(0, 1fr) auto; gap: 16px; align-items: baseline; padding: 14px 0; border-bottom: 1px solid #e6e8ee; font-size: 14px; line-height: 20px; }
-.fd-summary li span { color: #76767f; } .fd-summary li b { font-weight: 500; color: #262629; }
-.fd-summary li button { font-size: 13px; font-weight: 500; color: var(--brand); }
-.fd-result { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
-.fd-match { position: relative; flex: 1; padding: 40px; display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: 24px; align-items: center; animation: fd-pop .4s ease; }
-@keyframes fd-pop { from { opacity: 0; transform: scale(.985); } }
-.fd-badge { position: absolute; left: 24px; top: 24px; height: 28px; padding: 0 12px; border-radius: 50px; background: var(--brand); color: #fff; font-size: 12px; line-height: 28px; font-weight: 600; letter-spacing: .3px; }
-.fd-match-media { display: grid; place-items: center; align-self: stretch; }
-.fd-match-media img { width: 100%; max-height: 300px; object-fit: contain; mix-blend-mode: multiply; transform: scale(1.12); transition: transform .45s cubic-bezier(.2, .7, .2, 1); }
-.fd-match:hover .fd-match-media img { transform: scale(1.18); }
-.fd-match-copy { min-width: 0; }
-.fd-match h3 { font-size: 28px; line-height: 32px; font-weight: 600; color: #262629; }
-.fd-match h3 a:hover { color: var(--brand); }
-.fd-tagline { margin-top: 6px; font-size: 15px; line-height: 22px; color: #76767f; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-.fd-reasons { list-style: none; margin: 16px 0 0; padding: 0; display: grid; gap: 8px; }
-.fd-reasons li { display: flex; gap: 8px; font-size: 14px; line-height: 20px; color: #262629; }
-.fd-reasons svg { flex: none; margin-top: 2px; color: var(--brand); }
-.fd-price { display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 8px; margin-top: 20px; font-size: 14px; line-height: 28px; color: #76767f; }
-.fd-price b { font-size: 24px; line-height: 28px; font-weight: 600; color: #262629; }
-.fd-price s { color: #a1a1aa; }
-.fd-price em { font-style: normal; font-size: 12px; line-height: 20px; font-weight: 600; color: var(--brand); background: var(--brand-soft); border-radius: 4px; padding: 0 8px; align-self: center; }
-.fd-monthly { font-size: 13px; line-height: 20px; color: #76767f; } .fd-monthly b { font-weight: 600; color: #262629; }
-.fd-btns { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-top: 16px; }
-.fd-btns .ih-btn.sm { height: 44px; padding: 0 8px; gap: 6px; font-size: 14px; line-height: 44px; letter-spacing: 0; min-width: 0; }
-.fd-others > p { font-size: 13px; line-height: 18px; font-weight: 500; color: #76767f; margin-bottom: 10px; }
-.fd-others > div { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
-.fd-other { display: flex; align-items: center; gap: 12px; padding: 14px 16px; border-radius: 16px; transition: background .2s, transform .2s; }
-.fd-other:hover { background: #f1f3f8; transform: translateY(-2px); }
-.fd-other img { width: 84px; height: 64px; object-fit: contain; mix-blend-mode: multiply; flex: none; }
-.fd-other span { flex: 1; min-width: 0; display: grid; }
-.fd-other b { font-size: 15px; line-height: 20px; font-weight: 600; color: #262629; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.fd-other em { font-style: normal; font-size: 13px; line-height: 18px; color: #76767f; }
-.fd-other svg { flex: none; color: #a1a1aa; }
+/* ================= Home machine finder card (questions after thunderlaserusa.com, drawn as an Insta360 product card) ================= */
+.ih-card.fc { align-items: stretch; text-align: left; padding: 32px 32px 28px; background: linear-gradient(180deg, #fff1ed 0%, #f8f9fc 46%); box-shadow: inset 0 0 0 1px rgba(231, 49, 14, 0.14); }
+.fc-kicker { display: flex; align-items: center; gap: 6px; font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: 1.4px; text-transform: uppercase; color: var(--brand); }
+.fc-bar { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-top: 14px; }
+.fc-bar i { height: 3px; border-radius: 10px; background: rgba(38, 38, 41, 0.12); transition: background .3s; }
+.fc-bar i.done { background: #1d1d1f; } .fc-bar i.on { background: var(--brand); }
+.fc-q { flex: 1; min-height: 0; display: flex; flex-direction: column; margin-top: 20px; animation: fc-in .32s ease; }
+@keyframes fc-in { from { opacity: 0; transform: translateX(12px); } }
+.fc-q h3 { font-size: 22px; line-height: 28px; font-weight: 600; color: #262629; }
+.fc-hint { margin-top: 4px; font-size: 13px; line-height: 18px; color: #76767f; }
+.fc-options { display: grid; gap: 6px; margin-top: 14px; align-content: start; }
+.fc-options button { display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 40px; padding: 8px 12px 8px 14px; border-radius: 10px; background: #fff; box-shadow: inset 0 0 0 1px #dfe2e8; text-align: left; font-size: 14px; line-height: 18px; font-weight: 500; color: #262629; transition: box-shadow .18s, background .18s, transform .18s; }
+.fc-options button:hover { box-shadow: inset 0 0 0 1px #1d1d1f; transform: translateX(2px); }
+.fc-options i { flex: none; width: 20px; height: 20px; border-radius: 50%; display: grid; place-items: center; box-shadow: inset 0 0 0 1px #cfd3da; color: transparent; transition: background .18s, color .18s, box-shadow .18s; }
+.fc-options button.on { background: #fff6f3; box-shadow: inset 0 0 0 2px var(--brand); }
+.fc-options button.on i { background: var(--brand); color: #fff; box-shadow: none; }
+.fc-nav { display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 40px; margin-top: 12px; }
+.fc-link, .fc-count { font-size: 13px; line-height: 18px; font-weight: 500; color: #76767f; white-space: nowrap; }
+.fc-link:hover { color: #1d1d1f; }
+.fc-peek { flex: 1; min-width: 0; text-align: center; font-size: 12px; line-height: 16px; color: #76767f; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.fc-peek b { font-weight: 600; color: var(--brand); }
+.fc-nav .ih-btn.sm { height: 36px; padding: 0 16px; font-size: 13px; line-height: 36px; }
+.ih-card.fc-done { align-items: center; text-align: center; padding: 36px 40px 22px; animation: fc-pop .4s ease; }
+@keyframes fc-pop { from { opacity: 0; transform: scale(.985); } }
+.fc-done .ih-new { background: var(--brand); color: #fff; border-radius: 50px; padding: 4px 12px; font-size: 12px; line-height: 16px; font-weight: 600; margin-bottom: 8px; display: inline-block; width: fit-content; align-self: center; }
+.fc-reasons { list-style: none; margin: 8px 0 0; padding: 0; display: grid; gap: 4px; justify-items: center; }
+.fc-reasons li { display: flex; gap: 6px; align-items: flex-start; font-size: 13px; line-height: 18px; color: #515157; }
+.fc-reasons svg { flex: none; margin-top: 2px; color: var(--brand); }
+.fc-done .ih-card-media { padding: 4px 0; } .fc-done .ih-card-price { margin-bottom: 2px; } .fc-done .ih-card-monthly { margin-bottom: 10px; }
+.fc-foot { width: 100%; display: flex; justify-content: space-between; gap: 12px; margin-top: 10px; font-size: 12px; line-height: 16px; }
+.fc-foot button, .fc-foot a { color: #76767f; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+.fc-foot button { flex: none; } .fc-foot button:hover, .fc-foot a:hover { color: var(--brand); }
 .fd-links { display: flex; justify-content: center; flex-wrap: wrap; gap: 12px 40px; margin: 40px 0 0; }
 .fd-links a { font-size: 16px; line-height: 24px; font-weight: 500; color: #262629; transition: color .2s; }
 .fd-links a:hover { color: var(--brand); }
-.fd-help { margin-top: 32px; padding: 28px 40px; display: flex; align-items: center; gap: 24px; }
+.fd-help { margin-top: 32px; padding: 28px 40px; display: flex; align-items: center; gap: 24px; background: #f8f9fc; border-radius: 24px; }
 .fd-help > svg { flex: none; width: 72px; height: 72px; }
 .fd-help > div { flex: 1; min-width: 0; }
 .fd-help h3 { font-size: 22px; line-height: 28px; font-weight: 600; color: #262629; }
 .fd-help p { margin-top: 4px; font-size: 15px; line-height: 22px; color: #76767f; max-width: 640px; }
 .fd-help .ih-btn { flex: none; padding: 0 28px; }
 @media (max-width: 1180px) {
-  .fd-quiz, .fd-match { padding: 28px; }
-  .fd-match { grid-template-columns: 1fr; text-align: left; } .fd-match-media img { max-height: 200px; }
-  .fd-steps button span { font-size: 12px; }
+  .ih-card.fc { padding: 24px 20px 20px; } .fc-q h3 { font-size: 19px; line-height: 24px; } .fc-options button { min-height: 36px; font-size: 13px; }
 }
 @media (max-width: 860px) {
-  .fd { padding-top: 40px; }
-  .fd-head p { font-size: 14px; line-height: 20px; margin: 0; }
-  .fd-grid { grid-template-columns: 1fr; gap: 12px; margin-top: 20px; }
-  .fd-quiz, .fd-match, .fd-help { border-radius: 16px; }
-  .fd-quiz { padding: 20px 16px; min-height: 0; }
-  .fd-steps button { gap: 6px; } .fd-steps button span { font-size: 10px; line-height: 12px; } .fd-steps i { width: 30px; height: 30px; font-size: 13px; }
-  .fd-q { padding-top: 24px; } .fd-q h3 { font-size: 22px; line-height: 28px; }
-  .fd-options { grid-template-columns: 1fr; gap: 8px; margin-top: 16px; } .fd-options button { min-height: 56px; }
-  .fd-peek { display: flex; align-items: center; gap: 10px; width: 100%; margin-top: 16px; padding: 8px 12px; border-radius: 12px; background: #fff; box-shadow: inset 0 0 0 1px #dfe2e8; text-align: left; }
-  .fd-peek img { width: 52px; height: 40px; object-fit: contain; flex: none; }
-  .fd-peek span { flex: 1; min-width: 0; display: grid; } .fd-peek small { font-size: 11px; line-height: 14px; font-weight: 600; color: var(--brand); }
-  .fd-peek b { font-size: 14px; line-height: 18px; font-weight: 600; color: #262629; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .fd-peek em { font-style: normal; font-size: 14px; font-weight: 600; color: #262629; } .fd-peek svg { flex: none; color: #a1a1aa; transform: rotate(90deg); }
-  .fd-nav { padding-top: 16px; } .fd-result { scroll-margin-top: 60px; }
-  .fd-match { padding: 56px 20px 20px; } .fd-badge { left: 16px; top: 16px; }
-  .fd-match h3 { font-size: 22px; line-height: 28px; }
-  .fd-others > div { grid-template-columns: 1fr; gap: 0; } .fd-other { padding: 10px 8px; }
+  .ih-card.fc { height: auto; min-height: 434px; padding: 24px 20px 20px; border-radius: 16px; }
+  .fc-q h3 { font-size: 20px; line-height: 26px; } .fc-options button { min-height: 44px; font-size: 14px; }
+  .ih-card.fc-done { padding: 32px 24px 18px; }
   .fd-links { gap: 8px 24px; margin-top: 24px; } .fd-links a { font-size: 14px; }
-  .fd-help { flex-direction: column; align-items: flex-start; gap: 16px; padding: 20px; margin-top: 20px; } .fd-help h3 { font-size: 20px; } .fd-help .ih-btn { width: 100%; }
-  .fd-summary li { grid-template-columns: 88px minmax(0, 1fr) auto; gap: 10px; }
+  .fd-help { flex-direction: column; align-items: flex-start; gap: 16px; padding: 20px; margin-top: 20px; border-radius: 16px; } .fd-help h3 { font-size: 20px; } .fd-help .ih-btn { width: 100%; }
 }
 
 /* ================= Listing, Insta360 Store layout (measured 1440) ================= */

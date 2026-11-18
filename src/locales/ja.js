@@ -344,4 +344,5 @@ export default {
   "Not sure which one fits?": "どれが合うかわかりませんか？",
   "Talk it through with a OneLaser laser engineer. Tell us what you make and we'll point you to the right machine.": "OneLaser のレーザーエンジニアにご相談ください。制作内容をお聞かせいただければ、最適な機種をご案内します。",
   "Schedule a call": "通話を予約",
+  "Find your machine": "マシンを探す",
 };

@@ -5,13 +5,11 @@ import { useCart } from "../cart.jsx";
 import { Icon, Link } from "./ui.jsx";
 import { BenefitArt } from "./Chrome.jsx";
 
-/* "Find your machine", after the four-step finder on thunderlaserusa.com (studied 2026-11-17):
-   stepper (material → work → pieces → shop → machine), one question per step, large option tiles.
-   What is different here:
-   - the match is live: the right-hand panel re-ranks the machines after every answer and says why, so nobody has to finish the quiz
-     to see a result (Thunder shows nothing until the last answer);
-   - single-choice steps move on by themselves, any finished step can be reopened from the stepper, and every step can be skipped;
-   - the result is shoppable in place (price, 24-month figure, add to cart, buy now) and keeps two alternatives next to it.
+/* "Find your machine": a compact card in the last cell of the home product grid.
+   The questions follow the four-step finder on thunderlaserusa.com (material → work → pieces → shop → machine), adapted to the
+   OneLaser line-up. What is different: single-choice steps move on by themselves, every step can be skipped or revisited, the
+   current best match is named while you answer, and the card ends as a shoppable product card (reasons, price, 24-month figure,
+   add to cart, buy now) instead of sending you to another page.
    The rules below are a first pass written from the published specs. TODO(team): sales to confirm weights and wording. */
 
 const M = {
@@ -103,48 +101,19 @@ function rank(a) {
 const FINANCE_MONTHS = 24; // same illustration as 1laser.com's "24-month payment": price ÷ 24
 const monthly = (p) => (p.price / FINANCE_MONTHS).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
-function Match({ p, reasons, answered }) {
+/** Compact finder that sits in the last cell of the home product grid. When the last question is answered
+    (or skipped) the card turns into a product card for the best match, with the reasons and the buy buttons. */
+export default function FinderCard() {
   const { add } = useCart();
-  const [added, setAdded] = useState(false);
-  const variant = p.variants.find((v) => v.available) || p.variants[0];
-  const addNow = () => { add(p.handle, variant.id, 1); setAdded(true); setTimeout(() => setAdded(false), 1800); };
-  return (
-    <article className="fd-match" key={p.handle}>
-      <span className="fd-badge">{answered ? t("Best match") : t("Most popular")}</span>
-      <Link to={`/products/${p.handle}`} className="fd-match-media" tabIndex={-1} aria-hidden="true"><img src={img(p.images[0], 800)} alt="" /></Link>
-      <div className="fd-match-copy">
-        <h3><Link to={`/products/${p.handle}`}>{p.name}</Link></h3>
-        <p className="fd-tagline">{p.tagline}</p>
-        {reasons.length > 0 && (
-          <ul className="fd-reasons">{reasons.map((r) => <li key={r}><Icon name="check" size={16} />{t(r)}</li>)}</ul>
-        )}
-        <p className="fd-price">
-          {p.priceVaries && <span>{t("From")}</span>}
-          <b>{money(p.price)}</b>
-          {p.compareAt > p.price && <s>{money(p.compareAt)}</s>}
-          {p.compareAt > p.price && <em>{t("Save")} {money(p.compareAt - p.price)}</em>}
-        </p>
-        <p className="fd-monthly">{t("or")} <b>${monthly(p)}</b>{t("/mo for 24 months")}</p>
-        <div className="fd-btns">
-          <button type="button" className={`ih-btn line sm${added ? " added" : ""}`} disabled={!p.available} onClick={addNow} aria-live="polite">
-            <Icon name={added ? "check" : "cart"} size={16} />{added ? t("Added") : t("Add to cart")}
-          </button>
-          <Link to={`/products/${p.handle}`} className="ih-btn dark sm">{t("Buy now")}</Link>
-        </div>
-      </div>
-    </article>
-  );
-}
-
-export default function Finder() {
   const [answers, setAnswers] = useState({});
   const [step, setStep] = useState(0);
+  const [added, setAdded] = useState(false);
   const done = step >= STEPS.length;
   const cur = STEPS[Math.min(step, STEPS.length - 1)];
   const ranked = useMemo(() => rank(answers), [answers]);
   const answered = Object.values(answers).some((v) => (Array.isArray(v) ? v.length : v));
   const top = ranked[0] && byHandle[M[ranked[0].key].handle];
-  const others = ranked.slice(1, 3).map((r) => byHandle[M[r.key].handle]);
+  const next = ranked[1] && byHandle[M[ranked[1].key].handle];
   const has = (s) => (s.multi ? (answers[s.id] || []).length > 0 : !!answers[s.id]);
   const pick = (id) => {
     if (cur.multi) {
@@ -155,113 +124,93 @@ export default function Finder() {
       setTimeout(() => setStep((s) => Math.max(s, STEPS.indexOf(cur) + 1)), 260);
     }
   };
-  const labelOf = (s) => {
-    const v = answers[s.id];
-    if (!v || (Array.isArray(v) && !v.length)) return t("Skipped");
-    return (Array.isArray(v) ? v : [v]).map((id) => t(s.options.find((o) => o[0] === id)[1])).join(", ");
-  };
   const reset = () => { setAnswers({}); setStep(0); };
+  const addNow = () => {
+    const variant = top.variants.find((v) => v.available) || top.variants[0];
+    add(top.handle, variant.id, 1);
+    setAdded(true);
+    setTimeout(() => setAdded(false), 1800);
+  };
+  const bar = (
+    <div className="fc-bar" aria-hidden="true">
+      {STEPS.map((s, n) => <i key={s.id} className={n < step ? "done" : n === step ? "on" : ""} />)}
+    </div>
+  );
+
+  if (done && top)
+    return (
+      <article className="ih-card fc fc-done" aria-live="polite">
+        <div className="ih-card-info">
+          <span className="ih-new">{t("Best match")}</span>
+          <h3><Link to={`/products/${top.handle}`}>{top.name}</Link></h3>
+          <ul className="fc-reasons">{(answered ? ranked[0].reasons : []).slice(0, 2).map((r) => <li key={r}><Icon name="check" size={14} />{t(r)}</li>)}</ul>
+        </div>
+        <Link to={`/products/${top.handle}`} className="ih-card-media" tabIndex={-1} aria-hidden="true"><img src={img(top.images[0], 700)} alt="" /></Link>
+        <p className="ih-card-price">
+          {top.priceVaries && <span>{t("From")}</span>}
+          <b>{money(top.price)}</b>
+          {top.compareAt > top.price && <s>{money(top.compareAt)}</s>}
+          {top.compareAt > top.price && <em>{t("Save")} {money(top.compareAt - top.price)}</em>}
+        </p>
+        <p className="ih-card-monthly">{t("or")} <b>${monthly(top)}</b>{t("/mo for 24 months")}</p>
+        <div className="ih-card-btns">
+          <button type="button" className={`ih-btn line sm${added ? " added" : ""}`} disabled={!top.available} onClick={addNow}>
+            <Icon name={added ? "check" : "cart"} size={16} />{added ? t("Added") : t("Add to cart")}
+          </button>
+          <Link to={`/products/${top.handle}`} className="ih-btn dark sm">{t("Buy now")}</Link>
+        </div>
+        <p className="fc-foot">
+          <button type="button" onClick={reset}>↺ {t("Start over")}</button>
+          {next && <Link to={`/products/${next.handle}`}>{t("Also worth a look")}: {next.name} ›</Link>}
+        </p>
+      </article>
+    );
 
   return (
-    <section className="fd" id="finder">
-      <div className="ih-wrap">
-        <div className="fd-head">
-          <h2 className="ih-h2 narrow">{t("Find your OneLaser.")}</h2>
-          <p>{t("Four quick questions. Your match updates as you answer.")}</p>
-        </div>
-        <div className="fd-grid">
-          <div className="fd-quiz">
-            <ol className="fd-steps">
-              {STEPS.map((s, n) => (
-                <li key={s.id} className={n === step ? "on" : n < step || has(s) ? "done" : ""}>
-                  <button type="button" onClick={() => setStep(n)} aria-current={n === step ? "step" : undefined}>
-                    <i>{n < step || (has(s) && n !== step) ? <Icon name="check" size={16} /> : n + 1}</i><span>{t(s.label)}</span>
-                  </button>
-                </li>
-              ))}
-              <li className={done ? "on" : ""}><button type="button" onClick={() => setStep(STEPS.length)}><i>★</i><span>{t("Your machine")}</span></button></li>
-            </ol>
-            <div className="fd-bar"><span style={{ width: `${(Math.min(step, STEPS.length) / STEPS.length) * 100}%` }} /></div>
-
-            {!done ? (
-              <div className="fd-q" key={cur.id}>
-                <p className="fd-kicker">{t("Step")} {step + 1} / {STEPS.length} · {t(cur.label)}</p>
-                <h3>{t(cur.title)}</h3>
-                <p className="fd-hint">{t(cur.hint)}</p>
-                <div className={`fd-options n${cur.options.length}`} role={cur.multi ? "group" : "radiogroup"}>
-                  {cur.options.map(([id, label, sub]) => {
-                    const on = cur.multi ? (answers[cur.id] || []).includes(id) : answers[cur.id] === id;
-                    return (
-                      <button key={id} type="button" role={cur.multi ? "checkbox" : "radio"} aria-checked={on} className={on ? "on" : ""} onClick={() => pick(id)}>
-                        <b>{t(label)}</b>{sub && <small>{t(sub)}</small>}
-                        <i aria-hidden="true"><Icon name="check" size={14} /></i>
-                      </button>
-                    );
-                  })}
-                </div>
-                {top && (
-                  <button type="button" className="fd-peek" onClick={() => document.querySelector(".fd-result")?.scrollIntoView({ behavior: "smooth", block: "start" })}>
-                    <img src={img(top.images[0], 160)} alt="" />
-                    <span><small>{answered ? t("Best match") : t("Most popular")}</small><b>{top.name}</b></span>
-                    <em>{money(top.price)}</em><Icon name="chevron" size={16} />
-                  </button>
-                )}
-                <div className="fd-nav">
-                  {step > 0 ? <button type="button" className="fd-back" onClick={() => setStep(step - 1)}>← {t("Back")}</button> : <span />}
-                  <button type="button" className={cur.multi && has(cur) ? "ih-btn dark sm" : "fd-skip"} onClick={() => setStep(step + 1)}>
-                    {cur.multi && has(cur) ? t("Continue") : t("Skip")}
-                  </button>
-                </div>
-              </div>
-            ) : (
-              <div className="fd-q fd-summary">
-                <p className="fd-kicker">{t("Your answers")}</p>
-                <h3>{t("Here is your match.")}</h3>
-                <ul>
-                  {STEPS.map((s, n) => (
-                    <li key={s.id}><span>{t(s.label)}</span><b>{labelOf(s)}</b><button type="button" onClick={() => setStep(n)}>{t("Edit")}</button></li>
-                  ))}
-                </ul>
-                <div className="fd-nav">
-                  <button type="button" className="fd-back" onClick={reset}>↺ {t("Start over")}</button>
-                  <Link to="/compare" className="fd-skip">{t("Compare every spec")} ›</Link>
-                </div>
-              </div>
-            )}
-          </div>
-
-          <div className="fd-result" aria-live="polite">
-            {top && <Match p={top} reasons={answered ? ranked[0].reasons : []} answered={answered} />}
-            {others.length > 0 && <div className="fd-others">
-              <p>{answered ? t("Also worth a look") : t("Other favorites")}</p>
-              <div>
-                {others.map((p) => (
-                  <Link key={p.handle} to={`/products/${p.handle}`} className="fd-other">
-                    <img src={img(p.images[0], 300)} alt="" loading="lazy" />
-                    <span><b>{p.name}</b><em>{p.priceVaries ? `${t("From")} ` : ""}{money(p.price)}</em></span>
-                    <Icon name="chevron" size={18} />
-                  </Link>
-                ))}
-              </div>
-            </div>}
-          </div>
-        </div>
-
-        <p className="fd-links">
-          <Link to="/compare">{t("Compare every spec")} ›</Link>
-          <Link href="https://www.1laser.com/pages/financing">{t("Pricing and financing")} ›</Link>
-          <Link to="/collections/machines">{t("All machines")} ›</Link>
-        </p>
-
-        <div className="fd-help">
-          <BenefitArt name="support" />
-          <div>
-            <h3>{t("Not sure which one fits?")}</h3>
-            <p>{t("Talk it through with a OneLaser laser engineer. Tell us what you make and we'll point you to the right machine.")}</p>
-          </div>
-          <Link href="https://www.1laser.com/pages/sales-consultation" className="ih-btn dark">{t("Schedule a call")}</Link>
+    <article className="ih-card fc">
+      <p className="fc-kicker"><Icon name="search" size={14} />{t("Find your machine")}</p>
+      {bar}
+      <div className="fc-q" key={cur.id}>
+        <h3>{t(cur.title)}</h3>
+        <p className="fc-hint">{t(cur.hint)}</p>
+        <div className="fc-options" role={cur.multi ? "group" : "radiogroup"}>
+          {cur.options.map(([id, label]) => {
+            const on = cur.multi ? (answers[cur.id] || []).includes(id) : answers[cur.id] === id;
+            return (
+              <button key={id} type="button" role={cur.multi ? "checkbox" : "radio"} aria-checked={on} className={on ? "on" : ""} onClick={() => pick(id)}>
+                <span>{t(label)}</span><i aria-hidden="true"><Icon name="check" size={12} /></i>
+              </button>
+            );
+          })}
         </div>
       </div>
-    </section>
+      <div className="fc-nav">
+        {step > 0 ? <button type="button" className="fc-link" onClick={() => setStep(step - 1)}>← {t("Back")}</button> : <span className="fc-count">{step + 1} / {STEPS.length}</span>}
+        {top && answered && <span className="fc-peek" aria-live="polite">{t("Best match")}: <b>{top.name}</b></span>}
+        <button type="button" className={cur.multi && has(cur) ? "ih-btn dark sm" : "fc-link"} onClick={() => setStep(step + 1)}>
+          {cur.multi && has(cur) ? t("Continue") : t("Skip")}
+        </button>
+      </div>
+    </article>
+  );
+}
+
+/** Links and the "talk to us" card under the grid, after the same block on thunderlaserusa.com. */
+export function FinderHelp() {
+  return (
+    <>
+      <p className="fd-links">
+        <Link to="/compare">{t("Compare every spec")} ›</Link>
+        <Link href="https://www.1laser.com/pages/financing">{t("Pricing and financing")} ›</Link>
+      </p>
+      <div className="fd-help">
+        <BenefitArt name="support" />
+        <div>
+          <h3>{t("Not sure which one fits?")}</h3>
+          <p>{t("Talk it through with a OneLaser laser engineer. Tell us what you make and we'll point you to the right machine.")}</p>
+        </div>
+        <Link href="https://www.1laser.com/pages/sales-consultation" className="ih-btn dark">{t("Schedule a call")}</Link>
+      </div>
+    </>
   );
 }

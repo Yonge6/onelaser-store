@@ -344,4 +344,5 @@ export default {
   "Not sure which one fits?": "¿No sabes cuál te conviene?",
   "Talk it through with a OneLaser laser engineer. Tell us what you make and we'll point you to the right machine.": "Habla con un ingeniero láser de OneLaser. Cuéntanos qué fabricas y te indicaremos la máquina adecuada.",
   "Schedule a call": "Programar una llamada",
+  "Find your machine": "Encuentra tu máquina",
 };
