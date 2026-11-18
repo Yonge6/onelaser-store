@@ -316,16 +316,54 @@ export const trustpilot = {
   ],
 };
 
-// Home "made with OneLaser" videos: owners showing what they make and sell, not machine introductions.
-// Found on YouTube on 2026-11-18 (search: OneLaser + business / projects); titles and channels as published.
-// [id, title, channel, what they make, machine]
-export const homeMakers = [
-  ["WD5has9K3IY", "This Firefighter Made A Six Figure Business With A Laser", "OneLaser", "Six-figure laser business", "OneLaser"],
-  ["godnvdc7raE", "Making 5' Store Signs with the OneLaser Hydra 16", "Maker Foundry", "Store signs", "Hydra 16"],
-  ["0gGxQMZZhOs", "How To Make Leather Patch Hats", "Wrico Goods", "Leather patch hats", "Hydra 9"],
-  ["sk-OcNSGa1o", "Running Small Production of Tumblers on the OneLaser Hydra 7", "Woodwork by Allan", "Tumbler production", "Hydra 7"],
-  ["vBxXG9vpgIQ", "Laser ideas to make and sell online", "Peachy Creations", "Products to sell online", "XRF"],
-  ["27nhcSEJkso", "Laser Engraving Multicam American Flag Patches", "Us2a Apparel", "Flag patches", "XRF"],
-  ["wdxvI3lI0Bg", "How VertiGo™ Pays for Itself — ROI Explained", "LensDigital", "Tumbler business ROI", "VertiGo"],
-  ["LG3wz6y-tOE", "Engraving Bamboo Cutting Board in the OneLaser XRF 38W", "Peachy Creations", "Cutting boards", "XRF"],
-];
+// Home "Built for every ambition": Makers / Business / Education, as on www.1laser.com (kicker, heading, the three panel texts and
+// images are the official ones, read 2026-11-18). Each segment adds YouTube videos found the same day; titles and channels as published.
+// videos: [id, title, channel, what it shows, machine]
+const IND = "https://www.1laser.com/cdn/shop/files/home-industry-";
+export const homeAmbition = {
+  kicker: "Built for every ambition", title: "Different goals. A clearer machine path.",
+  text: "Choose the environment that looks most like yours, then explore the OneLaser path designed around it.",
+  cta: ["Let's Talk with Our Experts", "https://www.1laser.com/pages/sales-consultation"],
+  segments: [
+    {
+      label: "Makers", title: "Turn ideas into finished objects.", image: `${IND}makers-v3.webp?v=1788447362`,
+      text: "Move from one-off experiments to polished gifts, home décor, signs, and personal work with a machine matched to the projects you actually want to make.",
+      videos: [
+        ["0gGxQMZZhOs", "How To Make Leather Patch Hats", "Wrico Goods", "Leather patch hats", "Hydra 9"],
+        ["vBxXG9vpgIQ", "Laser ideas to make and sell online", "Peachy Creations", "Products to sell online", "XRF"],
+        ["27nhcSEJkso", "Laser Engraving Multicam American Flag Patches", "Us2a Apparel", "Flag patches", "XRF"],
+        ["LG3wz6y-tOE", "Engraving Bamboo Cutting Board in the OneLaser XRF 38W", "Peachy Creations", "Cutting boards", "XRF"],
+        ["RxgWwJg5kAk", "Behind The Maker Ep. 001 | Holly Whiteside", "OneLaser", "Maker story", "XRF"],
+        ["yoV9mOGnW-8", "First attempt at a Rubber Stamp on a Laser", "Peachy Creations", "Rubber stamps", "XRF"],
+        ["RMR_8i4D5n8", "How to Engrave Tumblers with PiGrip2 on the OneLaser XRF", "NTX Laser Engraving & Prints", "Tumblers", "XRF"],
+      ],
+    },
+    {
+      label: "Business", title: "Build a workflow you can repeat.", image: `${IND}business-v3.webp?v=1788447362`,
+      text: "Choose the right platform for personalization, broader catalogs, repeat orders, and dependable daily production—without pretending every shop needs the same machine.",
+      videos: [
+        ["WD5has9K3IY", "This Firefighter Made A Six Figure Business With A Laser", "OneLaser", "Six-figure laser business", "OneLaser"],
+        ["HdP62cQVzs0", "The Machine Behind His Best-Selling Maps", "OneLaser", "Best-selling maps", "Hydra 16"],
+        ["Fqtlsk_NsKM", "Is the OneLaser Hydra 13 Worth It? A Pottery Owner's Honest Review", "OneLaser", "Pottery studio", "Hydra 13"],
+        ["godnvdc7raE", "Making 5' Store Signs with the OneLaser Hydra 16", "Maker Foundry", "Store signs", "Hydra 16"],
+        ["vf5KO_kGgmU", "How We Built The Fast & Furious Supra Interior", "Stitchcraft Interiors", "Car interiors", "OneLaser"],
+        ["sk-OcNSGa1o", "Running Small Production of Tumblers on the OneLaser Hydra 7", "Woodwork by Allan", "Tumbler production", "Hydra 7"],
+        ["wdxvI3lI0Bg", "How VertiGo™ Pays for Itself — ROI Explained", "LensDigital", "Tumbler business ROI", "VertiGo"],
+        ["MHP87JAPBc8", "Why did they buy a Hydra 9??? | Hooks Design Co", "Bearded Builds Co", "Design shop", "Hydra 9"],
+      ],
+    },
+    {
+      label: "Education", title: "Make learning tangible.", image: `${IND}education-v3.webp?v=1788447362`,
+      text: "Bring prototyping, design, and hands-on STEM work into classrooms, labs, and maker spaces with training and support close at hand.",
+      // No classroom videos featuring OneLaser were found on YouTube; these are the training videos a class would start with.
+      videos: [
+        ["EszLHwtuEUw", "Why Your Laser Engraving Looks Terrible (And How to Fix It!)", "OneLaser", "Engraving settings", "OneLaser"],
+        ["R8uQVpeXr34", "LightBurn Material Test Card | OneLaser XRF Desktop", "OneLaser", "Material testing", "XRF"],
+        ["nKiR0tltDNA", "OneLaser XRF Simple Maintenance Guide", "OneLaser", "Maintenance", "XRF"],
+        ["bEAKhA2Wjj4", "OneLaser VertiGo: Step by Step Panel Tutorial", "OneLaser", "Control panel", "VertiGo"],
+        ["onc1Xx2wrb8", "Perfect Laser Project Alignment Every Time – Score Mark Method in LightBurn", "Wrico Goods", "Alignment", "OneLaser"],
+        ["-Xmny42Ubmo", "What's Inside the ONELASER XRF?", "OneLaser", "How it works", "XRF"],
+      ],
+    },
+  ],
+};

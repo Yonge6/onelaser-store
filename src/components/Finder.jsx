@@ -1,8 +1,7 @@
 import { useMemo, useState } from "react";
 import { t } from "../i18n.js";
 import { asset, byHandle, img, money } from "../lib.js";
-import { useCart } from "../cart.jsx";
-import { Icon, Link } from "./ui.jsx";
+import { AddButton, Icon, Link } from "./ui.jsx";
 
 /* "Find your machine": a compact card in the last cell of the home product grid.
    The questions follow the four-step finder on thunderlaserusa.com (material → work → pieces → shop → machine), adapted to the
@@ -121,10 +120,8 @@ const monthly = (p) => (p.price / FINANCE_MONTHS).toLocaleString("en-US", { mini
 /** Compact finder that sits in the last cell of the home product grid. When the last question is answered
     (or skipped) the card turns into a product card for the best match, with the reasons and the buy buttons. */
 export default function FinderCard() {
-  const { add } = useCart();
   const [answers, setAnswers] = useState({});
   const [step, setStep] = useState(0);
-  const [added, setAdded] = useState(false);
   const done = step >= STEPS.length;
   const cur = STEPS[Math.min(step, STEPS.length - 1)];
   const ranked = useMemo(() => rank(answers), [answers]);
@@ -143,12 +140,6 @@ export default function FinderCard() {
     }
   };
   const reset = () => { setAnswers({}); setStep(0); };
-  const addNow = () => {
-    const variant = top.variants.find((v) => v.available) || top.variants[0];
-    add(top.handle, variant.id, 1);
-    setAdded(true);
-    setTimeout(() => setAdded(false), 1800);
-  };
   const bar = (
     <div className="fc-bar" aria-hidden="true">
       {STEPS.map((s, n) => <i key={s.id} className={n < step ? "done" : n === step ? "on" : ""} />)}
@@ -175,9 +166,7 @@ export default function FinderCard() {
         </p>
         <p className="ih-card-monthly">{t("or")} <b>${monthly(top)}</b>{t("/mo for 24 months")}</p>
         <div className="ih-card-btns">
-          <button type="button" className={`ih-btn line sm${added ? " added" : ""}`} disabled={!top.available} onClick={addNow}>
-            <Icon name={added ? "check" : "cart"} size={16} />{added ? t("Added") : t("Add to cart")}
-          </button>
+          <AddButton product={top} className="ih-btn line sm" />
           <Link to={`/products/${top.handle}`} className="ih-btn dark sm">{t("Buy now")}</Link>
         </div>
         <p className="fc-foot">

@@ -1,9 +1,8 @@
 import { useEffect, useRef, useState } from "react";
-import { useCart } from "../cart.jsx";
 import { t } from "../i18n.js";
 import { asset, byHandle, img, money, products } from "../lib.js";
-import { heroSlides, homeFaq, homeMakers, homeProof, homeReviews, homeStandard, homeTabs, homeVideos, trustpilot, newHandles, promo, shortSlogans } from "../data/site.js";
-import { Countdown, Icon, Link } from "../components/ui.jsx";
+import { heroSlides, homeAmbition, homeFaq, homeProof, homeReviews, homeStandard, homeTabs, homeVideos, trustpilot, newHandles, promo, shortSlogans } from "../data/site.js";
+import { AddButton, Countdown, Icon, Link, useDragScroll } from "../components/ui.jsx";
 import FinderCard, { FinderHelp } from "../components/Finder.jsx";
 
 /* Module order, sizes and type follow the insta360.com homepage (measured 2026-11-17 at 1440 and 375):
@@ -17,22 +16,12 @@ const SLIDE_MS = 10000;
 /* Insta360's hero has "Buy now" + "Learn more", both leading to the same page. Here the second button does something else:
    a product slide adds that product to the cart (first available option, stays on the page); a series slide opens the comparison. */
 function HeroButtons({ s, tab }) {
-  const { add } = useCart();
-  const [added, setAdded] = useState(false);
   const product = s.to.startsWith("/products/") ? byHandle[s.to.slice(10)] : null;
-  const variant = product && (product.variants.find((v) => v.available) || product.variants[0]);
-  const addNow = () => {
-    add(product.handle, variant.id, 1);
-    setAdded(true);
-    setTimeout(() => setAdded(false), 1800);
-  };
   return (
     <div className="ih-btns">
       <Link to={s.to} className="ih-btn light" tabIndex={tab}>{product ? t("Buy now") : t("Shop now")}</Link>
       {product && product.available ? (
-        <button type="button" className={`ih-btn ghost${added ? " added" : ""}`} tabIndex={tab} onClick={addNow} aria-live="polite">
-          <Icon name={added ? "check" : "cart"} size={18} />{added ? t("Added") : t("Add to cart")}
-        </button>
+        <AddButton product={product} className="ih-btn ghost" drop="down" iconSize={18} />
       ) : (
         <Link to="/compare" className="ih-btn ghost" tabIndex={tab}>{t("Compare models")}</Link>
       )}
@@ -131,14 +120,6 @@ function Hero() {
 const FINANCE_MONTHS = 24;
 
 function HomeCard({ p }) {
-  const { add } = useCart();
-  const [added, setAdded] = useState(false);
-  const variant = p.variants.find((v) => v.available) || p.variants[0];
-  const addNow = () => {
-    add(p.handle, variant.id, 1);
-    setAdded(true);
-    setTimeout(() => setAdded(false), 1800);
-  };
   return (
     <article className="ih-card">
       <div className="ih-card-info">
@@ -157,9 +138,7 @@ function HomeCard({ p }) {
         <p className="ih-card-monthly">{t("or")} <b>${(p.price / FINANCE_MONTHS).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</b>{t("/mo for 24 months")}</p>
       )}
       <div className="ih-card-btns">
-        <button type="button" className={`ih-btn line sm${added ? " added" : ""}`} disabled={!p.available} onClick={addNow} aria-live="polite">
-          {added ? <><Icon name="check" size={16} />{t("Added")}</> : !p.available ? t("Sold Out") : <><Icon name="cart" size={16} />{t("Add to cart")}</>}
-        </button>
+        <AddButton product={p} className="ih-btn line sm" />
         <Link to={`/products/${p.handle}`} className="ih-btn dark sm">{t("Buy now")}</Link>
       </div>
     </article>
@@ -167,6 +146,7 @@ function HomeCard({ p }) {
 }
 
 function ProductBlock() {
+  const tabsRef = useDragScroll({ wheel: true });
   const [ti, setTi] = useState(0);
   const tab = homeTabs[ti];
   const list = (tab.picks ? tab.picks.map((h) => byHandle[h]) : products.filter((p) => p.category === tab.collection || (tab.collection === "materials" && p.kind === "material"))).filter(Boolean).slice(0, 6);
@@ -175,7 +155,7 @@ function ProductBlock() {
       <div className="ih-wrap"><h2 className="ih-h2 narrow">{t("Laser machines for makers and growing businesses.")}</h2></div>
       <div className="ih-sticky">
         <div className="ih-wrap">
-          <div className="ih-tabs" role="tablist">
+          <div className="ih-tabs" role="tablist" ref={tabsRef}>
             {homeTabs.map((x, n) => <button key={x.label} type="button" role="tab" aria-selected={n === ti} className={n === ti ? "on" : ""} onClick={() => setTi(n)}>{t(x.label)}</button>)}
           </div>
         </div>
@@ -245,11 +225,15 @@ function Videos() {
   );
 }
 
-/* Owner videos: what people make and sell with their machines. Cards open the video in a dialog on this page. */
+/* "Built for every ambition" (official heading and segment copy) with a pill switch for Makers / Business / Education.
+   Each segment is one full-bleed row: an intro card with the official photo and copy, then that segment's videos, which open
+   in a dialog on this page. */
 function Makers() {
+  const [seg, setSeg] = useState(0);
   const [open, setOpen] = useState(null);
-  const row = useRef(null);
+  const row = useDragScroll();
   const slide = (dir) => row.current?.scrollBy({ left: dir * row.current.clientWidth * 0.8, behavior: "smooth" });
+  useEffect(() => { row.current?.scrollTo({ left: 0 }); }, [seg]);
   useEffect(() => {
     if (!open) return undefined;
     const onKey = (e) => e.key === "Escape" && setOpen(null);
@@ -258,31 +242,43 @@ function Makers() {
     document.body.style.overflow = "hidden";
     return () => { window.removeEventListener("keydown", onKey); document.body.style.overflow = prev; };
   }, [open]);
+  const A = homeAmbition;
+  const cur = A.segments[seg];
   return (
     <section className="ih-block iu">
       <div className="ih-wrap">
+        <p className="ist-kicker">{t(A.kicker)}</p>
         <div className="ip2-head">
-          <h2 className="ih-h2">{t("Made with OneLaser. Sold by makers.")}</h2>
-          <p>{t("Real shops showing the products they make and sell.")}</p>
+          <h2 className="ih-h2">{t(A.title)}</h2>
+          <p>{t(A.text)}</p>
+        </div>
+        <div className="iu-bar">
+          <div className="iu-seg" role="tablist">
+            {A.segments.map((g, n) => <button key={g.label} type="button" role="tab" aria-selected={n === seg} className={n === seg ? "on" : ""} onClick={() => setSeg(n)}>{t(g.label)}</button>)}
+          </div>
           <div className="ih-arrows">
             <button type="button" aria-label={t("Previous")} onClick={() => slide(-1)}><Icon name="chevron" size={18} /></button>
             <button type="button" aria-label={t("Next")} onClick={() => slide(1)}><Icon name="chevron" size={18} /></button>
           </div>
         </div>
       </div>
-      <div className="ih-scroller iu-row" ref={row}>
-          {homeMakers.map(([id, title, channel, what, machine]) => (
-            <button key={id} type="button" className="iu-card" onClick={() => setOpen([id, title])} aria-label={`${t("Play video")}: ${title}`}>
-              <span className="iu-thumb">
-                <img src={thumb(id)} onError={(e) => thumbFallback(e, id)} alt="" loading="lazy" />
-                <i aria-hidden="true" />
-                <em>{machine}</em>
-              </span>
-              <span className="iu-what">{t(what)}</span>
-              <b>{title}</b>
-              <small>{channel}</small>
-            </button>
-          ))}
+      <div className="ih-scroller iu-row" ref={row} key={seg}>
+        <Link href={A.cta[1]} className="iu-intro">
+          <img src={img(cur.image, 1000)} alt="" loading="lazy" />
+          <span><small>{t(cur.label)}</small><b>{t(cur.title)}</b><em>{t(cur.text)}</em><i>{t(A.cta[0])} ›</i></span>
+        </Link>
+        {cur.videos.map(([id, title, channel, what, machine]) => (
+          <button key={id} type="button" className="iu-card" onClick={() => setOpen([id, title])} aria-label={`${t("Play video")}: ${title}`}>
+            <span className="iu-thumb">
+              <img src={thumb(id)} onError={(e) => thumbFallback(e, id)} alt="" loading="lazy" />
+              <i aria-hidden="true" />
+              <em>{machine}</em>
+            </span>
+            <span className="iu-what">{t(what)}</span>
+            <b>{title}</b>
+            <small>{channel}</small>
+          </button>
+        ))}
       </div>
       {open && (
         <div className="is-modal" role="dialog" aria-modal="true" aria-label={open[1]} onClick={() => setOpen(null)}>

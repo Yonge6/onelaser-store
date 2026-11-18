@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { t } from "../i18n.js";
 import { img, money } from "../lib.js";
 import { useCart } from "../cart.jsx";
@@ -158,4 +158,86 @@ export function Rail({ children, label, className = "" }) {
       <button type="button" className="slider-arrow next" aria-label={t("Next")} onClick={(e) => scroll(e, 1)}>›</button>
     </div>
   );
+}
+
+/** Add-to-cart button that stays on the page. One option: adds straight away. Several options (power, bundle, size…): opens a
+    small list above (or below) the button so the shopper picks one first. Confirms with "Added" for a moment. */
+export function AddButton({ product, className = "", drop = "up", iconSize = 16 }) {
+  const { add } = useCart();
+  const [open, setOpen] = useState(false);
+  const [added, setAdded] = useState(false);
+  const box = useRef(null);
+  const many = product.variants.length > 1;
+  useEffect(() => {
+    if (!open) return undefined;
+    const away = (e) => { if (!box.current?.contains(e.target)) setOpen(false); };
+    const key = (e) => e.key === "Escape" && setOpen(false);
+    document.addEventListener("mousedown", away);
+    window.addEventListener("keydown", key);
+    return () => { document.removeEventListener("mousedown", away); window.removeEventListener("keydown", key); };
+  }, [open]);
+  const put = (v) => {
+    add(product.handle, v.id, 1);
+    setOpen(false); setAdded(true);
+    setTimeout(() => setAdded(false), 1800);
+  };
+  const click = () => (many ? setOpen((o) => !o) : put(product.variants.find((v) => v.available) || product.variants[0]));
+  return (
+    <span className={`addbtn${open ? " open" : ""} ${drop}`} ref={box}>
+      <button type="button" className={`${className}${added ? " added" : ""}`} disabled={!product.available} onClick={click} aria-haspopup={many ? "listbox" : undefined} aria-expanded={many ? open : undefined} aria-live="polite">
+        {added ? <><Icon name="check" size={iconSize} />{t("Added")}</> : !product.available ? t("Sold Out") : <><Icon name="cart" size={iconSize} />{t("Add to cart")}</>}
+      </button>
+      {open && (
+        <span className="addbtn-menu" role="listbox" aria-label={t("Choose an option")}>
+          <b>{t("Choose an option")}</b>
+          {product.variants.map((v) => (
+            <button key={v.id} type="button" role="option" aria-selected="false" disabled={!v.available} onClick={() => put(v)}>
+              <span>{v.title || product.name}</span>
+              <em>{v.available ? <>{usd(v.price).replace(".00", "")}{v.compareAt > v.price && <s>{usd(v.compareAt).replace(".00", "")}</s>}</> : t("Sold out")}</em>
+            </button>
+          ))}
+        </span>
+      )}
+    </span>
+  );
+}
+
+/** Lets a horizontally scrolling row be dragged with the mouse; with `wheel` the mouse wheel also moves it sideways while it can.
+    A drag of more than a few pixels does not count as a click on the item under the pointer. */
+export function useDragScroll({ wheel = false } = {}) {
+  const ref = useRef(null);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return undefined;
+    let down = false, moved = false, startX = 0, startLeft = 0;
+    const onDown = (e) => { if (e.button !== 0) return; down = true; moved = false; startX = e.clientX; startLeft = el.scrollLeft; };
+    const onMove = (e) => {
+      if (!down) return;
+      const dx = e.clientX - startX;
+      if (Math.abs(dx) > 5) { moved = true; el.classList.add("dragging"); }
+      if (moved) { el.scrollLeft = startLeft - dx; e.preventDefault(); }
+    };
+    const onUp = () => { down = false; setTimeout(() => el.classList.remove("dragging"), 0); };
+    const onClick = (e) => { if (moved) { e.preventDefault(); e.stopPropagation(); moved = false; } };
+    const onWheel = (e) => {
+      if (Math.abs(e.deltaY) <= Math.abs(e.deltaX)) return;
+      const max = el.scrollWidth - el.clientWidth;
+      if (max <= 0 || (e.deltaY < 0 && el.scrollLeft <= 0) || (e.deltaY > 0 && el.scrollLeft >= max - 1)) return;
+      el.scrollLeft += e.deltaY;
+      e.preventDefault();
+    };
+    el.addEventListener("mousedown", onDown);
+    window.addEventListener("mousemove", onMove);
+    window.addEventListener("mouseup", onUp);
+    el.addEventListener("click", onClick, true);
+    if (wheel) el.addEventListener("wheel", onWheel, { passive: false });
+    return () => {
+      el.removeEventListener("mousedown", onDown);
+      window.removeEventListener("mousemove", onMove);
+      window.removeEventListener("mouseup", onUp);
+      el.removeEventListener("click", onClick, true);
+      if (wheel) el.removeEventListener("wheel", onWheel);
+    };
+  }, [wheel]);
+  return ref;
 }
