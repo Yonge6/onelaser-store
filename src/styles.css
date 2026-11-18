@@ -108,7 +108,13 @@ ul { list-style: none; }
 .to-top.show { opacity: 1; visibility: visible; transform: none; }
 .to-top:hover { background: #1d1d1f; color: #fff; }
 .pdp ~ .to-top, body:has(.ip-bar) .to-top { bottom: 104px; }
-@media (max-width: 860px) { .to-top { right: 14px; bottom: 18px; width: 42px; height: 42px; } body:has(.ip-bar) .to-top { bottom: 92px; } }
+@media (max-width: 860px) {
+  .to-top { right: 14px; bottom: calc(18px + env(safe-area-inset-bottom)); width: 42px; height: 42px; } body:has(.ip-bar) .to-top { bottom: calc(92px + env(safe-area-inset-bottom)); }
+  /* the floating button must not sit on the footer's last lines; keep clear of the iPhone home bar too */
+  .site-footer { padding-bottom: calc(76px + env(safe-area-inset-bottom)) !important; }
+}
+/* Pulling past the bottom on iPhone shows black (the footer colour), not a white strip. Shadows do not add scroll height. */
+.site-footer { box-shadow: 0 100vh 0 100vh #000; }
 .mega-inner.n1 { grid-template-columns: minmax(0, 320px); } .mega-inner.n2 { grid-template-columns: repeat(2, minmax(0, 320px)); }
 .site-header-bar { height: 64px; max-width: 1440px; margin: 0 auto; padding: 0 64px; display: flex; align-items: center; }
 .site-header-bar > .brand { margin-right: 29px; flex: none; }
