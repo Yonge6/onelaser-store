@@ -230,18 +230,6 @@ export default function Home() {
         </div>
       </section>
 
-      <Link href="https://www.1laser.com/pages/sales-consultation" className="ih-business">
-        <span className="ih-wrap">
-          <span className="ih-business-copy"><small>{t("OneLaser for Business")}</small><b>{t("Machines that mean business.")}</b><span className="ih-btn dark">{t("Learn more")}</span></span>
-          <span className="ih-business-art">
-            <img src={asset("home-product-cobra-scene.webp")} alt="" loading="lazy" />
-            <img src={asset("home-project-large-acrylic-sign.webp")} alt="" loading="lazy" />
-            <img src={asset("home-project-batch-leather-gifts.webp")} alt="" loading="lazy" />
-            <img src={asset("home-project-vertigo-corporate-tumbler-batch.webp")} alt="" loading="lazy" />
-          </span>
-        </span>
-      </Link>
-
       <section className="ih-block ih-support">
         <div className="ih-wrap">
           {SUPPORT.map(([label, icon, href]) => <Link key={label} href={href} className="ih-entry"><BenefitArt name={icon} /><span>{t(label)}</span><Icon name="chevron" size={22} /></Link>)}
