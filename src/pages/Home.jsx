@@ -172,9 +172,11 @@ function ProductBlock() {
       </div>
       <div className="ih-wrap">
         <div className="ih-grid" key={ti}>
-          {list.slice(0, 5).map((p) => (
-            <HomeCard key={p.handle} p={p} />
-          ))}
+          <div className="ih-row">
+            {list.slice(0, 4).map((p) => (
+              <HomeCard key={p.handle} p={p} />
+            ))}
+          </div>
           <FinderCard />
         </div>
         <div id="fc-result" />

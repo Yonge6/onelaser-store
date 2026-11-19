@@ -38,7 +38,7 @@ export function Header({ path }) {
     go("/");
     let tries = 0;
     const seek = () => {
-      const el = document.querySelector(".ih-card.fc");
+      const el = document.querySelector(".fx");
       if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
       else if (tries++ < 20) setTimeout(seek, 100);
     };

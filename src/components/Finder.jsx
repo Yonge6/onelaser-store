@@ -27,7 +27,7 @@ const POPULAR = ["xrf", "hydra9", "cobra10"];
 
 const STEPS = [
   {
-    id: "material", label: "Your material", title: "What do you work with?", hint: "Pick all that apply.", multi: true,
+    id: "material", short: "Material", label: "Your material", title: "What do you work with?", hint: "Pick all that apply.", multi: true,
     options: [
       ["wood", "Wood, acrylic, MDF"],
       ["leather", "Leather, fabric, paper"],
@@ -38,11 +38,11 @@ const STEPS = [
     ],
   },
   {
-    id: "work", label: "Your work", title: "Mostly cutting or mostly engraving?", hint: "Most shops do both. Pick the bigger share.",
+    id: "work", short: "Work", label: "Your work", title: "Mostly cutting or mostly engraving?", hint: "Most shops do both. Pick the bigger share.",
     options: [["engrave", "Mostly engraving"], ["both", "About half and half"], ["cut", "Mostly cutting"]],
   },
   {
-    id: "size", label: "Your pieces", title: "How big is your largest piece?", hint: "Pick the closest size.",
+    id: "size", short: "Size", label: "Your pieces", title: "How big is your largest piece?", hint: "Pick the closest size.",
     options: [
       ["s", "Small: up to 12 × 12 in.", "Tags, coasters, ornaments"],
       ["m", "Medium: up to 24 × 12 in.", "Signs, cutting boards"],
@@ -52,15 +52,15 @@ const STEPS = [
     ],
   },
   {
-    id: "round", label: "Round items", title: "Any round items, like tumblers, pens or bottles?", hint: "Round items need a rotary attachment.",
+    id: "round", short: "Round items", label: "Round items", title: "Any round items, like tumblers, pens or bottles?", hint: "Round items need a rotary attachment.",
     options: [["flat", "No, all flat"], ["some", "Yes, some round items"], ["most", "Mostly round items"]],
   },
   {
-    id: "shop", label: "Your shop", title: "How much will it run?", hint: "Pick where you are today, plus a little room to grow.",
+    id: "shop", short: "Volume", label: "Your shop", title: "How much will it run?", hint: "Pick where you are today, plus a little room to grow.",
     options: [["side", "Side business or just starting"], ["full", "Full-time shop"], ["high", "High volume, every day"]],
   },
   {
-    id: "vent", label: "Ventilation", title: "Can you vent fumes outside?", hint: "A window or wall vent works. If not, we will point you to an indoor filter.",
+    id: "vent", short: "Venting", label: "Ventilation", title: "Can you vent fumes outside?", hint: "A window or wall vent works. If not, we will point you to an indoor filter.",
     options: [["out", "Yes, through a wall or window"], ["in", "No, it has to stay indoors"]],
   },
 ];
@@ -119,8 +119,10 @@ function addOnsFor(a, key) {
 const FINANCE_MONTHS = 24; // same illustration as 1laser.com's "24-month payment": price ÷ 24
 const monthly = (p) => (p.price / FINANCE_MONTHS).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
-/** Compact finder that sits in the last cell of the home product grid. When the last question is answered
-    (or skipped) the card turns into a product card for the best match, with the reasons and the buy buttons. */
+/** Machine finder: spans two cells of the home product grid (one row below on phones).
+    Left: one question at a time with a labelled stepper. Right: the best match so far, which updates with every answer,
+    so the visitor sees where the answers lead before the end. When done, the card shows the pick and the full
+    result opens under the grid (FinderResult). */
 const memo = { answers: {}, step: 0 };
 
 export default function FinderCard() {
@@ -129,15 +131,18 @@ export default function FinderCard() {
   const setAnswers = (v) => { memo.answers = v; setAnswersRaw(v); };
   const setStep = (v) => setStepRaw((s) => { const n = typeof v === "function" ? v(s) : v; memo.step = n; return n; });
   const [slot, setSlot] = useState(null);
+  const [lead, setLead] = useState(null);
   useEffect(() => setSlot(document.getElementById("fc-result")), []);
   const done = step >= STEPS.length;
   const cur = STEPS[Math.min(step, STEPS.length - 1)];
   const ranked = useMemo(() => rank(answers), [answers]);
-  const answered = Object.values(answers).some((v) => (Array.isArray(v) ? v.length : v));
+  const lines = summary(answers);
+  const answered = lines.length > 0;
   const top = ranked[0] && byHandle[M[ranked[0].key].handle];
-  const next = ranked[1] && byHandle[M[ranked[1].key].handle];
-  const extras = ranked[0] ? addOnsFor(answers, ranked[0].key) : [];
+  const runner = ranked[1] && byHandle[M[ranked[1].key].handle];
   const has = (s) => (s.multi ? (answers[s.id] || []).length > 0 : !!answers[s.id]);
+  const reveal = () => setTimeout(() => document.getElementById("fc-result")?.scrollIntoView({ behavior: "smooth", block: "start" }), 80);
+  const finish = () => { setStep(STEPS.length); reveal(); };
   const pick = (id) => {
     if (cur.multi) {
       const set = answers[cur.id] || [];
@@ -149,58 +154,105 @@ export default function FinderCard() {
     }
   };
   const reset = () => { setAnswers({}); setStep(0); };
-  const bar = (
-    <div className="fc-bar" aria-hidden="true">
-      {STEPS.map((s, n) => <i key={s.id} className={n < step ? "done" : n === step ? "on" : ""} />)}
-    </div>
+  const edit = (n) => { setStep(n); document.querySelector(".fx")?.scrollIntoView({ behavior: "smooth", block: "center" }); };
+  const leadDialog = lead && <LeadDialog mode={lead} product={answered ? top : null} lines={lines} onClose={() => setLead(null)} />;
+
+  const stepper = (
+    <ol className="fx-steps" aria-label={t("Progress")}>
+      {STEPS.map((s, n) => {
+        const state = n === step ? "on" : has(s) ? "done" : n < step ? "skip" : "";
+        return (
+          <li key={s.id} className={state}>
+            <button type="button" onClick={() => setStep(n)} aria-current={n === step ? "step" : undefined} disabled={n > step && !has(s)}>
+              <i>{has(s) && n !== step ? <Icon name="check" size={11} /> : n + 1}</i><span>{t(s.short)}</span>
+            </button>
+          </li>
+        );
+      })}
+    </ol>
   );
 
-  const reveal = () => setTimeout(() => document.getElementById("fc-result")?.scrollIntoView({ behavior: "smooth", block: "start" }), 80);
-  const finish = () => { setStep(STEPS.length); reveal(); };
-
-  if (done && top)
+  if (done && top) {
+    const reasons = answered ? ranked[0].reasons : [];
     return (
-      <>
-        <article className="ih-card fc fc-done">
-          <div className="ih-card-info">
-            <span className="ih-new">{t("Best match")}</span>
-            <h3><Link to={`/products/${top.handle}`}>{top.name}</Link></h3>
-            <p>{top.tagline}</p>
+      <article className="fx fx-done" aria-live="polite">
+        <div className="fx-main">
+          <p className="fx-kicker"><Icon name="check" size={14} />{t("Your match is ready")}</p>
+          <p className="fx-sub">{fill(t("Based on {n} of {total} answers"), { n: lines.length, total: STEPS.length })}</p>
+          <h3 className="fx-name"><Link to={`/products/${top.handle}`}>{top.name}</Link></h3>
+          <p className="fx-tag">{top.tagline}</p>
+          {reasons.length > 0 && <ul className="fx-why">{reasons.map((r) => <li key={r}><Icon name="check" size={14} />{t(r)}</li>)}</ul>}
+          <p className="fx-price"><b>{money(top.price)}</b>{top.compareAt > top.price && <s>{money(top.compareAt)}</s>}<span>{t("or")} ${monthly(top)}{t("/mo for 24 months")}</span></p>
+          <div className="fx-cta">
+            <button type="button" className="ih-btn dark" onClick={reveal}>{t("See why it fits")} ↓</button>
+            <button type="button" className="fx-quote" onClick={() => setLead("quote")}><Icon name="mail" size={16} />{t("Email me a written quote")}</button>
           </div>
-          <Link to={`/products/${top.handle}`} className="ih-card-media" tabIndex={-1} aria-hidden="true"><img src={img(top.images[0], 700)} alt="" /></Link>
-          <p className="ih-card-price"><b>{money(top.price)}</b>{top.compareAt > top.price && <s>{money(top.compareAt)}</s>}</p>
-          <button type="button" className="ih-btn dark sm fc-see" onClick={reveal}>{t("See why it fits")} ↓</button>
-          <p className="fc-foot"><button type="button" onClick={reset}>↺ {t("Start over")}</button></p>
-        </article>
-        {slot && createPortal(<FinderResult answers={answers} ranked={ranked} onEdit={(n) => { setStep(n); document.querySelector(".ih-card.fc")?.scrollIntoView({ behavior: "smooth", block: "center" }); }} onReset={reset} />, slot)}
-      </>
+          <p className="fx-foot">
+            <button type="button" onClick={() => edit(STEPS.length - 1)}>← {t("Change answers")}</button>
+            <button type="button" onClick={reset}>↺ {t("Start over")}</button>
+          </p>
+        </div>
+        <Link to={`/products/${top.handle}`} className="fx-stage" tabIndex={-1} aria-hidden="true"><img src={img(top.images[0], 900)} alt="" /></Link>
+        {slot && createPortal(<FinderResult answers={answers} ranked={ranked} onEdit={edit} onReset={reset} />, slot)}
+        {leadDialog}
+      </article>
     );
+  }
 
   return (
-    <article className="ih-card fc">
-      <p className="fc-kicker"><Icon name="search" size={14} />{t("Find your machine")}</p>
-      {bar}
-      <div className="fc-q" key={cur.id}>
-        <h3>{t(cur.title)}</h3>
-        <p className="fc-hint">{t(cur.hint)}</p>
-        <div className="fc-options" role={cur.multi ? "group" : "radiogroup"}>
-          {cur.options.map(([id, label]) => {
-            const on = cur.multi ? (answers[cur.id] || []).includes(id) : answers[cur.id] === id;
-            return (
-              <button key={id} type="button" role={cur.multi ? "checkbox" : "radio"} aria-checked={on} className={on ? "on" : ""} onClick={() => pick(id)}>
-                <span>{t(label)}</span><i aria-hidden="true"><Icon name="check" size={12} /></i>
-              </button>
-            );
-          })}
+    <article className="fx">
+      <div className="fx-main">
+        <div className="fx-top">
+          <p className="fx-kicker"><Icon name="search" size={14} />{t("Find your machine")}</p>
+          <span className="fx-time">{t("6 quick questions · about 30 seconds")}</span>
+        </div>
+        {stepper}
+        <div className="fx-q" key={cur.id}>
+          <p className="fx-count">{fill(t("Question {n} of {total}"), { n: step + 1, total: STEPS.length })}</p>
+          <h3>{t(cur.title)}</h3>
+          <p className="fx-hint">{t(cur.hint)}</p>
+          <div className={`fx-options${cur.options.length > 3 ? " grid" : ""}`} role={cur.multi ? "group" : "radiogroup"} aria-label={t(cur.title)}>
+            {cur.options.map(([id, label, sub]) => {
+              const on = cur.multi ? (answers[cur.id] || []).includes(id) : answers[cur.id] === id;
+              return (
+                <button key={id} type="button" role={cur.multi ? "checkbox" : "radio"} aria-checked={on} className={on ? "on" : ""} onClick={() => pick(id)}>
+                  <span><b>{t(label)}</b>{sub && <em>{t(sub)}</em>}</span>
+                  <i aria-hidden="true"><Icon name="check" size={12} /></i>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+        <div className="fx-nav">
+          {step > 0 ? <button type="button" className="fx-link" onClick={() => setStep(step - 1)}>← {t("Back")}</button> : <span />}
+          <span className="fx-nav-r">
+            {!(cur.multi && has(cur)) && <button type="button" className="fx-link" onClick={() => (step === STEPS.length - 1 ? finish() : setStep(step + 1))}>{t("Skip")}</button>}
+            {cur.multi && has(cur) && <button type="button" className="ih-btn dark sm" onClick={() => (step === STEPS.length - 1 ? finish() : setStep(step + 1))}>{t("Continue")} →</button>}
+            {answered && step < STEPS.length - 1 && <button type="button" className="fx-link strong" onClick={finish}>{t("See my match")}</button>}
+          </span>
         </div>
       </div>
-      <div className="fc-nav">
-        {step > 0 ? <button type="button" className="fc-link" onClick={() => setStep(step - 1)}>← {t("Back")}</button> : <span className="fc-count">{step + 1} / {STEPS.length}</span>}
-        {top && answered && <span className="fc-peek" aria-live="polite">{t("Best match")}: <b>{top.name}</b></span>}
-        <button type="button" className={cur.multi && has(cur) ? "ih-btn dark sm" : "fc-link"} onClick={() => (step === STEPS.length - 1 ? finish() : setStep(step + 1))}>
-          {cur.multi && has(cur) ? t("Continue") : t("Skip")}
-        </button>
-      </div>
+      <aside className={`fx-peek${answered ? " live" : ""}`} aria-live="polite">
+        <p className="fx-peek-label">{answered ? t("Best match so far") : t("Most popular start")}</p>
+        {top && (
+          <Link to={`/products/${top.handle}`} className="fx-peek-card" key={top.handle}>
+            <span className="fx-peek-img"><img src={img(top.images[0], 600)} alt="" /></span>
+            <b>{top.name}</b>
+            <span className="fx-peek-price">{money(top.price)}{top.compareAt > top.price && <s>{money(top.compareAt)}</s>}</span>
+          </Link>
+        )}
+        {answered ? (
+          <>
+            <ul className="fx-peek-why">{ranked[0].reasons.slice(0, 2).map((r) => <li key={r}><Icon name="check" size={12} />{t(r)}</li>)}</ul>
+            <p className="fx-meter" aria-hidden="true"><i style={{ width: `${(lines.length / STEPS.length) * 100}%` }} /></p>
+            <p className="fx-peek-note">{fill(t("Based on {n} of {total} answers"), { n: lines.length, total: STEPS.length })}{runner && <> · {t("Runner-up")}: {runner.name}</>}</p>
+          </>
+        ) : (
+          <p className="fx-peek-note">{t("Your best match updates with every answer.")}</p>
+        )}
+        <button type="button" className="fx-expert" onClick={() => setLead("call")}><Icon name="phone" size={14} />{t("Rather talk to an expert?")}</button>
+      </aside>
+      {leadDialog}
     </article>
   );
 }
