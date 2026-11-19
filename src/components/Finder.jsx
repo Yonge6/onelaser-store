@@ -276,7 +276,7 @@ export function LeadDialog({ mode = "quote", product, lines = [], onClose }) {
       <div className="lead-box">
         <button type="button" className="lead-x" aria-label={t("Close")} onClick={onClose}>×</button>
         <div className="lead-art">
-          <img src={product ? img(product.images[0], 900) : asset("home-bf-lineup.jpg")} alt="" />
+          <img src={asset("home-bf-lineup.jpg")} alt="" />
           {product && <p className="lead-pick"><span>{t("Your pick")}</span><b>{product.name}</b><em>{money(product.price)}{product.compareAt > product.price && <s>{money(product.compareAt)}</s>}</em></p>}
           <p className="lead-tag">{t("Up to")} <b>$3,000</b> {t("off")}</p>
         </div>

@@ -2322,3 +2322,12 @@ ul { list-style: none; }
   .lead-body h2 { font-size: 24px; line-height: 30px; padding-right: 0; }
   .lead-budget > div { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
+/* Lead dialog art: the Black Friday line-up photo, as on the 1laser.com BF pop-up */
+.lead-art img { padding: 0; object-fit: cover; object-position: 48% 50%; filter: none; }
+.lead-art::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0, 0, 0, 0) 45%, rgba(10, 4, 2, 0.88) 100%); pointer-events: none; }
+.lead-pick, .lead-tag { z-index: 1; }
+@media (max-width: 860px) {
+  .lead-art img { left: 0; right: 0; width: 100%; padding: 0; object-position: 60% 55%; }
+  .lead-art::after { background: linear-gradient(90deg, rgba(10, 4, 2, 0.9) 0%, rgba(10, 4, 2, 0.55) 55%, rgba(0, 0, 0, 0.1) 100%); }
+  .lead-pick { right: 30%; }
+}
