@@ -159,6 +159,12 @@ function ProductBlock() {
   const tabsRef = useDragScroll({ wheel: true });
   const [ti, setTi] = useState(0);
   const tab = homeTabs[ti];
+  const machines = !!tab.picks; // the finder only belongs with the machine tabs
+  useEffect(() => {
+    const back = () => setTi((n) => (homeTabs[n].picks ? n : 0));
+    window.addEventListener("onelaser:finder", back);
+    return () => window.removeEventListener("onelaser:finder", back);
+  }, []);
   const list = (tab.picks ? tab.picks.map((h) => byHandle[h]) : products.filter((p) => p.category === tab.collection || (tab.collection === "materials" && p.kind === "material"))).filter(Boolean).slice(0, 6);
   return (
     <section className="ih-products">
@@ -173,15 +179,15 @@ function ProductBlock() {
       <div className="ih-wrap">
         <div className="ih-grid" key={ti}>
           <div className="ih-row">
-            {list.slice(0, 4).map((p) => (
+            {list.slice(0, machines ? 4 : 6).map((p) => (
               <HomeCard key={p.handle} p={p} />
             ))}
           </div>
-          <FinderCard />
+          {machines && <FinderCard />}
         </div>
-        <div id="fc-result" />
+        {machines && <div id="fc-result" />}
         <div className="ih-viewall"><Link to={tab.all}>{t("View all")}</Link></div>
-        <FinderHelp />
+        {machines && <FinderHelp />}
       </div>
     </section>
   );

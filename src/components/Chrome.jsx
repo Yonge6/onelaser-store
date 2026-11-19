@@ -36,6 +36,7 @@ export function Header({ path }) {
   const openFinder = () => {
     setOpen(null); setMobile(false);
     go("/");
+    window.dispatchEvent(new Event("onelaser:finder")); // the home product block switches back to a machine tab
     let tries = 0;
     const seek = () => {
       const el = document.querySelector(".fx");
