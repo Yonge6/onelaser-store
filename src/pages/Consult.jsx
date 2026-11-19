@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { t } from "../i18n.js";
 import { img } from "../lib.js";
 import { Icon, Link } from "../components/ui.jsx";
-import { contact } from "../data/site.js";
+import { contact, homeReviews } from "../data/site.js";
 
 /* Free sales consultation, redesigned from 1laser.com/pages/sales-consultation.
    Content, team and opening hours are the live page's: a 30-minute phone call, Monday to Friday,
@@ -44,7 +44,11 @@ const ZONES = [
 const HQ = "America/Los_Angeles";
 const SLOTS = ["10:00", "10:30", "11:00", "11:30", "14:00", "14:30", "15:00", "15:30", "16:00", "16:30"]; // Pacific
 const DAYS_AHEAD = 15; // business days offered
-const MAKE = ["Signs and décor", "Drinkware and gifts", "Leather and fabric", "Cutting wood and acrylic", "School or makerspace", "Something else"];
+// Form after the thunderlaserusa.com consultation form, with the OneLaser line-up and price bands.
+const MACHINES = [["XRF", "Desktop · 38W RF"], ["Cobra Series", "Glass CO₂ · 8 / 10 / 14"], ["Hydra Gen2", "RF + CO₂ · 7 / 9 / 13 / 16"], ["VertiGo", "Vertical · round items"], ["Need help deciding", ""]];
+const TIMELINE = ["I'm ready to buy", "Within the next 1–3 months", "Just exploring for now"];
+const BUDGETS = ["Under $5,000", "$5,000 to $10,000", "$10,000 to $15,000", "No set budget, I want the best fit"];
+const CODES = [["+1", "US"], ["+1", "CA"], ["+44", "UK"], ["+61", "AU"], ["+49", "DE"], ["+33", "FR"], ["+34", "ES"], ["+81", "JP"], ["+86", "CN"]];
 
 /** Minutes a time zone is ahead of UTC at a given instant. */
 const offset = (tz, at) => {
@@ -92,8 +96,20 @@ function Booking() {
   const [slot, setSlot] = useState(null);
   const [step, setStep] = useState("time"); // time → details → done
   const [err, setErr] = useState({});
-  const [make, setMake] = useState([]);
+  const [machines, setMachines] = useState([]);
   const stripRef = useRef(null);
+  const soon = useMemo(() => {
+    const out = [];
+    // the first open time on each of the next three days, so the shortcut also offers a choice of day
+    days.forEach((ymd, n) => { const at = SLOTS.map((h) => hqInstant(ymd, h)).find((x) => x > new Date(Date.now() + 60 * 60000)); if (at) out.push([n, at]); });
+    return out.slice(0, 3);
+  }, [days]);
+  const pickSoon = (n, at) => { setDay(n); setSlot(at); setStep("details"); };
+  const calendarFile = () => {
+    const z = (d) => d.toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, "");
+    const ics = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//OneLaser//Consultation//EN", "BEGIN:VEVENT", `UID:${slot.getTime()}@1laser.com`, `DTSTAMP:${z(new Date())}`, `DTSTART:${z(slot)}`, `DTEND:${z(new Date(slot.getTime() + 30 * 60000))}`, "SUMMARY:OneLaser free consultation call", "DESCRIPTION:A OneLaser expert calls you on the number you gave. Questions: sales@1laser.com", "END:VEVENT", "END:VCALENDAR"].join("\r\n");
+    return URL.createObjectURL(new Blob([ics], { type: "text/calendar" }));
+  };
   const zones = ZONES.some(([id]) => id === zone) ? ZONES : [[zone, zone.replace(/_/g, " ")], ...ZONES];
   const slots = SLOTS.map((s) => hqInstant(days[day], s)).filter((at) => at > new Date(Date.now() + 60 * 60000));
   const dayLabel = (ymd) => new Date(Date.UTC(...ymd, 12));
@@ -105,11 +121,20 @@ function Booking() {
     e.preventDefault();
     const f = new FormData(e.currentTarget);
     const bad = {};
-    if (!String(f.get("name") || "").trim()) bad.name = true;
+    if (!String(f.get("first") || "").trim()) bad.first = true;
+    if (!String(f.get("last") || "").trim()) bad.last = true;
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(f.get("email") || ""))) bad.email = true;
     if (String(f.get("phone") || "").replace(/\D/g, "").length < 7) bad.phone = true;
+    if (!machines.length) bad.machines = true;
+    if (!f.get("timeline")) bad.timeline = true;
+    if (!f.get("budget")) bad.budget = true;
     setErr(bad);
-    if (!Object.keys(bad).length) setStep("done");
+    if (Object.keys(bad).length) {
+      e.currentTarget.querySelector(".bad input, .bad button, .bad")?.scrollIntoView({ behavior: "smooth", block: "center" });
+      return;
+    }
+    setStep("done");
+    document.getElementById("book")?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
   return (
@@ -118,10 +143,27 @@ function Booking() {
         <span className="cs-live"><i />{t("Live availability")}</span>
         <h2>{t("Talk with a OneLaser expert")}</h2>
         <p className="cs-meta"><span><Icon name="clock" size={16} />{t("30 minutes")}</span><span><Icon name="phone" size={16} />{t("Phone call")}</span><span><Icon name="check" size={16} />{t("Free")}</span></p>
+        <ol className="cs-progress" aria-label={t("Booking steps")}>
+          <li className={step === "time" ? "now" : "done"}><i>{step === "time" ? 1 : <Icon name="check" size={12} />}</i>{t("Pick a time")}</li>
+          <li className={step === "details" ? "now" : step === "done" ? "done" : ""}><i>{step === "done" ? <Icon name="check" size={12} /> : 2}</i>{t("Your details")}</li>
+        </ol>
       </div>
 
       {step === "time" && (
         <div className="cs-book-body">
+          {soon.length > 0 && (
+            <div className="cs-soon">
+              <p>{t("Soonest open times")}</p>
+              <div>
+                {soon.map(([n, at]) => (
+                  <button key={at.getTime()} type="button" onClick={() => pickSoon(n, at)}>
+                    <small>{t(fmt(at, zone, { weekday: "short" }))} {fmt(at, zone, { month: "short", day: "numeric" })}</small>
+                    <b>{fmt(at, zone, { hour: "numeric", minute: "2-digit" })}</b>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
           <label className="cs-zone">
             <Icon name="globe" size={16} />
             <select value={zone} onChange={(e) => { setZone(e.target.value); setSlot(null); }} aria-label={t("Your timezone")}>
@@ -148,7 +190,7 @@ function Booking() {
               );
             })}
           </div>
-          <p className="cs-slots-head">{t("Available times")} <span>· {t("shown in your timezone")}</span></p>
+          <p className="cs-slots-head">{t("All times")} <span>· {t("shown in your timezone")}</span></p>
           <div className="cs-slots">
             {slots.map((at) => {
               const on = slot && slot.getTime() === at.getTime();
@@ -169,25 +211,50 @@ function Booking() {
       )}
 
       {step === "details" && (
-        <form className="cs-book-body" onSubmit={submit} noValidate>
-          <button type="button" className="cs-when" onClick={() => setStep("time")}>
-            <Icon name="calendar" size={18} /><span><b>{when}</b><small>{zoneLabel(zone)}</small></span><em>{t("Change")}</em>
-          </button>
-          <label className={`cs-field${err.name ? " bad" : ""}`}><span>{t("Name")} *</span><input name="name" autoComplete="name" autoFocus /></label>
-          <label className={`cs-field${err.email ? " bad" : ""}`}><span>{t("Email")} *</span><input name="email" type="email" inputMode="email" autoComplete="email" /></label>
-          <label className={`cs-field${err.phone ? " bad" : ""}`}><span>{t("Phone, so we can call you")} *</span><input name="phone" type="tel" inputMode="tel" autoComplete="tel" /></label>
-          <fieldset className="cs-make">
-            <legend>{t("What do you want to make?")} <span>{t("(optional)")}</span></legend>
-            <div>
-              {MAKE.map((m) => {
-                const on = make.includes(m);
-                return <button key={m} type="button" aria-pressed={on} className={on ? "on" : ""} onClick={() => setMake((x) => (on ? x.filter((y) => y !== m) : [...x, m]))}>{on && <Icon name="check" size={14} />}{t(m)}</button>;
+        <form className="cs-book-body cs-form" onSubmit={submit} noValidate>
+          <button type="button" className="cs-back" onClick={() => setStep("time")}><Icon name="arrow" size={16} />{t("Back to times")}</button>
+          <div className="cs-when"><Icon name="calendar" size={18} /><span><b>{when}</b><small>{zoneLabel(zone)}</small></span></div>
+          <div className="cs-row">
+            <label className={`cs-field${err.first ? " bad" : ""}`}><span>{t("First name")} <i>*</i></span><input name="first" autoComplete="given-name" autoFocus /></label>
+            <label className={`cs-field${err.last ? " bad" : ""}`}><span>{t("Last name")} <i>*</i></span><input name="last" autoComplete="family-name" /></label>
+          </div>
+          <label className={`cs-field${err.email ? " bad" : ""}`}><span>{t("Email")} <i>*</i></span><input name="email" type="email" inputMode="email" autoComplete="email" /></label>
+          <div className={`cs-field${err.phone ? " bad" : ""}`}>
+            <span>{t("Phone")} <i>*</i> <small>{t("We call you on this number")}</small></span>
+            <div className="cs-phone">
+              <select name="code" aria-label={t("Country code")} defaultValue="+1 US">{CODES.map(([c, r]) => <option key={c + r} value={`${c} ${r}`}>{r} {c}</option>)}</select>
+              <input name="phone" type="tel" inputMode="tel" autoComplete="tel-national" aria-label={t("Phone number")} />
+            </div>
+          </div>
+          <label className="cs-check">
+            <input type="checkbox" name="sms" />
+            <span><b>{t("Optional: text reminders.")}</b> {t("Text me a reminder about this appointment at the number above. Consent is not a condition of booking or purchase. Message and data rates may apply. Reply STOP to opt out.")}</span>
+          </label>
+          <fieldset className={`cs-group${err.machines ? " bad" : ""}`}>
+            <legend>{t("Which machine(s) are you interested in?")} <i>*</i> <small>{t("Pick any")}</small></legend>
+            <div className="cs-tiles">
+              {MACHINES.map(([m, sub]) => {
+                const on = machines.includes(m);
+                return (
+                  <button key={m} type="button" aria-pressed={on} className={on ? "on" : ""} onClick={() => setMachines((x) => (on ? x.filter((y) => y !== m) : [...x, m]))}>
+                    <i>{on && <Icon name="check" size={12} />}</i><span><b>{t(m)}</b>{sub && <small>{t(sub)}</small>}</span>
+                  </button>
+                );
               })}
             </div>
           </fieldset>
-          <label className="cs-field"><span>{t("Anything we should know? (optional)")}</span><textarea name="note" rows={2} placeholder={t("Materials, space, budget, a machine you're comparing…")} /></label>
+          <label className="cs-field"><span>{t("Do you own a laser now? If so, which brand and model?")} <small>{t("Optional")}</small></span><input name="current" placeholder={t("e.g. a 10W diode, or none yet")} /></label>
+          <fieldset className={`cs-group${err.timeline ? " bad" : ""}`}>
+            <legend>{t("When do you plan to get started?")} <i>*</i></legend>
+            <div className="cs-radios">{TIMELINE.map((x) => <label key={x}><input type="radio" name="timeline" value={x} /><span>{t(x)}</span></label>)}</div>
+          </fieldset>
+          <fieldset className={`cs-group${err.budget ? " bad" : ""}`}>
+            <legend>{t("What is your budget?")} <i>*</i></legend>
+            <div className="cs-radios two">{BUDGETS.map((x) => <label key={x}><input type="radio" name="budget" value={x} /><span>{t(x)}</span></label>)}</div>
+          </fieldset>
+          <label className="cs-field"><span>{t("Anything we should know?")} <small>{t("Optional")}</small></span><textarea name="note" rows={2} placeholder={t("What you want to make, materials, space…")} /></label>
           {Object.keys(err).length > 0 && <p className="cs-err" role="alert">{t("Please fill in the fields marked *.")}</p>}
-          <button type="submit" className="cs-next">{t("Book my free call")}</button>
+          <button type="submit" className="cs-next">{t("Confirm booking")}</button>
           <p className="cs-fine">{t("By submitting, you agree to receive follow-ups from the OneLaser team (human or AI) by email, phone, or text regarding your inquiry.")}</p>
         </form>
       )}
@@ -198,7 +265,13 @@ function Booking() {
           <h3>{t("Thanks — this is a design draft")}</h3>
           <p className="cs-done-when"><Icon name="calendar" size={18} /><span><b>{when}</b><small>{zoneLabel(zone)}</small></span></p>
           <p>{t("Booking is not connected yet, so nothing was sent. On the live site you would get a confirmation email, and a OneLaser expert would call you at this time.")}</p>
-          <button type="button" className="cs-next ghost" onClick={() => { setStep("time"); setSlot(null); }}>{t("Pick another time")}</button>
+          <ol className="cs-after">
+            <li><b>{t("Confirmation")}</b><span>{t("An email with your booking details.")}</span></li>
+            <li><b>{t("We call you")}</b><span>{t("A OneLaser expert calls the number you gave, at your time.")}</span></li>
+            <li><b>{t("Bring your ideas")}</b><span>{t("Materials, sizes, space and budget help us point you to the right machine.")}</span></li>
+          </ol>
+          <a className="cs-next" href={slot ? calendarFile() : undefined} download="onelaser-consultation.ics"><Icon name="calendar" size={18} />{t("Add to my calendar")}</a>
+          <button type="button" className="cs-link" onClick={() => { setStep("time"); setSlot(null); }}>{t("Pick another time")}</button>
         </div>
       )}
     </div>
@@ -213,6 +286,15 @@ const FOR_ICONS = {
   school: <><path d="m2.5 9 9.5-5 9.5 5-9.5 5zM6.5 11v5c1.5 1.6 3.4 2.5 5.5 2.5s4-.9 5.5-2.5v-5" /></>,
   quote: <><path d="M6 3.5h9l3 3v14H6zM9 10h6M9 14h6M9 18h3" /></>,
 };
+
+// Real owner reviews (Judge.me, 1laser.com product pages), from homeReviews in site.js. The hero quote is shortened with "…" only.
+const QUOTE = { ...homeReviews.items[0], text: "I absolutely love this laser. … Tech support is fantastic and quick to respond, material quality is great." };
+const FAQ = [
+  ["Is the call really free?", "Yes. It is a free 30-minute phone call with the OneLaser team, with no obligation to buy."],
+  ["What should I have ready?", "An idea of what you want to make: your materials, the size of your pieces, your space and your budget. A rough idea is fine."],
+  ["Can I get a quote on the call?", "Yes. If you are ready to purchase, we can go through pricing, configurations and accessories, and discuss a quote."],
+  ["What if none of the times work?", "Call us or email sales@1laser.com and we will find a time that suits you."],
+];
 
 export default function Consult() {
   useEffect(() => { document.title = "Free Sales Consultation | OneLaser"; return () => { document.title = "OneLaser Store — Redesign Draft"; }; }, []);
@@ -239,6 +321,10 @@ export default function Consult() {
             <ul className="cs-ticks">
               {["A clear machine recommendation, without pressure.", "Straightforward guidance on pricing and setup.", "Answers from the OneLaser team, with no obligation."].map((x) => <li key={x}><Icon name="check" size={18} />{t(x)}</li>)}
             </ul>
+            <blockquote className="cs-quote">
+              <p>“{QUOTE.text}”</p>
+              <footer><span className="cs-stars" aria-label={t("5 out of 5 stars")}>★★★★★</span><b>{QUOTE.name}</b><small>{QUOTE.verified ? t("Verified buyer") : ""} · {QUOTE.product}</small></footer>
+            </blockquote>
             <figure className="cs-team-shot">
               <img src={img(`${CDN}onelaser-team-gray-group-2026.png`, 1000)} alt={t("The OneLaser team")} />
               <figcaption>
@@ -249,6 +335,15 @@ export default function Consult() {
           </div>
           <Booking />
         </div>
+      </section>
+
+      <section className="cs-proof" aria-label={t("Why OneLaser")}>
+        <ul className="cs-wrap">
+          <li><b>{homeReviews.average}<em>★</em></b><span>{t("Average from")} {homeReviews.count} {t("owner reviews")}</span></li>
+          <li><b>{t("30 min")}</b><span>{t("Free, no obligation")}</span></li>
+          <li><b>3-2-1</b><span>{t("Year warranty: mechanical, electrical, optics")}</span></li>
+          <li><b>{t("U.S.")}</b><span>{t("Support from laser engineers")}</span></li>
+        </ul>
       </section>
 
       <section className="cs-sec">
@@ -294,6 +389,43 @@ export default function Consult() {
 
       <section className="cs-sec soft">
         <div className="cs-wrap">
+          <p className="cs-kicker">{t("From OneLaser owners")}</p>
+          <div className="cs-rev-head">
+            <h2 className="cs-h2">{t("Help that keeps going after you buy.")}</h2>
+            <p><b>{homeReviews.average} ★</b> {t("from")} {homeReviews.count} {t("owner reviews")} · <Link href={homeReviews.url}>{t("Read all reviews")} ›</Link></p>
+          </div>
+          <ul className="cs-revs">
+            {[2, 4, 1].map((n) => homeReviews.items[n]).map((r) => (
+              <li key={r.name}>
+                <span className="cs-stars" aria-label={t("5 out of 5 stars")}>★★★★★</span>
+                <p>“{r.text}”</p>
+                <footer><b>{r.name}</b><small>{r.verified ? `${t("Verified buyer")} · ` : ""}{r.product} · {r.date}</small></footer>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+
+      <section className="cs-sec">
+        <div className="cs-wrap cs-faq">
+          <div>
+            <p className="cs-kicker">{t("Before you book")}</p>
+            <h2 className="cs-h2">{t("Quick answers.")}</h2>
+            <button type="button" className="cs-next" onClick={toBook}><Icon name="calendar" size={18} />{t("Pick a time")}</button>
+          </div>
+          <div>
+            {FAQ.map(([q, a], n) => (
+              <details key={q} open={n === 0}>
+                <summary>{t(q)}<Icon name="plus" size={18} /></summary>
+                <p>{t(a)}</p>
+              </details>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="cs-sec soft">
+        <div className="cs-wrap">
           <p className="cs-kicker">{t("Not ready for a call?")}</p>
           <h2 className="cs-h2">{t("Start the conversation another way.")}</h2>
           <ul className="cs-ways">
@@ -301,6 +433,20 @@ export default function Consult() {
             <li><Link href="https://www.1laser.com/pages/contact-us"><Icon name="quote" size={24} /><h3>{t("Write to us")}</h3><p>{t("Send your question through our contact form so our team can follow up on your inquiry.")}</p><span>{t("Open the contact form")}<Icon name="arrow" size={16} /></span></Link></li>
             <li><Link href="https://www.1laser.com/pages/faq"><Icon name="search" size={24} /><h3>{t("Browse helpful answers")}</h3><p>{t("Find answers about choosing a machine, purchasing, financing and product support.")}</p><span>{t("Explore OneLaser FAQs")}<Icon name="arrow" size={16} /></span></Link></li>
           </ul>
+        </div>
+      </section>
+
+      <section className="cs-fin">
+        <div className="cs-wrap">
+          <div>
+            <p className="cs-kicker">{t("Financing")}</p>
+            <h2>{t("Make the right machine fit your budget.")}</h2>
+            <p>{t("Ask about current financing options on the call, and we'll include them in your quote.")}</p>
+          </div>
+          <div className="cs-fin-btns">
+            <button type="button" className="cs-next" onClick={toBook}><Icon name="calendar" size={18} />{t("Book my free call")}</button>
+            <Link href="https://www.1laser.com/pages/financing" className="cs-next ghost">{t("See financing options")}</Link>
+          </div>
         </div>
       </section>
 
