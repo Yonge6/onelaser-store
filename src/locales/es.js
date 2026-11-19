@@ -582,4 +582,6 @@ export default {
   "Specs and good to know": "Especificaciones y datos útiles",
   "{name} at a glance": "{name} de un vistazo",
   "See full specs and reviews": "Ver especificaciones y reseñas",
+  "Not ready to order yet?": "¿Aún no estás listo para pedir?",
+  "Get a written quote for the {name} with your answers attached, or talk it through with a laser expert.": "Recibe un presupuesto por escrito de la {name} con tus respuestas, o coméntalo con un experto láser.",
 };

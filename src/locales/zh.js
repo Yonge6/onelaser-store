@@ -582,4 +582,6 @@ export default {
   "Specs and good to know": "参数与购买须知",
   "{name} at a glance": "{name} 一览",
   "See full specs and reviews": "查看完整参数与评价",
+  "Not ready to order yet?": "还没准备好下单？",
+  "Get a written quote for the {name} with your answers attached, or talk it through with a laser expert.": "附上你的回答，获取 {name} 的书面报价，或直接和激光专家聊聊。",
 };

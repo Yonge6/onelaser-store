@@ -2599,3 +2599,18 @@ ul { list-style: none; }
 @media (max-width: 860px) {
   .fx-cta .fx-quote, .fx-cta .fx-call { grid-column: 1 / -1; }
 }
+/* lead strip under the details: quote / call kept apart from the buy buttons */
+.fr-lead { margin-top: 12px; display: flex; align-items: center; justify-content: space-between; gap: 16px 32px; padding: 22px 28px; border-radius: 18px; background: var(--brand-soft); box-shadow: inset 0 0 0 1px rgba(231, 49, 14, 0.15); }
+.fr-lead h3 { font-size: 18px; line-height: 24px; font-weight: 700; color: #262629; }
+.fr-lead p { margin-top: 4px; max-width: 560px; font-size: 14px; line-height: 20px; color: #515157; }
+.fr-lead-btns { flex: none; display: flex; gap: 10px; }
+.fr-lead-btns .fx-quote, .fr-lead-btns .fx-call { height: 46px; padding: 0 18px; border-radius: 8px; font-size: 14px; font-weight: 600; }
+.fx-done .fx-cta { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+@media (max-width: 860px) {
+  .fr-lead { flex-direction: column; align-items: stretch; padding: 18px; border-radius: 16px; }
+  .fr-lead-btns { display: grid; }
+}
+/* Phones: idle animation below the questions */
+@media (max-width: 860px) {
+  .fx-peek:not(.live) { order: 0; border-bottom: 0; border-top: 1px solid #e6eaf0; }
+}

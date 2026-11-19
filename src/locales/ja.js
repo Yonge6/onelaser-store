@@ -582,4 +582,6 @@ export default {
   "Specs and good to know": "仕様と知っておきたいこと",
   "{name} at a glance": "{name} の概要",
   "See full specs and reviews": "仕様とレビューをすべて見る",
+  "Not ready to order yet?": "まだ注文の準備ができていませんか？",
+  "Get a written quote for the {name} with your answers attached, or talk it through with a laser expert.": "回答内容を添えて {name} の見積書を受け取るか、レーザー専門家に相談できます。",
 };

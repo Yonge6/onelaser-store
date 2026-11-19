@@ -126,8 +126,6 @@ export default function FinderCard() {
           <div className="fx-cta">
             <AddButton product={top} className="ih-btn line" />
             <Link to={`/products/${top.handle}`} className="ih-btn dark">{t("Buy now")}</Link>
-            <button type="button" className="fx-quote" onClick={() => setLead("quote")}><Icon name="mail" size={16} />{t("Email me a written quote")}</button>
-            <a href={`tel:${contact.tel}`} className="fx-call"><Icon name="phone" size={16} />{t("Talk to a laser expert")}</a>
           </div>
           <p className="fx-foot">
             <button type="button" onClick={() => edit(STEPS.length - 1)}>← {t("Change answers")}</button>
@@ -330,6 +328,7 @@ export function LeadDialog({ mode = "quote", product, lines = [], onClose }) {
 /** Full-width result under the product grid, after the result panel of the thunderlaserusa.com finder:
     our pick with why it fits, key specs, good-to-know notes, warranty, then buy and lead buttons. */
 function FinderResult({ answers, ranked, onEdit }) {
+  const [lead, setLead] = useState(null);
   // Details under the result card: the pick itself (photo, price, buttons) is shown once, in the card above.
   const key = ranked[0].key;
   const top = byHandle[M[key].handle];
@@ -378,6 +377,17 @@ function FinderResult({ answers, ranked, onEdit }) {
           )}
         </div>
       </div>
+      <div className="fr-lead">
+        <div>
+          <h3>{t("Not ready to order yet?")}</h3>
+          <p>{fill(t("Get a written quote for the {name} with your answers attached, or talk it through with a laser expert."), { name: top.name })}</p>
+        </div>
+        <div className="fr-lead-btns">
+          <button type="button" className="fx-quote" onClick={() => setLead("quote")}><Icon name="mail" size={16} />{t("Email me a written quote")}</button>
+          <a href={`tel:${contact.tel}`} className="fx-call"><Icon name="phone" size={16} />{t("Talk to a laser expert")}</a>
+        </div>
+      </div>
+      {lead && <LeadDialog mode={lead} product={top} lines={lines} onClose={() => setLead(null)} />}
     </section>
   );
 }
