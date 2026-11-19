@@ -4,114 +4,21 @@ import { t } from "../i18n.js";
 import { asset, byHandle, img, money } from "../lib.js";
 import { AddButton, Icon, Link } from "./ui.jsx";
 import { contact } from "../data/site.js";
+import { M, STEPS, rank as rankAll, roundFocus, hasRound, ready } from "./finderRules.js";
+
+const rank = (a) => rankAll(a, (h) => !!byHandle[h], (h) => byHandle[h]?.price || 0);
 
 /* "Find your machine": a compact card in the last cell of the home product grid.
    The questions follow the four-step finder on thunderlaserusa.com (material → work → pieces → shop → machine), adapted to the
    OneLaser line-up. What is different: single-choice steps move on by themselves, every step can be skipped or revisited, the
    current best match is named while you answer, and the card ends as a shoppable product card (reasons, price, 24-month figure,
    add to cart, buy now) instead of sending you to another page.
-   The rules below are a first pass written from the published specs. TODO(team): sales to confirm weights and wording. */
-
-const M = {
-  xrf: { handle: "onelaser-xrf-desktop-laser-machine", width: 23.6, tube: "rf", tier: 1 },
-  vertigo: { handle: "vertigo-vertical-laser-engraver", width: 0, tube: "rf", tier: 1 },
-  cobra8: { handle: "cobra-8-90w-co2-laser-engraver-cutter", width: 31.5, tube: "glass", tier: 2 },
-  cobra10: { handle: "cobra-10-100w-co2-laser-engraver-cutter", width: 39.4, tube: "glass", tier: 2 },
-  cobra14: { handle: "cobra-14-130w-co2-laser-engraver-cutter", width: 55.1, tube: "glass", tier: 2 },
-  hydra7: { handle: "hydra-7-gen-2-70w-rf-co2-dual-laser-machine", width: 27.6, tube: "hybrid", tier: 3 },
-  hydra9: { handle: "hydra-9-gen-2-70w-rf-co2-dual-laser-machine", width: 35.4, tube: "hybrid", tier: 3 },
-  hydra13: { handle: "hydra-13-gen-2-70w-rf-co2-dual-laser-machine", width: 51.2, tube: "hybrid", tier: 3 },
-  hydra16: { handle: "hydra-16-gen-2-70w-rf-co2-dual-laser-machine", width: 63, tube: "hybrid", tier: 3 },
-};
-const POPULAR = ["xrf", "hydra9", "cobra10"];
-
-const STEPS = [
-  {
-    id: "material", short: "Material", label: "Your material", title: "What do you work with?", hint: "Pick all that apply.", multi: true,
-    options: [
-      ["wood", "Wood, acrylic, MDF"],
-      ["leather", "Leather, fabric, paper"],
-      ["drinkware", "Tumblers and drinkware"],
-      ["stone", "Glass, stone, slate, tile"],
-      ["coated", "Coated or anodized metal"],
-      ["photo", "Photos and fine detail"],
-    ],
-  },
-  {
-    id: "work", short: "Work", label: "Your work", title: "Mostly cutting or mostly engraving?", hint: "Most shops do both. Pick the bigger share.",
-    options: [["engrave", "Mostly engraving"], ["both", "About half and half"], ["cut", "Mostly cutting"]],
-  },
-  {
-    id: "size", short: "Size", label: "Your pieces", title: "How big is your largest piece?", hint: "Pick the closest size.",
-    options: [
-      ["s", "Small: up to 12 × 12 in.", "Tags, coasters, ornaments"],
-      ["m", "Medium: up to 24 × 12 in.", "Signs, cutting boards"],
-      ["l", "Large: up to 36 × 24 in.", "Big signs, 3 × 2 ft sheets"],
-      ["xl", "Extra large: up to 51 × 35 in.", "Furniture panels, batch layouts"],
-      ["xxl", "Full size: up to 63 × 39 in.", "Large-format production"],
-    ],
-  },
-  {
-    id: "round", short: "Round items", label: "Round items", title: "Any round items, like tumblers, pens or bottles?", hint: "Round items need a rotary attachment.",
-    options: [["flat", "No, all flat"], ["some", "Yes, some round items"], ["most", "Mostly round items"]],
-  },
-  {
-    id: "shop", short: "Volume", label: "Your shop", title: "How much will it run?", hint: "Pick where you are today, plus a little room to grow.",
-    options: [["side", "Side business or just starting"], ["full", "Full-time shop"], ["high", "High volume, every day"]],
-  },
-  {
-    id: "vent", short: "Venting", label: "Ventilation", title: "Can you vent fumes outside?", hint: "A window or wall vent works. If not, we will point you to an indoor filter.",
-    options: [["out", "Yes, through a wall or window"], ["in", "No, it has to stay indoors"]],
-  },
-];
-const NEED = { s: 12, m: 24, l: 36, xl: 51, xxl: 63 };
-
-/** Score every machine against the answers. Returns [{ key, score, reasons }] best first. */
-function rank(a) {
-  const mats = a.material || [];
-  const onlyDrinkware = (mats.length === 1 && mats[0] === "drinkware") || a.round === "most";
-  const round = mats.includes("drinkware") || a.round === "some" || a.round === "most";
-  return Object.entries(M)
-    .map(([key, m]) => {
-      let score = 0;
-      const reasons = [];
-      const add = (n, why) => { score += n; if (why && n > 0) reasons.push([n, why]); };
-      if (round) {
-        if (key === "vertigo") add(onlyDrinkware ? 9 : 4, "Built-in vertical rotary for drinkware");
-        else add(0.5, "Takes a rotary attachment for round items");
-      } else if (key === "vertigo" && (mats.length || a.round === "flat")) score -= 100; // drinkware machine: only offered for round work
-      if (mats.includes("photo") || mats.includes("stone") || mats.includes("coated")) {
-        if (m.tube !== "glass") add(2, "RF tube for fine detail and photo engraving");
-      }
-      if (mats.includes("wood") && a.work !== "engrave" && m.tube !== "rf") add(1.5, m.tube === "glass" ? "Glass CO₂ power for cutting wood and acrylic" : "Hybrid option adds a glass tube for cutting");
-      if (a.work === "engrave") { if (m.tube !== "glass") add(3, "RF source: fast, clean engraving"); }
-      if (a.work === "cut") { if (m.tube === "glass") add(3, "High-power glass tube for cutting"); else if (m.tube === "hybrid") add(2, "Hybrid option adds a glass tube for cutting"); }
-      if (a.work === "both") { if (m.tube === "hybrid") add(3, "RF for engraving, glass tube for cutting"); else add(1); }
-      if (a.size) {
-        const need = NEED[a.size];
-        if (key === "vertigo") { if (need > 24) score -= 100; else if (!onlyDrinkware) score -= 4; }
-        else if (m.width + 1 < need) score -= 100;
-        else {
-          const spare = m.width - need;
-          add(spare < 14 ? 4 : spare < 28 ? 2 : 0.5, spare < 14 ? "Work area fits your largest piece" : "Work area with room to grow");
-        }
-      }
-      if (a.shop === "side") add(m.tier === 1 ? 3 : m.tier === 2 ? 1.5 : 0, m.tier === 1 ? "Desktop size and price to start with" : "Workshop capacity at an entry price");
-      if (a.shop === "full") add(m.tier === 3 ? 2.5 : m.tier === 2 ? 2 : 0.5, m.tier === 3 ? "2,000 mm/s and 4G for daily production" : "Sized for a full-time workshop");
-      if (a.shop === "high") add(m.tier === 3 ? 4 : m.tier === 2 ? 1 : 0, "Industrial speed for high-volume runs");
-      // small nudge so the popular models lead when nothing is answered
-      score += POPULAR.includes(key) ? 0.3 - POPULAR.indexOf(key) * 0.05 : 0;
-      return { key, score, reasons: reasons.sort((x, y) => y[0] - x[0]).map((r) => r[1]).filter((r, i, all) => all.indexOf(r) === i).slice(0, 3) };
-    })
-    .filter((r) => r.score > -50 && byHandle[M[r.key].handle])
-    .sort((x, y) => y.score - x.score);
-}
+   The matching rules live in finderRules.js. */
 
 /** Accessories the answers call for: a rotary for round items (not for VertiGo, which has one built in) and an indoor fume filter. */
 function addOnsFor(a, key) {
   const out = [];
-  const round = (a.material || []).includes("drinkware") || a.round === "some" || a.round === "most";
-  if (round && key !== "vertigo") out.push(["Rotary attachment", M[key].tier === 1 ? "multi-function-rotary-axis-57-motor" : "piburn-omni-for-onelaser"]);
+  if (hasRound(a) && key !== "vertigo") out.push(["Rotary attachment", M[key].tier === 1 ? "multi-function-rotary-axis-57-motor" : "piburn-omni-for-onelaser"]);
   if (a.vent === "in") out.push(["Indoor fume filter", M[key].tier === 1 ? "filtrabox-micro" : "filtrabox-compact-x"]);
   return out.filter(([, h]) => byHandle[h]);
 }
@@ -275,7 +182,7 @@ export default function FinderCard() {
         const state = n === step ? "on" : has(s) ? "done" : n < step ? "skip" : "";
         return (
           <li key={s.id} className={state}>
-            <button type="button" onClick={() => setStep(n)} aria-current={n === step ? "step" : undefined} disabled={n > step && !has(s)}>
+            <button type="button" onClick={() => setStep(n)} aria-current={n === step ? "step" : undefined} disabled={n > step && (!has(s) || STEPS.slice(0, n).some((x) => x.required && !has(x)))}>
               <i>{has(s) && n !== step ? <Icon name="check" size={11} /> : n + 1}</i><span>{t(s.short)}</span>
             </button>
           </li>
@@ -320,7 +227,7 @@ export default function FinderCard() {
         </div>
         {stepper}
         <div className="fx-q" key={cur.id}>
-          <p className="fx-count">{fill(t("Question {n} of {total}"), { n: step + 1, total: STEPS.length })}</p>
+          <p className="fx-count">{fill(t("Question {n} of {total}"), { n: step + 1, total: STEPS.length })} · <span className={cur.required ? "req" : ""}>{t(cur.required ? "Required" : "Optional")}</span></p>
           <h3>{t(cur.title)}</h3>
           <p className="fx-hint">{t(cur.hint)}</p>
           <div className={`fx-options${cur.options.length > 3 ? " grid" : ""}`} role={cur.multi ? "group" : "radiogroup"} aria-label={t(cur.title)}>
@@ -338,9 +245,10 @@ export default function FinderCard() {
         <div className="fx-nav">
           {step > 0 ? <button type="button" className="fx-link" onClick={() => setStep(step - 1)}>← {t("Back")}</button> : <span />}
           <span className="fx-nav-r">
-            {!(cur.multi && has(cur)) && <button type="button" className="fx-link" onClick={() => (step === STEPS.length - 1 ? finish() : setStep(step + 1))}>{t("Skip")}</button>}
-            {cur.multi && has(cur) && <button type="button" className="ih-btn dark sm" onClick={() => (step === STEPS.length - 1 ? finish() : setStep(step + 1))}>{t("Continue")} →</button>}
-            {answered && step < STEPS.length - 1 && <button type="button" className="fx-link strong" onClick={finish}>{t("See my match")}</button>}
+            {!cur.required && !has(cur) && <button type="button" className="fx-link" onClick={() => (step === STEPS.length - 1 ? finish() : setStep(step + 1))}>{t("Skip")}</button>}
+            {cur.multi && <button type="button" className="ih-btn dark sm" disabled={!has(cur)} onClick={() => (step === STEPS.length - 1 ? finish() : setStep(step + 1))}>{t("Continue")} →</button>}
+            {!cur.multi && has(cur) && step < STEPS.length - 1 && <button type="button" className="fx-link" onClick={() => setStep(step + 1)}>{t("Next")} →</button>}
+            {ready(answers) && step < STEPS.length - 1 && <button type="button" className="fx-link strong" onClick={finish}>{t("See my match")}</button>}
           </span>
         </div>
       </div>
@@ -392,16 +300,17 @@ function notesFor(answers, key, product) {
   const area = product.specs?.["Work area"];
   if (answers.size && key !== "vertigo" && area) out.push(fill(t("Your largest piece (up to {size}) fits inside its {area} work area."), { size: SIZE_TEXT[answers.size], area }));
   if (round && key === "vertigo") out.push(fill(t("The rotary is built in: {range}."), { range: product.specs?.["Key capability"] || "" }));
+  if (key === "vertigo" && byHandle[M.xrf.handle]) out.push(fill(t("VertiGo only engraves round items. For flat pieces like signs or coasters, pair it with a flatbed such as the {name} ({price})."), { name: byHandle[M.xrf.handle].name, price: money(byHandle[M.xrf.handle].price) }));
   addOnsFor(answers, key).forEach(([label, h]) => {
     const a = { ...byHandle[h], name: byHandle[h].name.split(/ [–-] /)[0] };
     if (label === "Rotary attachment") out.push(fill(t("Round items need a rotary, sold separately: {name} ({price})."), { name: a.name, price: money(a.price) }));
     else out.push(fill(t("No outside vent? The {name} ({price}) is the indoor fume filter we pair with it."), { name: a.name, price: money(a.price) }));
   });
-  if (answers.round === "most" && key !== "vertigo" && byHandle[M.vertigo.handle]) {
+  if (roundFocus(answers) && key !== "vertigo" && byHandle[M.vertigo.handle]) {
     const v = byHandle[M.vertigo.handle];
     out.push(fill(t("Mostly tumblers? {name} ({price}) has a vertical rotary built in."), { name: v.name, price: money(v.price) }));
   }
-  const family = Object.entries(M).filter(([k, m]) => k.replace(/\d+$/, "") === key.replace(/\d+$/, "") && m.width > M[key].width).sort((x, y) => x[1].width - y[1].width)[0];
+  const family = Object.entries(M).filter(([k, m]) => k.replace(/\d+$/, "") === key.replace(/\d+$/, "") && m.w > M[key].w).sort((x, y) => x[1].w - y[1].w)[0];
   const bigger = family && byHandle[family[1].handle];
   if (bigger) out.push(fill(t("Room to grow: the {name} ({area}) is {price}."), { name: bigger.name, area: bigger.specs?.["Work area"] || "", price: money(bigger.price) }));
   return out;

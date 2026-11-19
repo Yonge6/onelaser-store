@@ -2533,3 +2533,5 @@ ul { list-style: none; }
   .fx-ms { margin-top: 10px; }
   .fx-peek:not(.live) .fx-peek-note { margin-top: 12px; }
 }
+.fx-count .req { color: var(--brand); }
+.fx-nav .ih-btn.sm:disabled { opacity: .35; cursor: not-allowed; }

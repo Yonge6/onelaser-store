@@ -572,4 +572,11 @@ export default {
   "Laser": "激光器",
   "Speed": "速度",
   "Fits": "适用直径",
+  "VertiGo only engraves round items. For flat pieces like signs or coasters, pair it with a flatbed such as the {name} ({price}).": "VertiGo 只能雕刻圆柱形物件。招牌、杯垫等平面工件，需要搭配平板机型，例如 {name}（{price}）。",
+  "70W RF power for cutting with clean edges": "70W RF，切割边缘干净",
+  "Clean RF edges on leather, fabric and paper": "RF 加工皮革、布料、纸张边缘干净",
+  "RF tube: crisp marks on coated and anodized metal": "RF 激光管：涂层与阳极氧化金属标记清晰",
+  "2,000 DPI for photos and fine detail": "2,000 DPI，适合照片与精细细节",
+  "Required": "必答",
+  "Optional": "选答",
 };

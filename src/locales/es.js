@@ -572,4 +572,11 @@ export default {
   "Laser": "Láser",
   "Speed": "Velocidad",
   "Fits": "Diámetro",
+  "VertiGo only engraves round items. For flat pieces like signs or coasters, pair it with a flatbed such as the {name} ({price}).": "VertiGo solo graba piezas redondas. Para piezas planas como letreros o posavasos, combínala con una máquina de cama plana como la {name} ({price}).",
+  "70W RF power for cutting with clean edges": "70W RF para cortes con bordes limpios",
+  "Clean RF edges on leather, fabric and paper": "Bordes RF limpios en cuero, tela y papel",
+  "RF tube: crisp marks on coated and anodized metal": "Tubo RF: marcas nítidas en metal recubierto y anodizado",
+  "2,000 DPI for photos and fine detail": "2.000 DPI para fotos y detalle fino",
+  "Required": "Obligatoria",
+  "Optional": "Opcional",
 };

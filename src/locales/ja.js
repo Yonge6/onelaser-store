@@ -572,4 +572,11 @@ export default {
   "Laser": "レーザー",
   "Speed": "速度",
   "Fits": "対応径",
+  "VertiGo only engraves round items. For flat pieces like signs or coasters, pair it with a flatbed such as the {name} ({price}).": "VertiGo は円柱物専用です。看板やコースターなど平面のワークには、{name}（{price}）などのフラットベッド機を組み合わせてください。",
+  "70W RF power for cutting with clean edges": "70W RF できれいな切断面",
+  "Clean RF edges on leather, fabric and paper": "RF で革・布・紙もきれいな仕上がり",
+  "RF tube: crisp marks on coated and anodized metal": "RF 管：塗装・アルマイト金属にくっきりマーキング",
+  "2,000 DPI for photos and fine detail": "2,000 DPI で写真や細部も精細に",
+  "Required": "必須",
+  "Optional": "任意",
 };
