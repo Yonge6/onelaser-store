@@ -3298,3 +3298,11 @@ ul { list-style: none; }
 .ik-fold-body .ik-coupon { padding-bottom: 20px; }
 .ik-thumb img { background: none !important; }
 .ik-summary-head a, .ik-saved button { color: var(--accent-ink); }
+
+/* Home banner: one fixed height at every desktop width (was max(660px, 45.83vw)), and lower on phones (was 600px) */
+.ih-hero { height: 560px; }
+@media (max-width: 860px) {
+  .ih-hero { height: 480px; }
+  .ih-slide-copy { top: 60px; }
+  .ih-btns { margin-top: 16px; }
+}
