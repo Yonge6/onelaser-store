@@ -445,7 +445,7 @@ export default function Consult() {
           </div>
           <div className="cs-fin-btns">
             <button type="button" className="cs-next" onClick={toBook}><Icon name="calendar" size={18} />{t("Book my free call")}</button>
-            <Link href="https://www.1laser.com/pages/financing" className="cs-next ghost">{t("See financing options")}</Link>
+            <Link to="/pages/financing" className="cs-next ghost">{t("See financing options")}</Link>
           </div>
         </div>
       </section>

@@ -158,7 +158,7 @@ export default function Product({ handle }) {
           <div className="ip-info">
             <div><Icon name="truck" size={20} /><ul><li>{t("Delivery estimate and rate shown at checkout")}</li><li>{t("30-day easy returns")}{isMachine && ` | ${t("3-2-1 warranty")}`}</li><li>{t("U.S.-based support from laser engineers")}</li></ul></div>
             <div><Icon name="check" size={20} /><ul>{bullets.slice(0, 4).map((b) => <li key={b}>{b}</li>)}{product.fit && <li>{t("Fits:")} {product.fit}</li>}</ul></div>
-            <div><Icon name="card" size={20} /><ul><li>{t("Financing available at checkout")} — <a href="https://www.1laser.com/pages/financing" target="_blank" rel="noreferrer">{t("learn more")}</a></li></ul></div>
+            <div><Icon name="card" size={20} /><ul><li>{t("Financing available at checkout")} — <a href={`#/pages/financing?p=${product.handle}`}>{t("learn more")}</a></li></ul></div>
           </div>
 
           {models.length > 1 && (

@@ -56,7 +56,7 @@ export const nav = [
       ["Get a Quote", `${SITE}/products/sales-consultation-call`, `${SITE}/cdn/shop/files/Consultation_Call_Session_f357d165-c36d-445e-8589-cd76cb193639.png?v=1764916744`],
       ["1-on-1 Support", `${SITE}/products/engineer-1-on-1-training-support`, `${SITE}/cdn/shop/files/1-on-1_training.png?v=1764920272`],
     ],
-    links: [["Contact Support", "https://zohodesk.1laser.com/portal/en/newticket"], ["Financing", `${SITE}/pages/financing`], ["Policy", `${SITE}/pages/shipping-policy`], ["Blogs", `${SITE}/blogs/topic`], ["Product Knowledge Base", "https://wiki.1laser.com"]],
+    links: [["Contact Support", "https://zohodesk.1laser.com/portal/en/newticket"], ["Financing", "/pages/financing"], ["Policy", `${SITE}/pages/shipping-policy`], ["Blogs", `${SITE}/blogs/topic`], ["Product Knowledge Base", "https://wiki.1laser.com"]],
   },
   {
     label: "Community", href: `${SITE}/pages/laser-engraving-community`,
@@ -75,7 +75,7 @@ export const footer = {
   groups: [
     ["Community", [["Purchase Rewards", `${SITE}/pages/onelaser-rewards`], ["Become Affiliate", "https://af.uppromote.com/OneLaser/register"], ["Join Community", `${SITE}/pages/laser-engraving-community`], ["Testimonials", `${SITE}/pages/testimonials`]]],
     ["Machines", [["OneLaser Machines", "/collections/machines"], ["X Series", "/collections/xrf-series"], ["Cobra Series", "/collections/cobra-series"], ["Hydra Gen2 Series", "/collections/hydra-gen2"], ["Hydra Series", "/collections/previous-generation"], ["VertiGo", "/products/vertigo-vertical-laser-engraver"], ["Laser Accessories", "/collections/accessories"]]],
-    ["Support", [["About Us", `${SITE}/pages/about-us`], ["Contact Us", `${SITE}/pages/contact-us`], ["Financing", `${SITE}/pages/financing`], ["Blog Center", `${SITE}/blogs/topic`], ["Payment Methods", `${SITE}/pages/payment-methods`], ["Common FAQ", `${SITE}/pages/faq`], ["Laser Engraving & Cutting Chart", `${SITE}/pages/laser-cutter-engraving-settings-for-different-materials`]]],
+    ["Support", [["About Us", `${SITE}/pages/about-us`], ["Contact Us", `${SITE}/pages/contact-us`], ["Financing", "/pages/financing"], ["Blog Center", `${SITE}/blogs/topic`], ["Payment Methods", `${SITE}/pages/payment-methods`], ["Common FAQ", `${SITE}/pages/faq`], ["Laser Engraving & Cutting Chart", `${SITE}/pages/laser-cutter-engraving-settings-for-different-materials`]]],
     ["Policy", [["Shipping Policy", `${SITE}/pages/shipping-policy`], ["Privacy Policy", `${SITE}/pages/privacy-policy`], ["Refund Policy", `${SITE}/pages/refund-policy`], ["Terms of Service", `${SITE}/pages/terms-of-service`], ["Warranty Policy", `${SITE}/pages/warranty-policy`], ["Pre & Backorder Policy", `${SITE}/pages/pre-order-backorder-policy`], ["Giveaway General Terms & Conditions", `${SITE}/pages/onelaser-giveaway-general-terms-conditions`]]],
   ],
   contact: [["Phone", "626-800-4130", "tel:+16268004130"], ["Tech Support", "ts@1laser.com", "mailto:ts@1laser.com"], ["Customer Support", "cs@1laser.com", "mailto:cs@1laser.com"], ["Sales Consultation", "sales@1laser.com", "mailto:sales@1laser.com"]],

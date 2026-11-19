@@ -2962,3 +2962,171 @@ ul { list-style: none; }
   .cs-tiles i { margin-top: 1px; }
 }
 @media (max-width: 860px) { .cs-tiles button:last-child:nth-child(odd) { align-items: center; min-height: 48px; } }
+
+/* ===== Financing (#/pages/financing): estimator beside the pitch, fit picker over four option cards, how-it-works tabs, FAQ ===== */
+.fi { background: #fff; }
+.fi-wrap { max-width: 1440px; margin: 0 auto; padding: 0 64px; }
+.fi-kicker { font-size: 12px; line-height: 16px; font-weight: 700; letter-spacing: 1.4px; text-transform: uppercase; color: var(--brand); }
+.fi-h2 { margin-top: 12px; max-width: 760px; font-size: 44px; line-height: 52px; font-weight: 700; letter-spacing: -0.02em; color: var(--title); }
+.fi-lede { margin-top: 14px; font-size: 17px; line-height: 26px; color: var(--muted); }
+.fi-btn { height: 50px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 0 24px; border-radius: 8px; background: var(--brand); color: #fff; font-size: 16px; font-weight: 600; white-space: nowrap; transition: background .2s, box-shadow .2s; }
+.fi-btn:hover { background: var(--brand-dark); }
+.fi-btn.sm { height: 42px; padding: 0 16px; font-size: 14px; }
+.fi-btn.ghost { background: #fff; color: var(--title); box-shadow: inset 0 0 0 1px var(--line); } .fi-btn.ghost:hover { box-shadow: inset 0 0 0 1px var(--title); }
+.fi-btn.light { background: #fff; color: var(--title); } .fi-btn.light:hover { background: #f1f1f3; }
+.fi-btn.ghost-light { background: transparent; color: #fff; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.5); } .fi-btn.ghost-light:hover { background: rgba(255, 255, 255, 0.1); }
+
+.fi-hero { padding: 48px 0 80px; background: linear-gradient(180deg, var(--page) 0%, #fff 100%); }
+.fi-hero-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 500px); gap: 64px; align-items: center; }
+.fi-intro h1 { margin-top: 14px; font-size: 54px; line-height: 60px; font-weight: 700; letter-spacing: -0.02em; color: var(--title); }
+.fi-sub { margin-top: 16px; max-width: 560px; font-size: 19px; line-height: 28px; color: var(--muted); }
+.fi-points { list-style: none; margin: 32px 0 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; max-width: 600px; }
+.fi-points li { display: grid; gap: 2px; padding: 16px; border-radius: 14px; background: #fff; box-shadow: 0 0 0 1px var(--line); }
+.fi-points b { font-size: 26px; line-height: 32px; font-weight: 700; color: var(--title); }
+.fi-points span { font-size: 13px; line-height: 18px; color: var(--muted); }
+.fi-cta { margin-top: 28px; display: flex; flex-wrap: wrap; gap: 12px; }
+.fi-partners { margin-top: 32px; display: grid; gap: 10px; }
+.fi-partners small { font-size: 12px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: #9a9aa2; }
+.fi-partners span { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 28px; }
+.fi-partners img { height: 28px; width: auto; max-width: 130px; object-fit: contain; filter: grayscale(1); opacity: .75; }
+
+.fi-calc { border-radius: 24px; background: #fff; box-shadow: 0 0 0 1px var(--line), 0 30px 60px -36px rgba(0, 0, 0, 0.35); overflow: hidden; scroll-margin-top: calc(var(--promo-h) + 88px); }
+.fi-calc-head { padding: 22px 26px 18px; background: #111113; color: #fff; border-top: 4px solid var(--brand); }
+.fi-calc-head .fi-kicker { color: #ffb19f; }
+.fi-calc-pick { margin-top: 12px; display: flex; align-items: center; gap: 14px; }
+.fi-calc-pick img { flex: none; width: 84px; height: 56px; object-fit: contain; }
+.fi-calc-pick label { flex: 1; min-width: 0; display: grid; gap: 4px; }
+.fi-calc-pick label span { font-size: 12px; color: #a8a8b0; }
+.fi-calc-pick select { width: 100%; height: 42px; padding: 0 12px; border-radius: 8px; border: 1px solid #3a3a42; background: #1c1c20; color: #fff; font: inherit; font-size: 15px; font-weight: 500; outline: none; }
+.fi-calc-pick select:focus { border-color: #fff; }
+.fi-calc-body { padding: 20px 26px 22px; display: grid; gap: 18px; }
+.fi-amount { display: grid; gap: 6px; } .fi-amount > span:first-child, .fi-row > span { font-size: 14px; font-weight: 500; color: var(--title); }
+.fi-amount-in { display: flex; align-items: center; height: 48px; padding: 0 14px; border-radius: 8px; border: 1px solid var(--line); background: var(--tile); }
+.fi-amount-in em { font-style: normal; font-size: 18px; font-weight: 600; color: var(--muted); }
+.fi-amount-in input { flex: 1; min-width: 0; height: 100%; padding: 0 0 0 6px; border: 0; background: none; font: inherit; font-size: 20px; font-weight: 600; color: var(--title); outline: none; }
+.fi-amount-in:focus-within { border-color: var(--title); background: #fff; }
+.fi-row { display: grid; gap: 8px; }
+.fi-row > span b { float: right; font-size: 15px; color: var(--title); }
+.fi-seg { display: flex; gap: 6px; flex-wrap: wrap; }
+.fi-seg button { flex: 1; min-width: 0; height: 40px; padding: 0 10px; border-radius: 8px; border: 1px solid var(--line); background: #fff; font-size: 14px; font-weight: 500; color: var(--title); white-space: nowrap; transition: border-color .2s, background .2s; }
+.fi-seg button:hover { border-color: var(--title); }
+.fi-seg button.on { border-color: var(--title); background: var(--title); color: #fff; }
+.fi-row input[type=range] { -webkit-appearance: none; appearance: none; width: 100%; height: 6px; border-radius: 6px; background: linear-gradient(90deg, var(--brand) var(--v), #e4e5e8 var(--v)); outline: none; }
+.fi-row input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 22px; height: 22px; border-radius: 50%; background: #fff; box-shadow: 0 0 0 2px var(--brand), 0 2px 6px rgba(0, 0, 0, 0.2); cursor: pointer; }
+.fi-row input[type=range]::-moz-range-thumb { width: 20px; height: 20px; border-radius: 50%; background: #fff; border: 2px solid var(--brand); cursor: pointer; }
+.fi-scale { display: flex; justify-content: space-between; gap: 8px; font-size: 11px; line-height: 15px; color: #9a9aa2; }
+.fi-result { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; padding: 16px 18px; border-radius: 14px; background: var(--brand-soft); }
+.fi-result > div { display: grid; gap: 2px; }
+.fi-result > div:last-child { text-align: right; }
+.fi-result small { font-size: 12px; line-height: 16px; color: var(--muted); }
+.fi-result b { font-size: 36px; line-height: 40px; font-weight: 700; letter-spacing: -0.02em; color: var(--brand); }
+.fi-result b em { font-style: normal; font-size: 16px; font-weight: 500; color: var(--title); }
+.fi-result span { font-size: 17px; font-weight: 600; color: var(--title); }
+.fi-fine { font-size: 12px; line-height: 17px; color: #8a8a90; }
+
+.fi-sec { padding: 96px 0; scroll-margin-top: calc(var(--promo-h) + 40px); }
+.fi-sec.soft { background: var(--page); }
+.fi-quiz { margin-top: 32px; display: flex; flex-wrap: wrap; align-items: flex-end; gap: 16px 24px; padding: 20px 24px; border-radius: 16px; background: var(--page); }
+.fi-q { display: grid; gap: 8px; min-width: 240px; flex: 1; }
+.fi-q > span { font-size: 13px; font-weight: 600; color: var(--title); }
+.fi-q .fi-seg button { height: 42px; }
+.fi-quiz-amt { flex: none; height: 42px; display: flex; align-items: center; gap: 8px; font-size: 14px; color: var(--muted); }
+.fi-quiz-amt b { font-size: 16px; color: var(--title); }
+.fi-quiz-amt button { font-size: 13px; font-weight: 600; color: var(--accent-ink); text-decoration: underline; text-underline-offset: 3px; }
+.fi-match { margin-top: 24px; display: flex; align-items: center; gap: 8px; font-size: 15px; font-weight: 600; color: var(--green); }
+.fi-cards { list-style: none; margin: 16px 0 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+.fi-cards li { position: relative; display: flex; flex-direction: column; padding: 24px; border-radius: 20px; background: #fff; box-shadow: 0 0 0 1px var(--line); transition: box-shadow .3s, opacity .3s, transform .3s; }
+.fi-cards li.fit { box-shadow: 0 0 0 2px var(--brand), 0 24px 48px -32px rgba(231, 49, 14, 0.5); }
+.fi-cards li.nofit { opacity: .55; }
+.fi-cards li.nofit:hover { opacity: 1; }
+.fi-badge { align-self: flex-start; display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 6px; background: var(--brand); color: #fff; font-size: 12px; line-height: 16px; font-weight: 600; }
+.fi-badge.off { background: #ececee; color: var(--muted); }
+.fi-logo { margin-top: 18px; height: 40px; display: flex; align-items: center; }
+.fi-logo img { max-height: 36px; max-width: 160px; width: auto; object-fit: contain; }
+.fi-cards h3 { margin-top: 14px; font-size: 20px; line-height: 26px; font-weight: 600; color: var(--title); }
+.fi-for { margin-top: 2px; font-size: 13px; font-weight: 600; color: var(--accent-ink); }
+.fi-pitch { margin-top: 10px; font-size: 14px; line-height: 21px; color: var(--muted); }
+.fi-cards dl { margin: 18px 0 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; flex: 1; align-content: start; }
+.fi-cards dl div { padding: 10px 12px; border-radius: 10px; background: var(--tile); }
+.fi-cards dt { font-size: 17px; line-height: 22px; font-weight: 700; color: var(--title); }
+.fi-cards dd { margin: 2px 0 0; font-size: 12px; line-height: 16px; color: var(--muted); }
+.fi-card-btns { margin-top: 18px; display: grid; gap: 8px; }
+.fi-card-btns .fi-btn { width: 100%; white-space: normal; text-align: center; line-height: 18px; }
+.fi-cards li.nofit .fi-btn { background: var(--title); }
+.fi-more { height: 34px; font-size: 14px; font-weight: 500; color: var(--title); }
+.fi-more:hover { text-decoration: underline; text-underline-offset: 3px; }
+
+.fi-tabs { margin-top: 16px; display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; }
+.fi-tabs::-webkit-scrollbar { display: none; }
+.fi-tabs button { flex: none; height: 44px; padding: 0 20px; border-radius: 8px; background: #fff; font-size: 15px; font-weight: 500; color: var(--title); box-shadow: inset 0 0 0 1px var(--line); }
+.fi-tabs button.on { background: var(--title); color: #fff; box-shadow: none; }
+.fi-panel { margin-top: 20px; padding: 36px; border-radius: 20px; background: #fff; animation: panel-in .3s ease; }
+.fi-panel-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 32px; }
+.fi-panel-head h3 { font-size: 28px; line-height: 34px; font-weight: 700; color: var(--title); }
+.fi-panel-head p { margin-top: 8px; max-width: 720px; font-size: 16px; line-height: 25px; color: var(--muted); }
+.fi-points-grid { list-style: none; margin: 28px 0 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.fi-points-grid li { padding: 20px 22px; border-radius: 14px; background: var(--tile); }
+.fi-points-grid h4, .fi-steps h4 { font-size: 16px; line-height: 22px; font-weight: 600; color: var(--title); }
+.fi-points-grid p, .fi-steps p { margin-top: 6px; font-size: 14px; line-height: 21px; color: var(--muted); }
+.fi-steps { list-style: none; margin: 28px 0 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.fi-steps li { padding: 20px 22px; border-radius: 14px; background: var(--tile); }
+.fi-steps span { width: 28px; height: 28px; display: inline-grid; place-items: center; margin-bottom: 12px; border-radius: 50%; background: var(--brand); color: #fff; font-size: 13px; font-weight: 700; }
+.fi-links { margin-top: 18px; display: flex; flex-wrap: wrap; gap: 8px 20px; font-size: 13px; }
+.fi-links a { color: var(--accent-ink); text-decoration: underline; text-underline-offset: 3px; }
+
+.fi-faq { display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); gap: 64px; align-items: start; }
+.fi-faq > div:first-child { position: sticky; top: calc(var(--promo-h) + 100px); }
+.fi-faq > div:first-child .fi-btn { margin-top: 24px; }
+.fi-faq-group + .fi-faq-group { margin-top: 36px; }
+.fi-faq-group h3 { margin-bottom: 4px; font-size: 13px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.fi-faq details { border-bottom: 1px solid var(--line); }
+.fi-faq summary { list-style: none; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 20px 0; font-size: 17px; line-height: 25px; font-weight: 600; color: var(--title); cursor: pointer; }
+.fi-faq summary::-webkit-details-marker { display: none; }
+.fi-faq summary svg { flex: none; transition: transform .2s; } .fi-faq details[open] summary svg { transform: rotate(45deg); }
+.fi-faq details p { padding: 0 40px 20px 0; font-size: 15px; line-height: 24px; color: var(--muted); }
+.fi-end { padding: 64px 0; background: linear-gradient(110deg, #1b0602 0%, #6d1606 60%, var(--brand) 130%); color: #fff; }
+.fi-end .fi-wrap { display: flex; align-items: center; justify-content: space-between; gap: 40px; }
+.fi-end h2 { font-size: 36px; line-height: 44px; font-weight: 700; letter-spacing: -0.01em; }
+.fi-end p { margin-top: 10px; max-width: 560px; font-size: 16px; line-height: 24px; color: rgba(255, 255, 255, 0.78); }
+.fi-end-btns { flex: none; display: flex; gap: 12px; }
+
+@media (max-width: 1180px) {
+  .fi-wrap { padding: 0 40px; }
+  .fi-hero-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 440px); gap: 40px; }
+  .fi-intro h1 { font-size: 42px; line-height: 48px; }
+  .fi-h2 { font-size: 36px; line-height: 44px; }
+  .fi-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .fi-end .fi-wrap { flex-direction: column; align-items: flex-start; }
+}
+@media (max-width: 860px) {
+  .fi-wrap { padding: 0 16px; }
+  .fi-hero { padding: 24px 0 48px; }
+  .fi-hero-grid { grid-template-columns: minmax(0, 1fr); gap: 28px; }
+  .fi-intro h1 { font-size: 32px; line-height: 38px; }
+  .fi-sub { font-size: 16px; line-height: 24px; }
+  .fi-points { margin-top: 20px; gap: 8px; }
+  .fi-points li { padding: 12px; } .fi-points b { font-size: 20px; line-height: 26px; } .fi-points span { font-size: 12px; line-height: 16px; }
+  .fi-cta { margin-top: 20px; } .fi-cta .fi-btn { flex: 1 1 100%; }
+  .fi-partners { margin-top: 24px; } .fi-partners span { gap: 10px 20px; } .fi-partners img { height: 22px; }
+  .fi-calc { border-radius: 20px; }
+  .fi-calc-head, .fi-calc-body { padding-left: 18px; padding-right: 18px; }
+  .fi-seg button { padding: 0 6px; font-size: 13px; }
+  .fi-result b { font-size: 30px; line-height: 34px; }
+  .fi-sec { padding: 56px 0; }
+  .fi-h2 { font-size: 28px; line-height: 34px; }
+  .fi-quiz { margin-top: 20px; padding: 16px; gap: 14px; }
+  .fi-q { min-width: 100%; }
+  .fi-cards { grid-template-columns: minmax(0, 1fr); gap: 12px; }
+  .fi-cards li { padding: 20px; }
+  .fi-panel { padding: 20px; border-radius: 16px; }
+  .fi-panel-head { flex-direction: column; gap: 16px; } .fi-panel-head .fi-btn { width: 100%; }
+  .fi-panel-head h3 { font-size: 22px; line-height: 28px; }
+  .fi-points-grid, .fi-steps { grid-template-columns: minmax(0, 1fr); margin-top: 20px; }
+  .fi-faq { grid-template-columns: minmax(0, 1fr); gap: 24px; }
+  .fi-faq > div:first-child { position: static; }
+  .fi-faq summary { padding: 16px 0; font-size: 16px; line-height: 23px; }
+  .fi-faq details p { padding-right: 0; }
+  .fi-end { padding: 44px 0; } .fi-end h2 { font-size: 26px; line-height: 32px; }
+  .fi-end-btns { width: 100%; flex-direction: column; } .fi-end-btns .fi-btn { width: 100%; }
+}
+.fi-q .fi-seg button { white-space: normal; line-height: 16px; height: auto; min-height: 42px; padding: 6px 10px; }

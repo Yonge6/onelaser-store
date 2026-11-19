@@ -398,7 +398,7 @@ export function FinderHelp() {
     <>
       <p className="fd-links">
         <Link to="/compare">{t("Compare every spec")} ›</Link>
-        <Link href="https://www.1laser.com/pages/financing">{t("Pricing and financing")} ›</Link>
+        <Link to="/pages/financing">{t("Pricing and financing")} ›</Link>
       </p>
       <div className="fd-help">
         <span className="fd-faces" aria-hidden="true">{[1, 2, 3].map((n) => <img key={n} src={asset(`team-${n}.jpg`)} alt="" loading="lazy" />)}</span>
