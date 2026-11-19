@@ -2781,3 +2781,16 @@ ul { list-style: none; }
 /* Finder result: the answer row is a read-only summary (answers change with "Change answers" on the card) */
 .fr-steps li > span { cursor: default; }
 .cs-bar { transition: transform .3s ease; } .cs-bar.off { transform: translateY(110%); pointer-events: none; }
+/* Consultation hero: the booking card and the left column share one height (no empty strip under the card).
+   Spare height goes above the main button, so the button and the help line sit on the photo's bottom line. */
+@media (min-width: 861px) {
+  .cs-hero-grid { align-items: stretch; }
+  .cs-intro { display: flex; flex-direction: column; }
+  .cs-team-shot { flex: 1 0 auto; }
+  .cs-book { position: static; display: flex; flex-direction: column; }
+  .cs-book-body { flex: 1; display: flex; flex-direction: column; }
+  .cs-book-body > .cs-next { margin-top: auto; }
+  .cs-book-body > .cs-slots, .cs-book-body > .cs-field:last-of-type, .cs-book-body > .cs-err { margin-bottom: 18px; }
+  .cs-done { justify-content: center; align-items: center; }
+  .cs-done > .cs-next { margin-top: 18px; }
+}
