@@ -79,7 +79,6 @@ export default function FinderCard() {
   const lines = summary(answers);
   const answered = lines.length > 0;
   const top = ranked[0] && byHandle[M[ranked[0].key].handle];
-  const runner = ranked[1] && byHandle[M[ranked[1].key].handle];
   const has = (s) => (s.multi ? (answers[s.id] || []).length > 0 : !!answers[s.id]);
   const reveal = () => setTimeout(() => document.getElementById("fc-result")?.scrollIntoView({ behavior: "smooth", block: "start" }), 80);
   const finish = () => { setStep(STEPS.length); reveal(); };
@@ -188,7 +187,6 @@ export default function FinderCard() {
           <>
             <ul className="fx-peek-why">{ranked[0].reasons.slice(0, 2).map((r) => <li key={r}><Icon name="check" size={12} />{t(r)}</li>)}</ul>
             <p className="fx-meter" aria-hidden="true"><i style={{ width: `${(lines.length / STEPS.length) * 100}%` }} /></p>
-            <p className="fx-peek-note">{fill(t("Based on {n} of {total} answers"), { n: lines.length, total: STEPS.length })}{runner && <> · {t("Runner-up")}: {runner.name}</>}</p>
           </>
         ) : (
           <p className="fx-peek-note">{t("Your best match updates with every answer.")}</p>
