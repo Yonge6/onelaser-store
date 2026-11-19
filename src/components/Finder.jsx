@@ -1,7 +1,9 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { t } from "../i18n.js";
 import { asset, byHandle, img, money } from "../lib.js";
 import { AddButton, Icon, Link } from "./ui.jsx";
+import { contact } from "../data/site.js";
 
 /* "Find your machine": a compact card in the last cell of the home product grid.
    The questions follow the four-step finder on thunderlaserusa.com (material → work → pieces → shop → machine), adapted to the
@@ -109,7 +111,7 @@ function rank(a) {
 function addOnsFor(a, key) {
   const out = [];
   const round = (a.material || []).includes("drinkware") || a.round === "some" || a.round === "most";
-  if (round && key !== "vertigo") out.push(["Rotary attachment", "piburn-omni-for-onelaser"]);
+  if (round && key !== "vertigo") out.push(["Rotary attachment", M[key].tier === 1 ? "multi-function-rotary-axis-57-motor" : "piburn-omni-for-onelaser"]);
   if (a.vent === "in") out.push(["Indoor fume filter", M[key].tier === 1 ? "filtrabox-micro" : "filtrabox-compact-x"]);
   return out.filter(([, h]) => byHandle[h]);
 }
@@ -119,9 +121,15 @@ const monthly = (p) => (p.price / FINANCE_MONTHS).toLocaleString("en-US", { mini
 
 /** Compact finder that sits in the last cell of the home product grid. When the last question is answered
     (or skipped) the card turns into a product card for the best match, with the reasons and the buy buttons. */
+const memo = { answers: {}, step: 0 };
+
 export default function FinderCard() {
-  const [answers, setAnswers] = useState({});
-  const [step, setStep] = useState(0);
+  const [answers, setAnswersRaw] = useState(memo.answers);
+  const [step, setStepRaw] = useState(memo.step);
+  const setAnswers = (v) => { memo.answers = v; setAnswersRaw(v); };
+  const setStep = (v) => setStepRaw((s) => { const n = typeof v === "function" ? v(s) : v; memo.step = n; return n; });
+  const [slot, setSlot] = useState(null);
+  useEffect(() => setSlot(document.getElementById("fc-result")), []);
   const done = step >= STEPS.length;
   const cur = STEPS[Math.min(step, STEPS.length - 1)];
   const ranked = useMemo(() => rank(answers), [answers]);
@@ -136,7 +144,8 @@ export default function FinderCard() {
       setAnswers({ ...answers, [cur.id]: set.includes(id) ? set.filter((x) => x !== id) : [...set, id] });
     } else {
       setAnswers({ ...answers, [cur.id]: id });
-      setTimeout(() => setStep((s) => Math.max(s, STEPS.indexOf(cur) + 1)), 260);
+      const last = STEPS.indexOf(cur) === STEPS.length - 1;
+      setTimeout(() => { setStep((s) => Math.max(s, STEPS.indexOf(cur) + 1)); if (last) reveal(); }, 260);
     }
   };
   const reset = () => { setAnswers({}); setStep(0); };
@@ -146,34 +155,25 @@ export default function FinderCard() {
     </div>
   );
 
+  const reveal = () => setTimeout(() => document.getElementById("fc-result")?.scrollIntoView({ behavior: "smooth", block: "start" }), 80);
+  const finish = () => { setStep(STEPS.length); reveal(); };
+
   if (done && top)
     return (
-      <article className="ih-card fc fc-done" aria-live="polite">
-        <div className="ih-card-info">
-          <span className="ih-new">{t("Best match")}</span>
-          <h3><Link to={`/products/${top.handle}`}>{top.name}</Link></h3>
-          <ul className="fc-reasons">{(answered ? ranked[0].reasons : []).slice(0, 2).map((r) => <li key={r}><Icon name="check" size={14} />{t(r)}</li>)}</ul>
-          {extras.length > 0 && (
-            <p className="fc-addons"><span>{t("Add")}</span>{extras.map(([label, h]) => <Link key={h} to={`/products/${h}`}>+ {t(label)}</Link>)}</p>
-          )}
-        </div>
-        <Link to={`/products/${top.handle}`} className="ih-card-media" tabIndex={-1} aria-hidden="true"><img src={img(top.images[0], 700)} alt="" /></Link>
-        <p className="ih-card-price">
-          {top.priceVaries && <span>{t("From")}</span>}
-          <b>{money(top.price)}</b>
-          {top.compareAt > top.price && <s>{money(top.compareAt)}</s>}
-          {top.compareAt > top.price && <em>{t("Save")} {money(top.compareAt - top.price)}</em>}
-        </p>
-        <p className="ih-card-monthly">{t("or")} <b>${monthly(top)}</b>{t("/mo for 24 months")}</p>
-        <div className="ih-card-btns">
-          <AddButton product={top} className="ih-btn line sm" />
-          <Link to={`/products/${top.handle}`} className="ih-btn dark sm">{t("Buy now")}</Link>
-        </div>
-        <p className="fc-foot">
-          <button type="button" onClick={reset}>↺ {t("Start over")}</button>
-          {next && <Link to={`/products/${next.handle}`}>{t("Also worth a look")}: {next.name} ›</Link>}
-        </p>
-      </article>
+      <>
+        <article className="ih-card fc fc-done">
+          <div className="ih-card-info">
+            <span className="ih-new">{t("Best match")}</span>
+            <h3><Link to={`/products/${top.handle}`}>{top.name}</Link></h3>
+            <p>{top.tagline}</p>
+          </div>
+          <Link to={`/products/${top.handle}`} className="ih-card-media" tabIndex={-1} aria-hidden="true"><img src={img(top.images[0], 700)} alt="" /></Link>
+          <p className="ih-card-price"><b>{money(top.price)}</b>{top.compareAt > top.price && <s>{money(top.compareAt)}</s>}</p>
+          <button type="button" className="ih-btn dark sm fc-see" onClick={reveal}>{t("See why it fits")} ↓</button>
+          <p className="fc-foot"><button type="button" onClick={reset}>↺ {t("Start over")}</button></p>
+        </article>
+        {slot && createPortal(<FinderResult answers={answers} ranked={ranked} onEdit={(n) => { setStep(n); document.querySelector(".ih-card.fc")?.scrollIntoView({ behavior: "smooth", block: "center" }); }} onReset={reset} />, slot)}
+      </>
     );
 
   return (
@@ -197,11 +197,213 @@ export default function FinderCard() {
       <div className="fc-nav">
         {step > 0 ? <button type="button" className="fc-link" onClick={() => setStep(step - 1)}>← {t("Back")}</button> : <span className="fc-count">{step + 1} / {STEPS.length}</span>}
         {top && answered && <span className="fc-peek" aria-live="polite">{t("Best match")}: <b>{top.name}</b></span>}
-        <button type="button" className={cur.multi && has(cur) ? "ih-btn dark sm" : "fc-link"} onClick={() => setStep(step + 1)}>
+        <button type="button" className={cur.multi && has(cur) ? "ih-btn dark sm" : "fc-link"} onClick={() => (step === STEPS.length - 1 ? finish() : setStep(step + 1))}>
           {cur.multi && has(cur) ? t("Continue") : t("Skip")}
         </button>
       </div>
     </article>
+  );
+}
+
+const SIZE_TEXT = { s: "12 × 12 in.", m: "24 × 12 in.", l: "36 × 24 in.", xl: "51 × 35 in.", xxl: "63 × 39 in." };
+const fill = (str, vars) => Object.entries(vars).reduce((out, [k, v]) => out.replace(`{${k}}`, v), str);
+const RF_WARRANTY = ["xrf", "hydra7", "hydra9", "hydra13", "hydra16"];
+
+/** What the visitor told the finder, as question → answer lines (shown on the result and sent with a lead). */
+function summary(answers) {
+  return STEPS.map((s, n) => {
+    const v = answers[s.id];
+    const ids = Array.isArray(v) ? v : v ? [v] : [];
+    if (!ids.length) return null;
+    return { n, q: s.title, label: s.label, a: ids.map((id) => s.options.find((o) => o[0] === id)?.[1]).filter(Boolean) };
+  }).filter(Boolean);
+}
+
+/** "Good to know": plain notes built only from catalog facts (work areas, prices, accessories) and the published warranty. */
+function notesFor(answers, key, product) {
+  const out = [];
+  const mats = answers.material || [];
+  const round = mats.includes("drinkware") || answers.round === "some" || answers.round === "most";
+  const area = product.specs?.["Work area"];
+  if (answers.size && key !== "vertigo" && area) out.push(fill(t("Your largest piece (up to {size}) fits inside its {area} work area."), { size: SIZE_TEXT[answers.size], area }));
+  if (round && key === "vertigo") out.push(fill(t("The rotary is built in: {range}."), { range: product.specs?.["Key capability"] || "" }));
+  addOnsFor(answers, key).forEach(([label, h]) => {
+    const a = { ...byHandle[h], name: byHandle[h].name.split(/ [–-] /)[0] };
+    if (label === "Rotary attachment") out.push(fill(t("Round items need a rotary, sold separately: {name} ({price})."), { name: a.name, price: money(a.price) }));
+    else out.push(fill(t("No outside vent? The {name} ({price}) is the indoor fume filter we pair with it."), { name: a.name, price: money(a.price) }));
+  });
+  if (answers.round === "most" && key !== "vertigo" && byHandle[M.vertigo.handle]) {
+    const v = byHandle[M.vertigo.handle];
+    out.push(fill(t("Mostly tumblers? {name} ({price}) has a vertical rotary built in."), { name: v.name, price: money(v.price) }));
+  }
+  const family = Object.entries(M).filter(([k, m]) => k.replace(/\d+$/, "") === key.replace(/\d+$/, "") && m.width > M[key].width).sort((x, y) => x[1].width - y[1].width)[0];
+  const bigger = family && byHandle[family[1].handle];
+  if (bigger) out.push(fill(t("Room to grow: the {name} ({area}) is {price}."), { name: bigger.name, area: bigger.specs?.["Work area"] || "", price: money(bigger.price) }));
+  return out;
+}
+
+const BUDGETS = ["Under $3k", "$3k–$5k", "$5k–$10k", "$10k+"];
+const CODES = [["+1", "US"], ["+44", "UK"], ["+61", "AU"], ["+49", "DE"], ["+33", "FR"], ["+34", "ES"], ["+81", "JP"], ["+86", "CN"]];
+
+/** Lead form in a dialog over the page, laid out after the 1laser.com Black Friday "Talk to a laser expert" pop-up.
+    Design draft: nothing is stored or sent. */
+export function LeadDialog({ mode = "quote", product, lines = [], onClose }) {
+  const [sent, setSent] = useState(false);
+  const [err, setErr] = useState({});
+  const first = useRef(null);
+  useEffect(() => {
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    first.current?.focus();
+    const key = (e) => e.key === "Escape" && onClose();
+    window.addEventListener("keydown", key);
+    return () => { document.body.style.overflow = prev; window.removeEventListener("keydown", key); };
+  }, [onClose]);
+  const submit = (e) => {
+    e.preventDefault();
+    const f = new FormData(e.currentTarget);
+    const bad = {};
+    if (!String(f.get("name") || "").trim()) bad.name = true;
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(f.get("email") || ""))) bad.email = true;
+    if (!f.get("budget")) bad.budget = true;
+    if (mode === "call" && String(f.get("phone") || "").replace(/\D/g, "").length < 6) bad.phone = true;
+    setErr(bad);
+    if (!Object.keys(bad).length) setSent(true);
+  };
+  const call = mode === "call";
+  return createPortal(
+    <div className="lead" role="dialog" aria-modal="true" aria-labelledby="lead-title" onMouseDown={(e) => e.target === e.currentTarget && onClose()}>
+      <div className="lead-box">
+        <button type="button" className="lead-x" aria-label={t("Close")} onClick={onClose}>×</button>
+        <div className="lead-art">
+          <img src={product ? img(product.images[0], 900) : asset("home-bf-lineup.jpg")} alt="" />
+          {product && <p className="lead-pick"><span>{t("Your pick")}</span><b>{product.name}</b><em>{money(product.price)}{product.compareAt > product.price && <s>{money(product.compareAt)}</s>}</em></p>}
+          <p className="lead-tag">{t("Up to")} <b>$3,000</b> {t("off")}</p>
+        </div>
+        {sent ? (
+          <div className="lead-body lead-done" role="status">
+            <span className="lead-ok"><Icon name="check" size={30} /></span>
+            <h2 id="lead-title">{t("Thanks — this is a design draft")}</h2>
+            <p>{t("This form is not connected yet, so nothing was sent. On the live site a OneLaser laser expert would follow up by email or phone.")}</p>
+            <p>{t("Prefer to talk now? Call")} <a href={`tel:${contact.tel}`}>{contact.phone}</a></p>
+            <button type="button" className="lead-submit" onClick={onClose}>{t("Back to my result")}</button>
+          </div>
+        ) : (
+          <form className="lead-body" onSubmit={submit} noValidate>
+            <h2 id="lead-title">{t(call ? "Talk to a laser expert" : "Get a written quote")}</h2>
+            <p className="lead-lede">
+              {t(call ? "Leave your details and a OneLaser laser expert will call you about this machine." : "A OneLaser laser expert reviews your answers and sends a written quote with pricing, accessories and delivery.")}{" "}
+              {t("Or call")} <a href={`tel:${contact.tel}`}>{contact.phone}</a>.
+            </p>
+            <label className={`lead-field${err.name ? " bad" : ""}`}><span>{t("Name")} *</span><input ref={first} name="name" autoComplete="name" /></label>
+            <label className={`lead-field${err.email ? " bad" : ""}`}><span>{t("Email")} *</span><input name="email" type="email" autoComplete="email" inputMode="email" /></label>
+            <div className={`lead-field${err.phone ? " bad" : ""}`}>
+              <span>{t(call ? "Phone" : "Phone (optional)")}{call && " *"}</span>
+              <div className="lead-phone">
+                <select name="code" aria-label={t("Country code")} defaultValue="+1">{CODES.map(([c, r]) => <option key={c} value={c}>{c} {r}</option>)}</select>
+                <input name="phone" type="tel" autoComplete="tel-national" inputMode="tel" aria-label={t("Phone number")} required={call} />
+              </div>
+            </div>
+            <fieldset className={`lead-budget${err.budget ? " bad" : ""}`}>
+              <legend>{t("What is your budget for the machine?")} *</legend>
+              <div>{BUDGETS.map((b) => <label key={b}><input type="radio" name="budget" value={b} /><span>{t(b)}</span></label>)}</div>
+            </fieldset>
+            <label className="lead-field"><span>{t("Anything else? (optional)")}</span><textarea name="note" rows={2} placeholder={t("Quantities, materials, deadlines…")} /></label>
+            {lines.length > 0 && (
+              <details className="lead-sum">
+                <summary>{t("Sent with your request")} · {lines.length + (product ? 1 : 0)}</summary>
+                <ul>
+                  {lines.map((l) => <li key={l.q}><span>{t(l.q)}</span><b>{l.a.map((x) => t(x)).join(", ")}</b></li>)}
+                  {product && <li><span>{t("Finder pick")}</span><b>{product.name} ({money(product.price)})</b></li>}
+                </ul>
+              </details>
+            )}
+            {Object.keys(err).length > 0 && <p className="lead-err" role="alert">{t("Please fill in the fields marked *.")}</p>}
+            <button type="submit" className="lead-submit">{t(call ? "Request a call" : "Email me a written quote")}</button>
+            <p className="lead-fine">{t("By submitting, you agree to receive follow-ups from the OneLaser team (human or AI) by email, phone, or text regarding your inquiry.")} {t("Never share sensitive information (credit card numbers, social security numbers, passwords) through this form.")}</p>
+          </form>
+        )}
+      </div>
+    </div>,
+    document.body
+  );
+}
+
+/** Full-width result under the product grid, after the result panel of the thunderlaserusa.com finder:
+    our pick with why it fits, key specs, good-to-know notes, warranty, then buy and lead buttons. */
+function FinderResult({ answers, ranked, onEdit, onReset }) {
+  const [lead, setLead] = useState(null);
+  const key = ranked[0].key;
+  const top = byHandle[M[key].handle];
+  const alt = ranked[1] && byHandle[M[ranked[1].key].handle];
+  const lines = summary(answers);
+  const notes = notesFor(answers, key, top);
+  const reasons = lines.length ? ranked[0].reasons : [];
+  const specs = ["Laser source", "Work area", "Max engraving speed", "Acceleration"].filter((k) => top.specs?.[k]);
+  return (
+    <section className="fr" aria-labelledby="fr-title">
+      <ol className="fr-steps">
+        {STEPS.map((s, n) => {
+          const l = lines.find((x) => x.n === n);
+          return (
+            <li key={s.id} className={l ? "done" : ""}>
+              <button type="button" onClick={() => onEdit(n)} title={t("Change answer")}>
+                <i>{l ? <Icon name="check" size={14} /> : n + 1}</i>
+                <span><b>{t(s.label)}</b><em>{l ? l.a.map((x) => t(x)).join(", ") : t("Skipped")}</em></span>
+              </button>
+            </li>
+          );
+        })}
+        <li className="pick"><span><i>★</i><span><b>{t("Your machine")}</b><em>{top.name}</em></span></span></li>
+      </ol>
+      <div className="fr-card">
+        <div className="fr-stage">
+          <Link to={`/products/${top.handle}`} tabIndex={-1} aria-hidden="true"><img src={img(top.images[0], 1000)} alt="" /></Link>
+          <p className="fr-price">
+            <b>{money(top.price)}</b>
+            {top.compareAt > top.price && <s>{money(top.compareAt)}</s>}
+            {top.compareAt > top.price && <em>{t("Save")} {money(top.compareAt - top.price)}</em>}
+          </p>
+          <p className="fr-monthly">{t("or")} <b>${monthly(top)}</b>{t("/mo for 24 months")}</p>
+          <div className="fr-buy">
+            <AddButton product={top} className="ih-btn line" />
+            <Link to={`/products/${top.handle}`} className="ih-btn dark">{t("Buy now")}</Link>
+          </div>
+        </div>
+        <div className="fr-copy">
+          <p className="fr-kicker">{t("Our pick for you")}</p>
+          <h2 id="fr-title"><Link to={`/products/${top.handle}`}>{top.name}</Link></h2>
+          <p className="fr-lede">{top.tagline}{top.bestFor && <> {t("Best for")}: {top.bestFor}.</>}</p>
+          {reasons.length > 0 && (
+            <>
+              <h3>{t("Why it fits your answers")}</h3>
+              <ul className="fr-why">{reasons.map((r) => <li key={r}><Icon name="check" size={16} />{t(r)}</li>)}</ul>
+            </>
+          )}
+          <dl className="fr-specs">{specs.map((k) => <div key={k}><dt>{t(k)}</dt><dd>{top.specs[k]}</dd></div>)}</dl>
+          {notes.length > 0 && (
+            <div className="fr-notes">
+              <h3>{t("Good to know")}</h3>
+              <ul>{notes.map((n) => <li key={n}>{n}</li>)}</ul>
+            </div>
+          )}
+          <p className="fr-warranty">
+            <Icon name="shield" size={16} />
+            {RF_WARRANTY.includes(key) ? t("3-2-1 warranty: 3-year mechanical, 2-year electrical and 1-year optics.") : t("Covered by the official OneLaser warranty policy.")} {t("U.S.-based support from laser engineers.")}
+          </p>
+          <div className="fr-lead">
+            <button type="button" className="fr-btn red" onClick={() => setLead("quote")}><Icon name="mail" size={18} />{t("Email me a written quote")}</button>
+            <button type="button" className="fr-btn ghost" onClick={() => setLead("call")}><Icon name="phone" size={18} />{t("Talk to a laser expert")}</button>
+          </div>
+          <p className="fr-foot">
+            <button type="button" onClick={() => onEdit(STEPS.length - 1)}>← {t("Change answers")}</button>
+            <button type="button" onClick={onReset}>↺ {t("Start over")}</button>
+            {alt && <Link to={`/products/${alt.handle}`}>{t("Also worth a look")}: {alt.name} · {money(alt.price)} ›</Link>}
+          </p>
+        </div>
+      </div>
+      {lead && <LeadDialog mode={lead} product={top} lines={lines} onClose={() => setLead(null)} />}
+    </section>
   );
 }
 

@@ -177,6 +177,7 @@ function ProductBlock() {
           ))}
           <FinderCard />
         </div>
+        <div id="fc-result" />
         <div className="ih-viewall"><Link to={tab.all}>{t("View all")}</Link></div>
         <FinderHelp />
       </div>
