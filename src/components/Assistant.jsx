@@ -157,7 +157,7 @@ export default function Assistant() {
         <div className="ai-panel" role="dialog" aria-label={t("OneLaser shopping assistant")}>
           <header className="ai-head">
             <span className="ai-avatar sm"><Icon name="sparkle" size={16} /></span>
-            <b>{t("OneLaser Shopping Assistant")}</b>
+            <span className="ai-title"><b>{t("OneLaser Shopping Assistant")}</b><small><i />{t("Online · replies instantly")}</small></span>
             <Link to="/cart" className="ai-icon" aria-label={t("Cart")}><Icon name="cart" size={20} />{count > 0 && <em>{count}</em>}</Link>
             {msgs.length > 0 && <button type="button" className="ai-icon" aria-label={t("New chat")} title={t("New chat")} onClick={() => setMsgs([])}><Icon name="refresh" size={18} /></button>}
             <button type="button" className="ai-icon" aria-label={t("Close")} onClick={() => setOpen(false)}><Icon name="close" size={20} /></button>
@@ -166,18 +166,23 @@ export default function Assistant() {
             <div className="ai-welcome">
               <h2>{t("Welcome to OneLaser")} 👋</h2>
               <p>{t("Ask me anything: which laser fits your work, today's deals, financing or shipping.")}</p>
-              <div className="ai-cats">
+              <div className="ai-cats-wrap"><div className="ai-cats">
                 {CATS.map((c) => {
                   const p = c[2] && byHandle[c[2]];
                   return (
                     <button key={c[0]} type="button" onClick={() => cat(c)}>
-                      <span>{p ? <img src={img(p.kind === "machine" ? frontImg(p) : p.images[0], 240)} alt="" /> : <b className="ai-cat-deal">{promo.headline}</b>}</span>
-                      {t(c[1])}
+                      <span className="ai-cat-img">{p ? <img src={img(p.kind === "machine" ? frontImg(p) : p.images[0], 240)} alt="" /> : <b className="ai-cat-deal">{promo.headline}</b>}</span>
+                      <span className="ai-cat-name">{t(c[1])}</span>
                     </button>
                   );
                 })}
-              </div>
-              {msgs.length === 0 && <div className="ai-chips">{CHIPS.map((c) => <button key={c} type="button" onClick={() => ask(c)}>{t(c)}</button>)}</div>}
+              </div></div>
+              {msgs.length === 0 && (
+                <div className="ai-try">
+                  <p>{t("Try asking")}</p>
+                  <div className="ai-chips grid">{CHIPS.map((c) => <button key={c} type="button" onClick={() => ask(c)}><Icon name="sparkle" size={12} />{t(c)}</button>)}</div>
+                </div>
+              )}
             </div>
             {msgs.map((m, n) => (m.me ? (
               <p key={n} className="ai-me">{m.text}</p>
