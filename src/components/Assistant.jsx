@@ -256,14 +256,16 @@ export default function Assistant({ product }) {
     return () => { window.removeEventListener("scroll", on); clearTimeout(idle); };
   }, []);
   // phones: the drawer takes a history entry, so the system back gesture closes it instead of leaving the page
+  // Only an entry this drawer pushed itself is ever popped (a reload keeps history.state, so that cannot be trusted).
+  const pushed = useRef(false);
   useEffect(() => {
     if (!open || wide()) return undefined;
-    if (!window.history.state?.ai) window.history.pushState({ ...(window.history.state || {}), ai: 1 }, "");
-    const back = () => setOpen(false);
+    if (!pushed.current) { window.history.pushState({ ...(window.history.state || {}), ai: 1 }, ""); pushed.current = true; }
+    const back = () => { pushed.current = false; setOpen(false); };
     window.addEventListener("popstate", back);
     return () => window.removeEventListener("popstate", back);
   }, [open]);
-  const close = () => { if (!wide() && window.history.state?.ai) window.history.back(); else setOpen(false); };
+  const close = () => { if (pushed.current) window.history.back(); else setOpen(false); };
   // phones: drag the drawer down by its header to close it
   const drag = useRef(null);
   const [dy, setDy] = useState(0);

@@ -42,9 +42,9 @@ let intent = null; // "new" | "keep" | null (null = back/forward)
 let current = typeof window !== "undefined" ? window.location.hash : "";
 const jump = (y) => window.scrollTo({ top: y, left: 0, behavior: "instant" });
 /** Content (products, images) renders after the route changes and keeps growing while images load,
-    so hold the target for up to 2 s, and stop as soon as the visitor scrolls by hand. */
+    so hold the target for up to 4 s (slow phone connections), and stop as soon as the visitor scrolls by hand. */
 const restore = (y) => {
-  const until = performance.now() + 2000;
+  const until = performance.now() + 4000;
   let user = false;
   const stop = () => { user = true; };
   const evs = ["wheel", "touchstart", "keydown", "mousedown"];
@@ -70,6 +70,9 @@ if (typeof window !== "undefined") {
     const a = e.target.closest?.("a[href^='#']");
     if (!a || e.defaultPrevented || e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return;
     intent = a.hasAttribute("data-keep-scroll") ? "keep" : "new";
+    // a link to the page we are already on changes nothing: drop the flag so a later back / forward is not mistaken for a new page
+    const was = window.location.hash;
+    setTimeout(() => { if (window.location.hash === was) intent = null; }, 0);
   }, true);
 }
 export function useRoute() {
@@ -92,6 +95,7 @@ export function useRoute() {
   return route;
 }
 export const go = (path) => {
-  intent = "new";
+  const same = window.location.hash.replace(/^#/, "") === path;
+  intent = same ? null : "new"; // same page: no hashchange will consume the flag
   window.location.hash = path;
 };
