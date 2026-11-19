@@ -569,4 +569,7 @@ export default {
   "Volume": "Volume",
   "Venting": "Ventilation",
   "Your match appears here": "Votre machine apparaîtra ici",
+  "Laser": "Laser",
+  "Speed": "Vitesse",
+  "Fits": "Diamètre",
 };

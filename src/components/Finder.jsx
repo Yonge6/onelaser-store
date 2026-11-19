@@ -123,10 +123,10 @@ const monthly = (p) => (p.price / FINANCE_MONTHS).toLocaleString("en-US", { mini
    (desktop XRF → Cobra cabinet → Hydra with its tower → vertical VertiGo) while a laser head scans across.
    Every outline uses the same path commands, so SVG <animate> can morph between them in every browser. */
 const SHAPES = [
-  { name: "XRF", panel: [168, 88, 138], body: [[28, 138], [28, 96], [140, 88], [140, 88], [212, 88], [212, 138]], win: [42, 98, 132, 116], stripe: [28, 212, 124], legs: [40, 200, 138, 142] },
-  { name: "Cobra", panel: [150, 58, 128], body: [[22, 128], [22, 62], [150, 62], [150, 58], [218, 58], [218, 128]], win: [34, 72, 140, 100], stripe: [22, 218, 110], legs: [34, 206, 128, 148] },
-  { name: "Hydra", panel: [158, 64, 132], body: [[26, 132], [26, 64], [158, 64], [158, 44], [214, 44], [214, 132]], win: [38, 74, 148, 102], stripe: [26, 214, 114], legs: [38, 202, 132, 146] },
-  { name: "VertiGo", panel: [148, 36, 140], body: [[78, 140], [78, 36], [130, 36], [130, 36], [162, 36], [162, 140]], win: [90, 50, 140, 104], stripe: [78, 162, 118], legs: [88, 152, 140, 144] },
+  { name: "XRF", specs: [["Laser", "38W RF"], ["Work area", "23.6 × 11.8 in"], ["Speed", "1,200 mm/s"]], panel: [168, 88, 138], body: [[28, 138], [28, 96], [140, 88], [140, 88], [212, 88], [212, 138]], win: [42, 98, 132, 116], stripe: [28, 212, 124], legs: [40, 200, 138, 142] },
+  { name: "Cobra", specs: [["Laser", "90–130W CO₂"], ["Work area", "up to 55 × 35 in"], ["Speed", "1,200 mm/s"]], panel: [150, 58, 128], body: [[22, 128], [22, 62], [150, 62], [150, 58], [218, 58], [218, 128]], win: [34, 72, 140, 100], stripe: [22, 218, 110], legs: [34, 206, 128, 148] },
+  { name: "Hydra", specs: [["Laser", "70W RF / hybrid"], ["Work area", "up to 63 × 39 in"], ["Speed", "2,000 mm/s · 4G"]], panel: [158, 64, 132], body: [[26, 132], [26, 64], [158, 64], [158, 44], [214, 44], [214, 132]], win: [38, 74, 148, 102], stripe: [26, 214, 114], legs: [38, 202, 132, 146] },
+  { name: "VertiGo", specs: [["Laser", "38W RF"], ["Fits", "Ø 16–230 mm"], ["Speed", "800 mm/s"]], panel: [148, 36, 140], body: [[78, 140], [78, 36], [130, 36], [130, 36], [162, 36], [162, 140]], win: [90, 50, 140, 104], stripe: [78, 162, 118], legs: [88, 152, 140, 144] },
 ];
 const loop = (list) => [...list, list[0]].join(";");
 const bodyD = (b) => `M${b.map((p) => p.join(" ")).join(" L")} Z`;
@@ -138,6 +138,9 @@ const DUR = 12; // seconds for the whole cycle: hold, morph, hold, morph…
 const KEY_TIMES = "0;0.2;0.25;0.45;0.5;0.7;0.75;0.95;1";
 
 function MachineMorph() {
+  const svg = useRef(null);
+  // the SVG clock starts with the page; restart it with the CSS name/spec animation so outline and label stay in step
+  useEffect(() => { try { svg.current?.setCurrentTime(0); } catch { /* older browsers */ } }, []);
   const still = typeof window !== "undefined" && window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
   const morph = (fn) => {
     const v = SHAPES.map((x) => fn(x));
@@ -148,7 +151,7 @@ function MachineMorph() {
   const first = SHAPES[0];
   return (
     <div className="fx-morph" aria-hidden="true">
-      <svg viewBox="0 0 240 180" role="presentation">
+      <svg ref={svg} viewBox="0 0 240 180" role="presentation">
         <defs>
           <pattern id="fx-grid" width="12" height="12" patternUnits="userSpaceOnUse"><path d="M12 0H0V12" fill="none" stroke="rgba(56,189,248,.09)" strokeWidth=".6" /></pattern>
           <radialGradient id="fx-glow"><stop offset="0" stopColor="#ff5a36" stopOpacity=".9" /><stop offset="1" stopColor="#ff5a36" stopOpacity="0" /></radialGradient>
@@ -173,11 +176,14 @@ function MachineMorph() {
           </g>
         )}
       </svg>
-      <p className="fx-morph-names">
+      <div className="fx-ms">
         {SHAPES.map((x, n) => (
-          <span key={x.name} style={{ animationDelay: `${(n * DUR) / 4}s`, animationDuration: `${DUR}s` }} className={still && n ? "off" : ""}>{x.name}</span>
+          <div key={x.name} className={`fx-ms-item${still && n ? " off" : ""}`} style={{ animationDelay: `${(n * DUR) / 4}s`, animationDuration: `${DUR}s` }}>
+            <b>{x.name}</b>
+            <dl>{x.specs.map(([k, v]) => <div key={k}><dt>{t(k)}</dt><dd>{v}</dd></div>)}</dl>
+          </div>
         ))}
-      </p>
+      </div>
     </div>
   );
 }
@@ -314,7 +320,7 @@ export default function FinderCard() {
         ) : (
           <p className="fx-peek-note">{t("Your best match updates with every answer.")}</p>
         )}
-        <button type="button" className="fx-expert" onClick={() => setLead("call")}><Icon name="phone" size={14} />{t("Rather talk to an expert?")}</button>
+        <a href={`tel:${contact.tel}`} className="fx-expert"><Icon name="phone" size={14} />{t("Rather talk to an expert?")} {contact.phone}</a>
       </aside>
       {leadDialog}
     </article>
@@ -509,7 +515,7 @@ function FinderResult({ answers, ranked, onEdit, onReset }) {
           </p>
           <div className="fr-lead">
             <button type="button" className="fr-btn red" onClick={() => setLead("quote")}><Icon name="mail" size={18} />{t("Email me a written quote")}</button>
-            <button type="button" className="fr-btn ghost" onClick={() => setLead("call")}><Icon name="phone" size={18} />{t("Talk to a laser expert")}</button>
+            <a href={`tel:${contact.tel}`} className="fr-btn ghost"><Icon name="phone" size={18} />{t("Talk to a laser expert")} · {contact.phone}</a>
           </div>
           <p className="fr-foot">
             <button type="button" onClick={() => onEdit(STEPS.length - 1)}>← {t("Change answers")}</button>

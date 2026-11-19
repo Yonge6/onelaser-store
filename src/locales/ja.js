@@ -569,4 +569,7 @@ export default {
   "Volume": "生産量",
   "Venting": "排気",
   "Your match appears here": "ここにおすすめが表示されます",
+  "Laser": "レーザー",
+  "Speed": "速度",
+  "Fits": "対応径",
 };

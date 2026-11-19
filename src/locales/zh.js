@@ -569,4 +569,7 @@ export default {
   "Volume": "产量",
   "Venting": "排烟",
   "Your match appears here": "你的推荐会显示在这里",
+  "Laser": "激光器",
+  "Speed": "速度",
+  "Fits": "适用直径",
 };
