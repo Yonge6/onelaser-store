@@ -731,4 +731,6 @@ export default {
   "Tumblers, cups, bottles and repeat drinkware jobs": "タンブラー、カップ、ボトルなどの繰り返しドリンクウェア案件",
   "Monthly payments for this machine": "このマシンの月額",
   "Contact support": "サポートに連絡",
+  "Book a free 30-minute call with a laser expert": "レーザー専門家との 30 分無料通話を予約",
+  "Want to talk it through first?": "まずは相談してみませんか？",
 };

@@ -126,10 +126,15 @@ export default function FinderCard() {
             <AddButton product={top} className="ih-btn line" />
             <Link to={`/products/${top.handle}`} className="ih-btn dark">{t("Buy now")}</Link>
           </div>
+          <Link to="/pages/sales-consultation" className="fx-call-cta">
+            <span className="fx-call-ico"><Icon name="calendar" size={18} /></span>
+            <span><b>{t("Want to talk it through first?")}</b><em>{t("Book a free 30-minute call with a laser expert")}</em></span>
+            <Icon name="arrow" size={18} />
+          </Link>
           <p className="fx-foot">
             <button type="button" onClick={() => edit(STEPS.length - 1)}>← {t("Change answers")}</button>
             <button type="button" onClick={reset}>↺ {t("Start over")}</button>
-            <button type="button" className="fx-more" onClick={reveal}>{t("Specs and good to know")} ↓</button>
+            <button type="button" onClick={reveal}>{t("Specs and good to know")} ↓</button>
           </p>
         </div>
         <Link to={`/products/${top.handle}`} className="fx-stage" tabIndex={-1} aria-hidden="true"><img src={img(frontImg(top), 900)} alt="" /></Link>

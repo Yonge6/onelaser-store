@@ -3598,3 +3598,14 @@ body:has(.ip-bar) .ai-nudge { bottom: 168px; }
 /* per-model front renders are cropped tight to the machine, so they need no enlarging (the series PNGs carry wide margins) */
 .ih-card:not(.fc) .ih-card-media img.front[src*="/front/"] { transform: scale(1.1); }
 .ih-card:not(.fc):hover .ih-card-media img.front[src*="/front/"] { transform: scale(1.15); }
+/* Finder result: the call to action under the buy buttons (book an expert call); the text links sit below it, muted */
+.fx-call-cta { margin-top: 10px; max-width: 440px; display: flex; align-items: center; gap: 12px; padding: 10px 14px 10px 10px; border-radius: 10px; background: var(--accent-soft); box-shadow: inset 0 0 0 1px rgba(56, 189, 248, 0.35); color: var(--title); transition: box-shadow .2s, background .2s; }
+.fx-call-cta:hover { box-shadow: inset 0 0 0 1.5px var(--accent); background: #dff2fd; }
+.fx-call-ico { flex: none; width: 36px; height: 36px; display: grid; place-items: center; border-radius: 8px; background: #fff; color: var(--accent-ink); }
+.fx-call-cta > span:nth-child(2) { flex: 1; min-width: 0; display: grid; gap: 1px; }
+.fx-call-cta b { font-size: 14px; line-height: 19px; font-weight: 600; }
+.fx-call-cta em { font-style: normal; font-size: 13px; line-height: 18px; color: var(--accent-ink); }
+.fx-call-cta > svg { flex: none; color: var(--accent-ink); transition: transform .2s; }
+.fx-call-cta:hover > svg { transform: translateX(3px); }
+.fx-done .fx-foot { margin-top: 12px; }
+@media (max-width: 860px) { .fx-call-cta { max-width: none; } }

@@ -890,4 +890,6 @@ export default {
   "Tumblers, cups, bottles and repeat drinkware jobs": "保温杯、杯子、水瓶和批量杯具订单",
   "Monthly payments for this machine": "这台机器的月供",
   "Contact support": "联系售后支持",
+  "Book a free 30-minute call with a laser expert": "预约 30 分钟免费激光专家通话",
+  "Want to talk it through first?": "想先聊聊再决定？",
 };

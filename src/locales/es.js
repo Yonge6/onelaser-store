@@ -731,4 +731,6 @@ export default {
   "Tumblers, cups, bottles and repeat drinkware jobs": "Vasos térmicos, tazas, botellas y pedidos repetidos de vajilla",
   "Monthly payments for this machine": "Cuotas mensuales de esta máquina",
   "Contact support": "Contactar con soporte",
+  "Book a free 30-minute call with a laser expert": "Reserva una llamada gratis de 30 minutos con un experto en láser",
+  "Want to talk it through first?": "¿Prefieres hablarlo antes?",
 };
