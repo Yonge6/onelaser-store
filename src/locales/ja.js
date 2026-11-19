@@ -579,4 +579,7 @@ export default {
   "2,000 DPI for photos and fine detail": "2,000 DPI で写真や細部も精細に",
   "Required": "必須",
   "Optional": "任意",
+  "Specs and good to know": "仕様と知っておきたいこと",
+  "{name} at a glance": "{name} の概要",
+  "See full specs and reviews": "仕様とレビューをすべて見る",
 };

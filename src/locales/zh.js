@@ -579,4 +579,7 @@ export default {
   "2,000 DPI for photos and fine detail": "2,000 DPI，适合照片与精细细节",
   "Required": "必答",
   "Optional": "选答",
+  "Specs and good to know": "参数与购买须知",
+  "{name} at a glance": "{name} 一览",
+  "See full specs and reviews": "查看完整参数与评价",
 };

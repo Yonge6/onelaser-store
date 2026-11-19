@@ -124,16 +124,19 @@ export default function FinderCard() {
           {reasons.length > 0 && <ul className="fx-why">{reasons.map((r) => <li key={r}><Icon name="check" size={14} />{t(r)}</li>)}</ul>}
           <p className="fx-price"><b>{money(top.price)}</b>{top.compareAt > top.price && <s>{money(top.compareAt)}</s>}<span>{t("or")} ${monthly(top)}{t("/mo for 24 months")}</span></p>
           <div className="fx-cta">
-            <button type="button" className="ih-btn dark" onClick={reveal}>{t("See why it fits")} ↓</button>
+            <AddButton product={top} className="ih-btn line" />
+            <Link to={`/products/${top.handle}`} className="ih-btn dark">{t("Buy now")}</Link>
             <button type="button" className="fx-quote" onClick={() => setLead("quote")}><Icon name="mail" size={16} />{t("Email me a written quote")}</button>
+            <a href={`tel:${contact.tel}`} className="fx-call"><Icon name="phone" size={16} />{t("Talk to a laser expert")}</a>
           </div>
           <p className="fx-foot">
             <button type="button" onClick={() => edit(STEPS.length - 1)}>← {t("Change answers")}</button>
             <button type="button" onClick={reset}>↺ {t("Start over")}</button>
+            <button type="button" className="fx-more" onClick={reveal}>{t("Specs and good to know")} ↓</button>
           </p>
         </div>
         <Link to={`/products/${top.handle}`} className="fx-stage" tabIndex={-1} aria-hidden="true"><img src={img(frontImg(top), 900)} alt="" /></Link>
-        {slot && createPortal(<FinderResult answers={answers} ranked={ranked} onEdit={edit} onReset={reset} />, slot)}
+        {slot && createPortal(<FinderResult answers={answers} ranked={ranked} onEdit={edit} />, slot)}
         {leadDialog}
       </article>
     );
@@ -192,7 +195,7 @@ export default function FinderCard() {
         ) : (
           <p className="fx-peek-note">{t("Your best match updates with every answer.")}</p>
         )}
-        <a href={`tel:${contact.tel}`} className="fx-expert"><Icon name="phone" size={14} />{t("Rather talk to an expert?")} {contact.phone}</a>
+        <a href={`tel:${contact.tel}`} className="fx-expert"><Icon name="phone" size={14} />{t("Rather talk to an expert?")}</a>
       </aside>
       {leadDialog}
     </article>
@@ -326,17 +329,16 @@ export function LeadDialog({ mode = "quote", product, lines = [], onClose }) {
 
 /** Full-width result under the product grid, after the result panel of the thunderlaserusa.com finder:
     our pick with why it fits, key specs, good-to-know notes, warranty, then buy and lead buttons. */
-function FinderResult({ answers, ranked, onEdit, onReset }) {
-  const [lead, setLead] = useState(null);
+function FinderResult({ answers, ranked, onEdit }) {
+  // Details under the result card: the pick itself (photo, price, buttons) is shown once, in the card above.
   const key = ranked[0].key;
   const top = byHandle[M[key].handle];
   const alt = ranked[1] && byHandle[M[ranked[1].key].handle];
   const lines = summary(answers);
   const notes = notesFor(answers, key, top);
-  const reasons = lines.length ? ranked[0].reasons : [];
   const specs = ["Laser source", "Work area", "Max engraving speed", "Acceleration"].filter((k) => top.specs?.[k]);
   return (
-    <section className="fr" aria-labelledby="fr-title">
+    <section className="fr" aria-label={t("Specs and good to know")}>
       <ol className="fr-steps">
         {STEPS.map((s, n) => {
           const l = lines.find((x) => x.n === n);
@@ -349,55 +351,33 @@ function FinderResult({ answers, ranked, onEdit, onReset }) {
             </li>
           );
         })}
-        <li className="pick"><span><i>★</i><span><b>{t("Your machine")}</b><em>{top.name}</em></span></span></li>
       </ol>
       <div className="fr-card">
-        <div className="fr-stage">
-          <Link to={`/products/${top.handle}`} tabIndex={-1} aria-hidden="true"><img src={img(frontImg(top), 1000)} alt="" /></Link>
-          <p className="fr-price">
-            <b>{money(top.price)}</b>
-            {top.compareAt > top.price && <s>{money(top.compareAt)}</s>}
-            {top.compareAt > top.price && <em>{t("Save")} {money(top.compareAt - top.price)}</em>}
-          </p>
-          <p className="fr-monthly">{t("or")} <b>${monthly(top)}</b>{t("/mo for 24 months")}</p>
-          <div className="fr-buy">
-            <AddButton product={top} className="ih-btn line" />
-            <Link to={`/products/${top.handle}`} className="ih-btn dark">{t("Buy now")}</Link>
-          </div>
-        </div>
-        <div className="fr-copy">
-          <p className="fr-kicker">{t("Our pick for you")}</p>
-          <h2 id="fr-title"><Link to={`/products/${top.handle}`}>{top.name}</Link></h2>
-          <p className="fr-lede">{top.tagline}{top.bestFor && <> {t("Best for")}: {top.bestFor}.</>}</p>
-          {reasons.length > 0 && (
-            <>
-              <h3>{t("Why it fits your answers")}</h3>
-              <ul className="fr-why">{reasons.map((r) => <li key={r}><Icon name="check" size={16} />{t(r)}</li>)}</ul>
-            </>
-          )}
+        <div className="fr-col">
+          <h3>{fill(t("{name} at a glance"), { name: top.name })}</h3>
           <dl className="fr-specs">{specs.map((k) => <div key={k}><dt>{t(k)}</dt><dd>{top.specs[k]}</dd></div>)}</dl>
-          {notes.length > 0 && (
-            <div className="fr-notes">
-              <h3>{t("Good to know")}</h3>
-              <ul>{notes.map((n) => <li key={n}>{n}</li>)}</ul>
-            </div>
-          )}
           <p className="fr-warranty">
             <Icon name="shield" size={16} />
             {RF_WARRANTY.includes(key) ? t("3-2-1 warranty: 3-year mechanical, 2-year electrical and 1-year optics.") : t("Covered by the official OneLaser warranty policy.")} {t("U.S.-based support from laser engineers.")}
           </p>
-          <div className="fr-lead">
-            <button type="button" className="fr-btn red" onClick={() => setLead("quote")}><Icon name="mail" size={18} />{t("Email me a written quote")}</button>
-            <a href={`tel:${contact.tel}`} className="fr-btn ghost"><Icon name="phone" size={18} />{t("Talk to a laser expert")} · {contact.phone}</a>
-          </div>
-          <p className="fr-foot">
-            <button type="button" onClick={() => onEdit(STEPS.length - 1)}>← {t("Change answers")}</button>
-            <button type="button" onClick={onReset}>↺ {t("Start over")}</button>
-            {alt && <Link to={`/products/${alt.handle}`}>{t("Also worth a look")}: {alt.name} · {money(alt.price)} ›</Link>}
-          </p>
+          <Link to={`/products/${top.handle}`} className="fr-link">{t("See full specs and reviews")} ›</Link>
+        </div>
+        <div className="fr-col">
+          {notes.length > 0 && (
+            <>
+              <h3>{t("Good to know")}</h3>
+              <ul className="fr-notes">{notes.map((n) => <li key={n}>{n}</li>)}</ul>
+            </>
+          )}
+          {alt && (
+            <Link to={`/products/${alt.handle}`} className="fr-alt">
+              <img src={img(frontImg(alt), 300)} alt="" loading="lazy" />
+              <span><em>{t("Also worth a look")}</em><b>{alt.name}</b><i>{money(alt.price)}</i></span>
+              <Icon name="chevron" size={16} />
+            </Link>
+          )}
         </div>
       </div>
-      {lead && <LeadDialog mode={lead} product={top} lines={lines} onClose={() => setLead(null)} />}
     </section>
   );
 }

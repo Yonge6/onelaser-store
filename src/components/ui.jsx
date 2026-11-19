@@ -196,6 +196,7 @@ export function AddButton({ product, className = "", drop = "up", iconSize = 16 
             <button key={v.id} type="button" role="option" aria-selected="false" disabled={!v.available} onClick={() => put(v)}>
               <span>{v.title || product.name}</span>
               <em>{v.available ? <>{usd(v.price).replace(".00", "")}{v.compareAt > v.price && <s>{usd(v.compareAt).replace(".00", "")}</s>}</> : t("Sold out")}</em>
+              {v.available && <i aria-hidden="true"><Icon name="cart" size={15} /></i>}
             </button>
           ))}
         </span>
