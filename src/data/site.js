@@ -33,7 +33,7 @@ export const collections = {
 const SITE = "https://www.1laser.com";
 export const nav = [
   {
-    label: "Laser Machines", to: "/collections/machines",
+    label: "Machines", to: "/collections/machines",
     // Series cards as in the new 1laser.com theme preview (render, name, one-line description, starting price) plus a "More" column.
     // Added here: each card lists its models as direct links, and "Help me choose" opens the machine finder on the home page.
     // crop = where the machine sits inside its product photo: [left, top, right, bottom] as fractions, then the photo's width ÷ height.
