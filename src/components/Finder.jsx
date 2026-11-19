@@ -81,7 +81,19 @@ export default function FinderCard() {
   const top = ranked[0] && byHandle[M[ranked[0].key].handle];
   const has = (s) => (s.multi ? (answers[s.id] || []).length > 0 : !!answers[s.id]);
   const reveal = () => setTimeout(() => document.getElementById("fc-result")?.scrollIntoView({ behavior: "smooth", block: "start" }), 80);
-  const finish = () => { setStep(STEPS.length); reveal(); };
+  /* After "See my match", park the whole result card just under the sticky header and tabs, so the buy buttons and the
+     expert-call CTA are in view; the details below are one tap away ("Specs and good to know"). */
+  const showCard = () => setTimeout(() => {
+    const card = document.querySelector(".fx");
+    if (!card) return;
+    const bar = document.querySelector(".ih-sticky");
+    const under = bar ? parseFloat(getComputedStyle(bar).top) + bar.offsetHeight : 80;
+    const top = card.getBoundingClientRect().top + window.scrollY - under - 16; // card top just under the tabs
+    const cta = card.querySelector(".fx-call-cta");
+    const low = cta ? cta.getBoundingClientRect().bottom + window.scrollY - window.innerHeight + 16 : top; // CTA bottom on screen
+    window.scrollTo({ top: Math.max(0, Math.max(top, low)), behavior: "smooth" }); // phones: the card is taller than the screen, the CTA wins
+  }, 80);
+  const finish = () => { setStep(STEPS.length); showCard(); };
   const pick = (id) => {
     if (cur.multi) {
       const set = answers[cur.id] || [];
@@ -137,7 +149,13 @@ export default function FinderCard() {
             <button type="button" onClick={reveal}>{t("Specs and good to know")} ↓</button>
           </p>
         </div>
-        <Link to={`/products/${top.handle}`} className="fx-stage" tabIndex={-1} aria-hidden="true"><img src={img(frontImg(top), 900)} alt="" /></Link>
+        {/* the reveal: the picked machine rises onto the stage, a laser line sweeps it once and a few sparks burst out */}
+        <Link to={`/products/${top.handle}`} className="fx-stage" tabIndex={-1} aria-hidden="true" key={top.handle}>
+          <span className="fx-pick-chip"><Icon name="sparkle" size={14} />{t("Picked for you")}</span>
+          <span className="fx-burst">{Array.from({ length: 12 }, (_, i) => <i key={i} style={{ "--a": `${i * 30 + (i % 2) * 12}deg`, "--r": `${150 + (i % 3) * 45}px`, "--d": `${0.55 + (i % 4) * 0.06}s` }} />)}</span>
+          <span className="fx-scan" />
+          <img src={img(frontImg(top), 900)} alt="" />
+        </Link>
         {slot && createPortal(<FinderResult answers={answers} ranked={ranked} />, slot)}
         {leadDialog}
       </article>

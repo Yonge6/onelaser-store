@@ -892,4 +892,13 @@ export default {
   "Contact support": "联系售后支持",
   "Book a free 30-minute call with a laser expert": "预约 30 分钟免费激光专家通话",
   "Want to talk it through first?": "想先聊聊再决定？",
+  "Desktop Studio": "桌面工作室",
+  "Value Line": "高性价比",
+  "Industrial Performance": "工业级性能",
+  "Last Units": "最后库存",
+  "XRF and VertiGo · all-in-one 38W RF for a home studio or first business": "XRF 和 VertiGo · 一体式 38W RF，适合家庭工作室或刚起步的生意",
+  "Cobra Series · 90–130W glass CO₂ cutting power at an entry price": "Cobra 系列 · 90–130W 玻璃 CO₂ 切割力，入门价格",
+  "Hydra Gen2 · RF and hybrid dual-laser systems for daily production": "Hydra Gen2 · RF 与混合双激光系统，适合日常量产",
+  "Previous generation · proven machines, very limited inventory": "上一代 · 久经验证的机型，库存非常有限",
+  "Picked for you": "为你挑选",
 };

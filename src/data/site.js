@@ -180,11 +180,14 @@ export const addOns = {
 
 /* ---------- Home, Insta360-style (2026-11-17) ---------- */
 // Tabs of the product block. Each tab shows up to six cards; "all" is the View all link.
+/* Home product tabs: machines grouped by what the buyer needs (desktop → value → industrial → clearance), not by series name;
+   the series name stays in each tab's note line. */
 export const homeTabs = [
   { label: "Most Popular", all: "/collections/machines", picks: ["onelaser-xrf-desktop-laser-machine", "hydra-9-gen-2-70w-rf-co2-dual-laser-machine", "cobra-10-100w-co2-laser-engraver-cutter", "vertigo-vertical-laser-engraver", "hydra-7-gen-2-70w-rf-co2-dual-laser-machine", "cobra-8-90w-co2-laser-engraver-cutter"] },
-  { label: "Desktop Lasers", all: "/collections/machines", picks: ["onelaser-xrf-desktop-laser-machine", "vertigo-vertical-laser-engraver"] },
-  { label: "Cobra Series", all: "/collections/cobra-series", picks: ["cobra-8-90w-co2-laser-engraver-cutter", "cobra-10-100w-co2-laser-engraver-cutter", "cobra-14-130w-co2-laser-engraver-cutter"] },
-  { label: "Hydra Gen2", all: "/collections/hydra-gen2", picks: ["hydra-7-gen-2-70w-rf-co2-dual-laser-machine", "hydra-9-gen-2-70w-rf-co2-dual-laser-machine", "hydra-13-gen-2-70w-rf-co2-dual-laser-machine", "hydra-16-gen-2-70w-rf-co2-dual-laser-machine"] },
+  { label: "Desktop Studio", note: "XRF and VertiGo · all-in-one 38W RF for a home studio or first business", all: "/collections/machines", picks: ["onelaser-xrf-desktop-laser-machine", "vertigo-vertical-laser-engraver"] },
+  { label: "Value Line", note: "Cobra Series · 90–130W glass CO₂ cutting power at an entry price", all: "/collections/cobra-series", picks: ["cobra-8-90w-co2-laser-engraver-cutter", "cobra-10-100w-co2-laser-engraver-cutter", "cobra-14-130w-co2-laser-engraver-cutter"] },
+  { label: "Industrial Performance", note: "Hydra Gen2 · RF and hybrid dual-laser systems for daily production", all: "/collections/hydra-gen2", picks: ["hydra-7-gen-2-70w-rf-co2-dual-laser-machine", "hydra-9-gen-2-70w-rf-co2-dual-laser-machine", "hydra-13-gen-2-70w-rf-co2-dual-laser-machine", "hydra-16-gen-2-70w-rf-co2-dual-laser-machine"] },
+  { label: "Last Units", note: "Previous generation · proven machines, very limited inventory", all: "/collections/previous-generation", picks: ["onelaser-xt-desktop-laser-machine", "onelaser-hydra-9-laser-engraving-machine", "onelaser-hydra-16-cabinet-dual-laser-system-with150w-glass-tube-and-38w-rf-metal-tube"] },
   { label: "Materials", all: "/collections/materials", collection: "materials" },
   { label: "Rotary Attachments", all: "/collections/rotary", collection: "rotary" },
   { label: "Fume Extractors", all: "/collections/fume", collection: "fume" },

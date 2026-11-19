@@ -177,6 +177,7 @@ function ProductBlock() {
         </div>
       </div>
       <div className="ih-wrap">
+        {tab.note && <p className="ih-tab-note" key={`n${ti}`}>{t(tab.note)} · {t("from")} <b>{money(Math.min(...list.map((p) => p.price)))}</b></p>}
         <div className="ih-grid" key={ti}>
           <div className="ih-row">
             {list.slice(0, machines ? 4 : 6).map((p) => (
