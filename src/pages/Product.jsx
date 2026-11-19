@@ -105,6 +105,7 @@ export default function Product({ handle }) {
   };
   const isMachine = product.kind === "machine";
   const many = product.variants.length > 6;
+  const models = isMachine && product.series !== "legacy" ? machines.filter((m) => m.series === product.series).sort((x, y) => x.price - y.price) : [];
   const compare = isMachine ? compareSet(product) : [];
   const questions = [...story.qa, ...faq];
   const specGroups = story.specs || (product.specs ? [{ group: "Key specifications", rows: [["Best for", product.bestFor], ...Object.entries(product.specs)] }] : null);
@@ -159,6 +160,19 @@ export default function Product({ handle }) {
             <div><Icon name="check" size={20} /><ul>{bullets.slice(0, 4).map((b) => <li key={b}>{b}</li>)}{product.fit && <li>{t("Fits:")} {product.fit}</li>}</ul></div>
             <div><Icon name="card" size={20} /><ul><li>{t("Financing available at checkout")} — <a href="https://www.1laser.com/pages/financing" target="_blank" rel="noreferrer">{t("learn more")}</a></li></ul></div>
           </div>
+
+          {models.length > 1 && (
+            <>
+              <div className="ip-label"><span>{t("Model")}</span></div>
+              <div className="ip-models" role="radiogroup" aria-label={t("Model")}>
+                {models.map((m) => (
+                  <Link key={m.handle} to={`/products/${m.handle}`} role="radio" aria-checked={m.handle === product.handle} className={m.handle === product.handle ? "on" : ""}>
+                    <b>{m.name.replace(/™/g, "")}</b><span>{usd(m.price)}</span>
+                  </Link>
+                ))}
+              </div>
+            </>
+          )}
 
           <div className="ip-label"><span>{t("Select option")}</span>{isMachine && <Link to="/compare">{t("Compare machines")}</Link>}</div>
           {many ? (

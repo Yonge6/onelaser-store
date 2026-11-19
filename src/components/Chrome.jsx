@@ -117,9 +117,6 @@ export function Header({ path }) {
                           <em>{t(g.desc)}</em>
                           <strong>{t("From")} {usd(from)}</strong>
                         </Go>
-                        {list.length > 1 && (
-                          <p className="mega-models"><span>{t("Models")}</span>{list.map((p) => <Link key={p.handle} to={`/products/${p.handle}`} title={p.name}>{(p.name.match(/\d+/) || [p.name])[0]}</Link>)}</p>
-                        )}
                       </article>
                     );
                   })}
@@ -186,7 +183,6 @@ export function Header({ path }) {
                               <span className="mnav-text"><b>{t(g.title)}</b><em>{t(g.desc)}</em></span>
                               <strong>{t("From")} {usd(Math.min(...list.map((p) => p.price))).replace(".00", "")}</strong>
                             </Go>
-                            {list.length > 1 && <p className="mega-models"><span>{t("Models")}</span>{list.map((p) => <Link key={p.handle} to={`/products/${p.handle}`} title={p.name}>{(p.name.match(/\d+/) || [p.name])[0]}</Link>)}</p>}
                           </article>
                         );
                       })}

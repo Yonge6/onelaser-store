@@ -508,4 +508,5 @@ export default {
   "Email": "邮箱",
   "Design draft — sign-up is not connected yet. Nothing was sent.": "设计稿：订阅功能尚未接入，未发送任何信息。",
   "By submitting, you agree to receive follow-ups from the OneLaser team (human or AI) by email, phone, or text regarding your inquiry.": "提交即表示您同意 OneLaser 团队（人工或 AI）通过邮件、电话或短信就您的咨询与您联系。",
+  "Model": "型号",
 };

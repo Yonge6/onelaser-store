@@ -508,4 +508,5 @@ export default {
   "Email": "E-mail",
   "Design draft — sign-up is not connected yet. Nothing was sent.": "Maquette : l'inscription n'est pas encore connectée. Rien n'a été envoyé.",
   "By submitting, you agree to receive follow-ups from the OneLaser team (human or AI) by email, phone, or text regarding your inquiry.": "En envoyant, vous acceptez d'être recontacté par l'équipe OneLaser (humain ou IA) par e-mail, téléphone ou SMS au sujet de votre demande.",
+  "Model": "Modèle",
 };
