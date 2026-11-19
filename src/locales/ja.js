@@ -568,4 +568,5 @@ export default {
   "Size": "サイズ",
   "Volume": "生産量",
   "Venting": "排気",
+  "Your match appears here": "ここにおすすめが表示されます",
 };

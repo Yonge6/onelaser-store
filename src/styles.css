@@ -2462,3 +2462,28 @@ ul { list-style: none; }
   .fx-peek-card b { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
   .fx-expert { flex-basis: 100%; height: 40px; margin-top: 8px; font-size: 13px; }
 }
+
+/* Finder preview, idle: dark blueprint panel with morphing machine outlines */
+.fx-peek:not(.live) { background: radial-gradient(120% 90% at 50% 35%, #12233a 0%, #0b1220 60%, #070b14 100%); border-left-color: #0b1220; }
+.fx-peek:not(.live) .fx-peek-label { color: #7dd3fc; }
+.fx-peek:not(.live) .fx-peek-note { color: rgba(226, 232, 240, 0.72); }
+.fx-peek:not(.live) .fx-expert { background: rgba(255, 255, 255, 0.06); color: #fff; box-shadow: inset 0 0 0 1px rgba(125, 211, 252, 0.35); }
+.fx-peek:not(.live) .fx-expert:hover { background: rgba(255, 255, 255, 0.12); box-shadow: inset 0 0 0 1px #7dd3fc; }
+.fx-morph { margin-top: 6px; display: grid; justify-items: center; }
+.fx-morph svg { width: 100%; height: auto; overflow: visible; }
+.fx-m-glow { opacity: .55; }
+.fx-m-win { animation: fx-dash 1.6s linear infinite; }
+@keyframes fx-dash { to { stroke-dashoffset: -12; } }
+.fx-morph-names { position: relative; height: 26px; width: 100%; margin-top: 2px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 15px; line-height: 26px; font-weight: 600; letter-spacing: .08em; color: #e0f2fe; text-align: center; }
+.fx-morph-names span { position: absolute; inset: 0; opacity: 0; animation-name: fx-name; animation-timing-function: ease; animation-iteration-count: infinite; }
+.fx-morph-names span::before { content: "> "; color: #38bdf8; }
+.fx-morph-names span::after { content: "_"; color: #38bdf8; animation: fx-caret 1s steps(1) infinite; }
+.fx-morph-names span.off { display: none; }
+@keyframes fx-name { 0% { opacity: 0; transform: translateY(4px); } 3%, 19% { opacity: 1; transform: none; } 24%, 100% { opacity: 0; transform: translateY(-4px); } }
+@keyframes fx-caret { 50% { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .fx-morph-names span:first-child { opacity: 1; animation: none; } .fx-m-win { animation: none; } }
+@media (max-width: 860px) {
+  .fx-peek:not(.live) { background: #f6f7fa; }
+  .fx-peek:not(.live) .fx-morph { display: none; }
+  .fx-peek:not(.live) .fx-expert { background: #fff; color: #262629; box-shadow: inset 0 0 0 1px #d6d9df; }
+}

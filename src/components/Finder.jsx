@@ -119,6 +119,69 @@ function addOnsFor(a, key) {
 const FINANCE_MONTHS = 24; // same illustration as 1laser.com's "24-month payment": price ÷ 24
 const monthly = (p) => (p.price / FINANCE_MONTHS).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
+/* Idle state of the finder preview: line drawings of the four machine families morph into one another
+   (desktop XRF → Cobra cabinet → Hydra with its tower → vertical VertiGo) while a laser head scans across.
+   Every outline uses the same path commands, so SVG <animate> can morph between them in every browser. */
+const SHAPES = [
+  { name: "XRF", panel: [168, 88, 138], body: [[28, 138], [28, 96], [140, 88], [140, 88], [212, 88], [212, 138]], win: [42, 98, 132, 116], stripe: [28, 212, 124], legs: [40, 200, 138, 142] },
+  { name: "Cobra", panel: [150, 58, 128], body: [[22, 128], [22, 62], [150, 62], [150, 58], [218, 58], [218, 128]], win: [34, 72, 140, 100], stripe: [22, 218, 110], legs: [34, 206, 128, 148] },
+  { name: "Hydra", panel: [158, 64, 132], body: [[26, 132], [26, 64], [158, 64], [158, 44], [214, 44], [214, 132]], win: [38, 74, 148, 102], stripe: [26, 214, 114], legs: [38, 202, 132, 146] },
+  { name: "VertiGo", panel: [148, 36, 140], body: [[78, 140], [78, 36], [130, 36], [130, 36], [162, 36], [162, 140]], win: [90, 50, 140, 104], stripe: [78, 162, 118], legs: [88, 152, 140, 144] },
+];
+const loop = (list) => [...list, list[0]].join(";");
+const bodyD = (b) => `M${b.map((p) => p.join(" ")).join(" L")} Z`;
+const winD = ([x1, y1, x2, y2]) => `M${x1} ${y1} L${x2} ${y1} L${x2} ${y2} L${x1} ${y2} Z`;
+const stripeD = ([x1, x2, y]) => `M${x1} ${y} L${x2} ${y}`;
+const panelD = ([x, y1, y2]) => `M${x} ${y1} L${x} ${y2}`;
+const legsD = ([a, b, y1, y2]) => `M${a} ${y1} L${a} ${y2} M${b} ${y1} L${b} ${y2}`;
+const DUR = 12; // seconds for the whole cycle: hold, morph, hold, morph…
+const KEY_TIMES = "0;0.2;0.25;0.45;0.5;0.7;0.75;0.95;1";
+
+function MachineMorph() {
+  const still = typeof window !== "undefined" && window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+  const morph = (fn) => {
+    const v = SHAPES.map((x) => fn(x));
+    // value pairs: hold each shape for 20% of the cycle, then morph for 5%
+    const values = [v[0], v[0], v[1], v[1], v[2], v[2], v[3], v[3], v[0]].join(";");
+    return still ? null : <animate attributeName="d" dur={`${DUR}s`} repeatCount="indefinite" values={values} keyTimes={KEY_TIMES} calcMode="spline" keySplines={Array(8).fill(".6 0 .2 1").join(";")} />;
+  };
+  const first = SHAPES[0];
+  return (
+    <div className="fx-morph" aria-hidden="true">
+      <svg viewBox="0 0 240 180" role="presentation">
+        <defs>
+          <pattern id="fx-grid" width="12" height="12" patternUnits="userSpaceOnUse"><path d="M12 0H0V12" fill="none" stroke="rgba(56,189,248,.09)" strokeWidth=".6" /></pattern>
+          <radialGradient id="fx-glow"><stop offset="0" stopColor="#ff5a36" stopOpacity=".9" /><stop offset="1" stopColor="#ff5a36" stopOpacity="0" /></radialGradient>
+          <filter id="fx-blur"><feGaussianBlur stdDeviation="1.6" /></filter>
+        </defs>
+        <rect width="240" height="180" fill="url(#fx-grid)" />
+        <ellipse cx="120" cy="156" rx="92" ry="6" fill="rgba(56,189,248,.08)" />
+        <g fill="none" strokeLinejoin="round" strokeLinecap="round">
+          <path className="fx-m-glow" d={bodyD(first.body)} stroke="#38bdf8" strokeWidth="4" filter="url(#fx-blur)">{morph((x) => bodyD(x.body))}</path>
+          <path className="fx-m-body" d={bodyD(first.body)} stroke="#7dd3fc" strokeWidth="1.4">{morph((x) => bodyD(x.body))}</path>
+          <path className="fx-m-win" d={winD(first.win)} stroke="#38bdf8" strokeWidth="1" strokeDasharray="3 3">{morph((x) => winD(x.win))}</path>
+          <path d={stripeD(first.stripe)} stroke="#e7310e" strokeWidth="2">{morph((x) => stripeD(x.stripe))}</path>
+          <path d={panelD(first.panel)} stroke="#7dd3fc" strokeWidth="1" strokeOpacity=".7">{morph((x) => panelD(x.panel))}</path>
+          <path d={legsD(first.legs)} stroke="#7dd3fc" strokeWidth="1.4">{morph((x) => legsD(x.legs))}</path>
+        </g>
+        {!still && (
+          <g className="fx-laser">
+            <line x1="0" y1="14" x2="0" y2="150" stroke="#ff5a36" strokeWidth=".8" strokeOpacity=".55" />
+            <rect x="-5" y="8" width="10" height="6" rx="1.5" fill="#e7310e" />
+            <circle cx="0" cy="150" r="7" fill="url(#fx-glow)" />
+            <animateTransform attributeName="transform" type="translate" values="40 0;200 0;40 0" dur="3.2s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines=".45 0 .55 1;.45 0 .55 1" />
+          </g>
+        )}
+      </svg>
+      <p className="fx-morph-names">
+        {SHAPES.map((x, n) => (
+          <span key={x.name} style={{ animationDelay: `${(n * DUR) / 4}s`, animationDuration: `${DUR}s` }} className={still && n ? "off" : ""}>{x.name}</span>
+        ))}
+      </p>
+    </div>
+  );
+}
+
 /** Machine finder: spans two cells of the home product grid (one row below on phones).
     Left: one question at a time with a labelled stepper. Right: the best match so far, which updates with every answer,
     so the visitor sees where the answers lead before the end. When done, the card shows the pick and the full
@@ -233,8 +296,9 @@ export default function FinderCard() {
         </div>
       </div>
       <aside className={`fx-peek${answered ? " live" : ""}`} aria-live="polite">
-        <p className="fx-peek-label">{answered ? t("Best match so far") : t("Most popular start")}</p>
-        {top && (
+        <p className="fx-peek-label">{answered ? t("Best match so far") : t("Your match appears here")}</p>
+        {!answered && <MachineMorph />}
+        {answered && top && (
           <Link to={`/products/${top.handle}`} className="fx-peek-card" key={top.handle}>
             <span className="fx-peek-img"><img src={img(top.images[0], 600)} alt="" /></span>
             <b>{top.name}</b>

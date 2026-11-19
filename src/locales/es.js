@@ -568,4 +568,5 @@ export default {
   "Size": "Tamaño",
   "Volume": "Volumen",
   "Venting": "Ventilación",
+  "Your match appears here": "Aquí aparecerá tu máquina",
 };
