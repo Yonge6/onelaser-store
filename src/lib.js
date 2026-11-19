@@ -10,6 +10,16 @@ export const materials = products.filter((p) => p.kind === "material");
 export const asset = (name) => `${import.meta.env.BASE_URL}assets/${name}`;
 /** Shopify CDN image at a given width. */
 export const img = (src, width = 800) => (src ? `${src}${src.includes("?") ? "&" : "?"}width=${width}` : "");
+/* Straight front views of each series, from the 1laser.com home page product row (transparent PNGs).
+   One photo per series: the Cobra shot shows a Cobra 8, the Hydra shot a Hydra 7 Gen2. */
+const FRONT = {
+  xrf: "https://www.1laser.com/cdn/shop/files/home-product-xrf.png",
+  cobra: "https://www.1laser.com/cdn/shop/files/home-product-cobra.png",
+  hydra: "https://www.1laser.com/cdn/shop/files/home-product-hydra-gen2_d4d95d1f-482d-48b9-bbe2-82d96bd9ac39.png",
+  vertigo: "https://www.1laser.com/cdn/shop/files/home-product-vertigo.png",
+};
+/** Front view for a current machine, otherwise its first product photo. */
+export const frontImg = (p) => (p?.kind === "machine" && FRONT[p.series]) || p?.images?.[0];
 export const money = (n) =>
   `$${Number(n).toLocaleString("en-US", { minimumFractionDigits: n % 1 ? 2 : 0, maximumFractionDigits: 2 })}`;
 export const saving = (p) => (p.compareAt ? p.compareAt - p.price : 0);

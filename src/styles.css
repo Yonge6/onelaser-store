@@ -2535,3 +2535,8 @@ ul { list-style: none; }
 }
 .fx-count .req { color: var(--brand); }
 .fx-nav .ih-btn.sm:disabled { opacity: .35; cursor: not-allowed; }
+/* front-view machine photos carry wide transparent margins: show them larger */
+.ih-card:not(.fc) .ih-card-media img.front { transform: scale(1.3); }
+.ih-card:not(.fc):hover .ih-card-media img.front { transform: scale(1.36); }
+.fx-art img.fv { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; opacity: 0; clip-path: inset(0 100% 0 0); animation: fx-engrave var(--dur) linear infinite; }
+@media (prefers-reduced-motion: reduce) { .fx-art img.fv { animation: none; } .fx-art img.fv:first-child { opacity: 1; clip-path: none; } }

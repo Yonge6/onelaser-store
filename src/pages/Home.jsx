@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { t } from "../i18n.js";
-import { asset, byHandle, img, money, products } from "../lib.js";
+import { asset, byHandle, img, money, products, frontImg } from "../lib.js";
 import { heroSlides, homeAmbition, homeFaq, homeProof, homeReviews, homeStandard, homeTabs, homeVideos, trustpilot, newHandles, promo, shortSlogans } from "../data/site.js";
 import { AddButton, Countdown, Icon, Link, useDragScroll } from "../components/ui.jsx";
 import FinderCard, { FinderHelp } from "../components/Finder.jsx";
@@ -137,7 +137,7 @@ function HomeCard({ p }) {
         <h3><Link to={`/products/${p.handle}`}>{p.name}</Link></h3>
         <p>{t(shortSlogans[p.handle] || p.tagline)}</p>
       </div>
-      <Link to={`/products/${p.handle}`} className="ih-card-media" tabIndex={-1} aria-hidden="true"><img src={img(p.images[0], 700)} alt="" loading="lazy" /></Link>
+      <Link to={`/products/${p.handle}`} className="ih-card-media" tabIndex={-1} aria-hidden="true"><img src={img(frontImg(p), 700)} alt="" loading="lazy" className={p.kind === "machine" ? "front" : undefined} /></Link>
       <p className="ih-card-price">
         {p.priceVaries && <span>{t("From")}</span>}
         <b>{money(p.price)}</b>

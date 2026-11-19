@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { t } from "../i18n.js";
-import { asset, byHandle, img, money } from "../lib.js";
+import { asset, byHandle, frontImg, img, money } from "../lib.js";
 import { AddButton, Icon, Link } from "./ui.jsx";
 import { contact } from "../data/site.js";
 import { M, STEPS, rank as rankAll, roundFocus, hasRound, ready } from "./finderRules.js";
@@ -26,86 +26,10 @@ function addOnsFor(a, key) {
 const FINANCE_MONTHS = 24; // same illustration as 1laser.com's "24-month payment": price ÷ 24
 const monthly = (p) => (p.price / FINANCE_MONTHS).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
-/* Idle state of the finder preview: line drawings traced from the four official product photos
-   (public/assets/finder-line-*.png). Every 3 s a laser head sweeps across and engraves the next machine in,
-   with its name and three key specs from the catalog. Pure CSS, so outline, laser and label share one clock. */
-/* Front views drawn in code (viewBox 240 × 160, ground at y 150). Proportions follow the product photos;
-   VertiGo uses its published 630 × 710 mm front. Red = the brand trim where it sits on each machine. */
-/** The official logo file (2350 × 301), placed at width w. anchor: start | middle | end, y = baseline-ish bottom. */
-const Logo = ({ x, y, w = 50, anchor = "start" }) => {
-  const h = (w * 301) / 2350;
-  const left = anchor === "middle" ? x - w / 2 : anchor === "end" ? x - w : x;
-  return <image href={asset("onelaser-logo-transparent.svg")} x={left} y={y - h} width={w} height={h} className="fv-logo" />;
-};
-const Feet = ({ xs, y, h = 6 }) => xs.map((x) => <path key={x} d={`M${x - 3} ${y} h6 v${h - 2} h2 v2 h-10 v-2 h2 z`} />);
-const Casters = ({ xs, y }) => xs.map((x) => <g key={x}><path d={`M${x} ${y} v3`} /><circle cx={x} cy={y + 7} r="4" /></g>);
-
-const FRONT = {
-  xrf: (
-    <>
-      <rect x="20" y="90" width="200" height="56" rx="3" />
-      <rect x="20" y="86" width="200" height="9" rx="2" className="fv-glass" />
-      <path d="M24 116 H150 L162 142 H24 Z" className="fv-dark" />
-      <rect x="20" y="111" width="146" height="3" className="fv-trim" />
-      <Logo x={30} y={131} w={52} />
-      <rect x="176" y="101" width="26" height="9" rx="2" />
-      <path d="M184 122 h18 M184 126 h18 M184 130 h18" className="fv-thin" />
-      <circle cx="216" cy="118" r="3" className="fv-trim" />
-      <Feet xs={[32, 208]} y={146} h={4} />
-    </>
-  ),
-  cobra: (
-    <>
-      <rect x="25" y="30" width="190" height="110" rx="3" />
-      <rect x="25" y="26" width="190" height="8" rx="2" className="fv-glass" />
-      <rect x="43" y="30" width="3" height="110" className="fv-trim" />
-      <text x="36" y="132" fontSize="9" fontWeight="800" transform="rotate(-90 36 132)" className="fv-label">COBRA <tspan className="fv-red">10</tspan></text>
-      <rect x="46" y="34" width="116" height="106" className="fv-dark" />
-      <path d="M58 40 H150 L146 56 H62 Z" className="fv-glass" />
-      <rect x="46" y="68" width="116" height="3.5" className="fv-trim" />
-      <Logo x={152} y={130} w={50} anchor="end" />
-      <path d="M162 30 V140" />
-      <circle cx="174" cy="44" r="3.2" className="fv-trim" />
-      <path d="M172 58 h34 M172 62 h34 M172 66 h34" className="fv-thin" />
-      <circle cx="176" cy="84" r="1.3" /><circle cx="176" cy="90" r="1.3" /><circle cx="176" cy="96" r="1.3" />
-      <Feet xs={[36, 94, 150, 204]} y={140} h={10} />
-    </>
-  ),
-  hydra: (
-    <>
-      <rect x="22" y="28" width="196" height="104" rx="3" />
-      <rect x="22" y="28" width="110" height="16" className="fv-glass" />
-      <path d="M22 44 H132 V112 H90 L80 104 H22 Z" className="fv-dark" />
-      <rect x="22" y="68" width="110" height="3.5" className="fv-trim" />
-      <Logo x={32} y={88} w={50} />
-      <text x="126" y="108" fontSize="6.5" fontWeight="800" fontStyle="italic" textAnchor="end" className="fv-label">Gen<tspan className="fv-red">2</tspan></text>
-      <path d="M132 28 V132" />
-      <path d="M150 52 h50 M150 56 h50 M150 60 h50" className="fv-thin" />
-      <circle cx="160" cy="84" r="1.3" /><circle cx="160" cy="90" r="1.3" /><circle cx="160" cy="96" r="1.3" />
-      <rect x="140" y="38" width="10" height="6" rx="1" />
-      <path d="M22 112 H218" />
-      <rect x="30" y="118" width="92" height="9" rx="1.5" className="fv-thin" />
-      <path d="M190 124 h18 M194 127 h14" className="fv-trim-line" />
-      <Casters xs={[36, 82, 158, 204]} y={132} />
-    </>
-  ),
-  vertigo: (
-    <>
-      <rect x="68" y="24" width="104" height="118" rx="3" />
-      <Logo x={113} y={41} w={56} anchor="middle" />
-      <rect x="78" y="48" width="70" height="80" rx="2" className="fv-dark" />
-      <rect x="84" y="56" width="58" height="64" className="fv-glass" />
-      <rect x="78" y="48" width="70" height="5" className="fv-trim" />
-      <rect x="78" y="123" width="70" height="5" className="fv-trim" />
-      <rect x="150" y="70" width="4" height="34" rx="1" />
-      <path d="M157 34 h10" className="fv-trim-line" />
-      <rect x="157" y="46" width="10" height="14" rx="1" />
-      <text x="165" y="134" fontSize="8" fontWeight="800" fontStyle="italic" transform="rotate(-90 165 134)" className="fv-label">VertiGo</text>
-      <path d="M72 142 v4 h96 v-4" />
-    </>
-  ),
-};
-
+/* Idle state of the finder preview: line drawings traced from the straight front views on the 1laser.com home page
+   (public/assets/finder-front-*.png), blue lines with the brand-red trim where it sits on each machine.
+   Every 3 s a laser head sweeps across and engraves the next machine in, with its name and three key specs from the
+   catalog. Pure CSS, so outline, laser and label share one clock. */
 const SHAPES = [
   { name: "XRF", art: "xrf", specs: [["Laser", "38W RF"], ["Work area", "23.6 × 11.8 in"], ["Speed", "1,200 mm/s"]] },
   { name: "Cobra", art: "cobra", specs: [["Laser", "90–130W CO₂"], ["Work area", "up to 55 × 35 in"], ["Speed", "1,200 mm/s"]] },
@@ -119,10 +43,7 @@ function MachineMorph() {
     <div className="fx-morph" aria-hidden="true" style={{ "--dur": `${DUR}s`, "--step": `${DUR / SHAPES.length}s` }}>
       <div className="fx-art">
         {SHAPES.map((x, n) => (
-          <svg key={x.art} viewBox="0 0 240 160" className="fv" style={{ animationDelay: `${(n * DUR) / SHAPES.length}s` }}>
-            <path d="M8 150.5 H232" className="fv-ground" />
-            <g className="fv-lines">{FRONT[x.art]}</g>
-          </svg>
+          <img key={x.art} src={asset(`finder-front-${x.art}.png`)} alt="" className="fv" style={{ animationDelay: `${(n * DUR) / SHAPES.length}s` }} />
         ))}
         <span className="fx-beam" />
       </div>
@@ -211,7 +132,7 @@ export default function FinderCard() {
             <button type="button" onClick={reset}>↺ {t("Start over")}</button>
           </p>
         </div>
-        <Link to={`/products/${top.handle}`} className="fx-stage" tabIndex={-1} aria-hidden="true"><img src={img(top.images[0], 900)} alt="" /></Link>
+        <Link to={`/products/${top.handle}`} className="fx-stage" tabIndex={-1} aria-hidden="true"><img src={img(frontImg(top), 900)} alt="" /></Link>
         {slot && createPortal(<FinderResult answers={answers} ranked={ranked} onEdit={edit} onReset={reset} />, slot)}
         {leadDialog}
       </article>
@@ -257,7 +178,7 @@ export default function FinderCard() {
         {!answered && <MachineMorph />}
         {answered && top && (
           <Link to={`/products/${top.handle}`} className="fx-peek-card" key={top.handle}>
-            <span className="fx-peek-img"><img src={img(top.images[0], 600)} alt="" /></span>
+            <span className="fx-peek-img"><img src={img(frontImg(top), 600)} alt="" /></span>
             <b>{top.name}</b>
             <span className="fx-peek-price">{money(top.price)}{top.compareAt > top.price && <s>{money(top.compareAt)}</s>}</span>
           </Link>
@@ -432,7 +353,7 @@ function FinderResult({ answers, ranked, onEdit, onReset }) {
       </ol>
       <div className="fr-card">
         <div className="fr-stage">
-          <Link to={`/products/${top.handle}`} tabIndex={-1} aria-hidden="true"><img src={img(top.images[0], 1000)} alt="" /></Link>
+          <Link to={`/products/${top.handle}`} tabIndex={-1} aria-hidden="true"><img src={img(frontImg(top), 1000)} alt="" /></Link>
           <p className="fr-price">
             <b>{money(top.price)}</b>
             {top.compareAt > top.price && <s>{money(top.compareAt)}</s>}

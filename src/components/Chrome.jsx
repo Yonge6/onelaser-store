@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { LANGS, getLang, setLang, t } from "../i18n.js";
-import { asset, byHandle, go, img, products } from "../lib.js";
+import { asset, byHandle, go, img, products, frontImg } from "../lib.js";
 import { useCart } from "../cart.jsx";
 import { nav, promo, benefits, contact, footer } from "../data/site.js";
 import { Countdown, Icon, Link, usd } from "./ui.jsx";
@@ -112,7 +112,7 @@ export function Header({ path }) {
                     return (
                       <article key={g.title}>
                         <Go url={g.to} className="mega-series-main">
-                          <span className="mega-series-img"><img src={img(list[0].images[0], 800)} alt="" style={fitCrop(g.crop)} /></span>
+                          <span className="mega-series-img"><img src={img(frontImg(list[0]), 800)} alt="" style={fitCrop(g.crop)} /></span>
                           <b>{t(g.title)}</b>
                           <em>{t(g.desc)}</em>
                           <strong>{t("From")} {usd(from)}</strong>
@@ -182,7 +182,7 @@ export function Header({ path }) {
                         return (
                           <article key={g.title}>
                             <Go url={g.to} className="mnav-row">
-                              <span className="mnav-thumb"><img src={img(list[0].images[0], 200)} alt="" /></span>
+                              <span className="mnav-thumb"><img src={img(frontImg(list[0]), 200)} alt="" /></span>
                               <span className="mnav-text"><b>{t(g.title)}</b><em>{t(g.desc)}</em></span>
                               <strong>{t("From")} {usd(Math.min(...list.map((p) => p.price))).replace(".00", "")}</strong>
                             </Go>
