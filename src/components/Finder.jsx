@@ -91,18 +91,16 @@ export default function FinderCard() {
     const top = card.getBoundingClientRect().top + window.scrollY - under - 16; // card top just under the tabs
     const cta = card.querySelector(".fx-call-cta");
     const low = cta ? cta.getBoundingClientRect().bottom + window.scrollY - window.innerHeight + 16 : top; // CTA bottom on screen
-    return Math.max(0, Math.max(top, low)); // phones: the card is taller than the screen, the CTA wins
+    const name = card.querySelector(".fx-name");
+    const cap = name ? name.getBoundingClientRect().top + window.scrollY - under - 8 : low; // never hide the machine's name
+    // short screens: show as much of the card as fits, but the name always stays below the tabs
+    return Math.max(0, Math.min(Math.max(top, low), cap));
   };
-  /* The card swap and the details panel mounting below can make the browser re-anchor the page, which cancels a smooth
-     scroll half way; so check where we landed and settle on the target if we are off. */
+  /* One smooth scroll, computed once; nothing scrolls the page again afterwards (scroll anchoring is off around the
+     finder in CSS, so the card swap cannot push the page either). */
   const showCard = () => setTimeout(() => {
     const y = cardTarget();
-    if (y == null) return;
-    window.scrollTo({ top: y, behavior: "smooth" });
-    setTimeout(() => {
-      const again = cardTarget();
-      if (again != null && Math.abs(window.scrollY - again) > 24) window.scrollTo({ top: again, behavior: "auto" });
-    }, 900);
+    if (y != null) window.scrollTo({ top: y, behavior: "smooth" });
   }, 120);
   const finish = () => { setStep(STEPS.length); showCard(); };
   const pick = (id) => {
