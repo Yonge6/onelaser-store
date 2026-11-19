@@ -4,7 +4,6 @@ import { asset, byHandle, img, money, products, frontImg } from "../lib.js";
 import { heroSlides, homeAmbition, homeFaq, homeProof, homeReviews, homeStandard, homeTabs, homeVideos, trustpilot, newHandles, promo, shortSlogans } from "../data/site.js";
 import { AddButton, Countdown, Icon, Link, useDragScroll } from "../components/ui.jsx";
 import FinderCard, { FinderHelp } from "../components/Finder.jsx";
-import Assistant from "../components/Assistant.jsx";
 
 /* Module order, sizes and type follow the insta360.com homepage (measured 2026-11-17 at 1440 and 375):
    full-bleed hero 660 with segmented progress → headline + sticky pill tabs + 3-column product cards (416×554, radius 24)
@@ -448,7 +447,6 @@ export default function Home() {
           </ul>
         </div>
       </section>
-      <Assistant />
     </div>
   );
 }

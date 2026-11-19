@@ -3444,3 +3444,57 @@ ul { list-style: none; }
   33% { box-shadow: 0 12px 30px -10px rgba(0, 0, 0, 0.5), 0 0 22px 2px rgba(167, 139, 250, 0.45); }
   66% { box-shadow: 0 12px 30px -10px rgba(0, 0, 0, 0.5), 0 0 22px 2px rgba(231, 49, 14, 0.4); }
 }
+
+/* ===== Assistant panel, light theme (the pill stays dark so it stands out on the page) ===== */
+.ai-panel { background: #fff; color: var(--title); box-shadow: 0 40px 100px -24px rgba(17, 24, 39, 0.35), 0 0 0 1px rgba(17, 24, 39, 0.08); }
+.ai-head { background: linear-gradient(180deg, #f4f9ff 0%, #fff 100%); border-bottom: 1px solid #eef0f3; }
+.ai-head .ai-avatar.sm { background: conic-gradient(from 200deg, #38bdf8, #a78bfa, #e7310e, #fbbf24, #38bdf8); color: #fff; }
+.ai-title small { color: var(--muted); }
+.ai-icon { color: #52525b; } .ai-icon:hover { background: #f1f2f4; color: var(--title); }
+.ai-body { scrollbar-color: #d4d4d8 transparent; }
+.ai-welcome > p, .ai-sub { color: var(--muted); }
+.ai-sub { margin-top: 16px; font-size: 12px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: #9a9aa2; }
+.ai-cats-wrap::after { background: linear-gradient(90deg, rgba(255, 255, 255, 0), #fff); }
+.ai-cats .ai-cat-img { background: radial-gradient(120% 90% at 50% 20%, #fafbfc 0%, #eef0f3 80%); box-shadow: inset 0 0 0 1px #e8eaee; }
+.ai-cats .ai-cat-img img { filter: drop-shadow(0 6px 8px rgba(0, 0, 0, 0.12)); }
+.ai-cats button:hover .ai-cat-img, .ai-cats button.on .ai-cat-img { box-shadow: inset 0 0 0 1.5px var(--accent); }
+.ai-cat-name { color: #3f3f46 !important; } .ai-cats button.on .ai-cat-name { color: var(--title) !important; font-weight: 700; }
+.ai-cat-deal { color: #fff; }
+.ai-try > p { color: #9a9aa2; }
+.ai-chips button { background: #f6f7f9; box-shadow: inset 0 0 0 1px #e8eaee; color: var(--title); }
+.ai-chips button svg { color: var(--accent-ink); }
+.ai-chips button:hover { background: var(--accent-soft); box-shadow: inset 0 0 0 1px var(--accent); }
+.ai-bot > p, .ai-typing { background: #f3f4f6; color: var(--title); }
+.ai-typing i { background: #a1a1aa; } @keyframes ai-dot { 40% { transform: translateY(-4px); background: var(--title); } }
+.ai-card { background: #fff; box-shadow: inset 0 0 0 1px #e8eaee; }
+.ai-links a, .ai-links button { background: #fff; box-shadow: inset 0 0 0 1px var(--title); }
+.ai-links a:hover, .ai-links button:hover { background: var(--title); color: #fff; }
+.ai-input { background: #f6f7f9; box-shadow: inset 0 0 0 1px #e4e6ea; }
+.ai-input:focus-within { background: #fff; box-shadow: inset 0 0 0 1.5px var(--accent); }
+.ai-input input { color: var(--title); } .ai-input input::placeholder { color: #9a9aa2; }
+.ai-input button { background: var(--title); color: #fff; }
+.ai-fine { color: #a1a1aa; }
+.ai-product { margin-top: 12px; display: flex; align-items: center; gap: 12px; padding: 10px 12px 10px 10px; border-radius: 14px; background: #f6f7f9; }
+.ai-product img { flex: none; width: 64px; height: 48px; object-fit: contain; }
+.ai-product span { flex: 1; min-width: 0; display: grid; gap: 2px; }
+.ai-product b { font-size: 14px; line-height: 19px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ai-product small { font-size: 13px; font-weight: 600; } .ai-product small s { margin-left: 6px; font-weight: 400; color: #a1a1aa; }
+.ai-product em { flex: none; padding: 3px 8px; border-radius: 6px; background: var(--brand); color: #fff; font-style: normal; font-size: 11px; font-weight: 700; }
+.ai-specs { margin: 8px 0 0; display: grid; gap: 1px; border-radius: 12px; overflow: hidden; background: #e8eaee; box-shadow: 0 0 0 1px #e8eaee; }
+.ai-specs div { display: grid; grid-template-columns: 42% 1fr; gap: 10px; padding: 8px 12px; background: #fff; font-size: 13px; line-height: 18px; }
+.ai-specs dt { color: var(--muted); } .ai-specs dd { margin: 0; font-weight: 600; color: var(--title); }
+.ai-opts { list-style: none; margin: 8px 0 0; padding: 0; display: grid; gap: 6px; }
+.ai-opts li { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 12px; border-radius: 10px; box-shadow: inset 0 0 0 1px #e8eaee; font-size: 13px; line-height: 18px; }
+.ai-opts b { flex: none; font-size: 14px; } .ai-opts s { margin-left: 6px; font-size: 11px; font-weight: 400; color: #a1a1aa; }
+
+/* on product pages the pill sits above the always-on buy bar */
+body:has(.ip-bar) .ai-pill { bottom: 100px; }
+@media (max-width: 860px) {
+  body:has(.ip-bar) .ai-pill { bottom: calc(80px + env(safe-area-inset-bottom)); }
+  body:has(.ip-bar) .to-top { bottom: calc(140px + env(safe-area-inset-bottom)); }
+}
+@media (min-width: 861px) { body:has(.ip-bar) .ai-panel { bottom: 100px; height: min(680px, calc(100dvh - 132px)); } }
+@media (max-width: 860px) {
+  body:has(.ip-bar) .ai-pill { bottom: calc(114px + env(safe-area-inset-bottom)); }
+  body:has(.ip-bar) .to-top { bottom: calc(176px + env(safe-area-inset-bottom)); }
+}

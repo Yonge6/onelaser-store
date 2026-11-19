@@ -10,6 +10,8 @@ import Checkout from "./pages/Checkout.jsx";
 import Compare from "./pages/Compare.jsx";
 import Consult from "./pages/Consult.jsx";
 import Finance from "./pages/Finance.jsx";
+import Assistant from "./components/Assistant.jsx";
+import { byHandle } from "./lib.js";
 
 function Page({ path, query }) {
   const [, section, handle] = path.split("/");
@@ -35,6 +37,9 @@ export default function App() {
           <Header path={path} lang={lang} />
           <main key={`main-${lang}`}><Page path={path} query={query} /></main>
           <Footer key={`footer-${lang}`} />
+          {/* Shopping assistant while people are choosing (home, product, collection, search, compare).
+              Left out of the single-goal pages: booking, financing, cart and checkout. */}
+          {/^\/($|products\/|collections\/|search|compare)/.test(path) && <Assistant key={path.split("/")[2] || "site"} product={path.startsWith("/products/") ? byHandle[path.split("/")[2]] : null} />}
         </>
       )}
     </CartProvider>
