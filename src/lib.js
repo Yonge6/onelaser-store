@@ -20,12 +20,61 @@ const parse = () => {
   const [path, query = ""] = raw.split("?");
   return { path, query: new URLSearchParams(query) };
 };
+/* Scroll memory for the hash router.
+   - A link click or go() is a new page: jump to the top at once (no smooth animation).
+   - Back / forward and a page reload: return to where that page was left.
+   - A link with data-keep-scroll (e.g. the model switcher on a product page) keeps the current position. */
+const SCROLL_KEY = "onelaser-scroll-v1";
+const readPos = () => { try { return JSON.parse(sessionStorage.getItem(SCROLL_KEY)) || {}; } catch { return {}; } };
+const positions = readPos();
+const savePos = () => { try { sessionStorage.setItem(SCROLL_KEY, JSON.stringify(positions)); } catch { /* private mode */ } };
+let intent = null; // "new" | "keep" | null (null = back/forward)
+let current = typeof window !== "undefined" ? window.location.hash : "";
+const jump = (y) => window.scrollTo({ top: y, left: 0, behavior: "instant" });
+/** Content (products, images) renders after the route changes and keeps growing while images load,
+    so hold the target for up to 2 s, and stop as soon as the visitor scrolls by hand. */
+const restore = (y) => {
+  const until = performance.now() + 2000;
+  let user = false;
+  const stop = () => { user = true; };
+  const evs = ["wheel", "touchstart", "keydown", "mousedown"];
+  evs.forEach((e) => window.addEventListener(e, stop, { once: true, passive: true }));
+  const step = () => {
+    if (user) return;
+    if (Math.abs(window.scrollY - y) > 2) jump(y);
+    if (performance.now() < until) requestAnimationFrame(step);
+    else evs.forEach((e) => window.removeEventListener(e, stop));
+  };
+  requestAnimationFrame(step);
+};
+if (typeof window !== "undefined") {
+  if ("scrollRestoration" in history) history.scrollRestoration = "manual";
+  let t = 0;
+  window.addEventListener("scroll", () => {
+    positions[window.location.hash] = window.scrollY;
+    clearTimeout(t);
+    t = setTimeout(savePos, 150);
+  }, { passive: true });
+  window.addEventListener("pagehide", savePos);
+  document.addEventListener("click", (e) => {
+    const a = e.target.closest?.("a[href^='#']");
+    if (!a || e.defaultPrevented || e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return;
+    intent = a.hasAttribute("data-keep-scroll") ? "keep" : "new";
+  }, true);
+}
 export function useRoute() {
   const [route, setRoute] = useState(parse);
   useEffect(() => {
+    if (positions[window.location.hash]) restore(positions[window.location.hash]); // after a reload
     const on = () => {
+      positions[current] = positions[current] ?? window.scrollY;
+      current = window.location.hash;
+      const how = intent;
+      intent = null;
       setRoute(parse());
-      window.scrollTo(0, 0);
+      if (how === "keep") { positions[current] = window.scrollY; savePos(); return; }
+      if (how === "new" || !positions[current]) { delete positions[current]; jump(0); }
+      else restore(positions[current]);
     };
     window.addEventListener("hashchange", on);
     return () => window.removeEventListener("hashchange", on);
@@ -33,5 +82,6 @@ export function useRoute() {
   return route;
 }
 export const go = (path) => {
+  intent = "new";
   window.location.hash = path;
 };

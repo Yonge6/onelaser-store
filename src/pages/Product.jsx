@@ -166,7 +166,7 @@ export default function Product({ handle }) {
               <div className="ip-label"><span>{t("Model")}</span></div>
               <div className="ip-models" role="radiogroup" aria-label={t("Model")}>
                 {models.map((m) => (
-                  <Link key={m.handle} to={`/products/${m.handle}`} role="radio" aria-checked={m.handle === product.handle} className={m.handle === product.handle ? "on" : ""}>
+                  <Link key={m.handle} to={`/products/${m.handle}`} data-keep-scroll role="radio" aria-checked={m.handle === product.handle} className={m.handle === product.handle ? "on" : ""}>
                     <b>{m.name.replace(/™/g, "")}</b><span>{usd(m.price)}</span>
                   </Link>
                 ))}
