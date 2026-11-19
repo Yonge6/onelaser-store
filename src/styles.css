@@ -3595,3 +3595,6 @@ body:has(.ip-bar) .ai-nudge { bottom: 168px; }
   .ai-title small { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 }
 @media (max-width: 380px) { .ai-head .ai-avatar.sm { display: none; } }
+/* per-model front renders are cropped tight to the machine, so they need no enlarging (the series PNGs carry wide margins) */
+.ih-card:not(.fc) .ih-card-media img.front[src*="/front/"] { transform: scale(1.1); }
+.ih-card:not(.fc):hover .ih-card-media img.front[src*="/front/"] { transform: scale(1.15); }

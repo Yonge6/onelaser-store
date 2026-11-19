@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { t } from "../i18n.js";
+import { getLang, t } from "../i18n.js";
 import { byHandle, frontImg, img, money, products } from "../lib.js";
 import { useCart } from "../cart.jsx";
 import { AddButton, Icon, Link } from "./ui.jsx";
@@ -29,6 +29,59 @@ const SERIES = {
   vertigo: ["vertigo-vertical-laser-engraver"],
 };
 const faq = (q) => homeFaq.find(([k]) => k.startsWith(q))?.[1] || "";
+
+/* Translatable text. A reply is built from pieces: a plain English string (looked up with t), a template
+   tx("... {name} ...", { name }) whose values can be pieces too, a list { list, sep }, or an array of pieces.
+   The same piece renders in English for the matching rules and in the visitor's language on screen. */
+const tx = (tpl, v) => ({ tpl, v });
+const fill = (str, v) => str.replace(/\{(\w+)\}/g, (_, k) => (v[k] == null ? "" : v[k]));
+function render(x, tr) {
+  if (x == null || x === false) return "";
+  if (Array.isArray(x)) return x.map((y) => render(y, tr)).filter(Boolean).join(" ");
+  if (typeof x === "object") {
+    if (x.list) {
+      const cjk = tr === t && ["zh", "ja"].includes(getLang());
+      const sep = x.sep || ", ";
+      return x.list.map((y) => render(y, tr)).join(cjk ? (sep.startsWith(";") ? "；" : "、") : sep);
+    }
+    const v = Object.fromEntries(Object.entries(x.v || {}).map(([k, val]) => [k, typeof val === "object" ? render(val, tr) : val]));
+    return fill(tr(x.tpl), v);
+  }
+  return tr(x);
+}
+const say = (x) => render(x, t); // on screen
+const en = (x) => render(x, (y) => y); // for the matching rules
+/* Typed questions in the other site languages: map common words onto the English keywords the rules use. */
+const WORDS = [
+  [/优惠|折扣|打折|黑五|促销|oferta|descuento|rebaja|promo|réduction|soldes|angebot|rabatt|セール|割引|ブラックフライデー/i, " deal "],
+  [/分期|月供|贷款|付款方式|financ|mensual|cuota|mensualité|crédit|finanzier|raten|monatlich|分割|ローン|月々/i, " monthly "],
+  [/保修|质保|garant|保証/i, " warranty "],
+  [/退货|退款|devoluc|retour|rückgabe|返品/i, " return "],
+  [/运费|配送|发货|物流|envío|livraison|versand|lieferung|配送|送料/i, " ship "],
+  [/人工|客服|专家|电话|真人|humano|persona|experto|humain|conseiller|mensch|berater|担当者|オペレーター|電話|専門/i, " human "],
+  [/评价|口碑|评论|reseña|opinion|avis|bewertung|レビュー|評価|口コミ/i, " review "],
+  [/参数|规格|especific|caractéristique|technische daten|スペック|仕様/i, " spec "],
+  [/配件|附件|accesorio|accessoire|zubehör|アクセサリー|付属品/i, " accessor "],
+  [/对比|比较|区别|compar|vergleich|比較|違い/i, " compare "],
+  [/推荐|适合|哪款|哪个|选哪|recomiend|cuál|recommand|quel|empfehl|welche|おすすめ|どれ|選び/i, " which "],
+  [/冷水机|enfriador|refroidisseur|kühler|チラー/i, " chiller "],
+  [/木|亚克力|madera|acrílico|bois|acrylique|holz|acryl|木材|アクリル/i, " wood "],
+  [/皮革|皮|cuero|cuir|leder|レザー|革/i, " leather "],
+  [/杯|保温杯|vaso|termo|gobelet|becher|タンブラー|マグ/i, " tumbler "],
+  [/切割|cortar|corte|découp|schneid|カット|切断/i, " cut "],
+  [/雕刻|grabar|grabado|gravure|graver|gravier|彫刻|刻印/i, " engrav "],
+  [/价格|多少钱|precio|prix|preis|価格|値段/i, " price "],
+  [/需要|要不要|必须|necesito|hace falta|besoin|brauche|必要/i, " need do i "],
+  [/怎么说|好不好|靠谱|值得|vale la pena|ça vaut|lohnt|評判/i, " review "],
+  [/切|corta|découpe|schneide|切り/i, " cut "],
+  [/雕|graba|grave|graviere|彫/i, " engrav "],
+  [/全职|工作室|生意|小店|negocio|taller|entreprise|atelier|betrieb|werkstatt|事業|工房|商売/i, " business "],
+  [/新手|入门|刚起步|兴趣|业余|principiante|débutant|anfänger|初心者|趣味/i, " beginner "],
+  [/量产|大批量|工厂|producción|production|serienfertigung|量産|大量/i, " production "],
+  [/大件|大尺寸|大幅面|grande|großformat|大判|大きい/i, " large "],
+  [/小件|杯垫|钥匙扣|吊牌|pequeñ|petit|klein|小物|キーホルダー/i, " small piece "],
+];
+const normalize = (q) => WORDS.reduce((s, [re, w]) => (re.test(s) ? `${s}${w}` : s), q);
 const has = (s, words) => words.some((w) => s.includes(w));
 
 /** Turn a message into finder answers (only what the words say). */
@@ -63,7 +116,7 @@ const fitsWith = (p) => [
   "air-assist-for-laser-engraver-cutter", "filtrabox-micro", "lightburn-software-pro-license-key", "engineer-1-on-1-training-support",
 ].filter(Boolean).map((h) => byHandle[h]).filter((x) => x && x.handle !== p.handle);
 const productChips = (p) => (p.kind === "machine"
-  ? [`What is the ${short(p)} best for?`, "What do owners say?", "Key specs", "Is it on sale?", "Which accessories fit?", siblings(p).length > 1 ? "Compare the other sizes" : "Compare with other series"]
+  ? [tx("What is the {name} best for?", { name: short(p) }), "What do owners say?", "Key specs", "Is it on sale?", "Which accessories fit?", siblings(p).length > 1 ? "Compare the other sizes" : "Compare with other series"]
   : ["Is it on sale?", "Which machines work with it?", "Show me laser machines", "Talk to an expert"]);
 
 /* Owner reviews: Judge.me averages per product page (site.js, read 2026-11-18). Gen2, Cobra and VertiGo pages have none yet,
@@ -78,15 +131,15 @@ function reviewsReply(p) {
   const own = p && REVIEW_STATS[p.handle];
   if (own) {
     const quotes = homeReviews.items.filter((r) => r.product === own[2] || r.product.startsWith(own[2])).slice(0, 3);
-    return { text: `Owners rate the ${short(p)} ${own[0]} out of 5 from ${own[1]} reviews. In their words:`, quotes, links: [["Read all reviews", homeReviews.url]], src: ["Owner reviews on 1laser.com (Judge.me)"] };
+    return { text: tx("Owners rate the {name} {avg} out of 5 from {n} reviews. In their words:", { name: short(p), avg: own[0], n: own[1] }), quotes, links: [["Read all reviews", homeReviews.url]], src: ["Owner reviews on 1laser.com (Judge.me)"] };
   }
   return {
-    text: `${p ? `The ${short(p)} has no owner reviews on its page yet. ` : ""}Across OneLaser machines, owners average ${homeReviews.average} out of 5 from ${homeReviews.count} reviews. A few recent ones, each labelled with its machine:`,
+    text: [p && tx("The {name} has no owner reviews on its page yet.", { name: short(p) }), tx("Across OneLaser machines, owners average {avg} out of 5 from {n} reviews. A few recent ones, each labelled with its machine:", { avg: homeReviews.average, n: homeReviews.count })],
     quotes: homeReviews.items.slice(0, 3), links: [["Read all reviews", homeReviews.url]], src: ["Owner reviews on 1laser.com (Judge.me)"],
   };
 }
 const ROWS = ["Laser source", "Work area", "Max engraving speed", "Max resolution"];
-const table = (list) => ({ cols: list.map((x) => x.handle), rows: [...ROWS.filter((k) => list.some((x) => x.specs?.[k])).map((k) => [k, ...list.map((x) => x.specs?.[k] || "—")]), ["Price", ...list.map((x) => `${x.priceVaries ? "From " : ""}${money(x.price)}`)]] });
+const table = (list) => ({ cols: list.map((x) => x.handle), rows: [...ROWS.filter((k) => list.some((x) => x.specs?.[k])).map((k) => [k, ...list.map((x) => x.specs?.[k] || "—")]), ["Price", ...list.map((x) => (x.priceVaries ? tx("From {price}", { price: money(x.price) }) : money(x.price)))]] });
 
 /* Guided match in the chat: the finder's three required questions as tap-to-answer buttons. */
 const GUIDE = ["material", "work", "size"];
@@ -94,11 +147,11 @@ function guide(ans, intro = "") {
   const id = GUIDE.find((k) => !ans[k]);
   if (id) {
     const st = STEPS.find((x) => x.id === id);
-    return { text: `${intro}${st.title}`, quick: { id, step: GUIDE.indexOf(id) + 1, options: st.options.map((o) => [o[0], o[1]]) }, src: ["Machine finder questions"] };
+    return { text: [intro, st.title], quick: { id, step: GUIDE.indexOf(id) + 1, options: st.options.map((o) => [o[0], o[1]]) }, src: ["Machine finder questions"] };
   }
   const top = rank({ ...ans, material: [ans.material] }, (h) => !!byHandle[h], (h) => byHandle[h]?.price || 0).slice(0, 3);
   return {
-    text: `Here is my match. ${byHandle[M[top[0].key].handle].name} comes first; the reason for each pick is under its card.`,
+    text: tx("Here is my match. {name} comes first; the reason for each pick is under its card.", { name: byHandle[M[top[0].key].handle].name }),
     cards: top.map((r) => M[r.key].handle), why: Object.fromEntries(top.map((r) => [M[r.key].handle, r.reasons.slice(0, 2)])),
     finder: true, src: ["Machine finder rules", "Catalog specs and prices"], next: ["What do owners say?", "Can I pay monthly?", "Talk to a person"],
   };
@@ -109,20 +162,22 @@ function productReply(s, p) {
   if (!p) return null;
   const save = p.compareAt > p.price ? p.compareAt - p.price : 0;
   if (has(s, ["review", "owners say", "customers say", "people say", "rating", "reliable", "worth it"])) return { ...reviewsReply(p), next: ["Key specs", "Is it on sale?", "Talk to an expert"] };
-  if (has(s, ["best for", "good for", "what can", "use it", "made for", "who is"])) return { text: `${short(p)}: ${p.tagline || ""} Best for: ${(p.bestFor || "see the product details").toLowerCase()}.`, src: ["Product page"], next: ["Key specs", "What do owners say?", "Which accessories fit?"] };
+  if (has(s, ["best for", "good for", "what can", "use it", "made for", "who is"])) return { text: [tx("{name}:", { name: short(p) }), p.tagline, tx("Best for: {what}.", { what: p.bestFor ? { tpl: p.bestFor } : { tpl: "see the product details" } })], src: ["Product page"], next: ["Key specs", "What do owners say?", "Which accessories fit?"] };
   if (has(s, ["compare", "other size", "bigger", "smaller", " vs", "difference"])) {
     const sib = siblings(p).filter((x) => x.handle !== p.handle);
-    return sib.length ? { text: `${p.seriesName || "This series"}, side by side. Your current model is first:`, table: table([p, ...sib]), links: [["Compare every spec", "/compare"]], src: ["Product specs", "Catalog prices"], next: ["Which accessories fit?", "Monthly payments for this machine", "Talk to an expert"] } : null;
+    return sib.length ? { text: tx("{series}, side by side. Your current model is first:", { series: { tpl: p.seriesName || "This series" } }), table: table([p, ...sib]), links: [["Compare every spec", "/compare"]], src: ["Product specs", "Catalog prices"], next: ["Which accessories fit?", "Monthly payments for this machine", "Talk to an expert"] } : null;
   }
   if (has(s, ["spec", "work area", "speed", "power", "watt", "resolution", "dpi", "size"]) && p.specs && Object.keys(p.specs).length)
-    return { text: `${short(p)} key specs:`, specs: Object.entries(p.specs).filter(([k]) => k !== "Product line").slice(0, 7), links: [["Compare every spec", "/compare"]], src: ["Product specs"], next: [siblings(p).length > 1 ? "Compare the other sizes" : "What do owners say?", "Is it on sale?", "Which accessories fit?"] };
+    return { text: tx("{name} key specs:", { name: short(p) }), specs: Object.entries(p.specs).filter(([k]) => k !== "Product line").slice(0, 7), links: [["Compare every spec", "/compare"]], src: ["Product specs"], next: [siblings(p).length > 1 ? "Compare the other sizes" : "What do owners say?", "Is it on sale?", "Which accessories fit?"] };
   if (has(s, ["sale", "price", "deal", "discount", "cost", "how much", "cheaper"]))
-    return { text: save ? `Yes. ${short(p)} is ${p.priceVaries ? "from " : ""}${money(p.price)} today, ${money(save)} off the regular ${money(p.compareAt)}. ${promo.label}.` : `${short(p)} is ${p.priceVaries ? "from " : ""}${money(p.price)}. ${promo.label}: see what else is on sale.`, options: p.variants.length > 1 ? p.variants.map((v) => [v.title, v.price, v.compareAt]) : null, src: ["Catalog prices", "Black Friday offer"], next: ["Monthly payments for this machine", "Which accessories fit?", "What do owners say?"] };
-  if (has(s, ["option", "version", "config", "variant", "hybrid", "pro "])) return p.variants.length > 1 ? { text: `${short(p)} comes in ${p.variants.length} configurations:`, options: p.variants.map((v) => [v.title, v.price, v.compareAt]) } : null;
+    return { text: save
+      ? [tx(p.priceVaries ? "Yes. {name} is from {price} today, {save} off the regular {was}." : "Yes. {name} is {price} today, {save} off the regular {was}.", { name: short(p), price: money(p.price), save: money(save), was: money(p.compareAt) }), promo.label]
+      : [tx(p.priceVaries ? "{name} is from {price}." : "{name} is {price}.", { name: short(p), price: money(p.price) }), promo.label], options: p.variants.length > 1 ? p.variants.map((v) => [v.title, v.price, v.compareAt]) : null, src: ["Catalog prices", "Black Friday offer"], next: ["Monthly payments for this machine", "Which accessories fit?", "What do owners say?"] };
+  if (has(s, ["option", "version", "config", "variant", "hybrid", "pro "])) return p.variants.length > 1 ? { text: tx("{name} comes in {n} configurations:", { name: short(p), n: p.variants.length }), options: p.variants.map((v) => [v.title, v.price, v.compareAt]) } : null;
   if (has(s, ["accessor", "fit", "add-on", "addon", "rotary", "chiller", "work with", "compatible", "need with"]))
-    return p.kind === "machine" ? { text: `These fit the ${short(p)}:`, cards: fitsWith(p), src: ["Catalog compatibility notes"], next: ["Do I need a chiller?", "Is it on sale?", "Talk to an expert"] } : { text: "Compatibility is listed in the product description. If you're unsure which machine it fits, an expert can check for you.", links: [["Book a free call", "/pages/sales-consultation"]] };
+    return p.kind === "machine" ? { text: tx("These fit the {name}:", { name: short(p) }), cards: fitsWith(p), src: ["Catalog compatibility notes"], next: ["Do I need a chiller?", "Is it on sale?", "Talk to an expert"] } : { text: "Compatibility is listed in the product description. If you're unsure which machine it fits, an expert can check for you.", links: [["Book a free call", "/pages/sales-consultation"]] };
   if (has(s, ["monthly", "financ", "pay over", "installment", "afford", "per month"]))
-    return { text: `${short(p)} can be financed: installments at checkout, or $0-down business options. Estimate the monthly payment for this machine:`, links: [[`Estimate payments for ${short(p)}`, `/pages/financing?p=${p.handle}`]], src: ["OneLaser financing page"], next: ["Is it on sale?", "Talk to an expert"] };
+    return { text: tx("{name} can be financed: installments at checkout, or $0-down business options. Estimate the monthly payment for this machine:", { name: short(p) }), links: [[tx("Estimate payments for {name}", { name: short(p) }), `/pages/financing?p=${p.handle}`]], src: ["OneLaser financing page"], next: ["Is it on sale?", "Talk to an expert"] };
   return null;
 }
 
@@ -134,15 +189,15 @@ function reply(raw, product) {
   if (own) return own;
   const list = (hs) => hs.map((h) => byHandle[h]).filter(Boolean);
   if (has(s, ["person", "human", "call", "phone", "talk", "expert", "sales", "agent"]))
-    return { src: ["OneLaser contact details"], next: ["Shipping and returns", "Can I pay monthly?"], text: "Happy to hand you over. A OneLaser expert can take a free 30-minute call, or you can ring the team now.", links: [["Book a free call", "/pages/sales-consultation"], [`Call ${contact.phone}`, `tel:${contact.tel}`]] };
+    return { src: ["OneLaser contact details"], next: ["Shipping and returns", "Can I pay monthly?"], text: "Happy to hand you over. A OneLaser expert can take a free 30-minute call, or you can ring the team now.", links: [["Book a free call", "/pages/sales-consultation"], [tx("Call {phone}", { phone: contact.phone }), `tel:${contact.tel}`]] };
   if (has(s, ["deal", "black friday", "sale", "discount", "cheap", "save", "offer", "coupon"])) {
     const deals = products.filter((p) => p.compareAt > p.price).sort((x, y) => (y.compareAt - y.price) - (x.compareAt - x.price)).slice(0, 6);
-    return { text: `${promo.label}. ${promo.headline}. These have the biggest savings right now:`, cards: deals, links: [["See all deals", "/collections/machines"]], src: ["Catalog prices", "Black Friday offer"], next: ["Which laser fits me?", "Can I pay monthly?", "What do owners say?"] };
+    return { text: [promo.label, promo.headline, "These have the biggest savings right now:"], cards: deals, links: [["See all deals", "/collections/machines"]], src: ["Catalog prices", "Black Friday offer"], next: ["Which laser fits me?", "Can I pay monthly?", "What do owners say?"] };
   }
   if (has(s, ["financ", "monthly", "per month", "pay over", "installment", "loan", "lease", "afford"]))
-    return { text: faq("Is financing available") + " Business loans can start at $0 down with terms up to 60 months.", links: [["Estimate my monthly payment", "/pages/financing"]], src: ["OneLaser financing page"], next: ["Which laser fits me?", "Show me Black Friday deals"] };
+    return { text: [faq("Is financing available"), "Business loans can start at $0 down with terms up to 60 months."], links: [["Estimate my monthly payment", "/pages/financing"]], src: ["OneLaser financing page"], next: ["Which laser fits me?", "Show me Black Friday deals"] };
   if (has(s, ["ship", "deliver", "return", "refund", "warranty", "guarantee"]))
-    return { text: `${faq("What warranty")} ${faq("Can I return")} Shipping rates and delivery dates are shown at checkout once you enter your address; machines ship by freight.`, links: [["Read the warranty policy", "https://www.1laser.com/pages/warranty-policy"]], src: ["OneLaser warranty and return policy"], next: ["What do owners say?", "Talk to a person"] };
+    return { text: [faq("What warranty"), faq("Can I return"), "Shipping rates and delivery dates are shown at checkout once you enter your address; machines ship by freight."], links: [["Read the warranty policy", "https://www.1laser.com/pages/warranty-policy"]], src: ["OneLaser warranty and return policy"], next: ["What do owners say?", "Talk to a person"] };
   if (has(s, ["review", "owners say", "customers say", "rating", "reliable", "worth it"])) return { ...reviewsReply(null), next: ["Which laser fits me?", "Show me Black Friday deals"] };
   if (has(s, ["software", "lightburn", "mac", "windows"]))
     return { text: faq("Which software"), cards: list(["lightburn-software-pro-license-key"]) };
@@ -150,7 +205,7 @@ function reply(raw, product) {
     return { text: faq("How does support"), links: [["Contact support", "https://zohodesk.1laser.com/portal/en/newticket"]] };
   if (has(s, [" vs", "versus", "compare", "difference", " or "]) && has(s, ["cobra", "hydra", "xrf", "vertigo"]))
     return { text: "Short version: XRF is an all-in-one 38W RF desktop for fine engraving. Cobra uses 90–130W glass CO₂ tubes, the value pick for cutting wood and acrylic. Hydra Gen2 adds RF engraving and a glass tube in one machine, with 2,000 mm/s and 4G for production. VertiGo is a vertical RF machine for round items only.", table: table(list(["onelaser-xrf-desktop-laser-machine", "cobra-10-100w-co2-laser-engraver-cutter", "hydra-9-gen-2-70w-rf-co2-dual-laser-machine"])), links: [["Compare every spec", "/compare"]], src: ["Product specs", "Catalog prices"], next: ["Which laser fits me?", "What do owners say?"] };
-  for (const k of Object.keys(SERIES)) if (s.includes(k)) return { text: `Here is the ${k === "xrf" ? "XRF" : k === "vertigo" ? "VertiGo" : k === "cobra" ? "Cobra Series" : "Hydra Gen2"} line-up with today's prices.`, cards: list(SERIES[k]) };
+  for (const k of Object.keys(SERIES)) if (s.includes(k)) return { text: tx("Here is the {series} line-up with today's prices.", { series: { tpl: k === "xrf" ? "XRF" : k === "vertigo" ? "VertiGo" : k === "cobra" ? "Cobra Series" : "Hydra Gen2" } }), cards: list(SERIES[k]) };
   if (has(s, ["rotary", "piburn", "round"]) && !has(s, ["which", "best", "recommend"])) return { text: "Rotary attachments for engraving round items:", cards: products.filter((p) => p.category === "rotary").slice(0, 6) };
   if (has(s, ["fume", "smoke", "filter", "vent", "extract"])) return { text: "FiltraBox fume extractors, for rooms without an outside vent:", cards: products.filter((p) => p.category === "fume" && p.price > 1000) };
   if (has(s, ["chiller", "cooling", "water"])) return { text: "Glass tubes need water cooling. These chillers fit Cobra and Hydra:", cards: products.filter((p) => p.category === "cooling") };
@@ -161,9 +216,9 @@ function reply(raw, product) {
     const MAT = { wood: "wood and acrylic", leather: "leather and fabric", drinkware: "tumblers", stone: "glass and stone", coated: "coated metal", photo: "photos" };
     const WORK = { engrave: "mostly engraving", cut: "mostly cutting", both: "cutting and engraving" };
     const USE = { side: "just starting out", full: "a full-time shop", high: "high-volume production" };
-    const heard = [a.material && a.material.map((m) => MAT[m]).join(", "), WORK[a.work], a.size && (a.size === "s" ? "small pieces" : "large pieces"), USE[a.shop]].filter(Boolean);
-    if (!heard.length) return guide({}, "Three quick taps and I'll match you. ");
-    return { text: `From what you said (${heard.join("; ")}), ${top[0].p.name} is my first pick. The reason for each is under its card.`, cards: top.map((x) => x.p), why: Object.fromEntries(top.map((x) => [x.p.handle, x.why.slice(0, 2)])), finder: true, src: ["Machine finder rules", "Catalog specs and prices"], next: ["What do owners say?", "Can I pay monthly?", "Talk to a person"] };
+    const heard = [a.material && { list: a.material.map((m) => MAT[m]), sep: ", " }, WORK[a.work], a.size && (a.size === "s" ? "small pieces" : "large pieces"), USE[a.shop]].filter(Boolean);
+    if (!heard.length) return guide({}, "Three quick taps and I'll match you.");
+    return { text: tx("From what you said ({heard}), {name} is my first pick. The reason for each is under its card.", { heard: { list: heard, sep: "; " }, name: top[0].p.name }), cards: top.map((x) => x.p), why: Object.fromEntries(top.map((x) => [x.p.handle, x.why.slice(0, 2)])), finder: true, src: ["Machine finder rules", "Catalog specs and prices"], next: ["What do owners say?", "Can I pay monthly?", "Talk to a person"] };
   }
   return { text: "I can match a machine to your work, show today's deals, compare models, share what owners say, or explain financing, shipping and warranty. Or I can connect you with a person.", next: ["Which laser fits me?", "Show me Black Friday deals", "Talk to a person"] };
 }
@@ -204,7 +259,7 @@ function Table({ data }) {
     <div className="ai-table-wrap">
       <table className="ai-table">
         <thead><tr><th />{list.map((p, i) => <th key={p.handle} className={i === 0 ? "me" : ""}><Link to={`/products/${p.handle}`}><img src={img(frontImg(p), 160)} alt="" />{short(p).replace(" Gen2", "")}</Link></th>)}</tr></thead>
-        <tbody>{data.rows.map(([k, ...v]) => <tr key={k}><th>{t(k)}</th>{v.map((x, i) => <td key={i} className={i === 0 ? "me" : ""}>{x}</td>)}</tr>)}</tbody>
+        <tbody>{data.rows.map(([k, ...v]) => <tr key={k}><th>{t(k)}</th>{v.map((x, i) => <td key={i} className={i === 0 ? "me" : ""}>{typeof x === "string" && /^\$/.test(x) ? x : say(x)}</td>)}</tr>)}</tbody>
       </table>
     </div>
   );
@@ -216,7 +271,7 @@ const keep = (v) => { try { sessionStorage.setItem(STORE, JSON.stringify(v)); } 
 const wide = () => typeof window !== "undefined" && !window.matchMedia("(max-width: 860px)").matches;
 
 export default function Assistant({ product }) {
-  const labels = product ? [`Ask about ${short(product)}`, "Shop with AI", product.compareAt > product.price ? "See today's deal" : "Find my laser"] : LABELS;
+  const labels = product ? [tx("Ask about {name}", { name: short(product) }), "Shop with AI", product.compareAt > product.price ? "See today's deal" : "Find my laser"] : LABELS;
   const chips = product ? productChips(product) : CHIPS;
   const cats = product?.kind === "machine" && siblings(product).length > 1 ? siblings(product).map((p) => [p.handle, short(p), p.handle, true]) : CATS;
   const ctx = product?.handle || "site";
@@ -225,7 +280,7 @@ export default function Assistant({ product }) {
   const [label, setLabel] = useState(0);
   const [msgs, setMsgs] = useState(() => {
     const m = saved.msgs || [];
-    if (m.length && saved.ctx !== ctx) return [...m, { divider: product ? `Now viewing ${product.name}` : "Back to browsing" }];
+    if (m.length && saved.ctx !== ctx) return [...m, { divider: product ? tx("Now viewing {name}", { name: product.name }) : "Back to browsing" }];
     return m;
   });
   const [ans, setAns] = useState(saved.ans || {});
@@ -299,13 +354,15 @@ export default function Assistant({ product }) {
     setMsgs((m) => { setLive(m.length); return [...m, out]; });
     setTyping(false);
   };
-  const ask = (q) => {
-    const v = q.trim();
-    if (!v || typing) return;
-    setMsgs((m) => [...m, { me: true, text: v }]);
+  /** typed = what the visitor wrote; otherwise q is a suggestion piece, shown translated and matched in English. */
+  const ask = (q, typed = false) => {
+    const shown = typed ? q.trim() : say(q);
+    const v = typed ? normalize(q.trim()) : en(q);
+    if (!shown || typing) return;
+    setMsgs((m) => [...m, { me: true, text: shown }]);
     setText("");
     setTyping(true);
-    if (/which laser fits|help me choose|find my laser/i.test(v)) { setAns({}); setTimeout(() => answer(guide({}, "Three quick taps and I'll match you. ")), 500); return; }
+    if (/which laser fits|help me choose|find my laser/i.test(v)) { setAns({}); setTimeout(() => answer(guide({}, "Three quick taps and I'll match you.")), 500); return; }
     setTimeout(() => answer(reply(v, product)), 600);
   };
   const pick = (id, val, label) => {
@@ -317,7 +374,7 @@ export default function Assistant({ product }) {
     setTimeout(() => answer(guide(next)), 450);
   };
   const openWith = (q) => { closeNudge(); setOpen(true); if (q) setTimeout(() => ask(q), 250); };
-  const cat = ([k, name, h, model]) => (model ? (window.location.hash = `#/products/${h}`) : ask(k === "deals" ? "Show me Black Friday deals" : k === "rotary" ? "Rotary attachments" : `Show me the ${name}`));
+  const cat = ([k, name, h, model]) => (model ? (window.location.hash = `#/products/${h}`) : ask(k === "deals" ? "Show me Black Friday deals" : k === "rotary" ? "Rotary attachments" : tx("Show me the {name}", { name: { tpl: name } })));
   const toFinder = () => {
     setOpen(false);
     if (!document.querySelector(".fx")) window.location.hash = "#/"; // the finder lives on the home page
@@ -333,14 +390,14 @@ export default function Assistant({ product }) {
         <div className="ai-nudge" role="status">
           <button type="button" className="ai-nudge-x" aria-label={t("Dismiss")} onClick={closeNudge}><Icon name="close" size={14} /></button>
           <button type="button" className="ai-nudge-body" onClick={() => openWith(siblings(product).length > 1 ? "Compare the other sizes" : "Key specs")}>
-            <b>{t(siblings(product).length > 1 ? `Choosing a ${product.seriesName || "size"}?` : `Questions about the ${short(product)}?`)}</b>
+            <b>{say(siblings(product).length > 1 ? tx("Choosing a {series}?", { series: { tpl: product.seriesName || "size" } }) : tx("Questions about the {name}?", { name: short(product) }))}</b>
             <span>{t(siblings(product).length > 1 ? "I can line up every size, side by side." : "Ask me about specs, price or what fits it.")}</span>
           </button>
         </div>
       )}
       <button type="button" className={`ai-pill${open ? " hide" : ""}${mini ? " mini" : ""}`} onClick={() => openWith()} aria-label={t("Open the OneLaser shopping assistant")} aria-expanded={open}>
         <span className="ai-avatar"><Icon name="sparkle" size={20} /></span>
-        <span className="ai-pill-text" key={label}>{t(labels[label % labels.length])}</span>
+        <span className="ai-pill-text" key={label}>{say(labels[label % labels.length])}</span>
       </button>
       {open && <div className="ai-backdrop" onClick={close} aria-hidden="true" />}
       {open && (
@@ -386,18 +443,18 @@ export default function Assistant({ product }) {
               {msgs.length === 0 && (
                 <div className="ai-try">
                   <p>{t("Try asking")}</p>
-                  <div className="ai-chips grid">{chips.map((c) => <button key={c} type="button" onClick={() => ask(c)}><Icon name="sparkle" size={12} />{t(c)}</button>)}</div>
+                  <div className="ai-chips grid">{chips.map((c) => <button key={en(c)} type="button" onClick={() => ask(c)}><Icon name="sparkle" size={12} />{say(c)}</button>)}</div>
                 </div>
               )}
             </div>
             {msgs.map((m, n) => {
-              if (m.divider) return <p key={n} className="ai-divider"><span>{t(m.divider)}</span></p>;
+              if (m.divider) return <p key={n} className="ai-divider"><span>{say(m.divider)}</span></p>;
               if (m.me) return <p key={n} className="ai-me">{m.text}</p>;
               const typingNow = n === live;
               const last = n === msgs.length - 1;
               return (
                 <div key={n} className="ai-bot">
-                  <Typed text={t(m.text)} live={typingNow} onDone={typingNow ? () => setLive(-1) : undefined} />
+                  <Typed text={say(m.text)} live={typingNow} onDone={typingNow ? () => setLive(-1) : undefined} />
                   {!typingNow && (
                     <div className="ai-extra">
                       {m.quick && (
@@ -414,7 +471,7 @@ export default function Assistant({ product }) {
                       {(m.links || m.finder) && (
                         <div className="ai-links">
                           {m.finder && <button type="button" onClick={toFinder}>{t("Open the full machine finder")} →</button>}
-                          {m.links?.map(([l, u]) => (/^(https?:|tel:)/.test(u) ? <Link key={l} href={u}>{t(l)} →</Link> : <Link key={l} to={u} onClick={() => !wide() && setOpen(false)}>{t(l)} →</Link>))}
+                          {m.links?.map(([l, u]) => (/^(https?:|tel:)/.test(u) ? <Link key={u} href={u}>{say(l)} →</Link> : <Link key={u} to={u} onClick={() => !wide() && setOpen(false)}>{say(l)} →</Link>))}
                         </div>
                       )}
                       <div className="ai-meta">
@@ -428,7 +485,7 @@ export default function Assistant({ product }) {
                           )}
                         </span>
                       </div>
-                      {last && !m.quick && m.next?.length > 0 && <div className="ai-chips ai-next">{m.next.map((c) => <button key={c} type="button" onClick={() => ask(c)}>{t(c)}</button>)}</div>}
+                      {last && !m.quick && m.next?.length > 0 && <div className="ai-chips ai-next">{m.next.map((c) => <button key={en(c)} type="button" onClick={() => ask(c)}>{say(c)}</button>)}</div>}
                     </div>
                   )}
                 </div>
@@ -436,7 +493,7 @@ export default function Assistant({ product }) {
             })}
             {typing && <div className="ai-typing" aria-label={t("Assistant is typing")}><i /><i /><i /></div>}
           </div>
-          <form className="ai-input" onSubmit={(e) => { e.preventDefault(); ask(text); }}>
+          <form className="ai-input" onSubmit={(e) => { e.preventDefault(); ask(text, true); }}>
             <input ref={input} value={text} onChange={(e) => setText(e.target.value)} placeholder={t("Message the OneLaser assistant")} aria-label={t("Message")} />
             <button type="submit" disabled={!text.trim() || typing} aria-label={t("Send")}><Icon name="arrow" size={18} /></button>
           </form>

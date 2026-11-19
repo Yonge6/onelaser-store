@@ -18,8 +18,19 @@ const FRONT = {
   hydra: "https://www.1laser.com/cdn/shop/files/home-product-hydra-gen2_d4d95d1f-482d-48b9-bbe2-82d96bd9ac39.png",
   vertigo: "https://www.1laser.com/cdn/shop/files/home-product-vertigo.png",
 };
-/** Front view for a current machine, otherwise its first product photo. */
-export const frontImg = (p) => (p?.kind === "machine" && FRONT[p.series]) || p?.images?.[0];
+/* One straight front render per model for Cobra and Hydra Gen2, from the team's image library
+   (yonge6.github.io/onelaser-product-images, "… 正面渲染"), cropped to the machine with 3% margin and saved as WebP. */
+const MODEL_FRONT = {
+  "cobra-8-90w-co2-laser-engraver-cutter": "cobra-8-front",
+  "cobra-10-100w-co2-laser-engraver-cutter": "cobra-10-front",
+  "cobra-14-130w-co2-laser-engraver-cutter": "cobra-14-front",
+  "hydra-7-gen-2-70w-rf-co2-dual-laser-machine": "hydra-7-gen2-front",
+  "hydra-9-gen-2-70w-rf-co2-dual-laser-machine": "hydra-9-gen2-front",
+  "hydra-13-gen-2-70w-rf-co2-dual-laser-machine": "hydra-13-gen2-front",
+  "hydra-16-gen-2-70w-rf-co2-dual-laser-machine": "hydra-16-gen2-front",
+};
+/** Front view of exactly this model when we have one, then the series front view, otherwise its first product photo. */
+export const frontImg = (p) => (MODEL_FRONT[p?.handle] && asset(`front/${MODEL_FRONT[p.handle]}.webp`)) || (p?.kind === "machine" && FRONT[p.series]) || p?.images?.[0];
 export const money = (n) =>
   `$${Number(n).toLocaleString("en-US", { minimumFractionDigits: n % 1 ? 2 : 0, maximumFractionDigits: 2 })}`;
 export const saving = (p) => (p.compareAt ? p.compareAt - p.price : 0);

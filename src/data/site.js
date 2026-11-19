@@ -40,8 +40,8 @@ export const nav = [
     // The menu tile uses it to show every machine at the same visual size (the photos have very different margins).
     series: [
       { title: "X Series", crop: [0.083, 0.405, 0.917, 0.611, 1], to: "/products/onelaser-xrf-desktop-laser-machine", desc: "Compact 38W RF desktop engraving", items: ["onelaser-xrf-desktop-laser-machine"] },
-      { title: "Cobra Series", crop: [0.099, 0.282, 0.907, 0.748, 1], to: "/products/cobra-10-100w-co2-laser-engraver-cutter", desc: "90W–130W CO₂ glass laser cutters", items: ["cobra-8-90w-co2-laser-engraver-cutter", "cobra-10-100w-co2-laser-engraver-cutter", "cobra-14-130w-co2-laser-engraver-cutter"] },
-      { title: "Hydra Series", crop: [0.064, 0.207, 0.935, 0.825, 1], to: "/products/hydra-9-gen-2-70w-rf-co2-dual-laser-machine", desc: "RF and hybrid lasers for larger projects", items: ["hydra-7-gen-2-70w-rf-co2-dual-laser-machine", "hydra-9-gen-2-70w-rf-co2-dual-laser-machine", "hydra-13-gen-2-70w-rf-co2-dual-laser-machine", "hydra-16-gen-2-70w-rf-co2-dual-laser-machine"] },
+      { title: "Cobra Series", crop: [0.028, 0.028, 0.972, 0.972, 1.724], to: "/products/cobra-10-100w-co2-laser-engraver-cutter", desc: "90W–130W CO₂ glass laser cutters", items: ["cobra-8-90w-co2-laser-engraver-cutter", "cobra-10-100w-co2-laser-engraver-cutter", "cobra-14-130w-co2-laser-engraver-cutter"] },
+      { title: "Hydra Series", crop: [0.028, 0.028, 0.972, 0.972, 1.418], to: "/products/hydra-9-gen-2-70w-rf-co2-dual-laser-machine", desc: "RF and hybrid lasers for larger projects", items: ["hydra-7-gen-2-70w-rf-co2-dual-laser-machine", "hydra-9-gen-2-70w-rf-co2-dual-laser-machine", "hydra-13-gen-2-70w-rf-co2-dual-laser-machine", "hydra-16-gen-2-70w-rf-co2-dual-laser-machine"] },
       { title: "VertiGo", crop: [0.191, 0.152, 0.806, 0.855, 1], to: "/products/vertigo-vertical-laser-engraver", desc: "Vertical 38W RF engraving for drinkware", items: ["vertigo-vertical-laser-engraver"] },
     ],
     more: [["All laser machines", "/collections/machines"], ["Accessories", "/collections/accessories"], ["Compare machines", "/compare"]],
