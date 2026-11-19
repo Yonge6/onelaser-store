@@ -124,9 +124,12 @@ const monthly = (p) => (p.price / FINANCE_MONTHS).toLocaleString("en-US", { mini
    with its name and three key specs from the catalog. Pure CSS, so outline, laser and label share one clock. */
 /* Front views drawn in code (viewBox 240 × 160, ground at y 150). Proportions follow the product photos;
    VertiGo uses its published 630 × 710 mm front. Red = the brand trim where it sits on each machine. */
-const Logo = ({ x, y, size = 6, anchor = "start" }) => (
-  <text x={x} y={y} fontSize={size} fontWeight="700" textAnchor={anchor} className="fv-logo"><tspan className="fv-red">1</tspan> ONELASER</text>
-);
+/** The official logo file (2350 × 301), placed at width w. anchor: start | middle | end, y = baseline-ish bottom. */
+const Logo = ({ x, y, w = 50, anchor = "start" }) => {
+  const h = (w * 301) / 2350;
+  const left = anchor === "middle" ? x - w / 2 : anchor === "end" ? x - w : x;
+  return <image href={asset("onelaser-logo-transparent.svg")} x={left} y={y - h} width={w} height={h} className="fv-logo" />;
+};
 const Feet = ({ xs, y, h = 6 }) => xs.map((x) => <path key={x} d={`M${x - 3} ${y} h6 v${h - 2} h2 v2 h-10 v-2 h2 z`} />);
 const Casters = ({ xs, y }) => xs.map((x) => <g key={x}><path d={`M${x} ${y} v3`} /><circle cx={x} cy={y + 7} r="4" /></g>);
 
@@ -137,7 +140,7 @@ const FRONT = {
       <rect x="20" y="86" width="200" height="9" rx="2" className="fv-glass" />
       <path d="M24 116 H150 L162 142 H24 Z" className="fv-dark" />
       <rect x="20" y="111" width="146" height="3" className="fv-trim" />
-      <Logo x={30} y={130} size={7} />
+      <Logo x={30} y={131} w={52} />
       <rect x="176" y="101" width="26" height="9" rx="2" />
       <path d="M184 122 h18 M184 126 h18 M184 130 h18" className="fv-thin" />
       <circle cx="216" cy="118" r="3" className="fv-trim" />
@@ -153,7 +156,7 @@ const FRONT = {
       <rect x="46" y="34" width="116" height="106" className="fv-dark" />
       <path d="M58 40 H150 L146 56 H62 Z" className="fv-glass" />
       <rect x="46" y="68" width="116" height="3.5" className="fv-trim" />
-      <Logo x={150} y={128} size={7} anchor="end" />
+      <Logo x={152} y={130} w={50} anchor="end" />
       <path d="M162 30 V140" />
       <circle cx="174" cy="44" r="3.2" className="fv-trim" />
       <path d="M172 58 h34 M172 62 h34 M172 66 h34" className="fv-thin" />
@@ -167,7 +170,7 @@ const FRONT = {
       <rect x="22" y="28" width="110" height="16" className="fv-glass" />
       <path d="M22 44 H132 V112 H90 L80 104 H22 Z" className="fv-dark" />
       <rect x="22" y="68" width="110" height="3.5" className="fv-trim" />
-      <Logo x={32} y={86} size={7} />
+      <Logo x={32} y={88} w={50} />
       <text x="126" y="108" fontSize="6.5" fontWeight="800" fontStyle="italic" textAnchor="end" className="fv-label">Gen<tspan className="fv-red">2</tspan></text>
       <path d="M132 28 V132" />
       <path d="M150 52 h50 M150 56 h50 M150 60 h50" className="fv-thin" />
@@ -182,7 +185,7 @@ const FRONT = {
   vertigo: (
     <>
       <rect x="68" y="24" width="104" height="118" rx="3" />
-      <Logo x={112} y={38} size={7} anchor="middle" />
+      <Logo x={113} y={41} w={56} anchor="middle" />
       <rect x="78" y="48" width="70" height="80" rx="2" className="fv-dark" />
       <rect x="84" y="56" width="58" height="64" className="fv-glass" />
       <rect x="78" y="48" width="70" height="5" className="fv-trim" />
