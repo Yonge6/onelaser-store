@@ -241,6 +241,35 @@ export default function Assistant({ product }) {
     const id = setTimeout(() => setNudge(true), 12000);
     return () => clearTimeout(id);
   }, [product]);
+  // phones: the pill shrinks to its icon while scrolling down, grows back on the way up or when scrolling stops
+  const [mini, setMini] = useState(false);
+  useEffect(() => {
+    let y = window.scrollY, idle;
+    const on = () => {
+      const ny = window.scrollY;
+      if (Math.abs(ny - y) > 6) setMini(ny > y && ny > 160);
+      y = ny;
+      clearTimeout(idle);
+      idle = setTimeout(() => setMini(false), 1400);
+    };
+    window.addEventListener("scroll", on, { passive: true });
+    return () => { window.removeEventListener("scroll", on); clearTimeout(idle); };
+  }, []);
+  // phones: the drawer takes a history entry, so the system back gesture closes it instead of leaving the page
+  useEffect(() => {
+    if (!open || wide()) return undefined;
+    if (!window.history.state?.ai) window.history.pushState({ ...(window.history.state || {}), ai: 1 }, "");
+    const back = () => setOpen(false);
+    window.addEventListener("popstate", back);
+    return () => window.removeEventListener("popstate", back);
+  }, [open]);
+  const close = () => { if (!wide() && window.history.state?.ai) window.history.back(); else setOpen(false); };
+  // phones: drag the drawer down by its header to close it
+  const drag = useRef(null);
+  const [dy, setDy] = useState(0);
+  const onTouchStart = (e) => { if (!wide()) drag.current = e.touches[0].clientY; };
+  const onTouchMove = (e) => { if (drag.current != null) setDy(Math.max(0, e.touches[0].clientY - drag.current)); };
+  const onTouchEnd = () => { if (drag.current == null) return; drag.current = null; if (dy > 110) close(); setDy(0); };
   const closeNudge = () => { setNudge(false); try { sessionStorage.setItem("onelaser-ai-nudge", "1"); } catch { /* ignore */ } };
   const [typing, setTyping] = useState(false);
   const [text, setText] = useState("");
@@ -253,7 +282,7 @@ export default function Assistant({ product }) {
   useEffect(() => {
     if (!open) return undefined;
     input.current?.focus({ preventScroll: true });
-    const key = (e) => e.key === "Escape" && setOpen(false);
+    const key = (e) => e.key === "Escape" && close();
     window.addEventListener("keydown", key);
     const small = window.matchMedia("(max-width: 860px)").matches;
     const prev = document.body.style.overflow;
@@ -307,18 +336,20 @@ export default function Assistant({ product }) {
           </button>
         </div>
       )}
-      <button type="button" className={`ai-pill${open ? " hide" : ""}`} onClick={() => openWith()} aria-label={t("Open the OneLaser shopping assistant")} aria-expanded={open}>
+      <button type="button" className={`ai-pill${open ? " hide" : ""}${mini ? " mini" : ""}`} onClick={() => openWith()} aria-label={t("Open the OneLaser shopping assistant")} aria-expanded={open}>
         <span className="ai-avatar"><Icon name="sparkle" size={20} /></span>
         <span className="ai-pill-text" key={label}>{t(labels[label % labels.length])}</span>
       </button>
+      {open && <div className="ai-backdrop" onClick={close} aria-hidden="true" />}
       {open && (
-        <div className="ai-panel" role="dialog" aria-label={t("OneLaser shopping assistant")}>
-          <header className="ai-head">
+        <div className={`ai-panel${msgs.length ? " chatting" : ""}${dy ? " dragging" : ""}`} role="dialog" aria-modal="true" aria-label={t("OneLaser shopping assistant")} style={dy ? { transform: `translateY(${dy}px)` } : undefined}>
+          <div className="ai-grab" onTouchStart={onTouchStart} onTouchMove={onTouchMove} onTouchEnd={onTouchEnd} aria-hidden="true"><i /></div>
+          <header className="ai-head" onTouchStart={onTouchStart} onTouchMove={onTouchMove} onTouchEnd={onTouchEnd}>
             <span className="ai-avatar sm"><Icon name="sparkle" size={16} /></span>
-            <span className="ai-title"><b>{t("OneLaser Shopping Assistant")}</b><small><i />{t("Online · replies instantly")}</small></span>
+            <span className="ai-title"><b><span className="ai-long">{t("OneLaser Shopping Assistant")}</span><span className="ai-short">{t("OneLaser Assistant")}</span></b><small><i />{t("Online · replies instantly")}</small></span>
             <Link to="/cart" className="ai-icon" aria-label={t("Cart")}><Icon name="cart" size={20} />{count > 0 && <em>{count}</em>}</Link>
             {msgs.length > 0 && <button type="button" className="ai-icon" aria-label={t("New chat")} title={t("New chat")} onClick={() => { setMsgs([]); setAns({}); setFb({}); }}><Icon name="refresh" size={18} /></button>}
-            <button type="button" className="ai-icon" aria-label={t("Close")} onClick={() => setOpen(false)}><Icon name="close" size={20} /></button>
+            <button type="button" className="ai-icon" aria-label={t("Close")} onClick={close}><Icon name="close" size={20} /></button>
           </header>
           <div className="ai-body" ref={body}>
             <div className="ai-welcome">
