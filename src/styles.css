@@ -3415,3 +3415,32 @@ ul { list-style: none; }
   .ai-input { margin: 4px 12px 0; }
 }
 .ai-cats button > .ai-cat-name { height: auto; display: block; border-radius: 0; background: none; overflow: hidden; transform: none; }
+
+/* ===== AI pill motion: entrance, spinning gradient ring with glow, light sweep, twinkling sparkle ===== */
+@property --ai-a { syntax: "<angle>"; inherits: false; initial-value: 0deg; }
+.ai-pill { isolation: isolate; background: linear-gradient(110deg, #0b0b0c 38%, #2c2c33 50%, #0b0b0c 62%) 0 0 / 260% 100% #0b0b0c; box-shadow: 0 12px 32px -8px rgba(0, 0, 0, 0.45); animation: ai-pill-in .7s cubic-bezier(.2, .9, .25, 1.2) .6s both, ai-sweep 4.5s ease-in-out 1.6s infinite; }
+.ai-pill::before, .ai-pill::after { content: ""; position: absolute; z-index: -1; border-radius: inherit; background: conic-gradient(from var(--ai-a), #38bdf8, #a78bfa, var(--brand), #fbbf24, #38bdf8); animation: ai-spin 3.2s linear infinite; }
+.ai-pill::before { inset: -2px; }
+.ai-pill::after { inset: -6px; filter: blur(14px); opacity: .55; }
+.ai-pill:hover { box-shadow: 0 16px 36px -8px rgba(0, 0, 0, 0.5); }
+.ai-pill:hover::before, .ai-pill:hover::after { animation-duration: 1.4s; }
+.ai-pill:hover::after { opacity: .85; }
+.ai-pill .ai-avatar svg { animation: ai-twinkle 2.4s ease-in-out infinite; }
+.ai-pill.hide { animation: none; }
+@keyframes ai-pill-in { from { opacity: 0; transform: translateX(-50%) translateY(40px) scale(.9); } }
+@keyframes ai-sweep { 0%, 55% { background-position: 100% 0; } 85%, 100% { background-position: -60% 0; } }
+@keyframes ai-spin { to { --ai-a: 360deg; } }
+@keyframes ai-twinkle { 0%, 100% { transform: scale(1) rotate(0); } 30% { transform: scale(1.18) rotate(18deg); } 55% { transform: scale(.92) rotate(-6deg); } }
+@media (prefers-reduced-motion: reduce) {
+  .ai-pill, .ai-pill::before, .ai-pill::after, .ai-pill .ai-avatar svg, .ai-avatar, .ai-pill-text { animation: none !important; }
+}
+/* ring only on the edge (masked), glow as a colour-cycling shadow so the dark face stays dark */
+.ai-pill::before { inset: -2px; padding: 2px; -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0); }
+.ai-pill::after { display: none; }
+.ai-pill { animation: ai-pill-in .7s cubic-bezier(.2, .9, .25, 1.2) .6s both, ai-sweep 4.5s ease-in-out 1.6s infinite, ai-halo 6s linear infinite; }
+.ai-pill:hover { animation-duration: .7s, 4.5s, 2.4s; }
+@keyframes ai-halo {
+  0%, 100% { box-shadow: 0 12px 30px -10px rgba(0, 0, 0, 0.5), 0 0 22px 2px rgba(56, 189, 248, 0.45); }
+  33% { box-shadow: 0 12px 30px -10px rgba(0, 0, 0, 0.5), 0 0 22px 2px rgba(167, 139, 250, 0.45); }
+  66% { box-shadow: 0 12px 30px -10px rgba(0, 0, 0, 0.5), 0 0 22px 2px rgba(231, 49, 14, 0.4); }
+}
