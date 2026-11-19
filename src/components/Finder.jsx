@@ -119,66 +119,106 @@ function addOnsFor(a, key) {
 const FINANCE_MONTHS = 24; // same illustration as 1laser.com's "24-month payment": price ÷ 24
 const monthly = (p) => (p.price / FINANCE_MONTHS).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
-/* Idle state of the finder preview: line drawings of the four machine families morph into one another
-   (desktop XRF → Cobra cabinet → Hydra with its tower → vertical VertiGo) while a laser head scans across.
-   Every outline uses the same path commands, so SVG <animate> can morph between them in every browser. */
+/* Idle state of the finder preview: line drawings traced from the four official product photos
+   (public/assets/finder-line-*.png). Every 3 s a laser head sweeps across and engraves the next machine in,
+   with its name and three key specs from the catalog. Pure CSS, so outline, laser and label share one clock. */
+/* Front views drawn in code (viewBox 240 × 160, ground at y 150). Proportions follow the product photos;
+   VertiGo uses its published 630 × 710 mm front. Red = the brand trim where it sits on each machine. */
+const Logo = ({ x, y, size = 6, anchor = "start" }) => (
+  <text x={x} y={y} fontSize={size} fontWeight="700" textAnchor={anchor} className="fv-logo"><tspan className="fv-red">1</tspan> ONELASER</text>
+);
+const Feet = ({ xs, y, h = 6 }) => xs.map((x) => <path key={x} d={`M${x - 3} ${y} h6 v${h - 2} h2 v2 h-10 v-2 h2 z`} />);
+const Casters = ({ xs, y }) => xs.map((x) => <g key={x}><path d={`M${x} ${y} v3`} /><circle cx={x} cy={y + 7} r="4" /></g>);
+
+const FRONT = {
+  xrf: (
+    <>
+      <rect x="20" y="90" width="200" height="56" rx="3" />
+      <rect x="20" y="86" width="200" height="9" rx="2" className="fv-glass" />
+      <path d="M24 116 H150 L162 142 H24 Z" className="fv-dark" />
+      <rect x="20" y="111" width="146" height="3" className="fv-trim" />
+      <Logo x={30} y={130} size={7} />
+      <rect x="176" y="101" width="26" height="9" rx="2" />
+      <path d="M184 122 h18 M184 126 h18 M184 130 h18" className="fv-thin" />
+      <circle cx="216" cy="118" r="3" className="fv-trim" />
+      <Feet xs={[32, 208]} y={146} h={4} />
+    </>
+  ),
+  cobra: (
+    <>
+      <rect x="25" y="30" width="190" height="110" rx="3" />
+      <rect x="25" y="26" width="190" height="8" rx="2" className="fv-glass" />
+      <rect x="43" y="30" width="3" height="110" className="fv-trim" />
+      <text x="36" y="132" fontSize="9" fontWeight="800" transform="rotate(-90 36 132)" className="fv-label">COBRA <tspan className="fv-red">10</tspan></text>
+      <rect x="46" y="34" width="116" height="106" className="fv-dark" />
+      <path d="M58 40 H150 L146 56 H62 Z" className="fv-glass" />
+      <rect x="46" y="68" width="116" height="3.5" className="fv-trim" />
+      <Logo x={150} y={128} size={7} anchor="end" />
+      <path d="M162 30 V140" />
+      <circle cx="174" cy="44" r="3.2" className="fv-trim" />
+      <path d="M172 58 h34 M172 62 h34 M172 66 h34" className="fv-thin" />
+      <circle cx="176" cy="84" r="1.3" /><circle cx="176" cy="90" r="1.3" /><circle cx="176" cy="96" r="1.3" />
+      <Feet xs={[36, 94, 150, 204]} y={140} h={10} />
+    </>
+  ),
+  hydra: (
+    <>
+      <rect x="22" y="28" width="196" height="104" rx="3" />
+      <rect x="22" y="28" width="110" height="16" className="fv-glass" />
+      <path d="M22 44 H132 V112 H90 L80 104 H22 Z" className="fv-dark" />
+      <rect x="22" y="68" width="110" height="3.5" className="fv-trim" />
+      <Logo x={32} y={86} size={7} />
+      <text x="126" y="108" fontSize="6.5" fontWeight="800" fontStyle="italic" textAnchor="end" className="fv-label">Gen<tspan className="fv-red">2</tspan></text>
+      <path d="M132 28 V132" />
+      <path d="M150 52 h50 M150 56 h50 M150 60 h50" className="fv-thin" />
+      <circle cx="160" cy="84" r="1.3" /><circle cx="160" cy="90" r="1.3" /><circle cx="160" cy="96" r="1.3" />
+      <rect x="140" y="38" width="10" height="6" rx="1" />
+      <path d="M22 112 H218" />
+      <rect x="30" y="118" width="92" height="9" rx="1.5" className="fv-thin" />
+      <path d="M190 124 h18 M194 127 h14" className="fv-trim-line" />
+      <Casters xs={[36, 82, 158, 204]} y={132} />
+    </>
+  ),
+  vertigo: (
+    <>
+      <rect x="68" y="24" width="104" height="118" rx="3" />
+      <Logo x={112} y={38} size={7} anchor="middle" />
+      <rect x="78" y="48" width="70" height="80" rx="2" className="fv-dark" />
+      <rect x="84" y="56" width="58" height="64" className="fv-glass" />
+      <rect x="78" y="48" width="70" height="5" className="fv-trim" />
+      <rect x="78" y="123" width="70" height="5" className="fv-trim" />
+      <rect x="150" y="70" width="4" height="34" rx="1" />
+      <path d="M157 34 h10" className="fv-trim-line" />
+      <rect x="157" y="46" width="10" height="14" rx="1" />
+      <text x="165" y="134" fontSize="8" fontWeight="800" fontStyle="italic" transform="rotate(-90 165 134)" className="fv-label">VertiGo</text>
+      <path d="M72 142 v4 h96 v-4" />
+    </>
+  ),
+};
+
 const SHAPES = [
-  { name: "XRF", specs: [["Laser", "38W RF"], ["Work area", "23.6 × 11.8 in"], ["Speed", "1,200 mm/s"]], panel: [168, 88, 138], body: [[28, 138], [28, 96], [140, 88], [140, 88], [212, 88], [212, 138]], win: [42, 98, 132, 116], stripe: [28, 212, 124], legs: [40, 200, 138, 142] },
-  { name: "Cobra", specs: [["Laser", "90–130W CO₂"], ["Work area", "up to 55 × 35 in"], ["Speed", "1,200 mm/s"]], panel: [150, 58, 128], body: [[22, 128], [22, 62], [150, 62], [150, 58], [218, 58], [218, 128]], win: [34, 72, 140, 100], stripe: [22, 218, 110], legs: [34, 206, 128, 148] },
-  { name: "Hydra", specs: [["Laser", "70W RF / hybrid"], ["Work area", "up to 63 × 39 in"], ["Speed", "2,000 mm/s · 4G"]], panel: [158, 64, 132], body: [[26, 132], [26, 64], [158, 64], [158, 44], [214, 44], [214, 132]], win: [38, 74, 148, 102], stripe: [26, 214, 114], legs: [38, 202, 132, 146] },
-  { name: "VertiGo", specs: [["Laser", "38W RF"], ["Fits", "Ø 16–230 mm"], ["Speed", "800 mm/s"]], panel: [148, 36, 140], body: [[78, 140], [78, 36], [130, 36], [130, 36], [162, 36], [162, 140]], win: [90, 50, 140, 104], stripe: [78, 162, 118], legs: [88, 152, 140, 144] },
+  { name: "XRF", art: "xrf", specs: [["Laser", "38W RF"], ["Work area", "23.6 × 11.8 in"], ["Speed", "1,200 mm/s"]] },
+  { name: "Cobra", art: "cobra", specs: [["Laser", "90–130W CO₂"], ["Work area", "up to 55 × 35 in"], ["Speed", "1,200 mm/s"]] },
+  { name: "Hydra Gen2", art: "hydra", specs: [["Laser", "70W RF / hybrid"], ["Work area", "up to 63 × 39 in"], ["Speed", "2,000 mm/s · 4G"]] },
+  { name: "VertiGo", art: "vertigo", specs: [["Laser", "38W RF"], ["Fits", "Ø 16–230 mm"], ["Speed", "800 mm/s"]] },
 ];
-const loop = (list) => [...list, list[0]].join(";");
-const bodyD = (b) => `M${b.map((p) => p.join(" ")).join(" L")} Z`;
-const winD = ([x1, y1, x2, y2]) => `M${x1} ${y1} L${x2} ${y1} L${x2} ${y2} L${x1} ${y2} Z`;
-const stripeD = ([x1, x2, y]) => `M${x1} ${y} L${x2} ${y}`;
-const panelD = ([x, y1, y2]) => `M${x} ${y1} L${x} ${y2}`;
-const legsD = ([a, b, y1, y2]) => `M${a} ${y1} L${a} ${y2} M${b} ${y1} L${b} ${y2}`;
-const DUR = 12; // seconds for the whole cycle: hold, morph, hold, morph…
-const KEY_TIMES = "0;0.2;0.25;0.45;0.5;0.7;0.75;0.95;1";
+const DUR = 12; // whole cycle; each machine gets a quarter
 
 function MachineMorph() {
-  const svg = useRef(null);
-  // the SVG clock starts with the page; restart it with the CSS name/spec animation so outline and label stay in step
-  useEffect(() => { try { svg.current?.setCurrentTime(0); } catch { /* older browsers */ } }, []);
-  const still = typeof window !== "undefined" && window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
-  const morph = (fn) => {
-    const v = SHAPES.map((x) => fn(x));
-    // value pairs: hold each shape for 20% of the cycle, then morph for 5%
-    const values = [v[0], v[0], v[1], v[1], v[2], v[2], v[3], v[3], v[0]].join(";");
-    return still ? null : <animate attributeName="d" dur={`${DUR}s`} repeatCount="indefinite" values={values} keyTimes={KEY_TIMES} calcMode="spline" keySplines={Array(8).fill(".6 0 .2 1").join(";")} />;
-  };
-  const first = SHAPES[0];
   return (
-    <div className="fx-morph" aria-hidden="true">
-      <svg ref={svg} viewBox="0 0 240 180" role="presentation">
-        <defs>
-          <pattern id="fx-grid" width="12" height="12" patternUnits="userSpaceOnUse"><path d="M12 0H0V12" fill="none" stroke="rgba(56,189,248,.09)" strokeWidth=".6" /></pattern>
-          <radialGradient id="fx-glow"><stop offset="0" stopColor="#ff5a36" stopOpacity=".9" /><stop offset="1" stopColor="#ff5a36" stopOpacity="0" /></radialGradient>
-          <filter id="fx-blur"><feGaussianBlur stdDeviation="1.6" /></filter>
-        </defs>
-        <rect width="240" height="180" fill="url(#fx-grid)" />
-        <ellipse cx="120" cy="156" rx="92" ry="6" fill="rgba(56,189,248,.08)" />
-        <g fill="none" strokeLinejoin="round" strokeLinecap="round">
-          <path className="fx-m-glow" d={bodyD(first.body)} stroke="#38bdf8" strokeWidth="4" filter="url(#fx-blur)">{morph((x) => bodyD(x.body))}</path>
-          <path className="fx-m-body" d={bodyD(first.body)} stroke="#7dd3fc" strokeWidth="1.4">{morph((x) => bodyD(x.body))}</path>
-          <path className="fx-m-win" d={winD(first.win)} stroke="#38bdf8" strokeWidth="1" strokeDasharray="3 3">{morph((x) => winD(x.win))}</path>
-          <path d={stripeD(first.stripe)} stroke="#e7310e" strokeWidth="2">{morph((x) => stripeD(x.stripe))}</path>
-          <path d={panelD(first.panel)} stroke="#7dd3fc" strokeWidth="1" strokeOpacity=".7">{morph((x) => panelD(x.panel))}</path>
-          <path d={legsD(first.legs)} stroke="#7dd3fc" strokeWidth="1.4">{morph((x) => legsD(x.legs))}</path>
-        </g>
-        {!still && (
-          <g className="fx-laser">
-            <line x1="0" y1="14" x2="0" y2="150" stroke="#ff5a36" strokeWidth=".8" strokeOpacity=".55" />
-            <rect x="-5" y="8" width="10" height="6" rx="1.5" fill="#e7310e" />
-            <circle cx="0" cy="150" r="7" fill="url(#fx-glow)" />
-            <animateTransform attributeName="transform" type="translate" values="40 0;200 0;40 0" dur="3.2s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines=".45 0 .55 1;.45 0 .55 1" />
-          </g>
-        )}
-      </svg>
+    <div className="fx-morph" aria-hidden="true" style={{ "--dur": `${DUR}s`, "--step": `${DUR / SHAPES.length}s` }}>
+      <div className="fx-art">
+        {SHAPES.map((x, n) => (
+          <svg key={x.art} viewBox="0 0 240 160" className="fv" style={{ animationDelay: `${(n * DUR) / SHAPES.length}s` }}>
+            <path d="M8 150.5 H232" className="fv-ground" />
+            <g className="fv-lines">{FRONT[x.art]}</g>
+          </svg>
+        ))}
+        <span className="fx-beam" />
+      </div>
       <div className="fx-ms">
         {SHAPES.map((x, n) => (
-          <div key={x.name} className={`fx-ms-item${still && n ? " off" : ""}`} style={{ animationDelay: `${(n * DUR) / 4}s`, animationDuration: `${DUR}s` }}>
+          <div key={x.name} className="fx-ms-item" style={{ animationDelay: `${(n * DUR) / SHAPES.length}s` }}>
             <b>{x.name}</b>
             <dl>{x.specs.map(([k, v]) => <div key={k}><dt>{t(k)}</dt><dd>{v}</dd></div>)}</dl>
           </div>
