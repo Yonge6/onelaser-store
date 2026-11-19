@@ -134,7 +134,7 @@ export default function FinderCard() {
           </p>
         </div>
         <Link to={`/products/${top.handle}`} className="fx-stage" tabIndex={-1} aria-hidden="true"><img src={img(frontImg(top), 900)} alt="" /></Link>
-        {slot && createPortal(<FinderResult answers={answers} ranked={ranked} onEdit={edit} />, slot)}
+        {slot && createPortal(<FinderResult answers={answers} ranked={ranked} />, slot)}
         {leadDialog}
       </article>
     );
@@ -327,7 +327,7 @@ export function LeadDialog({ mode = "quote", product, lines = [], onClose }) {
 
 /** Full-width result under the product grid, after the result panel of the thunderlaserusa.com finder:
     our pick with why it fits, key specs, good-to-know notes, warranty, then buy and lead buttons. */
-function FinderResult({ answers, ranked, onEdit }) {
+function FinderResult({ answers, ranked }) {
   const [lead, setLead] = useState(null);
   // Details under the result card: the pick itself (photo, price, buttons) is shown once, in the card above.
   const key = ranked[0].key;
@@ -343,10 +343,10 @@ function FinderResult({ answers, ranked, onEdit }) {
           const l = lines.find((x) => x.n === n);
           return (
             <li key={s.id} className={l ? "done" : ""}>
-              <button type="button" onClick={() => onEdit(n)} title={t("Change answer")}>
+              <span title={l ? l.a.map((x) => t(x)).join(", ") : undefined}>
                 <i>{l ? <Icon name="check" size={14} /> : n + 1}</i>
                 <span><b>{t(s.label)}</b><em>{l ? l.a.map((x) => t(x)).join(", ") : t("Skipped")}</em></span>
-              </button>
+              </span>
             </li>
           );
         })}
@@ -406,7 +406,7 @@ export function FinderHelp() {
           <h3>{t("Not sure which one fits?")}</h3>
           <p>{t("Talk it through with a OneLaser laser engineer. Tell us what you make and we'll point you to the right machine.")}</p>
         </div>
-        <Link href="https://www.1laser.com/pages/sales-consultation" className="ih-btn dark">{t("Schedule a call")}</Link>
+        <Link to="/pages/sales-consultation" className="ih-btn dark">{t("Schedule a call")}</Link>
       </div>
     </>
   );

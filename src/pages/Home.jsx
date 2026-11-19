@@ -282,7 +282,7 @@ function Makers() {
         </div>
       </div>
       <div className="ih-scroller iu-row" ref={row} key={seg}>
-        <Link href={A.cta[1]} className="iu-intro">
+        <Link to={A.cta[1]} className="iu-intro">
           <img src={img(cur.image, 1000)} alt="" loading="lazy" />
           <span><small>{t(cur.label)}</small><b>{t(cur.title)}</b><em>{t(cur.text)}</em><i>{t(A.cta[0])} ›</i></span>
         </Link>

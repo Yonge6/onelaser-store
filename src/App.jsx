@@ -8,6 +8,7 @@ import Product from "./pages/Product.jsx";
 import Cart from "./pages/Cart.jsx";
 import Checkout from "./pages/Checkout.jsx";
 import Compare from "./pages/Compare.jsx";
+import Consult from "./pages/Consult.jsx";
 
 function Page({ path, query }) {
   const [, section, handle] = path.split("/");
@@ -15,6 +16,7 @@ function Page({ path, query }) {
   if (section === "products" && handle) return <Product handle={handle} />;
   if (section === "search") return <Collection key={`s-${query.get("q")}`} search={query.get("q") || ""} />;
   if (section === "compare") return <Compare />;
+  if (section === "pages" && handle === "sales-consultation") return <Consult />;
   if (section === "cart") return <Cart />;
   return <Home />;
 }

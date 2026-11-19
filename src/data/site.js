@@ -68,7 +68,7 @@ export const nav = [
   },
   { label: "Contact", href: `${SITE}/pages/contact-us` },
 ];
-export const contact = { phone: "626 800 4130", tel: "+16268004130", call: `${SITE}/pages/sales-consultation` };
+export const contact = { phone: "626 800 4130", tel: "+16268004130", call: "/pages/sales-consultation" };
 
 // Footer: columns, links, contact lines and social accounts as on www.1laser.com (read 2026-11-18).
 export const footer = {
@@ -325,7 +325,7 @@ const IND = "https://www.1laser.com/cdn/shop/files/home-industry-";
 export const homeAmbition = {
   kicker: "Built for every ambition", title: "Different goals. A clearer machine path.",
   text: "Choose the environment that looks most like yours, then explore the OneLaser path designed around it.",
-  cta: ["Let's Talk with Our Experts", "https://www.1laser.com/pages/sales-consultation"],
+  cta: ["Let's Talk with Our Experts", "/pages/sales-consultation"],
   segments: [
     {
       label: "Makers", title: "Turn ideas into finished objects.", image: `${IND}makers-v3.webp?v=1788447362`,

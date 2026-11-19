@@ -87,7 +87,7 @@ export function Header({ path }) {
           </nav>
           <div className="site-actions">
             <Link href={`tel:${contact.tel}`} className="header-phone"><Icon name="phone" size={16} /><span>{contact.phone}</span></Link>
-            <Link href={contact.call} className="store-btn"><Icon name="calendar" size={16} /><span>{t("Schedule a Sales Call")}</span></Link>
+            <Link to="/pages/sales-consultation" className="store-btn"><Icon name="calendar" size={16} /><span>{t("Schedule a Sales Call")}</span></Link>
             <button type="button" className="icon-btn" aria-label={t("Search")} onClick={() => setSearch((s) => !s)}><Icon name="search" size={22} /></button>
             <Link href="https://www.1laser.com/account/login" className="icon-btn hide-mobile" aria-label={t("Account")}><Icon name="user" size={22} /></Link>
             <Link to="/cart" className="icon-btn cart-btn" aria-label={`Cart, ${count} items`}><Icon name="cart" size={22} />{count > 0 && <em>{count}</em>}</Link>
@@ -203,7 +203,7 @@ export function Header({ path }) {
               ))}
             </div>
             <div className="drawer-foot">
-              <Link href={contact.call} className="store-btn"><Icon name="calendar" size={16} /><span>{t("Schedule a Sales Call")}</span></Link>
+              <Link to="/pages/sales-consultation" className="store-btn"><Icon name="calendar" size={16} /><span>{t("Schedule a Sales Call")}</span></Link>
               <Link href={`tel:${contact.tel}`} className="drawer-phone"><Icon name="phone" size={16} />{contact.phone}</Link>
               <details className="drawer-lang">
                 <summary><Icon name="globe" size={20} /><span>{current.label}</span><Icon name="chevron" size={16} /></summary>
@@ -332,7 +332,7 @@ export function Footer() {
         <div className="footer-rep">
           <h2>{t("Talk to a Rep")}</h2>
           <p>{t("Have questions or need help?")}</p>
-          <Link href="https://www.1laser.com/pages/sales-consultation" className="footer-pill">{t("Book A Free Call")}</Link>
+          <Link to="/pages/sales-consultation" className="footer-pill">{t("Book A Free Call")}</Link>
         </div>
         <form className="footer-news" onSubmit={(e) => { e.preventDefault(); setSent(true); }}>
           <h2>{t("Unlock Exclusive Updates & Savings!")}</h2>

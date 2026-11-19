@@ -2614,3 +2614,170 @@ ul { list-style: none; }
 @media (max-width: 860px) {
   .fx-peek:not(.live) { order: 0; border-bottom: 0; border-top: 1px solid #e6eaf0; }
 }
+
+/* ===== Sales consultation (#/pages/sales-consultation): booking card next to the pitch, then who / how / team / other ways ===== */
+.cs { background: #fff; }
+.cs-wrap { max-width: 1440px; margin: 0 auto; padding: 0 64px; }
+.cs-kicker { font-size: 12px; line-height: 16px; font-weight: 700; letter-spacing: 1.4px; text-transform: uppercase; color: var(--brand); }
+.cs-hero { padding: 56px 0 80px; background: linear-gradient(180deg, var(--page) 0%, #fff 100%); }
+.cs-hero-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 520px); gap: 64px; align-items: start; }
+.cs-intro h1 { margin-top: 14px; font-size: 56px; line-height: 62px; font-weight: 700; letter-spacing: -0.02em; color: var(--title); }
+.cs-sub { margin-top: 12px; font-size: 22px; line-height: 30px; font-weight: 500; color: var(--brand); }
+.cs-ticks { list-style: none; margin: 28px 0 0; padding: 0; display: grid; gap: 12px; }
+.cs-ticks li { display: flex; align-items: center; gap: 12px; font-size: 17px; line-height: 24px; color: var(--text); }
+.cs-ticks svg { flex: none; width: 28px; height: 28px; padding: 5px; border-radius: 50%; background: var(--brand-soft); color: var(--brand); }
+.cs-team-shot { position: relative; margin: 36px 0 0; border-radius: 24px; overflow: hidden; background: #e9eaec; aspect-ratio: 16 / 10; }
+.cs-team-shot > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 30%; }
+.cs-team-shot figcaption { position: absolute; left: 16px; right: 16px; bottom: 16px; display: flex; align-items: center; gap: 14px; padding: 12px 16px; border-radius: 16px; background: rgba(255, 255, 255, 0.86); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+.cs-team-shot figcaption > span:last-child { display: grid; gap: 2px; min-width: 0; }
+.cs-team-shot b { font-size: 15px; line-height: 20px; color: var(--title); }
+.cs-team-shot small { font-size: 13px; line-height: 18px; color: var(--muted); }
+.cs-faces { flex: none; display: flex; }
+.cs-faces img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; background: #dcdde0; border: 2px solid #fff; }
+.cs-faces img + img { margin-left: -12px; }
+
+.cs-book { position: sticky; top: calc(var(--promo-h) + 88px); border-radius: 24px; background: #fff; box-shadow: 0 0 0 1px var(--line), 0 30px 60px -36px rgba(0, 0, 0, 0.35); overflow: hidden; scroll-margin-top: calc(var(--promo-h) + 88px); }
+.cs-book-head { padding: 24px 28px 20px; background: #111113; color: #fff; border-top: 4px solid var(--brand); }
+.cs-live { display: inline-flex; align-items: center; gap: 8px; font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: #8be0a8; }
+.cs-live i { width: 8px; height: 8px; border-radius: 50%; background: #34d27a; box-shadow: 0 0 0 0 rgba(52, 210, 122, 0.6); animation: cs-pulse 2s infinite; }
+@keyframes cs-pulse { 70% { box-shadow: 0 0 0 8px rgba(52, 210, 122, 0); } 100% { box-shadow: 0 0 0 0 rgba(52, 210, 122, 0); } }
+.cs-book-head h2 { margin-top: 8px; font-size: 26px; line-height: 32px; font-weight: 700; }
+.cs-meta { margin-top: 10px; display: flex; flex-wrap: wrap; gap: 8px 18px; font-size: 14px; line-height: 20px; color: #c8c8cf; }
+.cs-meta span { display: inline-flex; align-items: center; gap: 6px; } .cs-meta svg { color: #fff; }
+.cs-book-body { padding: 20px 28px 24px; display: grid; gap: 0; }
+.cs-zone { position: relative; display: flex; align-items: center; height: 44px; border-radius: 8px; border: 1px solid var(--line); background: var(--tile); color: var(--muted); }
+.cs-zone > svg:first-child { position: absolute; left: 14px; pointer-events: none; }
+.cs-zone > svg:last-child { position: absolute; right: 14px; transform: rotate(90deg); pointer-events: none; }
+.cs-zone select { appearance: none; -webkit-appearance: none; width: 100%; height: 100%; padding: 0 38px 0 40px; border: 0; background: none; font: inherit; font-size: 14px; font-weight: 500; color: var(--title); cursor: pointer; outline: none; }
+.cs-zone:focus-within { border-color: var(--title); }
+.cs-days-head { margin-top: 18px; display: flex; align-items: center; justify-content: space-between; }
+.cs-days-head b { font-size: 15px; line-height: 20px; color: var(--title); }
+.cs-days-head span { display: flex; gap: 6px; }
+.cs-days-head button { width: 32px; height: 32px; display: grid; place-items: center; border-radius: 8px; border: 1px solid var(--line); background: #fff; color: var(--title); }
+.cs-days-head button:first-child svg { transform: rotate(180deg); }
+.cs-days-head button:hover { border-color: var(--title); }
+.cs-days { margin-top: 10px; display: grid; grid-auto-flow: column; grid-auto-columns: calc((100% - 32px) / 5); gap: 8px; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; overscroll-behavior-x: contain; }
+.cs-days::-webkit-scrollbar { display: none; }
+.cs-days button { scroll-snap-align: start; display: grid; justify-items: center; gap: 2px; padding: 10px 0; border-radius: 8px; border: 1px solid var(--line); background: #fff; color: var(--title); transition: border-color .2s, background .2s; }
+.cs-days button small { font-size: 12px; line-height: 16px; color: var(--muted); }
+.cs-days button b { font-size: 20px; line-height: 24px; font-weight: 600; }
+.cs-days button:hover { border-color: var(--title); }
+.cs-days button.on { border-color: var(--title); background: var(--title); color: #fff; } .cs-days button.on small { color: rgba(255, 255, 255, 0.7); }
+.cs-slots-head { margin-top: 18px; font-size: 14px; line-height: 20px; font-weight: 600; color: var(--title); }
+.cs-slots-head span { font-weight: 400; color: var(--muted); }
+.cs-slots { margin-top: 10px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.cs-slots button { height: 44px; display: flex; align-items: center; justify-content: center; gap: 6px; border-radius: 8px; border: 1px solid var(--line); background: #fff; font-size: 15px; font-weight: 500; color: var(--title); transition: border-color .2s, background .2s, color .2s; }
+.cs-slots button small { font-size: 11px; color: var(--muted); }
+.cs-slots button:hover { border-color: var(--brand); color: var(--brand); }
+.cs-slots button.on { border-color: var(--brand); background: var(--brand); color: #fff; } .cs-slots button.on small { color: rgba(255, 255, 255, 0.8); }
+.cs-next { margin-top: 18px; height: 50px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 0 24px; border-radius: 8px; background: var(--brand); color: #fff; font-size: 16px; font-weight: 600; transition: background .2s, opacity .2s; }
+.cs-next:hover:not(:disabled) { background: var(--brand-dark); }
+.cs-next:disabled { background: #e7e8ea; color: #8a8a90; cursor: not-allowed; }
+.cs-next.ghost { background: #fff; color: var(--title); box-shadow: inset 0 0 0 1px var(--line); } .cs-next.ghost:hover { background: var(--tile); }
+.cs-alt { margin-top: 14px; font-size: 13px; line-height: 19px; color: var(--muted); text-align: center; }
+.cs-alt a { color: var(--title); font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
+.cs-when { display: flex; align-items: center; gap: 12px; width: 100%; padding: 12px 14px; border-radius: 12px; background: var(--brand-soft); color: var(--brand); text-align: left; }
+.cs-when span, .cs-done-when span { flex: 1; display: grid; min-width: 0; }
+.cs-when b, .cs-done-when b { font-size: 15px; line-height: 20px; color: var(--title); }
+.cs-when small, .cs-done-when small { font-size: 12px; line-height: 16px; color: var(--muted); }
+.cs-when em { font-style: normal; font-size: 13px; font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
+.cs-field { margin-top: 14px; display: grid; gap: 6px; }
+.cs-field > span, .cs-make legend { font-size: 14px; line-height: 20px; font-weight: 500; color: var(--title); }
+.cs-make legend span { font-weight: 400; color: var(--muted); }
+.cs-field input, .cs-field textarea { width: 100%; min-width: 0; height: 46px; padding: 0 14px; border-radius: 8px; border: 1px solid var(--line); background: #fff; font: inherit; font-size: 16px; color: var(--title); outline: none; transition: border-color .2s, box-shadow .2s; }
+.cs-field textarea { height: auto; padding: 10px 14px; resize: vertical; }
+.cs-field input:focus, .cs-field textarea:focus { border-color: var(--title); box-shadow: 0 0 0 3px rgba(29, 29, 31, 0.08); }
+.cs-field.bad input { border-color: var(--brand); box-shadow: 0 0 0 3px var(--brand-tint); }
+.cs-make { margin: 16px 0 0; padding: 0; border: 0; }
+.cs-make > div { margin-top: 8px; display: flex; flex-wrap: wrap; gap: 8px; }
+.cs-make button { height: 36px; display: inline-flex; align-items: center; gap: 6px; padding: 0 14px; border-radius: 8px; border: 1px solid var(--line); background: #fff; font-size: 13px; color: var(--title); transition: border-color .2s, background .2s; }
+.cs-make button:hover { border-color: var(--title); }
+.cs-make button.on { border-color: var(--brand); background: var(--brand-soft); color: var(--brand); font-weight: 500; }
+.cs-err { margin-top: 12px; font-size: 13px; color: var(--brand); }
+.cs-fine { margin-top: 12px; font-size: 12px; line-height: 17px; color: #8a8a90; }
+.cs-done { justify-items: center; text-align: center; padding-top: 32px; padding-bottom: 32px; }
+.cs-ok { width: 64px; height: 64px; display: grid; place-items: center; border-radius: 50%; background: #e7f6ee; color: var(--green); }
+.cs-done h3 { margin-top: 16px; font-size: 22px; line-height: 28px; font-weight: 700; color: var(--title); }
+.cs-done-when { margin-top: 16px; width: 100%; display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 12px; background: var(--tile); color: var(--brand); text-align: left; }
+.cs-done > p:not(.cs-done-when) { margin-top: 14px; font-size: 14px; line-height: 21px; color: var(--muted); }
+.cs-done .cs-next { width: 100%; }
+
+.cs-sec { padding: 96px 0; }
+.cs-sec.soft { background: var(--page); }
+.cs-h2 { margin-top: 12px; max-width: 760px; font-size: 44px; line-height: 52px; font-weight: 700; letter-spacing: -0.02em; color: var(--title); }
+.cs-lede { margin-top: 14px; max-width: 640px; font-size: 18px; line-height: 27px; color: var(--muted); }
+.cs-for { list-style: none; margin: 40px 0 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.cs-for li { display: grid; gap: 18px; align-content: start; padding: 28px; border-radius: 20px; background: var(--page); }
+.cs-for svg { width: 48px; height: 48px; padding: 11px; border-radius: 12px; background: #fff; color: var(--brand); }
+.cs-for p { font-size: 17px; line-height: 25px; font-weight: 500; color: var(--title); }
+.cs-note { margin-top: 24px; font-size: 16px; line-height: 24px; color: var(--muted); }
+.cs-steps { list-style: none; margin: 40px 0 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; counter-reset: none; }
+.cs-steps li { position: relative; padding: 32px 28px; border-radius: 20px; background: #fff; }
+.cs-steps li span { font-size: 48px; line-height: 52px; font-weight: 700; letter-spacing: -0.03em; color: var(--brand); }
+.cs-steps h3 { margin-top: 20px; font-size: 21px; line-height: 28px; font-weight: 600; color: var(--title); }
+.cs-steps p { margin-top: 8px; font-size: 15px; line-height: 23px; color: var(--muted); }
+.cs-steps li:not(:last-child)::after { content: ""; position: absolute; top: 56px; right: -12px; width: 8px; height: 8px; border-top: 2px solid #c7c8cc; border-right: 2px solid #c7c8cc; transform: rotate(45deg); }
+.cs-team { list-style: none; margin: 40px 0 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; }
+.cs-team-img { aspect-ratio: 4 / 4.4; border-radius: 20px; overflow: hidden; background: #e9eaec; }
+.cs-team-img img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 20%; transition: transform .5s ease; }
+.cs-team li:hover .cs-team-img img { transform: scale(1.03); }
+.cs-team h3 { margin-top: 18px; font-size: 22px; line-height: 28px; font-weight: 600; color: var(--title); }
+.cs-role { margin-top: 2px; font-size: 13px; line-height: 18px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--brand); }
+.cs-team li > p:last-child { margin-top: 10px; font-size: 15px; line-height: 23px; color: var(--muted); }
+.cs-again { margin-top: 40px; display: flex; justify-content: center; }
+.cs-ways { list-style: none; margin: 40px 0 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.cs-ways a { height: 100%; display: grid; grid-template-rows: auto auto 1fr auto; gap: 10px; padding: 28px; border-radius: 20px; background: #fff; color: var(--title); transition: box-shadow .2s, transform .2s; }
+.cs-ways a:hover { box-shadow: 0 20px 40px -24px rgba(0, 0, 0, 0.3); transform: translateY(-2px); }
+.cs-ways a > svg { color: var(--brand); margin-bottom: 6px; }
+.cs-ways h3 { font-size: 20px; line-height: 26px; font-weight: 600; }
+.cs-ways p { font-size: 15px; line-height: 23px; color: var(--muted); }
+.cs-ways span { margin-top: 8px; display: inline-flex; align-items: center; gap: 6px; font-size: 15px; font-weight: 600; }
+.cs-ways a:hover span svg { transform: translateX(3px); } .cs-ways span svg { transition: transform .2s; }
+.cs-bar { display: none; }
+
+@media (max-width: 1180px) {
+  .cs-wrap { padding: 0 40px; }
+  .cs-hero-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 460px); gap: 40px; }
+  .cs-intro h1 { font-size: 44px; line-height: 50px; }
+  .cs-h2 { font-size: 36px; line-height: 44px; }
+}
+@media (max-width: 860px) {
+  .cs-wrap { padding: 0 16px; }
+  .cs-hero { padding: 28px 0 48px; }
+  .cs-hero-grid { grid-template-columns: minmax(0, 1fr); gap: 28px; }
+  .cs-intro h1 { font-size: 34px; line-height: 40px; }
+  .cs-sub { font-size: 18px; line-height: 26px; }
+  .cs-ticks { margin-top: 20px; } .cs-ticks li { font-size: 15px; line-height: 22px; }
+  .cs-team-shot { margin-top: 24px; border-radius: 16px; aspect-ratio: 4 / 3; }
+  .cs-team-shot figcaption { left: 10px; right: 10px; bottom: 10px; padding: 10px 12px; gap: 10px; }
+  .cs-faces img { width: 32px; height: 32px; }
+  .cs-team-shot small { display: none; }
+  .cs-book { position: static; border-radius: 20px; }
+  .cs-book-head { padding: 20px 20px 16px; } .cs-book-head h2 { font-size: 22px; line-height: 28px; }
+  .cs-book-body { padding: 16px 20px 20px; }
+  .cs-days { grid-auto-columns: calc((100% - 24px) / 4.4); }
+  .cs-sec { padding: 56px 0; }
+  .cs-h2 { font-size: 28px; line-height: 34px; }
+  .cs-lede { font-size: 16px; line-height: 24px; }
+  .cs-for, .cs-steps, .cs-ways { margin-top: 24px; grid-template-columns: minmax(0, 1fr); gap: 10px; }
+  .cs-for li { grid-template-columns: auto minmax(0, 1fr); align-items: center; gap: 14px; padding: 16px; border-radius: 14px; }
+  .cs-for svg { width: 42px; height: 42px; padding: 9px; }
+  .cs-for p { font-size: 15px; line-height: 22px; }
+  .cs-steps li { padding: 20px; border-radius: 14px; display: grid; grid-template-columns: auto minmax(0, 1fr); column-gap: 16px; }
+  .cs-steps li span { grid-row: span 2; font-size: 32px; line-height: 36px; }
+  .cs-steps h3 { margin-top: 0; font-size: 18px; line-height: 24px; }
+  .cs-steps li::after { display: none; }
+  .cs-team { margin-top: 24px; grid-auto-flow: column; grid-template-columns: none; grid-auto-columns: 78%; gap: 12px; overflow-x: auto; scroll-snap-type: x mandatory; margin-left: -16px; margin-right: -16px; padding: 0 16px; scroll-padding-left: 16px; scrollbar-width: none; overscroll-behavior-x: contain; }
+  .cs-team::-webkit-scrollbar { display: none; }
+  .cs-team li { scroll-snap-align: start; }
+  .cs-team-img { border-radius: 16px; }
+  .cs-again { margin-top: 28px; } .cs-again .cs-next { width: 100%; }
+  .cs-ways a { padding: 20px; border-radius: 14px; }
+  .cs { padding-bottom: 76px; }
+  .cs-bar { display: block; position: fixed; left: 0; right: 0; bottom: 0; z-index: 40; padding: 10px 16px calc(10px + env(safe-area-inset-bottom)); background: rgba(255, 255, 255, 0.94); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); box-shadow: 0 -1px 0 var(--line); }
+  .cs-bar .cs-next { margin: 0; width: 100%; }
+}
+
+/* Finder result: the answer row is a read-only summary (answers change with "Change answers" on the card) */
+.fr-steps li > span { cursor: default; }
+.cs-bar { transition: transform .3s ease; } .cs-bar.off { transform: translateY(110%); pointer-events: none; }
