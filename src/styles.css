@@ -3665,3 +3665,5 @@ body:has(.ip-bar) .ai-nudge { bottom: 168px; }
 /* series photos (XRF, VertiGo) still carry wide transparent margins: keep them enlarged on the stage */
 .fx-stage img:not([src*="/front/"]) { width: 128%; max-width: none; max-height: none; aspect-ratio: 4 / 3; }
 @media (max-width: 860px) { .fx-done .fx-stage img:not([src*="/front/"]) { width: 100%; max-height: 240px; } }
+/* the finder swaps its card and mounts the details below: keep the browser from re-anchoring (it cancels our scroll) */
+.ih-products .fx, #fc-result { overflow-anchor: none; }

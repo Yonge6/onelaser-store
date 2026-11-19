@@ -83,16 +83,27 @@ export default function FinderCard() {
   const reveal = () => setTimeout(() => document.getElementById("fc-result")?.scrollIntoView({ behavior: "smooth", block: "start" }), 80);
   /* After "See my match", park the whole result card just under the sticky header and tabs, so the buy buttons and the
      expert-call CTA are in view; the details below are one tap away ("Specs and good to know"). */
-  const showCard = () => setTimeout(() => {
+  const cardTarget = () => {
     const card = document.querySelector(".fx");
-    if (!card) return;
+    if (!card) return null;
     const bar = document.querySelector(".ih-sticky");
     const under = bar ? parseFloat(getComputedStyle(bar).top) + bar.offsetHeight : 80;
     const top = card.getBoundingClientRect().top + window.scrollY - under - 16; // card top just under the tabs
     const cta = card.querySelector(".fx-call-cta");
     const low = cta ? cta.getBoundingClientRect().bottom + window.scrollY - window.innerHeight + 16 : top; // CTA bottom on screen
-    window.scrollTo({ top: Math.max(0, Math.max(top, low)), behavior: "smooth" }); // phones: the card is taller than the screen, the CTA wins
-  }, 80);
+    return Math.max(0, Math.max(top, low)); // phones: the card is taller than the screen, the CTA wins
+  };
+  /* The card swap and the details panel mounting below can make the browser re-anchor the page, which cancels a smooth
+     scroll half way; so check where we landed and settle on the target if we are off. */
+  const showCard = () => setTimeout(() => {
+    const y = cardTarget();
+    if (y == null) return;
+    window.scrollTo({ top: y, behavior: "smooth" });
+    setTimeout(() => {
+      const again = cardTarget();
+      if (again != null && Math.abs(window.scrollY - again) > 24) window.scrollTo({ top: again, behavior: "auto" });
+    }, 900);
+  }, 120);
   const finish = () => { setStep(STEPS.length); showCard(); };
   const pick = (id) => {
     if (cur.multi) {
@@ -101,7 +112,7 @@ export default function FinderCard() {
     } else {
       setAnswers({ ...answers, [cur.id]: id });
       const last = STEPS.indexOf(cur) === STEPS.length - 1;
-      setTimeout(() => { setStep((s) => Math.max(s, STEPS.indexOf(cur) + 1)); if (last) reveal(); }, 260);
+      setTimeout(() => { setStep((s) => Math.max(s, STEPS.indexOf(cur) + 1)); if (last) showCard(); }, 260);
     }
   };
   const reset = () => { setAnswers({}); setStep(0); };
