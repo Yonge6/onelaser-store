@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useRef, useState } from "react";
 import { t } from "../i18n.js";
-import { asset, byHandle, img, money, products, frontImg } from "../lib.js";
+import { asset, byHandle, img, lockScroll, money, products, frontImg } from "../lib.js";
 import { contact, footer, heroSlides, homeFaq, homeProof, homeReviews, homeStandard, homeTabs, trustpilot, newHandles, promo, shortSlogans } from "../data/site.js";
 import { AddButton, Countdown, Icon, Link, useDragScroll } from "../components/ui.jsx";
 import FinderCard, { FinderHelp } from "../components/Finder.jsx";
@@ -234,17 +234,35 @@ const FIN_MACHINES = ["onelaser-xrf-desktop-laser-machine", "cobra-10-100w-co2-l
 const perMonth = (amount, apr, n) => { const r = apr / 1200; return r ? (amount * r) / (1 - (1 + r) ** -n) : amount / n; };
 const Faces = () => <span className="tdlg-faces" aria-hidden="true">{[1, 2, 3].map((n) => <img key={n} src={asset(`team-${n}.jpg`)} alt="" />)}</span>;
 
+/** Phone sheets: drag down from the top (sheet scrolled to its top) to close; a short drag springs back. */
+function useSwipeClose(onClose) {
+  const st = useRef(null);
+  return {
+    onTouchStart: (e) => { const el = e.currentTarget; st.current = el.scrollTop <= 0 ? { y: e.touches[0].clientY, el, dy: 0 } : null; },
+    onTouchMove: (e) => {
+      const s = st.current; if (!s) return;
+      s.dy = Math.max(0, e.touches[0].clientY - s.y);
+      if (s.dy > 0 && s.el.scrollTop <= 0) { s.el.style.transition = "none"; s.el.style.transform = `translateY(${s.dy}px)`; }
+    },
+    onTouchEnd: () => {
+      const s = st.current; st.current = null; if (!s) return;
+      s.el.style.transition = "transform .25s ease"; s.el.style.transform = "";
+      if (s.dy > 110) onClose();
+    },
+  };
+}
+
 function TrustDialog({ kind, onClose, onTrustpilot }) {
   const [film, setFilm] = useState(false);
   const [clip, setClip] = useState(PRESS[0]);
   const [fin, setFin] = useState({ h: FIN_MACHINES[2], n: 36 });
   const quotes = useRef(null);
+  const swipe = useSwipeClose(onClose);
   useEffect(() => {
     const onKey = (e) => e.key === "Escape" && onClose();
     window.addEventListener("keydown", onKey);
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    return () => { window.removeEventListener("keydown", onKey); document.body.style.overflow = prev; };
+    const unlock = lockScroll();
+    return () => { window.removeEventListener("keydown", onKey); unlock(); };
   }, [onClose]);
   const More = ({ href, to, ghost, children }) => (href ? <Link href={href} className={`tdlg-more${ghost ? " ghost" : ""}`}>{children} <Icon name="arrow" size={16} /></Link> : <Link to={to} className={`tdlg-more${ghost ? " ghost" : ""}`}>{children} <Icon name="arrow" size={16} /></Link>);
   const Head = ({ title, sub }) => {
@@ -425,7 +443,8 @@ function TrustDialog({ kind, onClose, onTrustpilot }) {
   }
   return (
     <div className="tdlg-scrim" onClick={onClose}>
-      <div className={`tdlg tdlg-${kind}`} role="dialog" aria-modal="true" onClick={(e) => e.stopPropagation()}>
+      <div className={`tdlg tdlg-${kind}`} role="dialog" aria-modal="true" onClick={(e) => e.stopPropagation()} {...swipe}>
+        <span className="tdlg-grab" aria-hidden="true" />
         <button type="button" className="tdlg-x" aria-label={t("Close")} onClick={onClose}><Icon name="close" size={20} /></button>
         {body}
       </div>
@@ -489,9 +508,8 @@ function ReviewsDialog({ onClose }) {
   useEffect(() => {
     const onKey = (e) => e.key === "Escape" && onClose();
     window.addEventListener("keydown", onKey);
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    return () => { window.removeEventListener("keydown", onKey); document.body.style.overflow = prev; };
+    const unlock = lockScroll();
+    return () => { window.removeEventListener("keydown", onKey); unlock(); };
   }, [onClose]);
   const tp = trustpilot;
   const Stars = ({ n }) => <span className="tp-stars" aria-label={`${n} / 5`}>{[1, 2, 3, 4, 5].map((k) => <i key={k} className={k <= n ? "on" : ""}>★</i>)}</span>;

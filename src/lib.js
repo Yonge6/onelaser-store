@@ -113,3 +113,24 @@ export const go = (path) => {
   intent = same ? null : "new"; // same page: no hashchange will consume the flag
   window.location.hash = path;
 };
+
+/** Freeze the page behind a dialog. overflow:hidden alone still lets iOS Safari scroll the page under a sheet, so the body is
+    pinned with position:fixed at the current offset and put back exactly where it was on release. Nested dialogs share one lock. */
+let locks = 0, lockedAt = 0;
+export function lockScroll() {
+  if (typeof document === "undefined") return () => {};
+  if (locks++ === 0) {
+    lockedAt = window.scrollY;
+    const b = document.body.style;
+    Object.assign(b, { position: "fixed", top: `-${lockedAt}px`, left: "0", right: "0", width: "100%", overflow: "hidden" });
+  }
+  let done = false;
+  return () => {
+    if (done) return; done = true;
+    if (--locks === 0) {
+      const b = document.body.style;
+      Object.assign(b, { position: "", top: "", left: "", right: "", width: "", overflow: "" });
+      window.scrollTo({ top: lockedAt, left: 0, behavior: "instant" });
+    }
+  };
+}

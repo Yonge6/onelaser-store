@@ -940,4 +940,5 @@ export default {
   "1 year on mechanical and electrical parts. Optical lenses are not covered.": "1 an sur les pièces mécaniques et électriques. Les lentilles optiques ne sont pas couvertes.",
   "1 year on mechanical and electrical parts, 6 months on the laser source, 1 month on lens and mirror.": "1 an sur les pièces mécaniques et électriques, 6 mois sur la source laser, 1 mois sur lentille et miroir.",
   "Optical components and laser source parts": "Composants optiques et pièces de la source laser",
+  "Ask me anything…": "Posez-moi vos questions…",
 };

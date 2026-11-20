@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { t } from "../i18n.js";
-import { asset, byHandle, frontImg, img, money } from "../lib.js";
+import { asset, byHandle, frontImg, img, lockScroll, money } from "../lib.js";
 import { AddButton, Icon, Link } from "./ui.jsx";
 import { contact } from "../data/site.js";
 import { M, STEPS, rank as rankAll, roundFocus, hasRound, ready } from "./finderRules.js";
@@ -293,12 +293,11 @@ export function LeadDialog({ mode = "quote", product, lines = [], onClose }) {
   const [err, setErr] = useState({});
   const first = useRef(null);
   useEffect(() => {
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
+    const unlock = lockScroll();
     first.current?.focus();
     const key = (e) => e.key === "Escape" && onClose();
     window.addEventListener("keydown", key);
-    return () => { document.body.style.overflow = prev; window.removeEventListener("keydown", key); };
+    return () => { unlock(); window.removeEventListener("keydown", key); };
   }, [onClose]);
   const submit = (e) => {
     e.preventDefault();

@@ -4413,3 +4413,63 @@ body:has(.ip-bar) .ai-pill, .pdp ~ .ai-pill { bottom: 104px; }
 
 /* financing estimate figure in brand red */
 .tdlg-calc .tdlg-pay b { color: var(--brand); }
+
+/* ===== Dialog usability (all home dialogs, phone first) =====
+   - the close button never scrolls away: it is sticky in the sheet's top-right corner
+   - the main buttons stay pinned to the bottom of the sheet on a white fade, so it is clear there is an action
+   - the page under the dialog is frozen by lockScroll(); the sheet keeps its own scroll (overscroll contained)
+   - phones: bottom sheet that slides up, with a grab handle; drag down from the top to close */
+.tdlg { overscroll-behavior: contain; padding-bottom: 0; }
+.tdlg > .tdlg-x { position: sticky; top: 12px; float: right; margin: 12px 12px -52px 0; z-index: 6; box-shadow: 0 4px 14px -4px rgba(17, 24, 39, 0.3); }
+.tdlg > .tdlg-grab { display: none; }
+.tdlg > .tdlg-links { position: sticky; bottom: 0; z-index: 5; margin: 16px 0 0 !important; padding: 26px 32px calc(18px + env(safe-area-inset-bottom)); background: linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, #fff 22px); }
+.tdlg-training .tdlg-train-buy { position: sticky; bottom: 0; z-index: 5; background: #fff; padding-bottom: calc(4px + env(safe-area-inset-bottom)); }
+.tdlg::after { content: ""; display: block; height: 18px; }
+.tdlg:has(> .tdlg-links)::after { display: none; }
+.tp-dialog { overscroll-behavior: contain; }
+@media (max-width: 860px) {
+  .tdlg-scrim { align-items: end; }
+  .tdlg { animation: tdlg-sheet .32s cubic-bezier(.2, .8, .2, 1) backwards; }
+  @keyframes tdlg-sheet { from { transform: translateY(100%); } }
+  .tdlg > .tdlg-grab { display: block; position: sticky; top: 0; z-index: 6; height: 22px; margin: 0 0 -22px !important; pointer-events: none; }
+  .tdlg > .tdlg-grab::before { content: ""; position: absolute; left: 50%; top: 8px; width: 40px; height: 5px; margin-left: -20px; border-radius: 3px; background: rgba(17, 24, 39, 0.22); }
+  .tdlg > .tdlg-x { top: 10px; margin: 10px 10px -54px 0; width: 44px; height: 44px; background: #fff; }
+  .tdlg > .tdlg-links { padding: 22px 18px calc(14px + env(safe-area-inset-bottom)); flex-direction: column; gap: 8px; }
+  .tdlg > .tdlg-links .tdlg-more { width: 100%; height: 50px; justify-content: center; font-size: 16px; }
+  .tdlg-training .tdlg-train-buy { margin: 0 -18px; padding: 14px 18px calc(14px + env(safe-area-inset-bottom)); box-shadow: 0 -10px 20px -14px rgba(17, 24, 39, 0.3); }
+  .tdlg-training .tdlg-train-buy .tdlg-links { flex-direction: row; } .tdlg-training .tdlg-train-buy .tdlg-links > * { flex: 1; justify-content: center; }
+  /* reviews dialog: same bottom sheet, full width, sticky close */
+  .tp-scrim { display: flex; align-items: flex-end; padding: 0; }
+  .tp-dialog { width: 100%; max-width: 100%; max-height: 92dvh; border-radius: 20px 20px 0 0; padding: 26px 18px calc(18px + env(safe-area-inset-bottom)); animation: tdlg-sheet .32s cubic-bezier(.2, .8, .2, 1) backwards; }
+  .tp-foot { position: sticky; bottom: calc(-18px - env(safe-area-inset-bottom)); margin: 0 -18px; padding: 16px 18px calc(16px + env(safe-area-inset-bottom)); background: linear-gradient(180deg, rgba(255, 255, 255, 0), #fff 20px); }
+}
+@media (prefers-reduced-motion: reduce) { .tdlg, .tp-dialog { animation: none !important; } }
+
+/* Finder dialog: the top padding moves onto the content, so the sticky close sits at the sheet's corner like the others;
+   on phones the question's Back / Continue row stays pinned at the bottom while the question is on screen. */
+.tdlg.tdlg-finder, .tdlg-scrim .tdlg:has(.tdlg-finder) { padding-top: 0; }
+.tdlg:has(.tdlg-finder) > .tdlg-finder { margin-top: 56px; }
+@media (max-width: 860px) {
+  .tdlg:has(.tdlg-finder) > .tdlg-finder { margin-top: 56px; }
+  .tdlg-finder .fx { overflow: clip; }
+  .tdlg-finder .fx-nav { position: sticky; bottom: 0; z-index: 4; margin: 12px -16px 0; padding: 12px 16px calc(12px + env(safe-area-inset-bottom)); background: linear-gradient(180deg, rgba(255, 255, 255, 0), #fff 16px); }
+}
+
+/* Assistant input, easier to find: a white field with a sky-blue ring and soft glow, a sparkle icon, a brand-red send
+   button, on a footer bar that separates it from the messages. On phones it is taller and the ring pulses once on open. */
+.ai-input { position: relative; height: 54px; padding: 0 6px 0 12px; gap: 8px; background: #fff; box-shadow: 0 0 0 1.5px rgba(56, 189, 248, 0.75), 0 8px 22px -10px rgba(11, 127, 192, 0.45); }
+.ai-input:focus-within { background: #fff; box-shadow: 0 0 0 2px var(--accent), 0 10px 26px -10px rgba(11, 127, 192, 0.55); }
+.ai-input-ico { flex: none; width: 30px; height: 30px; display: grid; place-items: center; border-radius: 50%; background: linear-gradient(135deg, #e0f4fe, #fff0eb); color: var(--accent-ink); }
+.ai-input input { font-size: 16px; font-weight: 500; }
+.ai-input input::placeholder { color: #6e6e73; }
+.ai-input button { width: 42px; height: 42px; background: var(--brand); color: #fff; }
+.ai-input button:disabled { opacity: 1; background: #d9dbe0; color: #fff; }
+.ai-input::after { content: ""; position: absolute; inset: -2px; border-radius: inherit; box-shadow: 0 0 0 0 rgba(56, 189, 248, 0.55); pointer-events: none; animation: ai-input-pulse 1.6s ease-out .6s 2; }
+@keyframes ai-input-pulse { 0% { box-shadow: 0 0 0 0 rgba(56, 189, 248, 0.55); } 100% { box-shadow: 0 0 0 12px rgba(56, 189, 248, 0); } }
+@media (max-width: 860px) {
+  .ai-input { margin: 8px 12px 0; height: 58px; }
+  .ai-input-ico { width: 34px; height: 34px; }
+  .ai-input button { width: 44px; height: 44px; }
+  .ai-fine { border-top: 0; }
+}
+@media (prefers-reduced-motion: reduce) { .ai-input::after { animation: none; } }
