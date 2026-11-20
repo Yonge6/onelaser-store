@@ -428,7 +428,6 @@ function TrustStrip({ onTrustpilot }) {
     ["reviews", "star", <><b>{homeReviews.average}</b> ★</>, `${homeReviews.count} ${t("owner reviews")}`],
     ["company", "flag", t("U.S. company"), t("Local team for sales and support")],
     ["warranty", "shield", t("3-2-1 warranty"), t("XRF & Hydra · 30-day returns")],
-    ["fox", "tv", t("As seen on FOX & Discovery"), t("Watch the feature")],
   ];
   return (
     <section className="ih-trust" aria-label={t("Why buyers trust OneLaser")}>

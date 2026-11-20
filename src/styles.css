@@ -3671,7 +3671,7 @@ body:has(.ip-bar) .ai-nudge { bottom: 168px; }
 
 /* ===== Home trust strip (above "Watch OneLaser in action") ===== */
 .ih-trust { margin-top: 56px; }
-.ih-trust-list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-radius: 20px; background: var(--page); overflow: hidden; }
+.ih-trust-list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-radius: 20px; background: var(--page); overflow: hidden; }
 .ih-trust-list li + li { box-shadow: inset 1px 0 0 #e3e5e9; }
 .ih-trust-list a, .ih-trust-list button { width: 100%; height: 100%; display: flex; align-items: center; gap: 14px; padding: 22px 24px; text-align: left; color: var(--title); transition: background .2s; }
 .ih-trust-list a:hover, .ih-trust-list button:hover { background: #eceff3; }
@@ -3686,9 +3686,7 @@ body:has(.ip-bar) .ai-nudge { bottom: 168px; }
 @media (max-width: 1180px) { .ih-trust-list a, .ih-trust-list button { padding: 18px 16px; gap: 10px; } .ih-trust-list strong { font-size: 16px; line-height: 22px; } .ih-trust-ico { width: 40px; height: 40px; } }
 @media (max-width: 860px) {
   .ih-trust { margin-top: 40px; }
-  .ih-trust-list { grid-template-columns: repeat(2, minmax(0, 1fr)); border-radius: 16px; }
-  .ih-trust-list li:nth-child(3) { box-shadow: inset 0 1px 0 #e3e5e9; }
-  .ih-trust-list li:nth-child(4) { box-shadow: inset 1px 0 0 #e3e5e9, inset 0 1px 0 #e3e5e9; }
+  .ih-trust-list { grid-template-columns: repeat(3, minmax(0, 1fr)); border-radius: 16px; }
   .ih-trust-list a, .ih-trust-list button { flex-direction: column; align-items: flex-start; gap: 8px; padding: 16px 14px; }
   .ih-trust-ico { width: 36px; height: 36px; }
   .ih-trust-ico svg { width: 20px; height: 20px; }
