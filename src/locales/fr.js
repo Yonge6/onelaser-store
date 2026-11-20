@@ -888,4 +888,11 @@ export default {
   "I started out with a Full Spectrum K40 style, upgraded to a GlowForge, dabbled with some blue diode lasers, but the XRF is amazing.": "J'ai commencé avec une Full Spectrum de type K40, je suis passé à une GlowForge, j'ai essayé quelques lasers à diode bleue, mais la XRF est incroyable.",
   "Faster, steadier, and dependable day after day.": "Plus rapide, plus stable, fiable jour après jour.",
   "What decides whether a laser keeps running job after job, year after year.": "Ce qui décide si un laser tient la cadence, commande après commande, année après année.",
+  "Headquartered in California, with a team you can actually reach.": "Basée en Californie, avec une équipe que vous pouvez vraiment joindre.",
+  "Owner quotes": "Avis de clients",
+  "If I had the funds, I would replace several of the other lasers I have with OneLasers.": "Si j'avais les moyens, je remplacerais plusieurs de mes autres lasers par des OneLaser.",
+  "So much faster and reliable to cut! Really stoked on my purchase with this machine.": "Beaucoup plus rapide et fiable pour la découpe ! Ravi de cet achat.",
+  "Needed a laser that could keep up with my growing business, and this one delivers.": "Il me fallait un laser capable de suivre la croissance de mon activité, et celui-ci tient ses promesses.",
+  "Tech support is fantastic and quick to respond, material quality is great.": "Le support technique est fantastique et réactif, la qualité des matériaux est excellente.",
+  "The magnetic lens assembly is a lifesaver!": "Le bloc de lentille magnétique me sauve la vie !",
 };

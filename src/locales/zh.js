@@ -1042,4 +1042,11 @@ export default {
   "I started out with a Full Spectrum K40 style, upgraded to a GlowForge, dabbled with some blue diode lasers, but the XRF is amazing.": "我从 Full Spectrum 的 K40 起步，后来升级到 GlowForge，也玩过几台蓝光二极管激光机，但 XRF 真的太棒了。",
   "Faster, steadier, and dependable day after day.": "更快、更稳，天天开机都靠得住。",
   "What decides whether a laser keeps running job after job, year after year.": "决定一台激光机能不能一单接一单、一年接一年稳定运行的关键数据。",
+  "Headquartered in California, with a team you can actually reach.": "总部在美国加州，有问题，找得到人。",
+  "Owner quotes": "买家原话",
+  "If I had the funds, I would replace several of the other lasers I have with OneLasers.": "如果预算够，我会把手上好几台别家的激光机都换成 OneLaser。",
+  "So much faster and reliable to cut! Really stoked on my purchase with this machine.": "切割快多了，也稳多了！买这台机器真是太值了。",
+  "Needed a laser that could keep up with my growing business, and this one delivers.": "我需要一台跟得上生意增长的激光机，这台做到了。",
+  "Tech support is fantastic and quick to respond, material quality is great.": "技术支持非常好，响应很快，用料也很扎实。",
+  "The magnetic lens assembly is a lifesaver!": "磁吸镜片组件简直是救星！",
 };

@@ -4094,3 +4094,21 @@ body:has(.ip-bar) .ai-nudge { bottom: 168px; }
 @keyframes fx-chip { 0% { opacity: 0; transform: translateY(-10px) scale(.6); } 60% { opacity: 1; transform: scale(1.12); } 100% { transform: none; } }
 @media (prefers-reduced-motion: reduce) { .fx-burst .fx-flash { animation: none !important; display: none; } }
 .fx-price em { align-self: center; font-style: normal; padding: 2px 8px; border-radius: 6px; background: var(--brand-soft); color: var(--brand); font-size: 14px; line-height: 20px; font-weight: 600; }
+
+/* Rotating owner quote: fades and slides in; the dots under it fill as a timer while it plays. */
+.iowners-quote { position: relative; min-height: 166px; display: flex; flex-direction: column; justify-content: center; }
+.iowners-q { animation: iq-in .6s cubic-bezier(.2, .7, .2, 1) both; padding-right: 120px; }
+@keyframes iq-in { from { opacity: 0; transform: translateY(10px); } }
+.iowners-dots { position: absolute; right: 28px; bottom: 26px; display: flex; gap: 6px; }
+.iowners-dots button { width: 10px; height: 10px; padding: 0; border-radius: 999px; background: rgba(17, 24, 39, 0.16); overflow: hidden; transition: width .3s; }
+.iowners-dots button.on { width: 34px; }
+.iowners-dots button i { display: block; width: 0; height: 100%; background: var(--brand); }
+.iowners-dots button.on i { animation: iq-timer 5.5s linear both; }
+.iowners-dots button.on.held i { animation-play-state: paused; }
+@keyframes iq-timer { to { width: 100%; } }
+@media (max-width: 767px) {
+  .iowners-quote { min-height: 0; padding-bottom: 40px; }
+  .iowners-q { padding-right: 0; }
+  .iowners-dots { left: 18px; right: auto; bottom: 16px; }
+}
+@media (prefers-reduced-motion: reduce) { .iowners-q { animation: none; } .iowners-dots button.on i { animation: none; width: 100%; } }

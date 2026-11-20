@@ -888,4 +888,11 @@ export default {
   "I started out with a Full Spectrum K40 style, upgraded to a GlowForge, dabbled with some blue diode lasers, but the XRF is amazing.": "最初は Full Spectrum の K40 タイプから始め、GlowForge にアップグレードし、青色ダイオードレーザーもいくつか試しましたが、XRF は本当に素晴らしい。",
   "Faster, steadier, and dependable day after day.": "より速く、より安定して、毎日頼れる。",
   "What decides whether a laser keeps running job after job, year after year.": "レーザーが仕事を重ね、年を重ねても安定して動き続けるかを決める数字。",
+  "Headquartered in California, with a team you can actually reach.": "本社は米カリフォルニア。困ったとき、ちゃんと人につながります。",
+  "Owner quotes": "オーナーの声",
+  "If I had the funds, I would replace several of the other lasers I have with OneLasers.": "予算があれば、手持ちの他社レーザーのいくつかを OneLaser に置き換えたい。",
+  "So much faster and reliable to cut! Really stoked on my purchase with this machine.": "切断がずっと速くて安定している！このマシンを買って本当に良かった。",
+  "Needed a laser that could keep up with my growing business, and this one delivers.": "伸びていくビジネスについてこられるレーザーが必要だった。これはその期待に応えてくれる。",
+  "Tech support is fantastic and quick to respond, material quality is great.": "サポートは素晴らしく対応も早い。素材の品質も高い。",
+  "The magnetic lens assembly is a lifesaver!": "マグネット式のレンズユニットは本当に助かる！",
 };

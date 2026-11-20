@@ -446,7 +446,7 @@ function Credibility() {
     <section className="ih-block icred">
       <div className="ih-wrap">
         <p className="icred-kicker">{t("Who stands behind your machine")}</p>
-        <h2 className="ih-h2 narrow">{t("You're not just buying a machine. You're getting a U.S. team you can reach.")}</h2>
+        <h2 className="ih-h2 narrow">{t("Headquartered in California, with a team you can actually reach.")}</h2>
         <div className="icred-grid">
           <figure className={`icred-hq${playing === BRAND_FILM[0] ? " playing" : ""}`}>
             {playing === BRAND_FILM[0] ? embed(...BRAND_FILM) : (
@@ -621,8 +621,38 @@ const PROMISES = [ // [icon, worry, promise, link label, dialog]
 ];
 
 
-/* Featured owner quote: a real, verified XRF review (James Kirk, Judge.me), the opening of his text word for word. */
-const FEATURED = homeReviews.items.find((r) => r.name === "James Kirk");
+/* Featured owner quotes: one sentence each, word for word, from the real Judge.me reviews in homeReviews. They rotate every
+   few seconds (paused while the pointer or focus is on them, and not at all with reduced motion); the dots pick one. */
+const QUOTES = [
+  ["James Kirk", "I started out with a Full Spectrum K40 style, upgraded to a GlowForge, dabbled with some blue diode lasers, but the XRF is amazing."],
+  ["Thomas M Eichhorn", "If I had the funds, I would replace several of the other lasers I have with OneLasers."],
+  ["Chris Vaughn", "So much faster and reliable to cut! Really stoked on my purchase with this machine."],
+  ["Emily R.", "Needed a laser that could keep up with my growing business, and this one delivers."],
+  ["Thomas M Eichhorn", "Tech support is fantastic and quick to respond, material quality is great."],
+  ["Jack Anderson", "The magnetic lens assembly is a lifesaver!"],
+].map(([name, q]) => ({ q, ...homeReviews.items.find((r) => r.name === name) }));
+
+function QuoteReel() {
+  const [i, setI] = useState(0);
+  const [hold, setHold] = useState(false);
+  useEffect(() => {
+    if (hold || window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) return undefined;
+    const id = setTimeout(() => setI((n) => (n + 1) % QUOTES.length), 5500);
+    return () => clearTimeout(id);
+  }, [i, hold]);
+  const r = QUOTES[i];
+  return (
+    <blockquote className="iowners-quote" onMouseEnter={() => setHold(true)} onMouseLeave={() => setHold(false)} onFocus={() => setHold(true)} onBlur={() => setHold(false)} aria-live="polite">
+      <div className="iowners-q" key={i}>
+        <p>“{t(r.q)}”</p>
+        <footer><b>{r.name}</b>{r.verified ? ` · ${t("Verified buyer")}` : ""} · {r.product}</footer>
+      </div>
+      <div className="iowners-dots" role="tablist" aria-label={t("Owner quotes")}>
+        {QUOTES.map((x, n) => <button key={n} type="button" role="tab" aria-selected={n === i} aria-label={`${n + 1} / ${QUOTES.length}`} className={n === i ? (hold ? "on held" : "on") : ""} onClick={() => setI(n)}><i /></button>)}
+      </div>
+    </blockquote>
+  );
+}
 
 export default function Home() {
   const [reviewsOpen, setReviewsOpen] = useState(false);
@@ -652,10 +682,7 @@ export default function Home() {
               <em>{t("out of 5")} · {homeReviews.count} {t("machine reviews")}</em>
             </button>
           </div>
-          <blockquote className="iowners-quote">
-            <p>“{t("I started out with a Full Spectrum K40 style, upgraded to a GlowForge, dabbled with some blue diode lasers, but the XRF is amazing.")}”</p>
-            <footer><b>{FEATURED.name}</b> · {t("Verified buyer")} · {FEATURED.product}</footer>
-          </blockquote>
+          <QuoteReel />
           <div className="ih-arrows irv-arrows">
             <button type="button" aria-label={t("Previous")} onClick={() => rvSlide(-1)}><Icon name="chevron" size={16} /></button>
             <button type="button" aria-label={t("Next")} onClick={() => rvSlide(1)}><Icon name="chevron" size={16} /></button>
