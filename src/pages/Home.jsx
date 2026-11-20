@@ -446,7 +446,7 @@ function Credibility() {
     <section className="ih-block icred">
       <div className="ih-wrap">
         <p className="icred-kicker">{t("Who stands behind your machine")}</p>
-        <h2 className="ih-h2 narrow">{t("Headquartered in California, with a team you can actually reach.")}</h2>
+        <h2 className="ih-h2 narrow">{t("A real California company, seen on TV and at industry shows.")}</h2>
         <figure className={`icred-film-card${playing === BRAND_FILM[0] ? " playing" : ""}`}>
           {playing === BRAND_FILM[0] ? embed(...BRAND_FILM) : (
             <button type="button" className="icred-film-btn" onClick={() => setPlaying(BRAND_FILM[0])} aria-label={`${t("Play video")}: ${t("What makes OneLaser different")}`}>
@@ -454,14 +454,11 @@ function Credibility() {
               <span className="icred-film-copy">
                 <small>{t("Brand film")}</small>
                 <b>{t("What makes OneLaser different")}</b>
-                <span className="icred-film-pts">{homeStandard.points.filter((_, n) => n !== 2).map(([x]) => <span key={x}><Icon name="check" size={16} />{t(x)}</span>)}</span>
-                <span className="icred-film-addr"><Icon name="pin" size={16} />{t("OneLaser headquarters")} · Lake Forest, California</span>
               </span>
               <span className="icred-film-play" aria-hidden="true"><svg width="30" height="30" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.5v13l11-6.5z" /></svg></span>
             </button>
           )}
         </figure>
-        <p className="icred-press-label">{t("On TV and at industry shows")}</p>
         <ul className="icred-press">
           {PRESS.map(([id, tag, title]) => (
             <li key={id}>

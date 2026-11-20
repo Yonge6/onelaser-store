@@ -924,4 +924,5 @@ export default {
   "No doubt this have to be one of the best laser in the market for sure. I don't regret it one second.": "Ohne Zweifel einer der besten Laser auf dem Markt. Ich bereue es keine Sekunde.",
   "OneLaser headquarters": "OneLaser-Zentrale",
   "On TV and at industry shows": "Im TV und auf Fachmessen",
+  "A real California company, seen on TV and at industry shows.": "Ein echtes Unternehmen aus Kalifornien, bekannt aus dem TV und von Fachmessen.",
 };

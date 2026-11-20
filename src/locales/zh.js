@@ -1078,4 +1078,5 @@ export default {
   "No doubt this have to be one of the best laser in the market for sure. I don't regret it one second.": "毫无疑问，这绝对是市面上最好的激光机之一。我一秒都没后悔过。",
   "OneLaser headquarters": "OneLaser 总部",
   "On TV and at industry shows": "电视报道与行业展会",
+  "A real California company, seen on TV and at industry shows.": "扎根加州的真实公司，上过电视，也站上行业展会。",
 };

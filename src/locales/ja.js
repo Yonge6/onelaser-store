@@ -924,4 +924,5 @@ export default {
   "No doubt this have to be one of the best laser in the market for sure. I don't regret it one second.": "間違いなく市場で最高のレーザーのひとつ。一秒たりとも後悔していない。",
   "OneLaser headquarters": "OneLaser 本社",
   "On TV and at industry shows": "テレビと業界イベントで",
+  "A real California company, seen on TV and at industry shows.": "カリフォルニアに根ざした本物の会社。テレビにも業界展示会にも登場。",
 };
