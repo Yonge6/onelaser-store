@@ -4333,3 +4333,18 @@ body:has(.ip-bar) .ai-nudge { bottom: 168px; }
 .inext em, .inext li.hot em { background: #1d1d1f; color: #fff; box-shadow: none; }
 .inext li > :hover em, .inext li.hot > :hover em { background: var(--brand); color: #fff; box-shadow: 0 10px 20px -10px rgba(231, 49, 14, 0.7); }
 .inext li > * > *:not(.inext-mark) { position: relative; }
+
+/* "Talk it through" call card in the finder result: a light sweep crosses it every few seconds, the calendar icon sends
+   out a ring and the arrow nudges right, inviting the click without shouting. Stops on hover. */
+.fx-call-cta { position: relative; overflow: hidden; animation: fx-call-in .5s cubic-bezier(.2, .7, .2, 1) 2.2s both; }
+@keyframes fx-call-in { from { opacity: 0; transform: translateY(8px); } }
+.fx-call-cta::after { content: ""; position: absolute; top: 0; bottom: 0; left: -40%; width: 30%; background: linear-gradient(100deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0)); transform: skewX(-20deg); pointer-events: none; animation: fx-call-shine 4.5s ease-in-out 2.8s infinite; }
+@keyframes fx-call-shine { 0% { left: -40%; } 22%, 100% { left: 130%; } }
+.fx-call-ico { position: relative; }
+.fx-call-ico::after { content: ""; position: absolute; inset: -2px; border-radius: inherit; box-shadow: 0 0 0 2px var(--accent); opacity: 0; animation: fx-call-ring 2.2s ease-out 2.8s infinite; }
+@keyframes fx-call-ring { 0% { opacity: .9; transform: scale(1); } 60%, 100% { opacity: 0; transform: scale(1.45); } }
+.fx-call-cta > svg { animation: fx-call-arrow 1.6s ease-in-out 2.8s infinite; }
+@keyframes fx-call-arrow { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(5px); } }
+.fx-call-cta:hover::after, .fx-call-cta:hover .fx-call-ico::after { animation: none; opacity: 0; }
+.fx-call-cta:hover > svg { animation: none; transform: translateX(5px); }
+@media (prefers-reduced-motion: reduce) { .fx-call-cta, .fx-call-cta::after, .fx-call-ico::after, .fx-call-cta > svg { animation: none !important; } }
