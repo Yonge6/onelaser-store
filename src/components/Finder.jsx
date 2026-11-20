@@ -65,14 +65,17 @@ function MachineMorph() {
     result opens under the grid (FinderResult). */
 const memo = { answers: {}, step: 0 };
 
-export default function FinderCard() {
+/* modal: the finder opened from a home-page dialog. Its details render into the dialog (#fc-result-modal) and every
+   scroll stays inside the dialog, so the page underneath never moves. */
+export default function FinderCard({ modal = false }) {
+  const scope = modal ? ".tdlg .fx" : ".ih-products .fx";
   const [answers, setAnswersRaw] = useState(memo.answers);
   const [step, setStepRaw] = useState(memo.step);
   const setAnswers = (v) => { memo.answers = v; setAnswersRaw(v); };
   const setStep = (v) => setStepRaw((s) => { const n = typeof v === "function" ? v(s) : v; memo.step = n; return n; });
   const [slot, setSlot] = useState(null);
   const [lead, setLead] = useState(null);
-  useEffect(() => setSlot(document.getElementById("fc-result")), []);
+  useEffect(() => setSlot(document.getElementById(modal ? "fc-result-modal" : "fc-result")), [modal]);
   const done = step >= STEPS.length;
   const cur = STEPS[Math.min(step, STEPS.length - 1)];
   const ranked = useMemo(() => rank(answers), [answers]);
@@ -80,11 +83,11 @@ export default function FinderCard() {
   const answered = lines.length > 0;
   const top = ranked[0] && byHandle[M[ranked[0].key].handle];
   const has = (s) => (s.multi ? (answers[s.id] || []).length > 0 : !!answers[s.id]);
-  const reveal = () => setTimeout(() => document.getElementById("fc-result")?.scrollIntoView({ behavior: "smooth", block: "start" }), 80);
+  const reveal = () => setTimeout(() => document.getElementById(modal ? "fc-result-modal" : "fc-result")?.scrollIntoView({ behavior: "smooth", block: "start" }), 80);
   /* After "See my match", park the whole result card just under the sticky header and tabs, so the buy buttons and the
      expert-call CTA are in view; the details below are one tap away ("Specs and good to know"). */
   const cardTarget = () => {
-    const card = document.querySelector(".fx");
+    const card = document.querySelector(scope);
     if (!card) return null;
     const bar = document.querySelector(".ih-sticky");
     const under = bar ? parseFloat(getComputedStyle(bar).top) + bar.offsetHeight : 80;
@@ -99,6 +102,7 @@ export default function FinderCard() {
   /* One smooth scroll, computed once; nothing scrolls the page again afterwards (scroll anchoring is off around the
      finder in CSS, so the card swap cannot push the page either). */
   const showCard = () => setTimeout(() => {
+    if (modal) { document.querySelector(scope)?.scrollIntoView({ behavior: "smooth", block: "start" }); return; }
     const y = cardTarget();
     if (y != null) window.scrollTo({ top: y, behavior: "smooth" });
   }, 120);
@@ -114,7 +118,7 @@ export default function FinderCard() {
     }
   };
   const reset = () => { setAnswers({}); setStep(0); };
-  const edit = (n) => { setStep(n); document.querySelector(".fx")?.scrollIntoView({ behavior: "smooth", block: "center" }); };
+  const edit = (n) => { setStep(n); document.querySelector(scope)?.scrollIntoView({ behavior: "smooth", block: modal ? "start" : "center" }); };
   const leadDialog = lead && <LeadDialog mode={lead} product={answered ? top : null} lines={lines} onClose={() => setLead(null)} />;
 
   const stepper = (

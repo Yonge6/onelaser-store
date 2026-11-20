@@ -212,8 +212,23 @@ const TRUST_ICONS = {
 const REVIEW_BREAKDOWN = [["XRF 38W", "4.94", 49], ["Hydra 9", "4.89", 19], ["XT", "4.89", 18], ["Hydra 16", "5.00", 4]];
 const faqText = (q) => homeFaq.find(([k]) => k.startsWith(q))?.[1] || "";
 
-/** One small dialog per trust fact, so visitors stay on the home page; each ends with a link to the full page. */
+/** One dialog per trust fact or promise, so visitors stay on the home page; each ends with a link to the full page.
+    Everything shown is real: Judge.me averages, homeStandard, footer contacts, homeFaq answers, the training product,
+    the financing options and OneLaser's own videos. The payment figure is a plain estimate, marked as such. */
+const DLG_HEAD = {
+  reviews: ["star", "Owner reviews"], company: ["flag", "U.S. company"], warranty: ["shield", "Warranty and returns"],
+  returns: ["refresh", "Worried about choosing wrong?"], support: ["headset", "Stuck on a job?"], training: ["user", "First laser?"],
+  financing: ["card", "Budget tight?"], fox: ["tv", "TV feature"],
+};
+const FIN_MACHINES = ["onelaser-xrf-desktop-laser-machine", "cobra-10-100w-co2-laser-engraver-cutter", "hydra-9-gen-2-70w-rf-co2-dual-laser-machine", "hydra-16-gen-2-70w-rf-co2-dual-laser-machine"];
+const perMonth = (amount, apr, n) => { const r = apr / 1200; return r ? (amount * r) / (1 - (1 + r) ** -n) : amount / n; };
+const Faces = () => <span className="tdlg-faces" aria-hidden="true">{[1, 2, 3].map((n) => <img key={n} src={asset(`team-${n}.jpg`)} alt="" />)}</span>;
+
 function TrustDialog({ kind, onClose, onTrustpilot }) {
+  const [film, setFilm] = useState(false);
+  const [clip, setClip] = useState(PRESS[0]);
+  const [fin, setFin] = useState({ h: FIN_MACHINES[2], n: 36 });
+  const quotes = useRef(null);
   useEffect(() => {
     const onKey = (e) => e.key === "Escape" && onClose();
     window.addEventListener("keydown", onKey);
@@ -221,19 +236,41 @@ function TrustDialog({ kind, onClose, onTrustpilot }) {
     document.body.style.overflow = "hidden";
     return () => { window.removeEventListener("keydown", onKey); document.body.style.overflow = prev; };
   }, [onClose]);
-  const More = ({ href, children }) => <Link href={href} className="tdlg-more">{children} <Icon name="arrow" size={16} /></Link>;
+  const More = ({ href, to, ghost, children }) => (href ? <Link href={href} className={`tdlg-more${ghost ? " ghost" : ""}`}>{children} <Icon name="arrow" size={16} /></Link> : <Link to={to} className={`tdlg-more${ghost ? " ghost" : ""}`}>{children} <Icon name="arrow" size={16} /></Link>);
+  const Head = ({ title, sub }) => {
+    const [icon, kicker] = DLG_HEAD[kind];
+    return (
+      <header className="tdlg-head">
+        <span className="tdlg-head-ico">{TRUST_ICONS[icon] ? <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{TRUST_ICONS[icon]}</svg> : <Icon name={icon} size={26} />}</span>
+        <p className="tdlg-kicker">{t(kicker)}</p>
+        <h3>{title}</h3>
+        {sub && <p className="tdlg-sub">{sub}</p>}
+      </header>
+    );
+  };
+  const Contacts = () => (
+    <ul className="tdlg-contact">
+      {footer.contact.map(([label, value, href]) => <li key={label}><a href={href}><Icon name={/^tel:/.test(href) ? "phone" : "mail"} size={20} /><span><b>{value}</b><small>{t(label)}</small></span></a></li>)}
+    </ul>
+  );
   let body;
-  if (kind === "reviews") {
+  if (kind === "finder") {
     body = (
       <>
-        <p className="tdlg-kicker">{t("Owner reviews")}</p>
-        <p className="tdlg-score"><b>{homeReviews.average}</b><span className="tdlg-stars" aria-hidden="true">★★★★★</span></p>
-        <p className="tdlg-sub">{t("Average of")} {homeReviews.count} {t("owner reviews on 1laser.com product pages (Judge.me).")}</p>
+        <div className="tdlg-finder"><FinderCard modal /></div>
+        <div id="fc-result-modal" className="tdlg-finder-result" />
+      </>
+    );
+  } else if (kind === "reviews") {
+    body = (
+      <>
+        <Head title={<span className="tdlg-score"><b>{homeReviews.average}</b><span className="tdlg-stars" aria-hidden="true">★★★★★</span></span>} sub={`${t("Average of")} ${homeReviews.count} ${t("owner reviews on 1laser.com product pages (Judge.me).")}`} />
         <ul className="tdlg-bars">
-          {REVIEW_BREAKDOWN.map(([m, avg, n]) => <li key={m}><span>{m}</span><i><em style={{ width: `${(n / 49) * 100}%` }} /></i><b>{avg}</b><small>{n}</small></li>)}
+          {REVIEW_BREAKDOWN.map(([m, avg, n]) => <li key={m}><span>{m}</span><i><em style={{ width: `${(n / 49) * 100}%` }} /></i><b>{avg}</b><small>{n} {t("reviews")}</small></li>)}
         </ul>
-        <ul className="tdlg-quotes">
-          {[homeReviews.items[4], homeReviews.items[0]].map((r) => <li key={r.name}><p>“{r.text}”</p><small>{r.name} · {r.product}{r.verified ? ` · ${t("Verified buyer")}` : ""}</small></li>)}
+        <div className="tdlg-qhead"><b>{t("In their words")}</b><span><button type="button" aria-label={t("Previous")} onClick={() => quotes.current?.scrollBy({ left: -300, behavior: "smooth" })}><Icon name="chevron" size={16} /></button><button type="button" aria-label={t("Next")} onClick={() => quotes.current?.scrollBy({ left: 300, behavior: "smooth" })}><Icon name="chevron" size={16} /></button></span></div>
+        <ul className="tdlg-quotes row" ref={quotes}>
+          {homeReviews.items.map((r) => <li key={r.name}><span className="tdlg-stars sm" aria-hidden="true">★★★★★</span><p>“{r.text}”</p><small>{r.name} · {r.product} · {r.date}{r.verified ? ` · ${t("Verified buyer")}` : ""}</small></li>)}
         </ul>
         <div className="tdlg-links">
           <More href={homeReviews.url}>{t("Read all owner reviews")}</More>
@@ -244,64 +281,76 @@ function TrustDialog({ kind, onClose, onTrustpilot }) {
   } else if (kind === "company") {
     body = (
       <>
-        <div className="tdlg-photo"><img src={img(homeStandard.image, 1200)} alt={t("OneLaser headquarters in the United States")} /></div>
-        <p className="tdlg-kicker">{t("U.S. company")}</p>
-        <h3>{t("A U.S. company you can reach")}</h3>
-        <p className="tdlg-sub">{t(homeStandard.text)}</p>
-        <ul className="tdlg-points">{homeStandard.points.map(([h, x]) => <li key={h}><Icon name="check" size={18} /><span><b>{t(h)}</b>{t(x)}</span></li>)}</ul>
-        <p className="tdlg-addr"><Icon name="pin" size={18} /><span>{t("Headquarters")}: {footer.address}</span></p>
+        <div className={`tdlg-photo${film ? " film" : ""}`}>
+          {film ? embed(...BRAND_FILM) : (
+            <>
+              <img src={img(homeStandard.image, 1400)} alt={t("OneLaser headquarters in the United States")} />
+              <button type="button" className="icred-film" onClick={() => setFilm(true)}>
+                <i aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.5v13l11-6.5z" /></svg></i>
+                <span><small>{t("Brand film")}</small><b>{t("What makes OneLaser different")}</b></span>
+              </button>
+            </>
+          )}
+        </div>
+        <Head title={t("A U.S. company you can reach")} sub={t(homeStandard.text)} />
+        <div className="tdlg-team"><Faces /><span><b>{t("Real people, ready to help you compare machines and plan your next step.")}</b></span></div>
+        <ul className="tdlg-points two">{homeStandard.points.map(([h, x]) => <li key={h}><Icon name="check" size={18} /><span><b>{t(h)}</b>{t(x)}</span></li>)}</ul>
+        <p className="tdlg-addr"><Icon name="pin" size={18} /><span><b>{t("Headquarters")}</b>{footer.address}</span></p>
+        <Contacts />
         <div className="tdlg-links"><More href="https://www.1laser.com/pages/about-us">{t("About OneLaser")}</More></div>
       </>
     );
   } else if (kind === "warranty") {
     body = (
       <>
-        <p className="tdlg-kicker">{t("Warranty and returns")}</p>
-        <h3>{t("Covered after you buy")}</h3>
-        <div className="tdlg-cards">
-          <section>
-            <b className="tdlg-big">3-2-1</b>
-            <ul className="tdlg-years"><li><b>3</b>{t("years mechanical")}</li><li><b>2</b>{t("years electrical")}</li><li><b>1</b>{t("year optics")}</li></ul>
-            <p>{t("Covers XRF and Hydra machines. Other products follow the official warranty policy.")}</p>
-          </section>
-          <section>
-            <b className="tdlg-big">30</b>
-            <p className="tdlg-days">{t("day returns")}</p>
-            <p>{t(faqText("Can I return"))}</p>
-          </section>
+        <Head title={t("Covered after you buy")} />
+        <div className="tdlg-timeline">
+          {[[3, "years mechanical", "Frame, motion system and mechanical parts"], [2, "years electrical", "Power, control board and electronics"], [1, "year optics", "Lenses, mirrors and optical parts"]].map(([n, l, x]) => (
+            <div key={l}><b>{n}</b><span><strong>{t(l)}</strong><small>{t(x)}</small></span><i><em style={{ width: `${(n / 3) * 100}%` }} /></i></div>
+          ))}
+          <p>{t("Covers XRF and Hydra machines. Other products follow the official warranty policy.")}</p>
         </div>
+        <div className="tdlg-cards"><section><b className="tdlg-big">30</b><p className="tdlg-days">{t("day returns")}</p><p>{t(faqText("Can I return"))}</p></section>
+          <section><Faces /><p className="tdlg-days">{t("U.S.-based support")}</p><p>{t(faqText("How does support"))}</p></section></div>
         <div className="tdlg-links">
           <More href="https://www.1laser.com/pages/warranty-policy">{t("Warranty policy")}</More>
-          <More href="https://www.1laser.com/pages/refund-policy">{t("Refund policy")}</More>
+          <More href="https://www.1laser.com/pages/refund-policy" ghost>{t("Refund policy")}</More>
         </div>
       </>
     );
   } else if (kind === "returns") {
     body = (
       <>
-        <p className="tdlg-kicker">{t("Worried about choosing wrong?")}</p>
-        <h3>{t("Use it on real jobs first")}</h3>
-        <div className="tdlg-cards one"><section><b className="tdlg-big">30</b><p className="tdlg-days">{t("day returns")}</p><p>{t(faqText("Can I return"))}</p></section></div>
-        <p className="tdlg-sub">{t("Not sure it is the right machine? A free call with a laser expert before you order is the surest way to pick right.")}</p>
+        <Head title={t("Use it on real jobs first")} />
+        <ol className="tdlg-steps">
+          <li><b>1</b><span><strong>{t("Order your machine")}</strong><small>{t("Pay in full, or spread the cost with financing.")}</small></span></li>
+          <li><b>2</b><span><strong>{t("Put it to work")}</strong><small>{t("Run real jobs on your own materials.")}</small></span></li>
+          <li><b>3</b><span><strong>{t("Not right? Return it within 30 days")}</strong><small>{t(faqText("Can I return"))}</small></span></li>
+        </ol>
+        <div className="tdlg-callout"><Faces /><span><b>{t("Want to pick right the first time?")}</b><small>{t("Not sure it is the right machine? A free call with a laser expert before you order is the surest way to pick right.")}</small></span></div>
         <div className="tdlg-links">
-          <More href="https://www.1laser.com/pages/refund-policy">{t("Refund policy")}</More>
-          <Link to="/pages/sales-consultation" className="tdlg-more ghost"><Icon name="calendar" size={16} />{t("Book a free call")}</Link>
+          <More to="/pages/sales-consultation">{t("Book a free call")}</More>
+          <More href="https://www.1laser.com/pages/refund-policy" ghost>{t("Refund policy")}</More>
         </div>
       </>
     );
   } else if (kind === "support") {
+    const tr = byHandle["engineer-1-on-1-training-support"];
     body = (
       <>
-        <p className="tdlg-kicker">{t("Stuck on a job?")}</p>
-        <h3>{t("Real people who know these machines")}</h3>
-        <p className="tdlg-sub">{t(faqText("How does support"))}</p>
-        <ul className="tdlg-contact">
-          <li><a href={`tel:${contact.tel}`}><Icon name="phone" size={20} /><span><b>{contact.phone}</b><small>{t("Call the team")}</small></span></a></li>
-          <li><a href="mailto:ts@1laser.com"><Icon name="mail" size={20} /><span><b>ts@1laser.com</b><small>{t("Tech support by email")}</small></span></a></li>
-        </ul>
+        <Head title={t("Real people who know these machines")} sub={t(faqText("How does support"))} />
+        <div className="tdlg-team"><Faces /><span><b>{t("U.S.-based support")}</b><small>{t("Talk to real laser engineers.")}</small></span></div>
+        <Contacts />
+        {tr && (
+          <div className="tdlg-upsell">
+            <img src={img(tr.images[0], 300)} alt="" />
+            <span><b>{t("One hour, one engineer, your machine")}</b><small>{money(tr.price)}{tr.compareAt > tr.price && <s>{money(tr.compareAt)}</s>}</small></span>
+            <AddButton product={tr} className="ih-btn line sm" drop="up" />
+          </div>
+        )}
         <div className="tdlg-links">
           <More href="https://zohodesk.1laser.com/portal/en/newticket">{t("Open a support ticket")}</More>
-          <Link href="https://wiki.1laser.com" className="tdlg-more ghost">{t("Product knowledge base")} <Icon name="arrow" size={16} /></Link>
+          <More href="https://wiki.1laser.com" ghost>{t("Product knowledge base")}</More>
         </div>
       </>
     );
@@ -310,38 +359,49 @@ function TrustDialog({ kind, onClose, onTrustpilot }) {
     body = (
       <>
         {p && <div className="tdlg-photo"><img src={img(p.images[0], 1000)} alt="" /></div>}
-        <p className="tdlg-kicker">{t("First laser?")}</p>
-        <h3>{t("One hour, one engineer, your machine")}</h3>
+        <Head title={t("One hour, one engineer, your machine")} />
+        <p className="tdlg-chips"><span><Icon name="clock" size={16} />{t("1 hour")}</span><span><Icon name="calendar" size={16} />{t("Live video")}</span><span><Icon name="user" size={16} />{t("One-on-one")}</span></p>
         <p className="tdlg-sub">{t("A 1-hour live video session with an experienced OneLaser technician: machine assembly, software setup and troubleshooting, so you start cutting and engraving faster and avoid costly mistakes.")}</p>
-        {p && <p className="tdlg-price"><b>{money(p.price)}</b>{p.compareAt > p.price && <s>{money(p.compareAt)}</s>}</p>}
+        <ul className="tdlg-points">{["Machine assembly", "Software setup", "Troubleshooting", "Fine-tuning your workflow"].map((x) => <li key={x}><Icon name="check" size={18} /><span><b>{t(x)}</b></span></li>)}</ul>
+        {p && <p className="tdlg-price"><b>{money(p.price)}</b>{p.compareAt > p.price && <><s>{money(p.compareAt)}</s><em>{t("Save")} {money(p.compareAt - p.price)}</em></>}</p>}
         <div className="tdlg-links">
           {p && <AddButton product={p} className="tdlg-more" drop="up" />}
-          {p && <Link to={`/products/${p.handle}`} className="tdlg-more ghost">{t("Full details")} <Icon name="arrow" size={16} /></Link>}
+          {p && <More to={`/products/${p.handle}`} ghost>{t("Full details")}</More>}
         </div>
       </>
     );
   } else if (kind === "financing") {
+    const m = byHandle[fin.h];
+    const pay = m ? perMonth(m.price, 15, fin.n) : 0;
     body = (
       <>
-        <p className="tdlg-kicker">{t("Budget tight?")}</p>
-        <h3>{t("Spread the cost four ways")}</h3>
+        <Head title={t("Spread the cost four ways")} />
+        <div className="tdlg-calc">
+          <label><span>{t("Machine")}</span><select value={fin.h} onChange={(e) => setFin((f) => ({ ...f, h: e.target.value }))}>{FIN_MACHINES.map((h) => byHandle[h] && <option key={h} value={h}>{byHandle[h].name} · {money(byHandle[h].price)}</option>)}</select></label>
+          <div className="tdlg-seg">{[12, 24, 36, 60].map((n) => <button key={n} type="button" className={fin.n === n ? "on" : ""} onClick={() => setFin((f) => ({ ...f, n }))}>{n} {t("mo")}</button>)}</div>
+          <p className="tdlg-pay"><b>{money(Math.round(pay))}</b><span>/{t("mo")}</span><small>{t("Estimate at 15% APR. Your rate is set by the lender.")}</small></p>
+        </div>
         <ul className="tdlg-fin">
           <li><b>{t("OneLaser Subsidy Loan")}</b><span>{t("$0 down, first 3 months payment-free, up to 60 months.")}</span></li>
           <li><b>{t("First Citizens Bank")}</b><span>{t("Equipment finance for established businesses.")}</span></li>
           <li><b>{t("Shop Pay Installments")}</b><span>{t("3, 6 or 12 monthly payments, chosen at checkout.")}</span></li>
           <li><b>ClickLease</b><span>{t("Lease to own, $0 down, approval in minutes.")}</span></li>
         </ul>
-        <p className="tdlg-sub">{t("Rates and terms depend on the lender's approval.")}</p>
-        <div className="tdlg-links"><Link to="/pages/financing" className="tdlg-more">{t("Estimate my monthly payment")} <Icon name="arrow" size={16} /></Link></div>
+        <div className="tdlg-links"><More to={`/pages/financing?p=${fin.h}`}>{t("Compare all financing options")}</More></div>
       </>
     );
   } else {
     body = (
       <>
-        <div className="tdlg-video"><iframe src="https://www.youtube-nocookie.com/embed/seseyuxIZt4?autoplay=1&rel=0" title="OneLaser as seen on FOX & Discovery" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowFullScreen /></div>
-        <p className="tdlg-kicker">{t("TV feature")}</p>
-        <h3>{t("As seen on FOX & Discovery")}</h3>
-        <div className="tdlg-links"><button type="button" className="tdlg-more" onClick={() => { onClose(); setTimeout(() => document.querySelector(".iv")?.scrollIntoView({ behavior: "smooth", block: "start" }), 50); }}>{t("More OneLaser videos")} <Icon name="arrow" size={16} /></button></div>
+        <div className="tdlg-video"><iframe key={clip[0]} src={`https://www.youtube-nocookie.com/embed/${clip[0]}?autoplay=1&rel=0`} title={clip[2]} allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowFullScreen /></div>
+        <Head title={t(clip[2])} />
+        <ul className="tdlg-clips">
+          {PRESS.map((c) => (
+            <li key={c[0]}><button type="button" className={c[0] === clip[0] ? "on" : ""} onClick={() => setClip(c)}>
+              <img src={thumb(c[0])} onError={(e) => thumbFallback(e, c[0])} alt="" /><span><small>{t(c[1])}</small><b>{t(c[2])}</b></span>
+            </button></li>
+          ))}
+        </ul>
       </>
     );
   }
@@ -366,7 +426,7 @@ function TrustStrip({ onTrustpilot }) {
   return (
     <section className="ih-trust" aria-label={t("Why buyers trust OneLaser")}>
       <div className="ih-wrap">
-        <ul>
+        <ul className="ih-trust-list">
           {items.map(([kind, icon, head, sub]) => (
             <li key={kind}>
               <button type="button" onClick={() => setOpen(kind)} aria-haspopup="dialog">
@@ -435,6 +495,19 @@ function Credibility() {
   );
 }
 
+/* Each video tab is a machine: its tab shows the machine, and a card next to the player turns watching into a next step. */
+const VIDEO_MACHINE = {
+  XRF: "onelaser-xrf-desktop-laser-machine",
+  Hydra: "hydra-9-gen-2-70w-rf-co2-dual-laser-machine",
+  VertiGo: "vertigo-vertical-laser-engraver",
+  Cobra: "cobra-10-100w-co2-laser-engraver-cutter",
+};
+const seriesFrom = (h) => {
+  const p = byHandle[h];
+  const list = p ? products.filter((x) => x.kind === "machine" && x.series === p.series) : [];
+  return list.length ? Math.min(...list.map((x) => x.price)) : p?.price;
+};
+
 function Videos() {
   const [tab, setTab] = useState(0);
   const [cur, setCur] = useState(0);
@@ -457,9 +530,20 @@ function Videos() {
     <section className="ih-block iv" ref={box}>
       <div className="ih-wrap">
         <div className="iv-head">
-          <h2 className="ih-h2">{t("Watch OneLaser in action")}</h2>
-          <div className="ih-tabs" role="tablist">
-            {homeVideos.map((g, n) => <button key={g.label} type="button" role="tab" aria-selected={n === tab} className={n === tab ? "on" : ""} onClick={() => { setTab(n); choose(0, false); }}>{g.label}</button>)}
+          <div>
+            <h2 className="ih-h2">{t("See each machine at work")}</h2>
+            <p className="iv-sub">{t("Real jobs, real speed. Pick a machine and press play.")}</p>
+          </div>
+          <div className="iv-tabs" role="tablist">
+            {homeVideos.map((g, n) => {
+              const mp = byHandle[VIDEO_MACHINE[g.label]];
+              return (
+                <button key={g.label} type="button" role="tab" aria-selected={n === tab} className={n === tab ? "on" : ""} onClick={() => { setTab(n); choose(0, false); }}>
+                  {mp && <img src={img(frontImg(mp), 160)} alt="" />}
+                  <span><b>{g.label}</b>{mp && <small>{t("From")} {money(seriesFrom(mp.handle))}</small>}</span>
+                </button>
+              );
+            })}
           </div>
         </div>
         <div className="iv-grid" key={tab}>
@@ -476,6 +560,24 @@ function Videos() {
             </div>
             <div className="iv-meta"><b>{title}</b><span>{channel}</span></div>
           </div>
+          <div className="iv-side">
+          {(() => {
+            const mp = byHandle[VIDEO_MACHINE[homeVideos[tab].label]];
+            return mp && (
+              <div className="iv-machine">
+                <Link to={`/products/${mp.handle}`} className="iv-machine-img" tabIndex={-1} aria-hidden="true"><img src={img(frontImg(mp), 400)} alt="" /></Link>
+                <span className="iv-machine-text">
+                  <b>{mp.name}</b>
+                  <small>{t(shortSlogans[mp.handle] || mp.tagline)}</small>
+                  <em>{mp.priceVaries && `${t("From")} `}{money(mp.price)}{mp.compareAt > mp.price && <s>{money(mp.compareAt)}</s>}</em>
+                </span>
+                <span className="iv-machine-btns">
+                  <AddButton product={mp} className="ih-btn line sm" />
+                  <Link to={`/products/${mp.handle}`} className="ih-btn dark sm">{t("View details")}</Link>
+                </span>
+              </div>
+            );
+          })()}
           <ul className="iv-list">
             {items.map(([vid, vt, vc], n) => (
               <li key={vid}>
@@ -486,6 +588,7 @@ function Videos() {
               </li>
             ))}
           </ul>
+          </div>
         </div>
       </div>
     </section>
@@ -747,7 +850,7 @@ export default function Home() {
         <div className="ih-wrap">
           <h2 className="ih-h2">{t("Ready when you are. Pick your next step.")}</h2>
           <ul>
-            <li><button type="button" onClick={toFinder}><span className="inext-ico"><Icon name="search" size={26} /></span><small>{t("Choose it yourself")}</small><b>{t("Find your machine in 30 seconds")}</b><em>{t("Start the finder")} →</em></button></li>
+            <li><button type="button" onClick={() => setDlg("finder")} aria-haspopup="dialog"><span className="inext-ico"><Icon name="search" size={26} /></span><small>{t("Choose it yourself")}</small><b>{t("Find your machine in 30 seconds")}</b><em>{t("Start the finder")} →</em></button></li>
             <li className="hot"><Link to="/pages/sales-consultation"><span className="inext-ico"><Icon name="calendar" size={26} /></span><small>{t("Talk it through")}</small><b>{t("Book a free 30-minute call with a laser expert")}</b><em>{t("Pick a time")} →</em></Link></li>
             <li><button type="button" onClick={() => setDlg("financing")} aria-haspopup="dialog"><span className="inext-ico"><Icon name="card" size={26} /></span><small>{t("Do the math")}</small><b>{t("See your monthly payment")}</b><em>{t("Open the estimator")} →</em></button></li>
           </ul>
