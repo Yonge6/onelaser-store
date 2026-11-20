@@ -932,4 +932,12 @@ export default {
   "Hear it from owners.": "オーナーの声を聞いてください。",
   "Your next step.": "次の一歩を。",
   "U.S. engineers have you covered.": "米国のエンジニアがしっかりサポート。",
+  "\"3-2-1 warranty on X Series and Hydra: 3 years mechanical, 2 electrical, 1 optics and laser source.\"": "X シリーズと Hydra は 3-2-1 保証：機械 3 年、電気 2 年、光学・光源 1 年。",
+  "X Series (XRF, XT) and Hydra: 3-year mechanical parts, 2-year electrical components, 1-year optics and laser source. Cobra: 1-year mechanical and electrical (optical lenses not covered). VertiGo: 1-year mechanical and electrical, 6-month laser source, 1-month lens and mirror.": "X シリーズ（XRF、XT）と Hydra：機械部品 3 年、電気部品 2 年、光学部品と光源 1 年。Cobra：機械・電気 1 年（光学レンズは対象外）。VertiGo：機械・電気 1 年、レーザー光源 6 か月、レンズとミラー 1 か月。",
+  "3-year mechanical, 2-year electrical, 1-year optics on X Series and Hydra.": "X シリーズと Hydra：機械 3 年、電気 2 年、光学 1 年。",
+  "3-2-1 warranty · X Series and Hydra": "3-2-1 保証 · X シリーズと Hydra",
+  "X Series (XRF, XT) and Hydra machines.": "X シリーズ（XRF、XT）と Hydra が対象。",
+  "1 year on mechanical and electrical parts. Optical lenses are not covered.": "機械・電気部品 1 年。光学レンズは対象外。",
+  "1 year on mechanical and electrical parts, 6 months on the laser source, 1 month on lens and mirror.": "機械・電気部品 1 年、レーザー光源 6 か月、レンズとミラー 1 か月。",
+  "Optical components and laser source parts": "光学部品とレーザー光源関連部品",
 };

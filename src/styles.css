@@ -4360,3 +4360,10 @@ body:has(.ip-bar) .ai-nudge { bottom: 168px; }
 @keyframes fx-q-ring { 0%, 14%, 100% { transform: none; } 2%, 6%, 10% { transform: rotate(-14deg); } 4%, 8%, 12% { transform: rotate(14deg); } }
 .fx-quote:hover::after, .fx-quote:hover svg, .fx-call:hover svg { animation: none; }
 @media (prefers-reduced-motion: reduce) { .fx-quote::after, .fx-quote svg, .fx-call svg { animation: none !important; } }
+
+/* Warranty dialog: the other series' terms under the 3-2-1 timeline. */
+.tdlg-terms { margin: 14px 32px 0; display: grid; gap: 8px; }
+.tdlg-terms div { display: grid; grid-template-columns: 84px minmax(0, 1fr); gap: 12px; align-items: baseline; padding: 12px 14px; border-radius: 12px; background: var(--page); }
+.tdlg-terms b { font-size: 15px; font-weight: 700; }
+.tdlg-terms span { font-size: 14px; line-height: 21px; color: #515157; }
+@media (max-width: 767px) { .tdlg-terms { margin: 12px 18px 0; } .tdlg-terms div { grid-template-columns: minmax(0, 1fr); gap: 2px; } }

@@ -94,7 +94,7 @@ export default function Cart() {
                         <h2><Link to={`/products/${i.product.handle}`}>{i.product.name}</Link></h2>
                         <span className="ic-tag">{t("30-Day Returns")}</span>
                         {i.variant.title && i.variant.title !== "Default Title" && <p>{i.variant.title}</p>}
-                        {["xrf", "hydra"].includes(i.product.series) && <p className="ic-warranty"><Icon name="shield" size={14} />{t("3-2-1 warranty included")}</p>}
+                        {["xrf", "hydra", "legacy"].includes(i.product.series) && <p className="ic-warranty"><Icon name="shield" size={14} />{t("3-2-1 warranty included")}</p>}
                       </div>
                       <div className="ic-qty">
                         <button type="button" aria-label={t("Decrease quantity")} disabled={i.qty <= 1} onClick={() => setQty(i.variantId, i.qty - 1)}>−</button>

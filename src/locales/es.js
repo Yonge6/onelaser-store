@@ -932,4 +932,12 @@ export default {
   "Hear it from owners.": "Escucha a los propietarios.",
   "Your next step.": "Tu siguiente paso.",
   "U.S. engineers have you covered.": "Ingenieros en EE. UU. te respaldan.",
+  "\"3-2-1 warranty on X Series and Hydra: 3 years mechanical, 2 electrical, 1 optics and laser source.\"": "Garantía 3-2-1 en la serie X y Hydra: 3 años mecánica, 2 eléctrica, 1 óptica y fuente láser.",
+  "X Series (XRF, XT) and Hydra: 3-year mechanical parts, 2-year electrical components, 1-year optics and laser source. Cobra: 1-year mechanical and electrical (optical lenses not covered). VertiGo: 1-year mechanical and electrical, 6-month laser source, 1-month lens and mirror.": "Serie X (XRF, XT) e Hydra: 3 años piezas mecánicas, 2 años componentes eléctricos, 1 año óptica y fuente láser. Cobra: 1 año mecánica y eléctrica (lentes ópticas no cubiertas). VertiGo: 1 año mecánica y eléctrica, 6 meses fuente láser, 1 mes lente y espejo.",
+  "3-year mechanical, 2-year electrical, 1-year optics on X Series and Hydra.": "3 años mecánica, 2 eléctrica y 1 óptica en la serie X y Hydra.",
+  "3-2-1 warranty · X Series and Hydra": "Garantía 3-2-1 · serie X e Hydra",
+  "X Series (XRF, XT) and Hydra machines.": "Máquinas de la serie X (XRF, XT) e Hydra.",
+  "1 year on mechanical and electrical parts. Optical lenses are not covered.": "1 año en piezas mecánicas y eléctricas. Las lentes ópticas no están cubiertas.",
+  "1 year on mechanical and electrical parts, 6 months on the laser source, 1 month on lens and mirror.": "1 año en piezas mecánicas y eléctricas, 6 meses en la fuente láser, 1 mes en lente y espejo.",
+  "Optical components and laser source parts": "Componentes ópticos y piezas de la fuente láser",
 };

@@ -932,4 +932,12 @@ export default {
   "Hear it from owners.": "Hör, was Besitzer sagen.",
   "Your next step.": "Dein nächster Schritt.",
   "U.S. engineers have you covered.": "US-Ingenieure sind für dich da.",
+  "\"3-2-1 warranty on X Series and Hydra: 3 years mechanical, 2 electrical, 1 optics and laser source.\"": "3-2-1-Garantie auf X-Serie und Hydra: 3 Jahre Mechanik, 2 Elektrik, 1 Optik und Laserquelle.",
+  "X Series (XRF, XT) and Hydra: 3-year mechanical parts, 2-year electrical components, 1-year optics and laser source. Cobra: 1-year mechanical and electrical (optical lenses not covered). VertiGo: 1-year mechanical and electrical, 6-month laser source, 1-month lens and mirror.": "X-Serie (XRF, XT) und Hydra: 3 Jahre Mechanik, 2 Jahre Elektrik, 1 Jahr Optik und Laserquelle. Cobra: 1 Jahr Mechanik und Elektrik (optische Linsen ausgenommen). VertiGo: 1 Jahr Mechanik und Elektrik, 6 Monate Laserquelle, 1 Monat Linse und Spiegel.",
+  "3-year mechanical, 2-year electrical, 1-year optics on X Series and Hydra.": "3 Jahre Mechanik, 2 Elektrik, 1 Optik auf X-Serie und Hydra.",
+  "3-2-1 warranty · X Series and Hydra": "3-2-1-Garantie · X-Serie und Hydra",
+  "X Series (XRF, XT) and Hydra machines.": "Maschinen der X-Serie (XRF, XT) und Hydra.",
+  "1 year on mechanical and electrical parts. Optical lenses are not covered.": "1 Jahr auf Mechanik und Elektrik. Optische Linsen sind ausgenommen.",
+  "1 year on mechanical and electrical parts, 6 months on the laser source, 1 month on lens and mirror.": "1 Jahr auf Mechanik und Elektrik, 6 Monate auf die Laserquelle, 1 Monat auf Linse und Spiegel.",
+  "Optical components and laser source parts": "Optische Komponenten und Teile der Laserquelle",
 };

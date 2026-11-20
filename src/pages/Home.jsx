@@ -312,10 +312,14 @@ function TrustDialog({ kind, onClose, onTrustpilot }) {
       <>
         <Head title={t("Covered after you buy")} />
         <div className="tdlg-timeline">
-          {[[3, "years mechanical", "Frame, motion system and mechanical parts"], [2, "years electrical", "Power, control board and electronics"], [1, "year optics", "Lenses, mirrors and optical parts"]].map(([n, l, x]) => (
+          {[[3, "years mechanical", "Frame, motion system and mechanical parts"], [2, "years electrical", "Power, control board and electronics"], [1, "year optics", "Optical components and laser source parts"]].map(([n, l, x]) => (
             <div key={l}><b>{n}</b><span><strong>{t(l)}</strong><small>{t(x)}</small></span><i><em style={{ width: `${(n / 3) * 100}%` }} /></i></div>
           ))}
-          <p>{t("Covers XRF and Hydra machines. Other products follow the official warranty policy.")}</p>
+          <p>{t("X Series (XRF, XT) and Hydra machines.")}</p>
+        </div>
+        <div className="tdlg-terms">
+          <div><b>Cobra</b><span>{t("1 year on mechanical and electrical parts. Optical lenses are not covered.")}</span></div>
+          <div><b>VertiGo</b><span>{t("1 year on mechanical and electrical parts, 6 months on the laser source, 1 month on lens and mirror.")}</span></div>
         </div>
         <div className="tdlg-cards"><section><b className="tdlg-big">30</b><p className="tdlg-days">{t("day returns")}</p><p>{t(faqText("Can I return"))}</p></section>
           <section><Faces /><p className="tdlg-days">{t("U.S.-based support")}</p><p>{t(faqText("How does support"))}</p></section></div>
@@ -599,7 +603,7 @@ function ReviewsDialog({ onClose }) {
 /* Ownership promises, each one a door to the policy or service behind it. Copy speaks to the buyer's worry first. */
 const PROMISES = [ // [icon, worry, promise, link label, dialog]
   ["refresh", "Worried about choosing wrong?", "30-day returns. Use it on real jobs first.", "Refund policy", "returns"],
-  ["shield", "Something breaks?", "3-2-1 warranty on XRF and Hydra: 3 years mechanical, 2 electrical, 1 optics.", "Warranty policy", "warranty"],
+  ["shield", "Something breaks?", "3-2-1 warranty on X Series and Hydra: 3 years mechanical, 2 electrical, 1 optics and laser source.", "Warranty policy", "warranty"],
   ["headset", "Stuck on a job?", "Call U.S. engineers who build, tune and repair these machines.", "Contact support", "support"],
   ["user", "First laser?", "One-on-one training, so you are not figuring it out alone.", "1-on-1 training", "training"],
   ["card", "Budget tight?", "$0-down business financing and installments at checkout.", "See financing", "financing"],
