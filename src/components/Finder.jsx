@@ -67,6 +67,17 @@ const memo = { answers: {}, step: 0 };
 
 /* modal: the finder opened from a home-page dialog. Its details render into the dialog (#fc-result-modal) and every
    scroll stays inside the dialog, so the page underneath never moves. */
+/* Confetti for the reveal: 64 pieces thrown out from behind the machine on a golden-angle spread, mostly upward,
+   then falling and spinning. Fixed positions (no randomness) so every reveal looks the same. */
+const CONFETTI = Array.from({ length: 64 }, (_, i) => {
+  const a = (i * 137.5 * Math.PI) / 180;
+  const r = 55 + ((i * 53) % 185);
+  return {
+    k: ["c-red", "c-sky", "c-gold", "c-green", "c-pink"][i % 5] + (i % 3 === 0 ? " dot" : i % 3 === 1 ? " strip" : ""),
+    v: { "--x": `${Math.round(Math.cos(a) * r)}px`, "--y": `${Math.round(Math.sin(a) * r * 0.8 - 40)}px`, "--s": `${((i * 97) % 720) - 360}deg`, "--d": `${(1.1 + (i % 5) * 0.14).toFixed(2)}s`, "--w": `${(i % 4) * 0.035}s` },
+  };
+});
+
 export default function FinderCard({ modal = false }) {
   const scope = modal ? ".tdlg .fx" : ".ih-products .fx";
   const [answers, setAnswersRaw] = useState(memo.answers);
@@ -146,7 +157,7 @@ export default function FinderCard({ modal = false }) {
           <h3 className="fx-name"><Link to={`/products/${top.handle}`}>{top.name}</Link></h3>
           <p className="fx-tag">{top.tagline}</p>
           {reasons.length > 0 && <ul className="fx-why">{reasons.map((r) => <li key={r}><Icon name="check" size={14} />{t(r)}</li>)}</ul>}
-          <p className="fx-price"><b>{money(top.price)}</b>{top.compareAt > top.price && <s>{money(top.compareAt)}</s>}<span>{t("or")} ${monthly(top)}{t("/mo for 24 months")}</span></p>
+          <p className="fx-price"><b>{money(top.price)}</b>{top.compareAt > top.price && <><s>{money(top.compareAt)}</s><em>{t("Save")} {money(top.compareAt - top.price)}</em></>}<span>{t("or")} ${monthly(top)}{t("/mo for 24 months")}</span></p>
           <div className="fx-cta">
             <AddButton product={top} className="ih-btn line" />
             <Link to={`/products/${top.handle}`} className="ih-btn dark">{t("Buy now")}</Link>
@@ -165,7 +176,7 @@ export default function FinderCard({ modal = false }) {
         {/* the reveal: the picked machine rises onto the stage, a laser line sweeps it once and a few sparks burst out */}
         <Link to={`/products/${top.handle}`} className="fx-stage" tabIndex={-1} aria-hidden="true" key={top.handle}>
           <span className="fx-pick-chip"><Icon name="sparkle" size={14} />{t("Picked for you")}</span>
-          <span className="fx-burst">{Array.from({ length: 12 }, (_, i) => <i key={i} style={{ "--a": `${i * 30 + (i % 2) * 12}deg`, "--r": `${150 + (i % 3) * 45}px`, "--d": `${0.55 + (i % 4) * 0.06}s` }} />)}</span>
+          <span className="fx-burst"><b className="fx-flash" />{CONFETTI.map((c, i) => <i key={i} className={c.k} style={c.v} />)}</span>
           <span className="fx-scan" />
           <img src={img(frontImg(top), 900)} alt="" />
         </Link>
