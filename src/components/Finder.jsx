@@ -382,19 +382,6 @@ function FinderResult({ answers, ranked }) {
   const specs = ["Laser source", "Work area", "Max engraving speed", "Acceleration"].filter((k) => top.specs?.[k]);
   return (
     <section className="fr" aria-label={t("Specs and good to know")}>
-      <ol className="fr-steps">
-        {STEPS.map((s, n) => {
-          const l = lines.find((x) => x.n === n);
-          return (
-            <li key={s.id} className={l ? "done" : ""}>
-              <span title={l ? l.a.map((x) => t(x)).join(", ") : undefined}>
-                <i>{l ? <Icon name="check" size={14} /> : n + 1}</i>
-                <span><b>{t(s.label)}</b><em>{l ? l.a.map((x) => t(x)).join(", ") : t("Skipped")}</em></span>
-              </span>
-            </li>
-          );
-        })}
-      </ol>
       <div className="fr-card">
         <div className="fr-col">
           <h3>{fill(t("{name} at a glance"), { name: top.name })}</h3>
