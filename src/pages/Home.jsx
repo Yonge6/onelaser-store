@@ -451,7 +451,7 @@ function Credibility() {
     <section className="ih-block icred">
       <div className="ih-wrap">
         <p className="icred-kicker">{t("Who stands behind your machine")}</p>
-        <h2 className="ih-h2 narrow">{t("A real California company, seen on TV and at industry shows.")}</h2>
+        <h2 className="ih-h2 narrow">{t("A real U.S. company, seen on TV.")}</h2>
         <div className="icv">
           <div className="icv-main">
             <div className="icv-player">
@@ -710,7 +710,7 @@ export default function Home() {
         <div className="ih-wrap">
           <p className="ist-kicker">{t("Real owner reviews")}</p>
           <div className="irv-head">
-            <h2 className="ih-h2">{t("Don't take our word for it. Hear it from owners.")}</h2>
+            <h2 className="ih-h2">{t("Hear it from owners.")}</h2>
             <button type="button" className="irv-score" onClick={() => setReviewsOpen(true)}>
               <span className="irv-stars" aria-hidden="true">★★★★★</span>
               <b>{homeReviews.average}</b>

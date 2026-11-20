@@ -1082,4 +1082,6 @@ export default {
   "Playing": "播放中",
   "years": "年",
   "h": "小时",
+  "A real U.S. company, seen on TV.": "真实的美国公司，上过电视。",
+  "Hear it from owners.": "听听买家怎么说。",
 };

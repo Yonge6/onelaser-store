@@ -928,4 +928,6 @@ export default {
   "Playing": "再生中",
   "years": "年",
   "h": "時間",
+  "A real U.S. company, seen on TV.": "本物のアメリカ企業。テレビでも紹介。",
+  "Hear it from owners.": "オーナーの声を聞いてください。",
 };

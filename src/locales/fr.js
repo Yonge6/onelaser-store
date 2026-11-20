@@ -928,4 +928,6 @@ export default {
   "Playing": "En lecture",
   "years": "ans",
   "h": "h",
+  "A real U.S. company, seen on TV.": "Une vraie entreprise américaine, vue à la télé.",
+  "Hear it from owners.": "Écoutez les propriétaires.",
 };

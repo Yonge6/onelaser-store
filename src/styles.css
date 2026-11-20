@@ -4348,3 +4348,15 @@ body:has(.ip-bar) .ai-nudge { bottom: 168px; }
 .fx-call-cta:hover::after, .fx-call-cta:hover .fx-call-ico::after { animation: none; opacity: 0; }
 .fx-call-cta:hover > svg { animation: none; transform: translateX(5px); }
 @media (prefers-reduced-motion: reduce) { .fx-call-cta, .fx-call-cta::after, .fx-call-ico::after, .fx-call-cta > svg { animation: none !important; } }
+
+/* Quote / call buttons under the finder result (page and dialog): a soft shine crosses the quote button every few seconds,
+   its envelope gives a little lift and the phone icon a short ring; both settle on hover. */
+.fx-quote { position: relative; overflow: hidden; }
+.fx-quote::after { content: ""; position: absolute; top: 0; bottom: 0; left: -50%; width: 35%; background: linear-gradient(100deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.45), rgba(255, 255, 255, 0)); transform: skewX(-20deg); pointer-events: none; animation: fx-q-shine 4s ease-in-out 1s infinite; }
+@keyframes fx-q-shine { 0% { left: -50%; } 25%, 100% { left: 130%; } }
+.fx-quote svg { animation: fx-q-env 4s ease-in-out 1.2s infinite; }
+@keyframes fx-q-env { 0%, 20%, 100% { transform: none; } 6% { transform: translateY(-3px) rotate(-8deg); } 12% { transform: translateY(0) rotate(4deg); } }
+.fx-call svg { transform-origin: 50% 60%; animation: fx-q-ring 4s ease-in-out 2.4s infinite; }
+@keyframes fx-q-ring { 0%, 14%, 100% { transform: none; } 2%, 6%, 10% { transform: rotate(-14deg); } 4%, 8%, 12% { transform: rotate(14deg); } }
+.fx-quote:hover::after, .fx-quote:hover svg, .fx-call:hover svg { animation: none; }
+@media (prefers-reduced-motion: reduce) { .fx-quote::after, .fx-quote svg, .fx-call svg { animation: none !important; } }
