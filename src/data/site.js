@@ -228,15 +228,9 @@ export const shortSlogans = {
 };
 
 // Home video module. Lists supplied by the team on 2026-11-18; titles and channels read from YouTube. [id, title, channel]
+// The brand, TV, news and trade-show videos play in the home credibility block; this module keeps the machine videos.
 export const homeVideos = [
-  { label: "OneLaser", items: [
-    ["_dv0xXmHSiA", "Engineered in the USA: What Makes OneLaser Different", "OneLaser"],
-    ["seseyuxIZt4", "OneLaser Laser Engravers As Seen on FOX & Discovery | Product Showcase", "OneLaser"],
-    ["KAtO7_wkmMk", "OneLaser at APA Show | International Personalization Expo 2025 Recap", "OneLaser"],
-    ["waBw5gDMPIM", "I Tested the New OneLaser Machines at the Next Level Maker Conference...", "OneLaser"],
-  ] },
   { label: "XRF", items: [
-    ["8tn7O69iCnQ", "Fox News Introduces ONELASER As Best Holiday DIY Gift!", "OneLaser"],
     ["RxgWwJg5kAk", "Behind The Maker Ep. 001 | Holly Whiteside", "OneLaser"],
     ["jNaj50MkKiE", "I Was Wrong About the One Laser X Desktop Laser", "Make or Break Shop"],
     ["zHtW_nGm19U", "Pro Desktop Laser at a Budget Price - OneLaser X Series Review", "Make or Break Shop"],
