@@ -213,12 +213,6 @@ const thumbFallback = (e, id) => { if (!e.target.dataset.fb) { e.target.dataset.
 /* Trust strip right above the videos: four facts, each a door to its proof. All real:
    Judge.me owner rating (homeReviews), U.S. company (homeStandard), 3-2-1 warranty on XRF + Hydra and 30-day returns
    (homeFaq), FOX & Discovery coverage (the OneLaser videos below). */
-const TRUST_ICONS = {
-  star: <path d="m12 3.6 2.6 5.3 5.8.8-4.2 4.1 1 5.8L12 16.9l-5.2 2.7 1-5.8-4.2-4.1 5.8-.8z" />,
-  flag: <><path d="M5 21V4" /><path d="M5 4h11l-2 4 2 4H5" /></>,
-  shield: <><path d="M12 3.5 19 6v5.5c0 4.3-3 7.7-7 9-4-1.3-7-4.7-7-9V6z" /><path d="m9 12 2.2 2.2L15.5 10" /></>,
-  tv: <><rect x="3" y="5" width="18" height="12" rx="2" /><path d="m10.5 8.8 4 2.2-4 2.2zM8 20.5h8" /></>,
-};
 /* Judge.me averages per product page (read 2026-11-18, as in site.js homeReviews): the 4.92 is review-weighted across these. */
 const faqText = (q) => homeFaq.find(([k]) => k.startsWith(q))?.[1] || "";
 
@@ -269,7 +263,7 @@ function TrustDialog({ kind, onClose, onTrustpilot }) {
     const [icon, kicker] = DLG_HEAD[kind];
     return (
       <header className="tdlg-head">
-        <span className="tdlg-head-ico">{TRUST_ICONS[icon] ? <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{TRUST_ICONS[icon]}</svg> : <Icon name={icon} size={26} />}</span>
+        <span className="tdlg-head-ico"><Icon name={icon} size={26} tone /></span>
         <p className="tdlg-kicker">{t(kicker)}</p>
         <h3>{title}</h3>
         {sub && <p className="tdlg-sub">{sub}</p>}
@@ -718,7 +712,7 @@ export default function Home() {
           <h2 className="ih-h2 narrow">{t("U.S. engineers have you covered.")}</h2>
           <ul>
             {PROMISES.map(([icon, worry, promise, label, kind]) => (
-              <li key={worry}><button type="button" onClick={() => setDlg(kind)} aria-haspopup="dialog"><span className="iprom-ico"><Icon name={icon} size={24} /></span><b>{t(worry)}</b><p>{t(promise)}</p><em>{t(label)} ›</em></button></li>
+              <li key={worry}><button type="button" onClick={() => setDlg(kind)} aria-haspopup="dialog"><span className="iprom-ico"><Icon name={icon} size={26} tone /></span><b>{t(worry)}</b><p>{t(promise)}</p><em>{t(label)} ›</em></button></li>
             ))}
           </ul>
         </div>
@@ -743,9 +737,9 @@ export default function Home() {
         <div className="ih-wrap">
           <h2 className="ih-h2">{t("Your next step.")}</h2>
           <ul>
-            <li><button type="button" onClick={() => setDlg("finder")} aria-haspopup="dialog"><span className="inext-mark" aria-hidden="true"><Icon name="search" size={140} /></span><span className="inext-top"><span className="inext-ico"><Icon name="search" size={24} /></span><i>{t("6 questions")}</i></span><small>{t("Choose it yourself")}</small><b>{t("Find your machine in 30 seconds")}</b><p>{t("Answer a few questions about your materials and jobs, and get a matched machine.")}</p><em>{t("Start the finder")}<Icon name="chevron" size={16} /></em></button></li>
-            <li><Link to="/pages/sales-consultation"><span className="inext-mark" aria-hidden="true"><Icon name="calendar" size={140} /></span><span className="inext-top"><span className="inext-ico"><Icon name="calendar" size={24} /></span><i>{t("Free")}</i></span><small>{t("Talk it through")}</small><b>{t("Book a free 30-minute call with a laser expert")}</b><p>{t("Talk through your materials, space and budget before you choose.")}</p><em>{t("Pick a time")}<Icon name="chevron" size={16} /></em></Link></li>
-            <li><button type="button" onClick={() => setDlg("financing")} aria-haspopup="dialog"><span className="inext-mark" aria-hidden="true"><Icon name="card" size={140} /></span><span className="inext-top"><span className="inext-ico"><Icon name="card" size={24} /></span><i>{t("Estimate")}</i></span><small>{t("Do the math")}</small><b>{t("See your monthly payment")}</b><p>{t("Pick a machine and a term to see a rough monthly payment right away.")}</p><em>{t("Open the estimator")}<Icon name="chevron" size={16} /></em></button></li>
+            <li><button type="button" onClick={() => setDlg("finder")} aria-haspopup="dialog"><span className="inext-mark" aria-hidden="true"><Icon name="search" size={140} /></span><span className="inext-top"><span className="inext-ico"><Icon name="search" size={26} tone /></span><i>{t("6 questions")}</i></span><small>{t("Choose it yourself")}</small><b>{t("Find your machine in 30 seconds")}</b><p>{t("Answer a few questions about your materials and jobs, and get a matched machine.")}</p><em>{t("Start the finder")}<Icon name="chevron" size={16} /></em></button></li>
+            <li><Link to="/pages/sales-consultation"><span className="inext-mark" aria-hidden="true"><Icon name="calendar" size={140} /></span><span className="inext-top"><span className="inext-ico"><Icon name="calendar" size={26} tone /></span><i>{t("Free")}</i></span><small>{t("Talk it through")}</small><b>{t("Book a free 30-minute call with a laser expert")}</b><p>{t("Talk through your materials, space and budget before you choose.")}</p><em>{t("Pick a time")}<Icon name="chevron" size={16} /></em></Link></li>
+            <li><button type="button" onClick={() => setDlg("financing")} aria-haspopup="dialog"><span className="inext-mark" aria-hidden="true"><Icon name="card" size={140} /></span><span className="inext-top"><span className="inext-ico"><Icon name="card" size={26} tone /></span><i>{t("Estimate")}</i></span><small>{t("Do the math")}</small><b>{t("See your monthly payment")}</b><p>{t("Pick a machine and a term to see a rough monthly payment right away.")}</p><em>{t("Open the estimator")}<Icon name="chevron" size={16} /></em></button></li>
           </ul>
         </div>
       </section>

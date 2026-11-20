@@ -4492,3 +4492,20 @@ body:has(.ip-bar) .ai-pill, .pdp ~ .ai-pill { bottom: 104px; }
   .inext li > :hover .inext-mark { transform: none; }
   .iprom li > button:hover, .ih-card:hover, .ip2-grid article:hover { transform: none; }
 }
+
+/* Feature icon tiles (promises, next steps, dialog heads, finder call card): one look. A soft warm gradient squircle with a
+   hairline ring and a small inner highlight; the icon is the two-tone brand version. Hover deepens it. */
+.iprom-ico, .inext-ico, .inext li.hot .inext-ico, .tdlg-head-ico {
+  width: 52px; height: 52px; border-radius: 16px; display: grid; place-items: center; color: var(--brand);
+  background: linear-gradient(145deg, #fff 0%, #ffeee8 100%);
+  box-shadow: inset 0 0 0 1px rgba(231, 49, 14, 0.14), inset 0 1px 0 #fff, 0 6px 14px -8px rgba(231, 49, 14, 0.45);
+  transition: background .25s, color .25s, box-shadow .25s, transform .25s;
+}
+.iprom li > button:hover .iprom-ico, .inext li > :hover .inext-ico {
+  background: linear-gradient(145deg, #ff5a36 0%, var(--brand) 100%); color: #fff;
+  box-shadow: 0 10px 20px -10px rgba(231, 49, 14, 0.8); transform: translateY(-1px) rotate(-4deg);
+}
+.iprom li > button:hover .iprom-ico .ico-tone, .inext li > :hover .inext-ico .ico-tone { fill-opacity: .28; }
+.fx-call-ico { border-radius: 10px; background: linear-gradient(145deg, #fff, #e3f4fd); color: var(--accent-ink); box-shadow: inset 0 0 0 1px rgba(56, 189, 248, 0.3); }
+@media (hover: none) { .iprom li > button:hover .iprom-ico, .inext li > :hover .inext-ico { transform: none; } }
+@media (max-width: 767px) { .iprom-ico, .inext-ico, .tdlg-head-ico { width: 46px; height: 46px; border-radius: 14px; } }

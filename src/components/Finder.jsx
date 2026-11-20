@@ -163,7 +163,7 @@ export default function FinderCard({ modal = false }) {
             <Link to={`/products/${top.handle}`} className="ih-btn dark">{t("Buy now")}</Link>
           </div>
           <Link to="/pages/sales-consultation" className="fx-call-cta">
-            <span className="fx-call-ico"><Icon name="calendar" size={18} /></span>
+            <span className="fx-call-ico"><Icon name="calendar" size={20} tone /></span>
             <span><b>{t("Want to talk it through first?")}</b><em>{t("Book a free 30-minute call with a laser expert")}</em></span>
             <Icon name="arrow" size={18} />
           </Link>
