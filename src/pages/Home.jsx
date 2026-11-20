@@ -430,8 +430,7 @@ function TrustDialog({ kind, onClose, onTrustpilot }) {
 }
 
 
-/* Credibility: who stands behind the machine. Real material only: the U.S. headquarters photo and points (homeStandard),
-   and OneLaser's own brand film, TV, news and trade-show videos, each playing right where it is clicked. */
+/* Press and brand-film clips, shown in the company and FOX dialogs. Real OneLaser videos only. */
 const PRESS = [
   ["seseyuxIZt4", "TV feature", "As seen on FOX & Discovery"],
   ["8tn7O69iCnQ", "FOX News", "Picked as a best holiday DIY gift"],
@@ -440,44 +439,6 @@ const PRESS = [
 ];
 const BRAND_FILM = ["_dv0xXmHSiA", "Engineered in the USA: What Makes OneLaser Different"];
 const embed = (id, title) => <iframe src={`https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0`} title={title} allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowFullScreen />;
-function Credibility() {
-  const [playing, setPlaying] = useState(null); // one video plays at a time, right where it was clicked
-  return (
-    <section className="ih-block icred">
-      <div className="ih-wrap">
-        <p className="icred-kicker">{t("Who stands behind your machine")}</p>
-        <h2 className="ih-h2 narrow">{t("A real California company, seen on TV and at industry shows.")}</h2>
-        <figure className={`icred-film-card${playing === BRAND_FILM[0] ? " playing" : ""}`}>
-          {playing === BRAND_FILM[0] ? embed(...BRAND_FILM) : (
-            <button type="button" className="icred-film-btn" onClick={() => setPlaying(BRAND_FILM[0])} aria-label={`${t("Play video")}: ${t("What makes OneLaser different")}`}>
-              <img src={img(homeStandard.image, 1600)} alt="" loading="lazy" />
-              <span className="icred-film-copy">
-                <small>{t("Brand film")}</small>
-                <b>{t("What makes OneLaser different")}</b>
-              </span>
-              <span className="icred-film-play" aria-hidden="true"><svg width="30" height="30" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.5v13l11-6.5z" /></svg></span>
-            </button>
-          )}
-        </figure>
-        <ul className="icred-press">
-          {PRESS.map(([id, tag, title]) => (
-            <li key={id}>
-              <div className={`icred-tile${playing === id ? " playing" : ""}`}>
-                {playing === id ? <span className="icred-thumb">{embed(id, title)}</span> : (
-                  <button type="button" className="icred-thumb" onClick={() => setPlaying(id)} aria-label={`${t("Play video")}: ${t(title)}`}>
-                    <img src={thumb(id)} onError={(e) => thumbFallback(e, id)} alt="" loading="lazy" /><i aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.5v13l11-6.5z" /></svg></i>
-                  </button>
-                )}
-                <span className="icred-text"><small>{t(tag)}</small><b>{t(title)}</b></span>
-              </div>
-            </li>
-          ))}
-        </ul>
-      </div>
-    </section>
-  );
-}
-
 /* "Built for every ambition" (official heading and segment copy) with a pill switch for Makers / Business / Education.
    Each segment is one full-bleed row: an intro card with the official photo and copy, then that segment's videos, which open
    in a dialog on this page. */
@@ -661,7 +622,6 @@ export default function Home() {
       <Hero />
       <ProductBlock />
 
-      <Credibility />
 
       {/* Owners: real words on top, what they make below */}
       <section className="ih-block irv iowners">
