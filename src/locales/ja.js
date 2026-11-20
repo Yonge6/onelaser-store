@@ -883,4 +883,6 @@ export default {
   "Answer a few questions about your materials and jobs, and get a matched machine.": "素材と用途についていくつか答えるだけで、合う機種がわかります。",
   "Talk through your materials, space and budget before you choose.": "選ぶ前に、素材・設置スペース・予算について相談できます。",
   "Pick a machine and a term to see a rough monthly payment right away.": "機種と回数を選ぶと、月々の目安がすぐにわかります。",
+  "Real owner reviews": "オーナーの本音",
+  "Don't take our word for it. Hear it from owners.": "私たちの言葉より、使っている人の声を。",
 };

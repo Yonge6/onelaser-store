@@ -883,4 +883,6 @@ export default {
   "Answer a few questions about your materials and jobs, and get a matched machine.": "Responde unas preguntas sobre tus materiales y trabajos y te recomendamos una máquina.",
   "Talk through your materials, space and budget before you choose.": "Habla de tus materiales, tu espacio y tu presupuesto antes de elegir.",
   "Pick a machine and a term to see a rough monthly payment right away.": "Elige una máquina y un plazo para ver al momento una cuota mensual aproximada.",
+  "Real owner reviews": "Opiniones reales de clientes",
+  "Don't take our word for it. Hear it from owners.": "No te fíes solo de nosotros. Escucha a quienes ya la tienen.",
 };

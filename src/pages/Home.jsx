@@ -640,9 +640,9 @@ export default function Home() {
       {/* Owners: real words on top, what they make below */}
       <section className="ih-block irv iowners">
         <div className="ih-wrap">
-          <p className="ist-kicker">{t("Makers like you")}</p>
+          <p className="ist-kicker">{t("Real owner reviews")}</p>
           <div className="irv-head">
-            <h2 className="ih-h2">{t("Is it right for someone like me? Ask the people who bought one.")}</h2>
+            <h2 className="ih-h2">{t("Don't take our word for it. Hear it from owners.")}</h2>
             <button type="button" className="irv-score" onClick={() => setReviewsOpen(true)}>
               <span className="irv-stars" aria-hidden="true">★★★★★</span>
               <b>{homeReviews.average}</b>
