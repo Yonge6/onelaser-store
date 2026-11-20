@@ -4479,3 +4479,16 @@ body:has(.ip-bar) .ai-pill, .pdp ~ .ai-pill { bottom: 104px; }
 .iowners-q { width: 100%; }
 .iowners-quote .iowners-q p { width: 100%; max-width: 100%; overflow-wrap: anywhere; }
 .iowners-quote { touch-action: pan-y; }
+
+/* No sideways wobble on phones: the next-step cards clip their own paint, the faint corner icon sits inside the card, and
+   the section clips anything that still pokes out. On touch screens a tap does not leave the cards "hovered" (lifted,
+   icon rotated), which was the moment the page could pan sideways. */
+.inext { overflow: hidden; }
+.inext li > a, .inext li > button { contain: paint; }
+.inext-mark { right: -14px; bottom: -22px; }
+.inext-mark svg { width: 120px; height: 120px; }
+@media (hover: none) {
+  .inext li > a:hover, .inext li > button:hover { transform: none; }
+  .inext li > :hover .inext-mark { transform: none; }
+  .iprom li > button:hover, .ih-card:hover, .ip2-grid article:hover { transform: none; }
+}
