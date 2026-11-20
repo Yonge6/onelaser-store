@@ -220,7 +220,6 @@ const TRUST_ICONS = {
   tv: <><rect x="3" y="5" width="18" height="12" rx="2" /><path d="m10.5 8.8 4 2.2-4 2.2zM8 20.5h8" /></>,
 };
 /* Judge.me averages per product page (read 2026-11-18, as in site.js homeReviews): the 4.92 is review-weighted across these. */
-const REVIEW_BREAKDOWN = [["XRF 38W", "4.94", 49], ["Hydra 9", "4.89", 19], ["XT", "4.89", 18], ["Hydra 16", "5.00", 4]];
 const faqText = (q) => homeFaq.find(([k]) => k.startsWith(q))?.[1] || "";
 
 /** One dialog per trust fact or promise, so visitors stay on the home page; each ends with a link to the full page.
@@ -276,9 +275,6 @@ function TrustDialog({ kind, onClose, onTrustpilot }) {
     body = (
       <>
         <Head title={<span className="tdlg-score"><b>{homeReviews.average}</b><span className="tdlg-stars" aria-hidden="true">★★★★★</span></span>} sub={`${t("Average of")} ${homeReviews.count} ${t("owner reviews on 1laser.com product pages (Judge.me).")}`} />
-        <ul className="tdlg-bars">
-          {REVIEW_BREAKDOWN.map(([m, avg, n]) => <li key={m}><span>{m}</span><i className="tdlg-stars" aria-label={`${avg} / 5`}><span aria-hidden="true">★★★★★</span><em aria-hidden="true" style={{ width: `${(Number(avg) / 5) * 100}%` }}>★★★★★</em></i><b>{avg}</b><small>{n} {t("reviews")}</small></li>)}
-        </ul>
         <div className="tdlg-qhead"><b>{t("In their words")}</b><span><button type="button" aria-label={t("Previous")} onClick={() => quotes.current?.scrollBy({ left: -300, behavior: "smooth" })}><Icon name="chevron" size={16} /></button><button type="button" aria-label={t("Next")} onClick={() => quotes.current?.scrollBy({ left: 300, behavior: "smooth" })}><Icon name="chevron" size={16} /></button></span></div>
         <ul className="tdlg-quotes row" ref={quotes}>
           {homeReviews.items.map((r) => <li key={r.name}><span className="tdlg-stars sm" aria-hidden="true">★★★★★</span><p>“{r.text}”</p><small>{r.name} · {r.product} · {r.date}{r.verified ? ` · ${t("Verified buyer")}` : ""}</small></li>)}
