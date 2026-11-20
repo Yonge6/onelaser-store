@@ -2,7 +2,7 @@ import { createContext, useContext, useEffect, useRef, useState } from "react";
 import { t } from "../i18n.js";
 import { asset, byHandle, img, lockScroll, money, products, frontImg } from "../lib.js";
 import { contact, footer, heroSlides, homeFaq, homeProof, homeReviews, homeStandard, homeTabs, trustpilot, newHandles, promo, shortSlogans } from "../data/site.js";
-import { AddButton, Countdown, Icon, Link, useDragScroll } from "../components/ui.jsx";
+import { AddButton, Countdown, Icon, Link, SpecIcon, useDragScroll } from "../components/ui.jsx";
 import FinderCard, { FinderHelp } from "../components/Finder.jsx";
 
 /* Module order, sizes and type follow the insta360.com homepage (measured 2026-11-17 at 1440 and 375):
@@ -263,7 +263,7 @@ function TrustDialog({ kind, onClose, onTrustpilot }) {
     const [icon, kicker] = DLG_HEAD[kind];
     return (
       <header className="tdlg-head">
-        <span className="tdlg-head-ico"><Icon name={icon} size={26} tone /></span>
+        <span className="tdlg-head-ico plate-mini"><SpecIcon name={icon} /></span>
         <p className="tdlg-kicker">{t(kicker)}</p>
         <h3>{title}</h3>
         {sub && <p className="tdlg-sub">{sub}</p>}
@@ -540,6 +540,8 @@ function ReviewsDialog({ onClose }) {
 
 
 /* Ownership promises, each one a door to the policy or service behind it. Copy speaks to the buyer's worry first. */
+/* spec-plate labels per promise: [section code, figure] */
+const PROMISE_SPEC = { returns: ["Returns", "30 days"], warranty: ["Warranty", "3·2·1"], support: ["Support", "U.S."], training: ["Training", "1:1"] };
 const PROMISES = [ // [icon, worry, promise, link label, dialog]
   ["refresh", "Worried about choosing wrong?", "30-day returns. Use it on real jobs first.", "Refund policy", "returns"],
   ["shield", "Something breaks?", "3-2-1 warranty on X Series and Hydra: 3 years mechanical, 2 electrical, 1 optics and laser source.", "Warranty policy", "warranty"],
@@ -711,8 +713,8 @@ export default function Home() {
           <p className="ist-kicker">{t("After you buy")}</p>
           <h2 className="ih-h2 narrow">{t("U.S. engineers have you covered.")}</h2>
           <ul>
-            {PROMISES.map(([icon, worry, promise, label, kind]) => (
-              <li key={worry}><button type="button" onClick={() => setDlg(kind)} aria-haspopup="dialog"><span className="iprom-ico"><Icon name={icon} size={26} tone /></span><b>{t(worry)}</b><p>{t(promise)}</p><em>{t(label)} ›</em></button></li>
+            {PROMISES.map(([icon, worry, promise, label, kind], n) => (
+              <li key={worry}><button type="button" className="plate" onClick={() => setDlg(kind)} aria-haspopup="dialog"><span className="spec-idx"><span>{String(n + 1).padStart(2, "0")} / {t(PROMISE_SPEC[kind][0])}</span><span>{t(PROMISE_SPEC[kind][1])}</span></span><SpecIcon name={icon} /><b>{t(worry)}</b><p>{t(promise)}</p><em className="spec-cta">{t(label)}<span aria-hidden="true">↗</span></em></button></li>
             ))}
           </ul>
         </div>
@@ -737,9 +739,9 @@ export default function Home() {
         <div className="ih-wrap">
           <h2 className="ih-h2">{t("Your next step.")}</h2>
           <ul>
-            <li><button type="button" onClick={() => setDlg("finder")} aria-haspopup="dialog"><span className="inext-mark" aria-hidden="true"><Icon name="search" size={140} /></span><span className="inext-top"><span className="inext-ico"><Icon name="search" size={26} tone /></span><i>{t("6 questions")}</i></span><small>{t("Choose it yourself")}</small><b>{t("Find your machine in 30 seconds")}</b><p>{t("Answer a few questions about your materials and jobs, and get a matched machine.")}</p><em>{t("Start the finder")}<Icon name="chevron" size={16} /></em></button></li>
-            <li><Link to="/pages/sales-consultation"><span className="inext-mark" aria-hidden="true"><Icon name="calendar" size={140} /></span><span className="inext-top"><span className="inext-ico"><Icon name="calendar" size={26} tone /></span><i>{t("Free")}</i></span><small>{t("Talk it through")}</small><b>{t("Book a free 30-minute call with a laser expert")}</b><p>{t("Talk through your materials, space and budget before you choose.")}</p><em>{t("Pick a time")}<Icon name="chevron" size={16} /></em></Link></li>
-            <li><button type="button" onClick={() => setDlg("financing")} aria-haspopup="dialog"><span className="inext-mark" aria-hidden="true"><Icon name="card" size={140} /></span><span className="inext-top"><span className="inext-ico"><Icon name="card" size={26} tone /></span><i>{t("Estimate")}</i></span><small>{t("Do the math")}</small><b>{t("See your monthly payment")}</b><p>{t("Pick a machine and a term to see a rough monthly payment right away.")}</p><em>{t("Open the estimator")}<Icon name="chevron" size={16} /></em></button></li>
+            <li><button type="button" className="plate" onClick={() => setDlg("finder")} aria-haspopup="dialog"><span className="spec-idx"><span>01 / {t("Finder")}</span><span>{t("6 questions")}</span></span><SpecIcon name="search" /><small>{t("Choose it yourself")}</small><b>{t("Find your machine in 30 seconds")}</b><p>{t("Answer a few questions about your materials and jobs, and get a matched machine.")}</p><em>{t("Start the finder")}<Icon name="chevron" size={16} /></em></button></li>
+            <li><Link to="/pages/sales-consultation" className="plate"><span className="spec-idx"><span>02 / {t("Call")}</span><span>{t("Free")}</span></span><SpecIcon name="calendar" /><small>{t("Talk it through")}</small><b>{t("Book a free 30-minute call with a laser expert")}</b><p>{t("Talk through your materials, space and budget before you choose.")}</p><em>{t("Pick a time")}<Icon name="chevron" size={16} /></em></Link></li>
+            <li><button type="button" className="plate" onClick={() => setDlg("financing")} aria-haspopup="dialog"><span className="spec-idx"><span>03 / {t("Finance")}</span><span>{t("Estimate")}</span></span><SpecIcon name="card" /><small>{t("Do the math")}</small><b>{t("See your monthly payment")}</b><p>{t("Pick a machine and a term to see a rough monthly payment right away.")}</p><em>{t("Open the estimator")}<Icon name="chevron" size={16} /></em></button></li>
           </ul>
         </div>
       </section>

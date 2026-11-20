@@ -53,6 +53,29 @@ export const Icon = ({ name, size = 22, tone = false }) => {
   );
 };
 
+
+/* Spec-plate drawings (design direction B): technical line drawings on a 96x72 plate, ink outline, blue dimension
+   marks with small monospace labels, one brand-red point. Keyed by the same names as Icon so feature spots can swap. */
+const D = ({ d }) => <path className="sp-dim" d={d} />;
+const T = ({ x, y, children }) => <text className="sp-dimt" x={x} y={y}>{children}</text>;
+const SPEC = {
+  refresh: <><path className="sp-st" d="M30 40a16 16 0 1 0 5-11M28 21v9h9" /><circle className="sp-acc" cx="46" cy="40" r="2.6" /><D d="M68 24v32M64 24h8M64 56h8" /><T x="74" y="43">30d</T></>,
+  shield: <><path className="sp-st" d="M40 8 24 14v12c0 11 7 18 16 22 9-4 16-11 16-22V14zM33 28l5 5 9-10" /><D d="M64 14h18M64 30h12M64 44h6" /><T x="84" y="16">3y</T><T x="78" y="32">2y</T><T x="72" y="46">1y</T><circle className="sp-acc" cx="40" cy="8" r="2.4" /></>,
+  headset: <><path className="sp-st" d="M22 40v-4a18 18 0 0 1 36 0v4M22 40h5v11h-5zM53 40h5v11h-5zM58 51c0 5-4 8-9 8h-6" /><circle className="sp-acc" cx="42" cy="59" r="2.6" /><D d="M68 18v34M64 18h8M64 52h8" /><T x="73" y="38">US</T></>,
+  user: <><circle className="sp-st" cx="28" cy="24" r="8" /><path className="sp-st" d="M14 56c0-9 6-14 14-14s14 5 14 14" /><circle className="sp-st" cx="60" cy="24" r="8" /><path className="sp-st" d="M46 56c0-9 6-14 14-14s14 5 14 14" /><circle className="sp-acc" cx="44" cy="24" r="2.6" /><D d="M14 64h60M14 61v6M74 61v6" /><T x="80" y="66">1:1</T></>,
+  search: <><rect className="sp-st" x="44" y="16" width="38" height="26" rx="2" /><path className="sp-st" d="M44 23h38" /><circle className="sp-st" cx="34" cy="38" r="15" /><path className="sp-st" d="M45 49l11 11" /><path className="sp-dim" d="M29 38h10M34 33v10" /><circle className="sp-acc" cx="34" cy="38" r="2.4" /><D d="M44 50h38M44 47v6M82 47v6" /><T x="60" y="58">6Q</T></>,
+  calendar: <><rect className="sp-st" x="16" y="14" width="40" height="42" rx="3" /><path className="sp-st" d="M16 26h40M26 9v9M46 9v9" /><path className="sp-st" d="M24 34h.01M32 34h.01M40 34h.01M48 34h.01M24 42h.01M32 42h.01M48 42h.01M24 50h.01M32 50h.01" strokeWidth="2.6" /><circle className="sp-acc" cx="40" cy="42" r="2.8" /><D d="M66 14v42M62 14h8M62 56h8" /><T x="71" y="38">30m</T></>,
+  card: <><rect className="sp-st" x="12" y="18" width="50" height="32" rx="3" /><path className="sp-st" d="M12 27h50M18 42h12" /><circle className="sp-acc" cx="52" cy="41" r="2.8" /><D d="M70 50v-6M76 50v-12M82 50v-18M88 50v-24M68 54h22" /><T x="70" y="64">/mo</T></>,
+  star: <><path className="sp-st" d="M36 10l7 14 15 2-11 11 3 15-14-7-14 7 3-15-11-11 15-2z" /><circle className="sp-acc" cx="36" cy="32" r="2.4" /><D d="M66 14h22M66 26h20M66 38h22M66 50h14" /><T x="66" y="64">4.92</T></>,
+  flag: <><path className="sp-st" d="M20 62V12M20 14h30l-6 9 6 9H20" /><circle className="sp-acc" cx="20" cy="12" r="2.6" /><path className="sp-st" d="M56 62V40h20v22M62 48h8M62 55h8" /><D d="M14 66h68" /><T x="64" y="34">CA</T></>,
+  tv: <><rect className="sp-st" x="16" y="20" width="46" height="32" rx="3" /><path className="sp-st" d="M30 8l9 12 9-12M30 60h18" /><path className="sp-st" d="M35 30l10 6-10 6z" /><circle className="sp-acc" cx="56" cy="26" r="2.4" /><D d="M70 20v32M66 20h8M66 52h8" /><T x="75" y="39">TV</T></>,
+};
+export const SpecIcon = ({ name, className = "" }) => (
+  <svg className={`spec-ico ${className}`} viewBox="0 0 96 72" fill="none" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    {SPEC[name] || SPEC.search}
+  </svg>
+);
+
 /** DJI writes prices as "$439.00 USD" on product pages and "USD $439" on cards and in the cart. */
 export const usd = (n) => `$${Number(n).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 

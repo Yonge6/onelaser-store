@@ -941,4 +941,11 @@ export default {
   "1 year on mechanical and electrical parts, 6 months on the laser source, 1 month on lens and mirror.": "機械・電気部品 1 年、レーザー光源 6 か月、レンズとミラー 1 か月。",
   "Optical components and laser source parts": "光学部品とレーザー光源関連部品",
   "Ask me anything…": "なんでも聞いてください…",
+  "Returns": "返品",
+  "Training": "トレーニング",
+  "30 days": "30 日",
+  "U.S.": "米国",
+  "Finder": "診断",
+  "Call": "通話",
+  "Finance": "分割",
 };

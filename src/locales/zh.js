@@ -1095,4 +1095,10 @@ export default {
   "1 year on mechanical and electrical parts, 6 months on the laser source, 1 month on lens and mirror.": "机械与电气部件 1 年，激光光源 6 个月，镜片和反射镜 1 个月。",
   "Optical components and laser source parts": "光学部件与激光光源相关部件",
   "Ask me anything…": "有什么想问的？",
+  "Returns": "退货",
+  "Training": "培训",
+  "30 days": "30 天",
+  "Finder": "选机",
+  "Call": "通话",
+  "Finance": "分期",
 };

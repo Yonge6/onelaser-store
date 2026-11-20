@@ -941,4 +941,11 @@ export default {
   "1 year on mechanical and electrical parts, 6 months on the laser source, 1 month on lens and mirror.": "1 año en piezas mecánicas y eléctricas, 6 meses en la fuente láser, 1 mes en lente y espejo.",
   "Optical components and laser source parts": "Componentes ópticos y piezas de la fuente láser",
   "Ask me anything…": "Pregúntame lo que quieras…",
+  "Returns": "Devoluciones",
+  "Training": "Formación",
+  "30 days": "30 días",
+  "U.S.": "EE. UU.",
+  "Finder": "Buscador",
+  "Call": "Llamada",
+  "Finance": "Financiación",
 };
