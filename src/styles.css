@@ -4293,3 +4293,24 @@ body:has(.ip-bar) .ai-nudge { bottom: 168px; }
 .ih-banner .countdown .cd-seconds strong { color: #ffb199; }
 @media (prefers-reduced-motion: reduce) { .countdown strong i, .ih-banner .countdown .cd-seconds { animation: none; } }
 .ip2-grid:not(.seen) .ip2-vs dd i u, .ip2-grid:not(.seen) .ip2-top em { transition: none; }
+
+/* Badge celebration: as each multiple badge pops, a ring of confetti bursts out of it and a light sweep crosses it. */
+.ip2-badge { position: relative; display: inline-flex; }
+.ip2-top .ip2-badge em { position: relative; overflow: hidden; }
+.ip2-top .ip2-badge em::after { content: ""; position: absolute; top: 0; bottom: 0; left: -60%; width: 40%; background: linear-gradient(100deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.75), rgba(255, 255, 255, 0)); transform: skewX(-20deg); opacity: 0; }
+.ip2-grid.seen .ip2-top .ip2-badge em::after { animation: ip2-shine .9s ease-out calc(var(--n, 0) * 0.12s + 1.45s) both; }
+@keyframes ip2-shine { 0% { left: -60%; opacity: 1; } 100% { left: 130%; opacity: 1; } }
+.ip2-pop { position: absolute; left: 50%; top: 50%; width: 0; height: 0; pointer-events: none; z-index: 2; }
+.ip2-pop i { position: absolute; left: -4px; top: -3px; width: 8px; height: 6px; border-radius: 2px; background: var(--c); opacity: 0; }
+.ip2-pop i:nth-child(3n) { border-radius: 50%; width: 7px; height: 7px; }
+.ip2-pop i:nth-child(3n + 1) { width: 4px; height: 10px; }
+.ip2-grid.seen .ip2-pop i { animation: ip2-bit .9s cubic-bezier(.15, .75, .3, 1) calc(var(--n, 0) * 0.12s + 1.25s) both; }
+@keyframes ip2-bit {
+  0% { opacity: 0; transform: translate(0, 0) rotate(0) scale(.4); }
+  15% { opacity: 1; }
+  70% { opacity: 1; transform: translate(var(--x), var(--y)) rotate(var(--r)) scale(1); }
+  100% { opacity: 0; transform: translate(calc(var(--x) * 1.1), calc(var(--y) + 18px)) rotate(var(--r)) scale(.8); }
+}
+.ip2-grid.seen .ip2-top em { animation: ip2-badge-pop .6s cubic-bezier(.3, 1.8, .5, 1) calc(var(--n, 0) * 0.12s + 1.2s) both; transition: none; opacity: 1; transform: none; }
+@keyframes ip2-badge-pop { 0% { opacity: 0; transform: scale(.4); } 55% { opacity: 1; transform: scale(1.25); } 100% { transform: scale(1); } }
+@media (prefers-reduced-motion: reduce) { .ip2-pop { display: none; } .ip2-grid.seen .ip2-top em, .ip2-grid.seen .ip2-top .ip2-badge em::after { animation: none; } }

@@ -653,6 +653,12 @@ function QuoteReel() {
 
 /* Why OneLaser cards animate when they scroll into view (and again on each later visit): figures count up, bars grow. */
 const SeenCtx = createContext(false);
+// Confetti bits thrown out from each multiple badge as it pops: fixed angles and distances, five brand colours.
+const BADGE_BITS = Array.from({ length: 16 }, (_, k) => {
+  const a = (k / 16) * Math.PI * 2 + (k % 2) * 0.2;
+  const r = 34 + (k % 3) * 16;
+  return { "--x": `${Math.round(Math.cos(a) * r * 1.4)}px`, "--y": `${Math.round(Math.sin(a) * r)}px`, "--c": ["#e7310e", "#38bdf8", "#fbbf24", "#34d399", "#f472b6"][k % 5], "--r": `${(k * 67) % 360}deg` };
+});
 function ProofGrid({ children }) {
   const ref = useRef(null);
   const [seen, setSeen] = useState(false);
@@ -744,7 +750,7 @@ export default function Home() {
           <ProofGrid>
             {homeProof.map((x, n) => (
               <article key={x.figure} style={{ "--n": n }}>
-                <div className="ip2-top"><em>{t(x.times)}</em><b><CountUp text={x.figure} /></b></div>
+                <div className="ip2-top"><span className="ip2-badge"><em>{t(x.times)}</em><span className="ip2-pop" aria-hidden="true">{BADGE_BITS.map((s, k) => <i key={k} style={s} />)}</span></span><b><CountUp text={x.figure} /></b></div>
                 <h3>{t(x.title)}</h3>
                 <dl className="ip2-vs">
                   <div className="me"><dt>OneLaser</dt><dd><i><u style={{ width: `${x.us}%` }} /></i><span>{t(x.usLabel)}</span></dd></div>
