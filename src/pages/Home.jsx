@@ -277,7 +277,7 @@ function TrustDialog({ kind, onClose, onTrustpilot }) {
         <Head title={<span className="tdlg-score"><b>{homeReviews.average}</b><span className="tdlg-stars" aria-hidden="true">★★★★★</span></span>} sub={`${t("Average of")} ${homeReviews.count} ${t("owner reviews on 1laser.com product pages (Judge.me).")}`} />
         <div className="tdlg-qhead"><b>{t("In their words")}</b><span><button type="button" aria-label={t("Previous")} onClick={() => quotes.current?.scrollBy({ left: -300, behavior: "smooth" })}><Icon name="chevron" size={16} /></button><button type="button" aria-label={t("Next")} onClick={() => quotes.current?.scrollBy({ left: 300, behavior: "smooth" })}><Icon name="chevron" size={16} /></button></span></div>
         <ul className="tdlg-quotes row" ref={quotes}>
-          {homeReviews.items.map((r) => <li key={r.name}><span className="tdlg-stars sm" aria-hidden="true">★★★★★</span><p>“{r.text}”</p><small>{r.name} · {r.product} · {r.date}{r.verified ? ` · ${t("Verified buyer")}` : ""}</small></li>)}
+          {homeReviews.items.map((r) => <li key={r.name}><span className="tdlg-stars sm" aria-hidden="true">★★★★★</span><p>“{r.text}”</p><small>{r.name} · {r.product} · {r.date}</small></li>)}
         </ul>
         <div className="tdlg-links">
           <More href={homeReviews.url}>{t("Read all owner reviews")}</More>
@@ -588,7 +588,7 @@ function ReviewsDialog({ onClose }) {
               <Stars n={r.rating} />
               <h3>{r.title}</h3>
               <p>{r.text}</p>
-              <footer><b>{r.name}</b><span>{r.verified && <><Icon name="check" size={13} />{t("Verified")} · </>}{r.date}</span></footer>
+              <footer><b>{r.name}</b><span>{r.date}</span></footer>
             </article>
           ))}
         </div>
@@ -645,7 +645,7 @@ function QuoteReel() {
     <blockquote className="iowners-quote" onMouseEnter={() => setHold(true)} onMouseLeave={() => setHold(false)} onFocus={() => setHold(true)} onBlur={() => setHold(false)} aria-live="polite">
       <div className="iowners-q" key={i}>
         <p>“{t(r.q)}”</p>
-        <footer><b>{r.name}</b>{r.verified ? ` · ${t("Verified buyer")}` : ""} · {r.product}</footer>
+        <footer><b>{r.name}</b> · {r.product}</footer>
       </div>
       <div className="iowners-dots" role="tablist" aria-label={t("Owner quotes")}>
         {QUOTES.map((x, n) => <button key={n} type="button" role="tab" aria-selected={n === i} aria-label={`${n + 1} / ${QUOTES.length}`} className={n === i ? (hold ? "on held" : "on") : ""} onClick={() => setI(n)}><i /></button>)}
@@ -693,7 +693,7 @@ export default function Home() {
               <figure key={r.product + r.name}>
                 <span className="irv-stars" aria-label={`${r.rating || 5} / 5`}>{"★".repeat(r.rating || 5)}</span>
                 <blockquote>“{r.text}”</blockquote>
-                <figcaption><b>{r.name}</b><span>{r.verified && <><Icon name="check" size={13} />{t(r.product === "Trustpilot" ? "Verified" : "Verified buyer")} · </>}{r.product} · {r.date}</span></figcaption>
+                <figcaption><b>{r.name}</b><span>{r.product} · {r.date}</span></figcaption>
               </figure>
             ))}
         </div>

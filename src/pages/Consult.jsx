@@ -323,7 +323,7 @@ export default function Consult() {
             </ul>
             <blockquote className="cs-quote">
               <p>“{QUOTE.text}”</p>
-              <footer><span className="cs-stars" aria-label={t("5 out of 5 stars")}>★★★★★</span><b>{QUOTE.name}</b><small>{QUOTE.verified ? t("Verified buyer") : ""} · {QUOTE.product}</small></footer>
+              <footer><span className="cs-stars" aria-label={t("5 out of 5 stars")}>★★★★★</span><b>{QUOTE.name}</b><small>{QUOTE.product}</small></footer>
             </blockquote>
             <figure className="cs-team-shot">
               <img src={img(`${CDN}onelaser-team-gray-group-2026.png`, 1000)} alt={t("The OneLaser team")} />
@@ -399,7 +399,7 @@ export default function Consult() {
               <li key={r.name}>
                 <span className="cs-stars" aria-label={t("5 out of 5 stars")}>★★★★★</span>
                 <p>“{r.text}”</p>
-                <footer><b>{r.name}</b><small>{r.verified ? `${t("Verified buyer")} · ` : ""}{r.product} · {r.date}</small></footer>
+                <footer><b>{r.name}</b><small>{r.product} · {r.date}</small></footer>
               </li>
             ))}
           </ul>

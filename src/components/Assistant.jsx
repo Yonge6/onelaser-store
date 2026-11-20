@@ -466,7 +466,7 @@ export default function Assistant({ product }) {
                       {m.specs && <dl className="ai-specs">{m.specs.map(([k, v]) => <div key={k}><dt>{t(k)}</dt><dd>{v}</dd></div>)}</dl>}
                       {m.table && <Table data={m.table} />}
                       {m.options && <ul className="ai-opts">{m.options.map(([o, pr, was]) => <li key={o}><span>{o}</span><b>{money(pr)}{was > pr && <s>{money(was)}</s>}</b></li>)}</ul>}
-                      {m.quotes && <ul className="ai-quotes">{m.quotes.map((r) => <li key={r.name}><span className="ai-stars" aria-label={t("5 out of 5 stars")}>★★★★★</span><p>“{r.text}”</p><small>{r.name} · {r.product}{r.verified ? ` · ${t("Verified buyer")}` : ""}</small></li>)}</ul>}
+                      {m.quotes && <ul className="ai-quotes">{m.quotes.map((r) => <li key={r.name}><span className="ai-stars" aria-label={t("5 out of 5 stars")}>★★★★★</span><p>“{r.text}”</p><small>{r.name} · {r.product}</small></li>)}</ul>}
                       {m.cards?.length > 0 && <Cards list={m.cards} why={m.why} />}
                       {(m.links || m.finder) && (
                         <div className="ai-links">
