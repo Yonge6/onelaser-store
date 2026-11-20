@@ -925,4 +925,5 @@ export default {
   "OneLaser headquarters": "OneLaser-Zentrale",
   "On TV and at industry shows": "Im TV und auf Fachmessen",
   "A real California company, seen on TV and at industry shows.": "Ein echtes Unternehmen aus Kalifornien, bekannt aus dem TV und von Fachmessen.",
+  "Playing": "Läuft",
 };

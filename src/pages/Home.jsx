@@ -439,6 +439,47 @@ const PRESS = [
 ];
 const BRAND_FILM = ["_dv0xXmHSiA", "Engineered in the USA: What Makes OneLaser Different"];
 const embed = (id, title) => <iframe src={`https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0`} title={title} allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowFullScreen />;
+/* Video wall: one large player and a list of OneLaser's own clips (brand film, TV, news, trade show, conference).
+   Picking a clip loads it into the player and plays it there; nothing leaves the page. */
+const CLIPS = [[BRAND_FILM[0], "Brand film", "What makes OneLaser different"], ...PRESS];
+function Credibility() {
+  const [cur, setCur] = useState(0);
+  const [playing, setPlaying] = useState(false);
+  const [id, tag, title] = CLIPS[cur];
+  const pick = (n) => { setCur(n); setPlaying(true); };
+  return (
+    <section className="ih-block icred">
+      <div className="ih-wrap">
+        <p className="icred-kicker">{t("Who stands behind your machine")}</p>
+        <h2 className="ih-h2 narrow">{t("A real California company, seen on TV and at industry shows.")}</h2>
+        <div className="icv">
+          <div className="icv-main">
+            <div className="icv-player">
+              {playing ? embed(id, title) : (
+                <button type="button" onClick={() => setPlaying(true)} aria-label={`${t("Play video")}: ${t(title)}`}>
+                  <img src={cur === 0 ? img(homeStandard.image, 1400) : thumb(id)} onError={(e) => thumbFallback(e, id)} alt="" loading="lazy" />
+                  <span className="icv-play" aria-hidden="true"><svg width="30" height="30" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.5v13l11-6.5z" /></svg></span>
+                </button>
+              )}
+            </div>
+            <p className="icv-meta"><small>{t(tag)}</small><b>{t(title)}</b></p>
+          </div>
+          <ol className="icv-list">
+            {CLIPS.map(([cid, ctag, ctitle], n) => (
+              <li key={cid}>
+                <button type="button" className={n === cur ? "on" : ""} aria-current={n === cur ? "true" : undefined} onClick={() => pick(n)}>
+                  <span className="icv-thumb"><img src={thumb(cid)} onError={(e) => thumbFallback(e, cid)} alt="" loading="lazy" />{n === cur && playing ? <em>{t("Playing")}</em> : <i aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.5v13l11-6.5z" /></svg></i>}</span>
+                  <span className="icv-text"><small>{t(ctag)}</small><b>{t(ctitle)}</b></span>
+                </button>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 /* "Built for every ambition" (official heading and segment copy) with a pill switch for Makers / Business / Education.
    Each segment is one full-bleed row: an intro card with the official photo and copy, then that segment's videos, which open
    in a dialog on this page. */
@@ -622,6 +663,8 @@ export default function Home() {
       <Hero />
       <ProductBlock />
 
+
+      <Credibility />
 
       {/* Owners: real words on top, what they make below */}
       <section className="ih-block irv iowners">

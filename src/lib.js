@@ -57,12 +57,15 @@ const jump = (y) => window.scrollTo({ top: y, left: 0, behavior: "instant" });
 const restore = (y) => {
   const until = performance.now() + 4000;
   let user = false;
+  let last = null; // where our own last jump left the page; any other movement is the visitor scrolling (scrollbar, keys, trackpad)
   const stop = () => { user = true; };
-  const evs = ["wheel", "touchstart", "keydown", "mousedown"];
+  const evs = ["wheel", "touchstart", "keydown", "mousedown", "pointerdown"];
   evs.forEach((e) => window.addEventListener(e, stop, { once: true, passive: true }));
   const step = () => {
-    if (user) return;
+    if (!user && last != null && Math.abs(window.scrollY - last) > 2 && Math.abs(window.scrollY - y) > 2) user = true;
+    if (user) { evs.forEach((e) => window.removeEventListener(e, stop)); return; }
     if (Math.abs(window.scrollY - y) > 2) jump(y);
+    last = window.scrollY;
     if (performance.now() < until) requestAnimationFrame(step);
     else evs.forEach((e) => window.removeEventListener(e, stop));
   };
