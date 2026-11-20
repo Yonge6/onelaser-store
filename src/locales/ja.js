@@ -926,4 +926,6 @@ export default {
   "On TV and at industry shows": "テレビと業界イベントで",
   "A real California company, seen on TV and at industry shows.": "カリフォルニアに根ざした本物の会社。テレビにも業界展示会にも登場。",
   "Playing": "再生中",
+  "years": "年",
+  "h": "時間",
 };

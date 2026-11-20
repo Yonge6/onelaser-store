@@ -926,4 +926,6 @@ export default {
   "On TV and at industry shows": "À la télé et sur les salons",
   "A real California company, seen on TV and at industry shows.": "Une vraie entreprise californienne, vue à la télé et sur les salons professionnels.",
   "Playing": "En lecture",
+  "years": "ans",
+  "h": "h",
 };

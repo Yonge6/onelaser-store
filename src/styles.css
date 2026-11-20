@@ -4260,3 +4260,24 @@ body:has(.ip-bar) .ai-nudge { bottom: 168px; }
   .icv-list button { grid-template-columns: 112px minmax(0, 1fr); gap: 12px; padding: 6px; }
 }
 @media (prefers-reduced-motion: reduce) { .icv-play::before { animation: none; } }
+
+/* Proof cards: bars grow and the multiple badge pops once the grid is in view. */
+.ip2-vs dd i u { transform-origin: left center; transform: scaleX(0); transition: transform 1.3s cubic-bezier(.2, .8, .2, 1); transition-delay: calc(var(--n, 0) * 0.12s + .15s); }
+.ip2-vs div:not(.me) dd i u { transition-delay: calc(var(--n, 0) * 0.12s + .45s); }
+.ip2-grid.seen .ip2-vs dd i u { transform: scaleX(1); }
+.ip2-top em { opacity: 0; transform: scale(.6); transition: opacity .3s, transform .45s cubic-bezier(.3, 1.6, .5, 1); transition-delay: calc(var(--n, 0) * 0.12s + 1.2s); }
+.ip2-grid.seen .ip2-top em { opacity: 1; transform: none; }
+.ip2-top b { font-variant-numeric: tabular-nums; }
+@media (prefers-reduced-motion: reduce) { .ip2-vs dd i u, .ip2-top em { transition: none; } }
+
+/* Quote reel motion: the stars pop in one by one, the words rise in sequence, the author slides up, the big mark floats. */
+.iowners-q { animation: none; }
+.iowners-stars i { display: inline-block; font-style: normal; animation: iq-star .45s cubic-bezier(.3, 1.6, .5, 1) calc(var(--s) * 70ms) both; }
+@keyframes iq-star { from { opacity: 0; transform: scale(.3) rotate(-40deg); } }
+.iowners-q p span { display: inline-block; white-space: pre; animation: iq-word .5s cubic-bezier(.2, .7, .2, 1) calc(.25s + var(--w) * 35ms) both; }
+@keyframes iq-word { from { opacity: 0; transform: translateY(12px); filter: blur(4px); } }
+.iowners-q footer { animation: iq-word .55s cubic-bezier(.2, .7, .2, 1) .7s both; }
+.iowners-avatar { animation: iq-star .5s cubic-bezier(.3, 1.6, .5, 1) .75s both; }
+.iowners-mark { animation: iq-float 6s ease-in-out infinite; }
+@keyframes iq-float { 0%, 100% { transform: translateY(0) rotate(0); } 50% { transform: translateY(8px) rotate(-4deg); } }
+@media (prefers-reduced-motion: reduce) { .iowners-stars i, .iowners-q p span, .iowners-q footer, .iowners-avatar, .iowners-mark { animation: none !important; } }

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { createContext, useContext, useEffect, useRef, useState } from "react";
 import { t } from "../i18n.js";
 import { asset, byHandle, img, money, products, frontImg } from "../lib.js";
 import { contact, footer, heroSlides, homeAmbition, homeFaq, homeProof, homeReviews, homeStandard, homeTabs, trustpilot, newHandles, promo, shortSlogans } from "../data/site.js";
@@ -618,6 +618,8 @@ const QUOTES = [
   { name: "Guills785", product: "Trustpilot", q: "No doubt this have to be one of the best laser in the market for sure. I don't regret it one second." },
 ];
 
+/* Split a quote for the word-by-word reveal: on spaces for Latin text, in pairs of characters for Chinese / Japanese. */
+const words = (s) => (/\s/.test(s) ? s.split(/(?<=\s)/) : s.match(/.{1,2}/gu) || [s]);
 function QuoteReel() {
   const [i, setI] = useState(0);
   const [hold, setHold] = useState(false);
@@ -631,8 +633,8 @@ function QuoteReel() {
     <blockquote className="iowners-quote" onMouseEnter={() => setHold(true)} onMouseLeave={() => setHold(false)} onFocus={() => setHold(true)} onBlur={() => setHold(false)} aria-live="polite">
       <span className="iowners-mark" aria-hidden="true">“</span>
       <div className="iowners-q" key={i}>
-        <span className="iowners-stars" aria-label={t("5 out of 5 stars")}>★★★★★</span>
-        <p>{t(r.q)}</p>
+        <span className="iowners-stars" aria-label={t("5 out of 5 stars")}>{[0, 1, 2, 3, 4].map((n) => <i key={n} style={{ "--s": n }} aria-hidden="true">★</i>)}</span>
+        <p aria-label={t(r.q)}>{words(t(r.q)).map((w, n) => <span key={n} aria-hidden="true" style={{ "--w": n }}>{w}</span>)}</p>
         <footer>
           <span className="iowners-avatar" aria-hidden="true">{r.name.replace(/[^A-Za-z ]/g, "").split(" ").filter(Boolean).slice(0, 2).map((w) => w[0]).join("")}</span>
           <span><b>{r.name}</b><small>{r.product}</small></span>
@@ -647,6 +649,36 @@ function QuoteReel() {
       </div>
     </blockquote>
   );
+}
+
+/* Why OneLaser cards animate once they scroll into view: the big figures count up, the bars grow from zero. */
+const SeenCtx = createContext(false);
+function ProofGrid({ children }) {
+  const ref = useRef(null);
+  const [seen, setSeen] = useState(false);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || !("IntersectionObserver" in window) || window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) { setSeen(true); return undefined; }
+    const io = new IntersectionObserver(([e]) => { if (e.isIntersecting) { setSeen(true); io.disconnect(); } }, { threshold: 0.3 });
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+  return <SeenCtx.Provider value={seen}><div ref={ref} className={`ip2-grid${seen ? " seen" : ""}`}>{children}</div></SeenCtx.Provider>;
+}
+function CountUp({ text }) {
+  const seen = useContext(SeenCtx);
+  const [, num, unit] = text.match(/^([\d,]+)\s*(.*)$/) || [null, null, text];
+  const target = num ? Number(num.replace(/,/g, "")) : 0;
+  const [v, setV] = useState(0);
+  useEffect(() => {
+    if (!seen || !num) return undefined;
+    const t0 = performance.now(); let raf;
+    const tick = (now) => { const k = Math.min(1, (now - t0) / 1400); setV(Math.round(target * (1 - Math.pow(1 - k, 3)))); if (k < 1) raf = requestAnimationFrame(tick); };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [seen]);
+  if (!num) return t(text);
+  return <>{(seen ? v : 0).toLocaleString("en-US")}{unit && <> {t(unit)}</>}</>;
 }
 
 export default function Home() {
@@ -708,10 +740,10 @@ export default function Home() {
             <h2 className="ih-h2">{t("Faster, steadier, and dependable day after day.")}</h2>
             <p>{t("What decides whether a laser keeps running job after job, year after year.")}</p>
           </div>
-          <div className="ip2-grid">
-            {homeProof.map((x) => (
-              <article key={x.figure}>
-                <div className="ip2-top"><em>{t(x.times)}</em><b>{x.figure}</b></div>
+          <ProofGrid>
+            {homeProof.map((x, n) => (
+              <article key={x.figure} style={{ "--n": n }}>
+                <div className="ip2-top"><em>{t(x.times)}</em><b><CountUp text={x.figure} /></b></div>
                 <h3>{t(x.title)}</h3>
                 <dl className="ip2-vs">
                   <div className="me"><dt>OneLaser</dt><dd><i><u style={{ width: `${x.us}%` }} /></i><span>{t(x.usLabel)}</span></dd></div>
@@ -720,7 +752,7 @@ export default function Home() {
                 <p><strong>{t("For you:")}</strong> {t(x.meaning)}</p>
               </article>
             ))}
-          </div>
+          </ProofGrid>
           <p className="ip2-note">{t("Compared with the published specs of a typical 55W glass-tube desktop CO2 laser. Years estimated at 8 hours a day. Bars are for illustration.")}</p>
         </div>
       </section>

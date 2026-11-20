@@ -926,4 +926,6 @@ export default {
   "On TV and at industry shows": "En TV y en ferias del sector",
   "A real California company, seen on TV and at industry shows.": "Una empresa real de California, vista en TV y en ferias del sector.",
   "Playing": "Reproduciendo",
+  "years": "años",
+  "h": "h",
 };

@@ -1080,4 +1080,6 @@ export default {
   "On TV and at industry shows": "电视报道与行业展会",
   "A real California company, seen on TV and at industry shows.": "扎根加州的真实公司，上过电视，也站上行业展会。",
   "Playing": "播放中",
+  "years": "年",
+  "h": "小时",
 };
