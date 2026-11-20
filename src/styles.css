@@ -3667,3 +3667,63 @@ body:has(.ip-bar) .ai-nudge { bottom: 168px; }
 @media (max-width: 860px) { .fx-done .fx-stage img:not([src*="/front/"]) { width: 100%; max-height: 240px; } }
 /* the finder swaps its card and mounts the details below: keep the browser from re-anchoring (it cancels our scroll) */
 .ih-products .fx, #fc-result { overflow-anchor: none; }
+
+/* ===== Home trust strip (above "Watch OneLaser in action") ===== */
+.ih-trust { margin-top: 56px; }
+.ih-trust ul { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-radius: 20px; background: var(--page); overflow: hidden; }
+.ih-trust li + li { box-shadow: inset 1px 0 0 #e3e5e9; }
+.ih-trust a, .ih-trust button { width: 100%; height: 100%; display: flex; align-items: center; gap: 14px; padding: 22px 24px; text-align: left; color: var(--title); transition: background .2s; }
+.ih-trust a:hover, .ih-trust button:hover { background: #eceff3; }
+.ih-trust-ico { flex: none; width: 48px; height: 48px; display: grid; place-items: center; border-radius: 50%; background: #fff; color: var(--brand); box-shadow: 0 4px 12px -6px rgba(17, 24, 39, 0.2); }
+.ih-trust li:first-child .ih-trust-ico { color: #f5a623; }
+.ih-trust li:first-child .ih-trust-ico svg { fill: currentColor; }
+.ih-trust a > span:last-child, .ih-trust button > span:last-child { display: grid; gap: 2px; min-width: 0; }
+.ih-trust strong { font-size: 18px; line-height: 24px; font-weight: 700; }
+.ih-trust strong b { font-size: 22px; }
+.ih-trust small { font-size: 14px; line-height: 20px; color: #6e6e73; }
+.iv { scroll-margin-top: calc(var(--promo-h) + 80px); }
+@media (max-width: 1180px) { .ih-trust a, .ih-trust button { padding: 18px 16px; gap: 10px; } .ih-trust strong { font-size: 16px; line-height: 22px; } .ih-trust-ico { width: 40px; height: 40px; } }
+@media (max-width: 860px) {
+  .ih-trust { margin-top: 40px; }
+  .ih-trust ul { grid-template-columns: repeat(2, minmax(0, 1fr)); border-radius: 16px; }
+  .ih-trust li:nth-child(3) { box-shadow: inset 0 1px 0 #e3e5e9; }
+  .ih-trust li:nth-child(4) { box-shadow: inset 1px 0 0 #e3e5e9, inset 0 1px 0 #e3e5e9; }
+  .ih-trust a, .ih-trust button { flex-direction: column; align-items: flex-start; gap: 8px; padding: 16px 14px; }
+  .ih-trust-ico { width: 36px; height: 36px; }
+  .ih-trust-ico svg { width: 20px; height: 20px; }
+  .ih-trust strong { font-size: 15px; line-height: 20px; } .ih-trust strong b { font-size: 18px; }
+  .ih-trust small { font-size: 13px; line-height: 18px; }
+}
+
+/* ===== Home credibility block (HQ + press and shows), above the videos ===== */
+.icred-kicker { font-size: 14px; line-height: 20px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--brand); }
+.icred .ih-h2 { margin-top: 10px; max-width: 880px; }
+.icred-grid { margin-top: 32px; display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); gap: 20px; }
+.icred-hq { position: relative; margin: 0; min-height: 420px; border-radius: 24px; overflow: hidden; background: #1d1d1f; }
+.icred-hq > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.icred-hq::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0, 0, 0, 0) 35%, rgba(0, 0, 0, 0.78) 100%); }
+.icred-hq figcaption { position: absolute; z-index: 1; left: 28px; right: 28px; bottom: 26px; color: #fff; }
+.icred-hq figcaption b { font-size: 22px; line-height: 28px; font-weight: 700; }
+.icred-hq ul { list-style: none; margin: 12px 0 0; padding: 0; display: grid; gap: 8px; }
+.icred-hq li { display: flex; align-items: center; gap: 8px; font-size: 16px; line-height: 22px; color: rgba(255, 255, 255, 0.92); }
+.icred-hq li svg { flex: none; color: #8be0a8; }
+.icred-press { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.icred-press button { width: 100%; height: 100%; display: flex; flex-direction: column; border-radius: 18px; background: var(--page); overflow: hidden; text-align: left; transition: box-shadow .2s, transform .2s; }
+.icred-press button:hover { transform: translateY(-2px); box-shadow: 0 18px 36px -24px rgba(17, 24, 39, 0.4); }
+.icred-thumb { position: relative; aspect-ratio: 16 / 9; background: #ddd; overflow: hidden; }
+.icred-thumb img { width: 100%; height: 100%; object-fit: cover; transition: transform .5s; }
+.icred-press button:hover .icred-thumb img { transform: scale(1.04); }
+.icred-thumb i { position: absolute; left: 12px; bottom: 12px; width: 40px; height: 40px; display: grid; place-items: center; border-radius: 50%; background: rgba(255, 255, 255, 0.92); color: var(--brand); padding-left: 2px; }
+.icred-text { display: grid; gap: 4px; padding: 14px 16px 16px; }
+.icred-text small { font-size: 13px; line-height: 18px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--brand); }
+.icred-text b { font-size: 16px; line-height: 22px; font-weight: 600; color: var(--title); }
+@media (max-width: 1180px) { .icred-grid { grid-template-columns: minmax(0, 1fr); } .icred-hq { min-height: 360px; } }
+@media (max-width: 860px) {
+  .icred-grid { margin-top: 20px; gap: 12px; }
+  .icred-hq { min-height: 300px; border-radius: 16px; }
+  .icred-hq figcaption { left: 18px; right: 18px; bottom: 18px; } .icred-hq figcaption b { font-size: 19px; line-height: 24px; }
+  .icred-hq li { font-size: 15px; line-height: 21px; }
+  .icred-press { gap: 10px; }
+  .icred-press button { border-radius: 14px; }
+  .icred-text { padding: 10px 12px 12px; } .icred-text b { font-size: 14px; line-height: 19px; }
+}

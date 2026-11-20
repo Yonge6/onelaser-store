@@ -199,6 +199,81 @@ function ProductBlock() {
 const thumb = (id) => `https://i.ytimg.com/vi/${id}/hq720.jpg`;
 const thumbFallback = (e, id) => { if (!e.target.dataset.fb) { e.target.dataset.fb = 1; e.target.src = `https://i.ytimg.com/vi/${id}/hqdefault.jpg`; } };
 
+/* Trust strip right above the videos: four facts, each a door to its proof. All real:
+   Judge.me owner rating (homeReviews), U.S. company (homeStandard), 3-2-1 warranty on XRF + Hydra and 30-day returns
+   (homeFaq), FOX & Discovery coverage (the OneLaser videos below). */
+const TRUST_ICONS = {
+  star: <path d="m12 3.6 2.6 5.3 5.8.8-4.2 4.1 1 5.8L12 16.9l-5.2 2.7 1-5.8-4.2-4.1 5.8-.8z" />,
+  flag: <><path d="M5 21V4" /><path d="M5 4h11l-2 4 2 4H5" /></>,
+  shield: <><path d="M12 3.5 19 6v5.5c0 4.3-3 7.7-7 9-4-1.3-7-4.7-7-9V6z" /><path d="m9 12 2.2 2.2L15.5 10" /></>,
+  tv: <><rect x="3" y="5" width="18" height="12" rx="2" /><path d="m10.5 8.8 4 2.2-4 2.2zM8 20.5h8" /></>,
+};
+function TrustStrip({ onReviews }) {
+  const watch = (id) => window.dispatchEvent(new CustomEvent("onelaser:video", { detail: id }));
+  const items = [
+    ["star", <><b>{homeReviews.average}</b> ★</>, `${homeReviews.count} ${t("owner reviews")}`, { onClick: onReviews }],
+    ["flag", t("U.S. company"), t("Local team for sales and support"), { href: "https://www.1laser.com/pages/about-us" }],
+    ["shield", t("3-2-1 warranty"), t("XRF & Hydra · 30-day returns"), { href: "https://www.1laser.com/pages/warranty-policy" }],
+    ["tv", t("As seen on FOX & Discovery"), t("Watch the feature"), { onClick: () => watch("seseyuxIZt4") }],
+  ];
+  return (
+    <section className="ih-trust" aria-label={t("Why buyers trust OneLaser")}>
+      <div className="ih-wrap">
+        <ul>
+          {items.map(([icon, head, sub, act]) => {
+            const body = (
+              <>
+                <span className="ih-trust-ico"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{TRUST_ICONS[icon]}</svg></span>
+                <span><strong>{head}</strong><small>{sub}</small></span>
+              </>
+            );
+            return <li key={icon}>{act.href ? <Link href={act.href}>{body}</Link> : <button type="button" onClick={act.onClick}>{body}</button>}</li>;
+          })}
+        </ul>
+      </div>
+    </section>
+  );
+}
+
+/* Credibility: who stands behind the machine. Real material only: the U.S. headquarters photo and points (homeStandard),
+   and OneLaser's own TV, news and trade-show videos (homeVideos); each tile plays its video in the module below. */
+const PRESS = [
+  ["seseyuxIZt4", "TV feature", "As seen on FOX & Discovery"],
+  ["8tn7O69iCnQ", "FOX News", "Picked as a best holiday DIY gift"],
+  ["KAtO7_wkmMk", "Trade show", "APA Show 2025, International Personalization Expo"],
+  ["waBw5gDMPIM", "Conference", "Hands-on at the Next Level Maker Conference"],
+];
+function Credibility() {
+  const watch = (id) => window.dispatchEvent(new CustomEvent("onelaser:video", { detail: id }));
+  return (
+    <section className="ih-block icred">
+      <div className="ih-wrap">
+        <p className="icred-kicker">{t("Who stands behind your machine")}</p>
+        <h2 className="ih-h2 narrow">{t("You're not just buying a machine. You're getting a U.S. team you can reach.")}</h2>
+        <div className="icred-grid">
+          <figure className="icred-hq">
+            <img src={img(homeStandard.image, 1200)} alt={t("OneLaser headquarters in the United States")} loading="lazy" />
+            <figcaption>
+              <b>{t("OneLaser headquarters, USA")}</b>
+              <ul>{homeStandard.points.filter((_, n) => n !== 2).map(([h]) => <li key={h}><Icon name="check" size={16} />{t(h)}</li>)}</ul>
+            </figcaption>
+          </figure>
+          <ul className="icred-press">
+            {PRESS.map(([id, tag, title]) => (
+              <li key={id}>
+                <button type="button" onClick={() => watch(id)}>
+                  <span className="icred-thumb"><img src={thumb(id)} onError={(e) => thumbFallback(e, id)} alt="" loading="lazy" /><i aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.5v13l11-6.5z" /></svg></i></span>
+                  <span className="icred-text"><small>{t(tag)}</small><b>{t(title)}</b></span>
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function Videos() {
   const [tab, setTab] = useState(0);
   const [cur, setCur] = useState(0);
@@ -206,8 +281,19 @@ function Videos() {
   const items = homeVideos[tab].items;
   const [id, title, channel] = items[cur] || items[0];
   const choose = (n, play) => { setCur(n); setPlaying(play); };
+  const box = useRef(null);
+  useEffect(() => {
+    const show = (e) => {
+      const g = homeVideos.findIndex((x) => x.items.some((v) => v[0] === e.detail));
+      if (g < 0) return;
+      setTab(g); setCur(homeVideos[g].items.findIndex((v) => v[0] === e.detail)); setPlaying(false);
+      box.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    };
+    window.addEventListener("onelaser:video", show);
+    return () => window.removeEventListener("onelaser:video", show);
+  }, []);
   return (
-    <section className="ih-block iv">
+    <section className="ih-block iv" ref={box}>
       <div className="ih-wrap">
         <div className="iv-head">
           <h2 className="ih-h2">{t("Watch OneLaser in action")}</h2>
@@ -363,6 +449,8 @@ export default function Home() {
       <Hero />
       <ProductBlock />
 
+      <TrustStrip onReviews={() => setReviewsOpen(true)} />
+      <Credibility />
       <Videos />
 
       <section className="ih-block ip2">
