@@ -756,7 +756,7 @@ export default function Home() {
                   <div className="me"><dt>OneLaser</dt><dd><i><u style={{ width: `${x.us}%` }} /></i><span>{t(x.usLabel)}</span></dd></div>
                   <div><dt>{t("Typical glass-tube laser")}</dt><dd><i><u style={{ width: `${x.them}%` }} /></i><span>{t(x.themLabel)}</span></dd></div>
                 </dl>
-                <p><strong>{t("For you:")}</strong> {t(x.meaning)}</p>
+                <p>{t(x.meaning)}</p>
               </article>
             ))}
           </ProofGrid>
