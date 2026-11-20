@@ -4131,3 +4131,10 @@ body:has(.ip-bar) .ai-nudge { bottom: 168px; }
 .ip2-grid article p strong { color: var(--title); }
 .ip2-note { margin-top: 14px; font-size: 13px; line-height: 19px; color: #6e6e73; }
 @media (max-width: 767px) { .ip2-grid .ip2-top b { font-size: 28px; line-height: 36px; } }
+
+/* Bars on a visible track, the comparison bar in a solid mid grey so it reads at a glance. */
+.ip2-vs dd i { height: 10px; border-radius: 10px; background: #e6e8ec; overflow: hidden; }
+.ip2-vs .me dd i { background: #e6e8ec; }
+.ip2-vs dd i u { display: block; height: 100%; border-radius: 10px; background: #8e8f98; }
+.ip2-vs .me dd i u { background: linear-gradient(90deg, var(--accent), var(--accent-ink)); }
+.ip2-vs dd span { color: #3a3a40; }
