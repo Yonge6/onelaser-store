@@ -422,31 +422,6 @@ function TrustDialog({ kind, onClose, onTrustpilot }) {
   );
 }
 
-function TrustStrip({ onTrustpilot }) {
-  const [open, setOpen] = useState(null);
-  const items = [
-    ["reviews", "star", <><b>{homeReviews.average}</b> ★</>, `${homeReviews.count} ${t("owner reviews")}`],
-    ["company", "flag", t("U.S. company"), t("Local team for sales and support")],
-    ["warranty", "shield", t("3-2-1 warranty"), t("XRF & Hydra · 30-day returns")],
-  ];
-  return (
-    <section className="ih-trust" aria-label={t("Why buyers trust OneLaser")}>
-      <div className="ih-wrap">
-        <ul className="ih-trust-list">
-          {items.map(([kind, icon, head, sub]) => (
-            <li key={kind}>
-              <button type="button" onClick={() => setOpen(kind)} aria-haspopup="dialog">
-                <span className="ih-trust-ico"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{TRUST_ICONS[icon]}</svg></span>
-                <span><strong>{head}</strong><small>{sub}</small></span>
-              </button>
-            </li>
-          ))}
-        </ul>
-      </div>
-      {open && <TrustDialog kind={open} onClose={() => setOpen(null)} onTrustpilot={() => { setOpen(null); onTrustpilot(); }} />}
-    </section>
-  );
-}
 
 /* Credibility: who stands behind the machine. Real material only: the U.S. headquarters photo and points (homeStandard),
    and OneLaser's own brand film, TV, news and trade-show videos, each playing right where it is clicked. */
@@ -653,7 +628,6 @@ export default function Home() {
       <Hero />
       <ProductBlock />
 
-      <TrustStrip onTrustpilot={() => setReviewsOpen(true)} />
       <Credibility />
 
       {/* Owners: real words on top, what they make below */}
