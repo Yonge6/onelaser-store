@@ -768,7 +768,7 @@ export default function Home() {
       <section className="ih-block iprom">
         <div className="ih-wrap">
           <p className="ist-kicker">{t("After you buy")}</p>
-          <h2 className="ih-h2 narrow">{t("If something goes wrong, our U.S. engineers have you covered.")}</h2>
+          <h2 className="ih-h2 narrow">{t("U.S. engineers have you covered.")}</h2>
           <ul>
             {PROMISES.map(([icon, worry, promise, label, kind]) => (
               <li key={worry}><button type="button" onClick={() => setDlg(kind)} aria-haspopup="dialog"><span className="iprom-ico"><Icon name={icon} size={24} /></span><b>{t(worry)}</b><p>{t(promise)}</p><em>{t(label)} ›</em></button></li>
@@ -794,7 +794,7 @@ export default function Home() {
       {/* Next step: three ways forward, side by side */}
       <section className="ih-block inext">
         <div className="ih-wrap">
-          <h2 className="ih-h2">{t("Ready when you are. Pick your next step.")}</h2>
+          <h2 className="ih-h2">{t("Your next step.")}</h2>
           <ul>
             <li><button type="button" onClick={() => setDlg("finder")} aria-haspopup="dialog"><span className="inext-mark" aria-hidden="true"><Icon name="search" size={140} /></span><span className="inext-top"><span className="inext-ico"><Icon name="search" size={24} /></span><i>{t("6 questions")}</i></span><small>{t("Choose it yourself")}</small><b>{t("Find your machine in 30 seconds")}</b><p>{t("Answer a few questions about your materials and jobs, and get a matched machine.")}</p><em>{t("Start the finder")}<Icon name="chevron" size={16} /></em></button></li>
             <li><Link to="/pages/sales-consultation"><span className="inext-mark" aria-hidden="true"><Icon name="calendar" size={140} /></span><span className="inext-top"><span className="inext-ico"><Icon name="calendar" size={24} /></span><i>{t("Free")}</i></span><small>{t("Talk it through")}</small><b>{t("Book a free 30-minute call with a laser expert")}</b><p>{t("Talk through your materials, space and budget before you choose.")}</p><em>{t("Pick a time")}<Icon name="chevron" size={16} /></em></Link></li>

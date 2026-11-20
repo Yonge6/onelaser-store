@@ -930,4 +930,6 @@ export default {
   "h": "h",
   "A real U.S. company, seen on TV.": "Una empresa real de EE. UU., vista en TV.",
   "Hear it from owners.": "Escucha a los propietarios.",
+  "Your next step.": "Tu siguiente paso.",
+  "U.S. engineers have you covered.": "Ingenieros en EE. UU. te respaldan.",
 };

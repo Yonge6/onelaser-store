@@ -930,4 +930,6 @@ export default {
   "h": "時間",
   "A real U.S. company, seen on TV.": "本物のアメリカ企業。テレビでも紹介。",
   "Hear it from owners.": "オーナーの声を聞いてください。",
+  "Your next step.": "次の一歩を。",
+  "U.S. engineers have you covered.": "米国のエンジニアがしっかりサポート。",
 };

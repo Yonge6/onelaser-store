@@ -1084,4 +1084,6 @@ export default {
   "h": "小时",
   "A real U.S. company, seen on TV.": "真实的美国公司，上过电视。",
   "Hear it from owners.": "听听买家怎么说。",
+  "Your next step.": "下一步，你来选。",
+  "U.S. engineers have you covered.": "美国工程师，为你兜底。",
 };
