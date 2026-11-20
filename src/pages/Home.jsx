@@ -760,7 +760,6 @@ export default function Home() {
               </article>
             ))}
           </ProofGrid>
-          <p className="ip2-note">{t("Compared with the published specs of a typical 55W glass-tube desktop CO2 laser. Years estimated at 8 hours a day. Bars are for illustration.")}</p>
         </div>
       </section>
 
