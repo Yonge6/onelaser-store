@@ -1032,4 +1032,9 @@ export default {
   "See each machine at work": "看每台机器实际干活",
   "Real jobs, real speed. Pick a machine and press play.": "真实订单，真实速度。选一台机器，点播放。",
   "View details": "查看详情",
+  "6 questions": "6 个问题",
+  "Estimate": "估算",
+  "Answer a few questions about your materials and jobs, and get a matched machine.": "回答几个关于材料和用途的问题，直接给出适合你的机型。",
+  "Talk through your materials, space and budget before you choose.": "先聊聊你的材料、场地和预算，再决定买哪台。",
+  "Pick a machine and a term to see a rough monthly payment right away.": "选机器、选期数，当场看到每月大概要付多少。",
 };

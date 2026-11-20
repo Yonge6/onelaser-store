@@ -877,4 +877,10 @@ export default {
   "See each machine at work": "各マシンの実働を見る",
   "Real jobs, real speed. Pick a machine and press play.": "実際の仕事、実際のスピード。マシンを選んで再生。",
   "View details": "詳細を見る",
+  "6 questions": "6つの質問",
+  "Free": "無料",
+  "Estimate": "概算",
+  "Answer a few questions about your materials and jobs, and get a matched machine.": "素材と用途についていくつか答えるだけで、合う機種がわかります。",
+  "Talk through your materials, space and budget before you choose.": "選ぶ前に、素材・設置スペース・予算について相談できます。",
+  "Pick a machine and a term to see a rough monthly payment right away.": "機種と回数を選ぶと、月々の目安がすぐにわかります。",
 };

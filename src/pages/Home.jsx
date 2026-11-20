@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { t } from "../i18n.js";
 import { asset, byHandle, img, money, products, frontImg } from "../lib.js";
-import { contact, footer, heroSlides, homeAmbition, homeFaq, homeProof, homeReviews, homeStandard, homeTabs, homeVideos, trustpilot, newHandles, promo, shortSlogans } from "../data/site.js";
+import { contact, footer, heroSlides, homeAmbition, homeFaq, homeProof, homeReviews, homeStandard, homeTabs, trustpilot, newHandles, promo, shortSlogans } from "../data/site.js";
 import { AddButton, Countdown, Icon, Link, useDragScroll } from "../components/ui.jsx";
 import FinderCard, { FinderHelp } from "../components/Finder.jsx";
 
@@ -75,11 +75,22 @@ function HeroYouTube({ id, start = 0, active }) {
 function Hero() {
   const [i, setI] = useState(0);
   const [paused, setPaused] = useState(false);
+  /* Only rotate slides and run the slide videos while the banner is on screen. A YouTube player that starts or loops
+     can make Chrome scroll the page back up to its frame, so off screen the frame is not mounted at all. */
+  const box = useRef(null);
+  const [seen, setSeen] = useState(true);
   useEffect(() => {
-    if (paused) return undefined;
+    const el = box.current;
+    if (!el || !("IntersectionObserver" in window)) return undefined;
+    const io = new IntersectionObserver(([e]) => setSeen(e.isIntersecting), { threshold: 0.05 });
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+  useEffect(() => {
+    if (paused || !seen) return undefined;
     const t = setTimeout(() => setI((n) => (n + 1) % heroSlides.length), SLIDE_MS);
     return () => clearTimeout(t);
-  }, [i, paused]);
+  }, [i, paused, seen]);
   // Finger swipe (phones and tablets): a mostly horizontal move of 40px or more changes the slide; vertical moves still scroll the page.
   const touch = useRef(null);
   const n = heroSlides.length;
@@ -91,12 +102,12 @@ function Hero() {
     if (Math.abs(dx) >= 40 && Math.abs(dx) > Math.abs(dy) * 1.2) setI((k) => (k + (dx < 0 ? 1 : n - 1)) % n);
   };
   return (
-    <section className="ih-hero" onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)} onTouchStart={onTouchStart} onTouchEnd={onTouchEnd} onTouchCancel={() => { touch.current = null; setPaused(false); }} aria-roledescription="carousel">
+    <section ref={box} className="ih-hero" onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)} onTouchStart={onTouchStart} onTouchEnd={onTouchEnd} onTouchCancel={() => { touch.current = null; setPaused(false); }} aria-roledescription="carousel">
       {heroSlides.map((s, n) => (
         <article key={s.title} className={`ih-slide${n === i ? " on" : ""}`} aria-hidden={n !== i}>
           <img src={asset(s.image)} alt="" />
-          {s.video && <HeroVideo src={/^https?:/.test(s.video) ? s.video : asset(s.video)} poster={asset(s.image)} active={n === i} />}
-          {s.youtube && <HeroYouTube id={s.youtube} start={s.start} active={n === i} />}
+          {s.video && <HeroVideo src={/^https?:/.test(s.video) ? s.video : asset(s.video)} poster={asset(s.image)} active={n === i && seen} />}
+          {s.youtube && <HeroYouTube id={s.youtube} start={s.start} active={n === i && seen} />}
           <div className="ih-slide-copy">
             <p className="ih-top">{t(s.eyebrow)}</p>
             <h1>{t(s.title)}</h1>
@@ -495,106 +506,6 @@ function Credibility() {
   );
 }
 
-/* Each video tab is a machine: its tab shows the machine, and a card next to the player turns watching into a next step. */
-const VIDEO_MACHINE = {
-  XRF: "onelaser-xrf-desktop-laser-machine",
-  Hydra: "hydra-9-gen-2-70w-rf-co2-dual-laser-machine",
-  VertiGo: "vertigo-vertical-laser-engraver",
-  Cobra: "cobra-10-100w-co2-laser-engraver-cutter",
-};
-const seriesFrom = (h) => {
-  const p = byHandle[h];
-  const list = p ? products.filter((x) => x.kind === "machine" && x.series === p.series) : [];
-  return list.length ? Math.min(...list.map((x) => x.price)) : p?.price;
-};
-
-function Videos() {
-  const [tab, setTab] = useState(0);
-  const [cur, setCur] = useState(0);
-  const [playing, setPlaying] = useState(false);
-  const items = homeVideos[tab].items;
-  const [id, title, channel] = items[cur] || items[0];
-  const choose = (n, play) => { setCur(n); setPlaying(play); };
-  const box = useRef(null);
-  useEffect(() => {
-    const show = (e) => {
-      const g = homeVideos.findIndex((x) => x.items.some((v) => v[0] === e.detail));
-      if (g < 0) return;
-      setTab(g); setCur(homeVideos[g].items.findIndex((v) => v[0] === e.detail)); setPlaying(false);
-      box.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-    };
-    window.addEventListener("onelaser:video", show);
-    return () => window.removeEventListener("onelaser:video", show);
-  }, []);
-  return (
-    <section className="ih-block iv" ref={box}>
-      <div className="ih-wrap">
-        <div className="iv-head">
-          <div>
-            <h2 className="ih-h2">{t("See each machine at work")}</h2>
-            <p className="iv-sub">{t("Real jobs, real speed. Pick a machine and press play.")}</p>
-          </div>
-          <div className="iv-tabs" role="tablist">
-            {homeVideos.map((g, n) => {
-              const mp = byHandle[VIDEO_MACHINE[g.label]];
-              return (
-                <button key={g.label} type="button" role="tab" aria-selected={n === tab} className={n === tab ? "on" : ""} onClick={() => { setTab(n); choose(0, false); }}>
-                  {mp && <img src={img(frontImg(mp), 160)} alt="" />}
-                  <span><b>{g.label}</b>{mp && <small>{t("From")} {money(seriesFrom(mp.handle))}</small>}</span>
-                </button>
-              );
-            })}
-          </div>
-        </div>
-        <div className="iv-grid" key={tab}>
-          <div className="iv-main">
-            <div className="iv-player">
-              {playing ? (
-                <iframe key={id} src={`https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0`} title={title} allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowFullScreen />
-              ) : (
-                <button type="button" onClick={() => setPlaying(true)} aria-label={`${t("Play video")}: ${title}`}>
-                  <img key={id} src={thumb(id)} onError={(e) => thumbFallback(e, id)} alt="" loading="lazy" />
-                  <span aria-hidden="true" />
-                </button>
-              )}
-            </div>
-            <div className="iv-meta"><b>{title}</b><span>{channel}</span></div>
-          </div>
-          <div className="iv-side">
-          {(() => {
-            const mp = byHandle[VIDEO_MACHINE[homeVideos[tab].label]];
-            return mp && (
-              <div className="iv-machine">
-                <Link to={`/products/${mp.handle}`} className="iv-machine-img" tabIndex={-1} aria-hidden="true"><img src={img(frontImg(mp), 400)} alt="" /></Link>
-                <span className="iv-machine-text">
-                  <b>{mp.name}</b>
-                  <small>{t(shortSlogans[mp.handle] || mp.tagline)}</small>
-                  <em>{mp.priceVaries && `${t("From")} `}{money(mp.price)}{mp.compareAt > mp.price && <s>{money(mp.compareAt)}</s>}</em>
-                </span>
-                <span className="iv-machine-btns">
-                  <AddButton product={mp} className="ih-btn line sm" />
-                  <Link to={`/products/${mp.handle}`} className="ih-btn dark sm">{t("View details")}</Link>
-                </span>
-              </div>
-            );
-          })()}
-          <ul className="iv-list">
-            {items.map(([vid, vt, vc], n) => (
-              <li key={vid}>
-                <button type="button" className={n === cur ? "on" : ""} aria-current={n === cur} onClick={() => choose(n, true)}>
-                  <span className="iv-thumb"><img src={thumb(vid)} onError={(e) => thumbFallback(e, vid)} alt="" loading="lazy" /><i aria-hidden="true" /></span>
-                  <span className="iv-text"><b>{vt}</b><em>{vc}</em></span>
-                </button>
-              </li>
-            ))}
-          </ul>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
 /* "Built for every ambition" (official heading and segment copy) with a pill switch for Makers / Business / Education.
    Each segment is one full-bleed row: an intro card with the official photo and copy, then that segment's videos, which open
    in a dialog on this page. */
@@ -753,7 +664,6 @@ export default function Home() {
 
       <TrustStrip onTrustpilot={() => setReviewsOpen(true)} />
       <Credibility />
-      <Videos />
 
       {/* Owners: real words on top, what they make below */}
       <section className="ih-block irv iowners">
@@ -850,9 +760,9 @@ export default function Home() {
         <div className="ih-wrap">
           <h2 className="ih-h2">{t("Ready when you are. Pick your next step.")}</h2>
           <ul>
-            <li><button type="button" onClick={() => setDlg("finder")} aria-haspopup="dialog"><span className="inext-ico"><Icon name="search" size={26} /></span><small>{t("Choose it yourself")}</small><b>{t("Find your machine in 30 seconds")}</b><em>{t("Start the finder")} →</em></button></li>
-            <li className="hot"><Link to="/pages/sales-consultation"><span className="inext-ico"><Icon name="calendar" size={26} /></span><small>{t("Talk it through")}</small><b>{t("Book a free 30-minute call with a laser expert")}</b><em>{t("Pick a time")} →</em></Link></li>
-            <li><button type="button" onClick={() => setDlg("financing")} aria-haspopup="dialog"><span className="inext-ico"><Icon name="card" size={26} /></span><small>{t("Do the math")}</small><b>{t("See your monthly payment")}</b><em>{t("Open the estimator")} →</em></button></li>
+            <li><button type="button" onClick={() => setDlg("finder")} aria-haspopup="dialog"><span className="inext-top"><span className="inext-ico"><Icon name="search" size={24} /></span><i>{t("6 questions")}</i></span><small>{t("Choose it yourself")}</small><b>{t("Find your machine in 30 seconds")}</b><p>{t("Answer a few questions about your materials and jobs, and get a matched machine.")}</p><em>{t("Start the finder")}<Icon name="chevron" size={16} /></em></button></li>
+            <li className="hot"><Link to="/pages/sales-consultation"><span className="inext-top"><span className="inext-ico"><Icon name="calendar" size={24} /></span><i>{t("Free")}</i></span><small>{t("Talk it through")}</small><b>{t("Book a free 30-minute call with a laser expert")}</b><p>{t("Talk through your materials, space and budget before you choose.")}</p><em>{t("Pick a time")}<Icon name="chevron" size={16} /></em></Link></li>
+            <li><button type="button" onClick={() => setDlg("financing")} aria-haspopup="dialog"><span className="inext-top"><span className="inext-ico"><Icon name="card" size={24} /></span><i>{t("Estimate")}</i></span><small>{t("Do the math")}</small><b>{t("See your monthly payment")}</b><p>{t("Pick a machine and a term to see a rough monthly payment right away.")}</p><em>{t("Open the estimator")}<Icon name="chevron" size={16} /></em></button></li>
           </ul>
         </div>
       </section>

@@ -877,4 +877,10 @@ export default {
   "See each machine at work": "Mira cada máquina trabajando",
   "Real jobs, real speed. Pick a machine and press play.": "Trabajos reales, velocidad real. Elige una máquina y dale al play.",
   "View details": "Ver detalles",
+  "6 questions": "6 preguntas",
+  "Free": "Gratis",
+  "Estimate": "Estimación",
+  "Answer a few questions about your materials and jobs, and get a matched machine.": "Responde unas preguntas sobre tus materiales y trabajos y te recomendamos una máquina.",
+  "Talk through your materials, space and budget before you choose.": "Habla de tus materiales, tu espacio y tu presupuesto antes de elegir.",
+  "Pick a machine and a term to see a rough monthly payment right away.": "Elige una máquina y un plazo para ver al momento una cuota mensual aproximada.",
 };
