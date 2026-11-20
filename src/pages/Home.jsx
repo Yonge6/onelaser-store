@@ -365,15 +365,22 @@ function TrustDialog({ kind, onClose, onTrustpilot }) {
     const p = byHandle["engineer-1-on-1-training-support"];
     body = (
       <>
-        {p && <div className="tdlg-photo"><img src={img(p.images[0], 1000)} alt="" /></div>}
-        <Head title={t("One hour, one engineer, your machine")} />
-        <p className="tdlg-chips"><span><Icon name="clock" size={16} />{t("1 hour")}</span><span><Icon name="calendar" size={16} />{t("Live video")}</span><span><Icon name="user" size={16} />{t("One-on-one")}</span></p>
-        <p className="tdlg-sub">{t("A 1-hour live video session with an experienced OneLaser technician: machine assembly, software setup and troubleshooting, so you start cutting and engraving faster and avoid costly mistakes.")}</p>
-        <ul className="tdlg-points">{["Machine assembly", "Software setup", "Troubleshooting", "Fine-tuning your workflow"].map((x) => <li key={x}><Icon name="check" size={18} /><span><b>{t(x)}</b></span></li>)}</ul>
-        {p && <p className="tdlg-price"><b>{money(p.price)}</b>{p.compareAt > p.price && <><s>{money(p.compareAt)}</s><em>{t("Save")} {money(p.compareAt - p.price)}</em></>}</p>}
-        <div className="tdlg-links">
-          {p && <AddButton product={p} className="tdlg-more" drop="up" />}
-          {p && <More to={`/products/${p.handle}`} ghost>{t("Full details")}</More>}
+        <div className="tdlg-train">
+          {p && <div className="tdlg-train-pic"><img src={img(p.images[0], 1000)} alt="" /></div>}
+          <div className="tdlg-train-body">
+            <p className="tdlg-kicker">{t("First laser?")}</p>
+            <h3>{t("One hour, one engineer, your machine")}</h3>
+            <p className="tdlg-chips"><span><Icon name="clock" size={16} />{t("1 hour")}</span><span><Icon name="calendar" size={16} />{t("Live video")}</span><span><Icon name="user" size={16} />{t("One-on-one")}</span></p>
+            <p className="tdlg-sub">{t("A 1-hour live video session with an experienced OneLaser technician: machine assembly, software setup and troubleshooting, so you start cutting and engraving faster and avoid costly mistakes.")}</p>
+            <ul className="tdlg-train-points">{["Machine assembly", "Software setup", "Troubleshooting", "Fine-tuning your workflow"].map((x) => <li key={x}><Icon name="check" size={16} />{t(x)}</li>)}</ul>
+            {p && <div className="tdlg-train-buy">
+              <p className="tdlg-price"><b>{money(p.price)}</b>{p.compareAt > p.price && <><s>{money(p.compareAt)}</s><em>{t("Save")} {money(p.compareAt - p.price)}</em></>}</p>
+              <div className="tdlg-links">
+                <AddButton product={p} className="tdlg-more" drop="up" />
+                <More to={`/products/${p.handle}`} ghost>{t("Full details")}</More>
+              </div>
+            </div>}
+          </div>
         </div>
       </>
     );
