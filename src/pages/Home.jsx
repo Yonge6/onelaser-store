@@ -606,7 +606,6 @@ const PROMISES = [ // [icon, worry, promise, link label, dialog]
   ["shield", "Something breaks?", "3-2-1 warranty on X Series and Hydra: 3 years mechanical, 2 electrical, 1 optics and laser source.", "Warranty policy", "warranty"],
   ["headset", "Stuck on a job?", "Call U.S. engineers who build, tune and repair these machines.", "Contact support", "support"],
   ["user", "First laser?", "One-on-one training, so you are not figuring it out alone.", "1-on-1 training", "training"],
-  ["card", "Budget tight?", "$0-down business financing and installments at checkout.", "See financing", "financing"],
 ];
 
 

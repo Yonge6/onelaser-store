@@ -3753,7 +3753,7 @@ body:has(.ip-bar) .ai-nudge { bottom: 168px; }
 .icmp-note { margin-top: 12px; font-size: 14px; line-height: 20px; color: #6e6e73; }
 .icmp-note a { color: var(--accent-ink); font-weight: 600; }
 
-.iprom ul { list-style: none; margin: 32px 0 0; padding: 0; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 14px; }
+.iprom ul { list-style: none; margin: 32px 0 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
 .iprom li a { height: 100%; display: flex; flex-direction: column; gap: 8px; padding: 24px 20px; border-radius: 18px; background: var(--page); color: var(--title); transition: transform .2s, box-shadow .2s, background .2s; }
 .iprom li a:hover { transform: translateY(-3px); background: #fff; box-shadow: 0 20px 40px -24px rgba(17, 24, 39, 0.35), 0 0 0 1px #e6e8ec; }
 .iprom-ico { width: 48px; height: 48px; display: grid; place-items: center; border-radius: 14px; background: #fff; color: var(--brand); box-shadow: 0 4px 12px -6px rgba(17, 24, 39, 0.2); margin-bottom: 6px; }
@@ -3771,7 +3771,7 @@ body:has(.ip-bar) .ai-nudge { bottom: 168px; }
 .iquick a svg { flex: none; color: var(--accent-ink); }
 
 @media (max-width: 1180px) {
-  .iprom ul { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .iprom ul { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .iquick ul { grid-template-columns: repeat(4, minmax(0, 1fr)); }
   .iowners-quote p { font-size: 24px; line-height: 32px; }
 }
