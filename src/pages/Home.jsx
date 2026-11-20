@@ -625,7 +625,7 @@ function QuoteReel() {
   const [hold, setHold] = useState(false);
   useEffect(() => {
     if (hold || window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) return undefined;
-    const id = setTimeout(() => setI((n) => (n + 1) % QUOTES.length), 5500);
+    const id = setTimeout(() => setI((n) => (n + 1) % QUOTES.length), 3800);
     return () => clearTimeout(id);
   }, [i, hold]);
   const r = QUOTES[i];

@@ -4103,7 +4103,7 @@ body:has(.ip-bar) .ai-nudge { bottom: 168px; }
 .iowners-dots button { width: 10px; height: 10px; padding: 0; border-radius: 999px; background: rgba(17, 24, 39, 0.16); overflow: hidden; transition: width .3s; }
 .iowners-dots button.on { width: 34px; }
 .iowners-dots button i { display: block; width: 0; height: 100%; background: var(--brand); }
-.iowners-dots button.on i { animation: iq-timer 5.5s linear both; }
+.iowners-dots button.on i { animation: iq-timer 3.8s linear both; }
 .iowners-dots button.on.held i { animation-play-state: paused; }
 @keyframes iq-timer { to { width: 100%; } }
 @media (max-width: 767px) {
@@ -4314,3 +4314,7 @@ body:has(.ip-bar) .ai-nudge { bottom: 168px; }
 .ip2-grid.seen .ip2-top em { animation: ip2-badge-pop .6s cubic-bezier(.3, 1.8, .5, 1) calc(var(--n, 0) * 0.12s + 1.2s) both; transition: none; opacity: 1; transform: none; }
 @keyframes ip2-badge-pop { 0% { opacity: 0; transform: scale(.4); } 55% { opacity: 1; transform: scale(1.25); } 100% { transform: scale(1); } }
 @media (prefers-reduced-motion: reduce) { .ip2-pop { display: none; } .ip2-grid.seen .ip2-top em, .ip2-grid.seen .ip2-top .ip2-badge em::after { animation: none; } }
+/* faster reel: words and author arrive sooner */
+.iowners-q p span { animation-duration: .4s; animation-delay: calc(.15s + var(--w) * 22ms); }
+.iowners-q footer { animation-delay: .45s; } .iowners-avatar { animation-delay: .5s; }
+.iowners-stars i { animation-delay: calc(var(--s) * 50ms); }
