@@ -4138,3 +4138,24 @@ body:has(.ip-bar) .ai-nudge { bottom: 168px; }
 .ip2-vs dd i u { display: block; height: 100%; border-radius: 10px; background: #8e8f98; }
 .ip2-vs .me dd i u { background: linear-gradient(90deg, var(--accent), var(--accent-ink)); }
 .ip2-vs dd span { color: #3a3a40; }
+
+/* Finder answers invite a click: they rise in one after another, then (until something is picked or hovered) their
+   contents give a small hop, one answer after the next. Picking an answer stops it and pops the tick. */
+.fx-options button:nth-child(1) { --i: 0; }
+.fx-options button:nth-child(2) { --i: 1; }
+.fx-options button:nth-child(3) { --i: 2; }
+.fx-options button:nth-child(4) { --i: 3; }
+.fx-options button:nth-child(5) { --i: 4; }
+.fx-options button:nth-child(6) { --i: 5; }
+.fx-options button:nth-child(7) { --i: 6; }
+.fx-options button:nth-child(8) { --i: 7; }
+.fx-options button:nth-child(9) { --i: 8; }
+.fx-options button { position: relative; animation: fx-opt-in .45s cubic-bezier(.2, .7, .2, 1) calc(var(--i, 0) * 60ms) both; }
+@keyframes fx-opt-in { from { opacity: 0; transform: translateY(10px); } }
+.fx-options button > * { animation: fx-hop 4.2s cubic-bezier(.3, 1.5, .5, 1) calc(1s + var(--i, 0) * 0.18s) infinite; }
+@keyframes fx-hop { 0%, 14%, 100% { translate: 0 0; } 5% { translate: 0 -4px; } 9% { translate: 0 0; } 11% { translate: 0 -1px; } }
+.fx-options:has(button.on) button > *, .fx-options:hover button > * { animation: none; }
+.fx-options button.on i { animation: fx-tick .4s cubic-bezier(.3, 1.6, .5, 1); }
+@keyframes fx-tick { 0% { transform: scale(.6); } 60% { transform: scale(1.2); } 100% { transform: scale(1); } }
+.fx-options button:active { transform: scale(.98); }
+@media (prefers-reduced-motion: reduce) { .fx-options button, .fx-options button > *, .fx-options button.on i { animation: none !important; } }

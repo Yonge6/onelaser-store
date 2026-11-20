@@ -1072,4 +1072,8 @@ export default {
   "Typical glass-tube laser": "常见玻璃管激光机",
   "For you:": "对你来说：",
   "Compared with the published specs of a typical 55W glass-tube desktop CO2 laser. Years estimated at 8 hours a day. Bars are for illustration.": "对比对象为常见 55W 玻璃管桌面 CO₂ 激光机的公开参数；年限按每天 8 小时估算；条形图仅作示意。",
+  "Smooth, solid, relatively quiet, accurate. I love it! Puts the joy back into creating.": "顺滑、扎实、相对安静、精准。我爱它！让我重新找回了创作的乐趣。",
+  "Tech support is not only here in America but the team is dedicated and passionate and it shows!": "技术支持不仅就在美国，而且团队用心又热情，看得出来！",
+  "I like having the RF tube because I'm able to run the laser at higher power and not having any water cooling.": "我喜欢 RF 管：可以用更高的功率跑，而且完全不用水冷。",
+  "No doubt this have to be one of the best laser in the market for sure. I don't regret it one second.": "毫无疑问，这绝对是市面上最好的激光机之一。我一秒都没后悔过。",
 };

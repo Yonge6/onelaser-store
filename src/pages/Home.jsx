@@ -621,16 +621,17 @@ const PROMISES = [ // [icon, worry, promise, link label, dialog]
 ];
 
 
-/* Featured owner quotes: one sentence each, word for word, from the real Judge.me reviews in homeReviews. They rotate every
+/* Featured owner quotes: seven lines picked from the real reviews in site.js (Judge.me homeReviews and Trustpilot), word for word. They rotate every
    few seconds (paused while the pointer or focus is on them, and not at all with reduced motion); the dots pick one. */
 const QUOTES = [
-  ["James Kirk", "I started out with a Full Spectrum K40 style, upgraded to a GlowForge, dabbled with some blue diode lasers, but the XRF is amazing."],
-  ["Thomas M Eichhorn", "If I had the funds, I would replace several of the other lasers I have with OneLasers."],
-  ["Chris Vaughn", "So much faster and reliable to cut! Really stoked on my purchase with this machine."],
-  ["Emily R.", "Needed a laser that could keep up with my growing business, and this one delivers."],
-  ["Thomas M Eichhorn", "Tech support is fantastic and quick to respond, material quality is great."],
-  ["Jack Anderson", "The magnetic lens assembly is a lifesaver!"],
-].map(([name, q]) => ({ q, ...homeReviews.items.find((r) => r.name === name) }));
+  { name: "Thomas M Eichhorn", product: "XRF 38W", q: "If I had the funds, I would replace several of the other lasers I have with OneLasers." },
+  { name: "James Kirk", product: "XRF 38W", q: "Smooth, solid, relatively quiet, accurate. I love it! Puts the joy back into creating." },
+  { name: "Jason Olsen", product: "XRF · Trustpilot", q: "Tech support is not only here in America but the team is dedicated and passionate and it shows!" },
+  { name: "Chris Vaughn", product: "Hydra 9", q: "So much faster and reliable to cut! Really stoked on my purchase with this machine." },
+  { name: "David F", product: "XRF · Trustpilot", q: "I like having the RF tube because I'm able to run the laser at higher power and not having any water cooling." },
+  { name: "Emily R.", product: "Hydra 16", q: "Needed a laser that could keep up with my growing business, and this one delivers." },
+  { name: "Guills785", product: "Trustpilot", q: "No doubt this have to be one of the best laser in the market for sure. I don't regret it one second." },
+];
 
 function QuoteReel() {
   const [i, setI] = useState(0);

@@ -918,4 +918,8 @@ export default {
   "Typical glass-tube laser": "Laser à tube en verre classique",
   "For you:": "Pour vous :",
   "Compared with the published specs of a typical 55W glass-tube desktop CO2 laser. Years estimated at 8 hours a day. Bars are for illustration.": "Comparaison avec les caractéristiques publiées d'un laser CO2 de bureau classique à tube en verre de 55W. Années estimées à 8 heures par jour. Barres à titre indicatif.",
+  "Smooth, solid, relatively quiet, accurate. I love it! Puts the joy back into creating.": "Fluide, solide, plutôt silencieuse, précise. Je l'adore ! Elle redonne le plaisir de créer.",
+  "Tech support is not only here in America but the team is dedicated and passionate and it shows!": "Le support technique est non seulement ici en Amérique, mais l'équipe est dévouée et passionnée, et ça se voit !",
+  "I like having the RF tube because I'm able to run the laser at higher power and not having any water cooling.": "J'aime avoir le tube RF : je peux faire tourner le laser à plus forte puissance, sans refroidissement à eau.",
+  "No doubt this have to be one of the best laser in the market for sure. I don't regret it one second.": "Sans aucun doute l'un des meilleurs lasers du marché. Je ne le regrette pas une seconde.",
 };

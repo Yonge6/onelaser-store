@@ -918,4 +918,8 @@ export default {
   "Typical glass-tube laser": "一般的なガラス管レーザー",
   "For you:": "あなたにとって：",
   "Compared with the published specs of a typical 55W glass-tube desktop CO2 laser. Years estimated at 8 hours a day. Bars are for illustration.": "一般的な 55W ガラス管デスクトップ CO₂ レーザーの公開仕様との比較です。年数は 1 日 8 時間で試算。棒グラフはイメージです。",
+  "Smooth, solid, relatively quiet, accurate. I love it! Puts the joy back into creating.": "なめらかで頑丈、比較的静かで正確。大好き！ものづくりの楽しさを取り戻してくれた。",
+  "Tech support is not only here in America but the team is dedicated and passionate and it shows!": "テクニカルサポートはアメリカ国内にあるだけでなく、チームが熱心で情熱的なのが伝わってくる！",
+  "I like having the RF tube because I'm able to run the laser at higher power and not having any water cooling.": "RF 管が気に入っています。高出力で動かせて、水冷も要らないから。",
+  "No doubt this have to be one of the best laser in the market for sure. I don't regret it one second.": "間違いなく市場で最高のレーザーのひとつ。一秒たりとも後悔していない。",
 };
