@@ -130,6 +130,7 @@ export function CollectionCard({ product }) {
   );
 }
 
+/** Countdown with flip digits: each digit is keyed by its value, so only the digits that change replay the flip. */
 export function Countdown({ endsAt }) {
   const [now, setNow] = useState(Date.now());
   useEffect(() => {
@@ -144,7 +145,7 @@ export function Countdown({ endsAt }) {
   return (
     <div className="countdown" role="timer">
       {parts.map(([label, n]) => (
-        <span key={label}><strong>{String(n).padStart(2, "0")}</strong><small>{t(label)}</small></span>
+        <span key={label} className={`cd-${label.toLowerCase()}`}><strong aria-label={String(n)}>{String(n).padStart(2, "0").split("").map((d, i) => <i key={`${i}-${d}`} aria-hidden="true">{d}</i>)}</strong><small>{t(label)}</small></span>
       ))}
     </div>
   );

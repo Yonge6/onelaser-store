@@ -651,7 +651,7 @@ function QuoteReel() {
   );
 }
 
-/* Why OneLaser cards animate once they scroll into view: the big figures count up, the bars grow from zero. */
+/* Why OneLaser cards animate when they scroll into view (and again on each later visit): figures count up, bars grow. */
 const SeenCtx = createContext(false);
 function ProofGrid({ children }) {
   const ref = useRef(null);
@@ -659,7 +659,8 @@ function ProofGrid({ children }) {
   useEffect(() => {
     const el = ref.current;
     if (!el || !("IntersectionObserver" in window) || window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) { setSeen(true); return undefined; }
-    const io = new IntersectionObserver(([e]) => { if (e.isIntersecting) { setSeen(true); io.disconnect(); } }, { threshold: 0.3 });
+    // play when a good part of the cards is on screen; reset once they have left the screen, so it plays again next time
+    const io = new IntersectionObserver(([e]) => { if (e.intersectionRatio >= 0.35) setSeen(true); else if (!e.isIntersecting) setSeen(false); }, { threshold: [0, 0.35] });
     io.observe(el);
     return () => io.disconnect();
   }, []);
@@ -671,7 +672,7 @@ function CountUp({ text }) {
   const target = num ? Number(num.replace(/,/g, "")) : 0;
   const [v, setV] = useState(0);
   useEffect(() => {
-    if (!seen || !num) return undefined;
+    if (!seen || !num) { setV(0); return undefined; }
     const t0 = performance.now(); let raf;
     const tick = (now) => { const k = Math.min(1, (now - t0) / 1400); setV(Math.round(target * (1 - Math.pow(1 - k, 3)))); if (k < 1) raf = requestAnimationFrame(tick); };
     raf = requestAnimationFrame(tick);
