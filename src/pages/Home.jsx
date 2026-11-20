@@ -143,8 +143,8 @@ const FINANCE_MONTHS = 24;
 function HomeCard({ p }) {
   return (
     <article className="ih-card">
+      {newHandles.includes(p.handle) && <span className="ih-new">{t("NEW")}</span>}
       <div className="ih-card-info">
-        {newHandles.includes(p.handle) && <span className="ih-new">{t("NEW")}</span>}
         <h3><Link to={`/products/${p.handle}`}>{p.name}</Link></h3>
         <p>{t(shortSlogans[p.handle] || p.tagline)}</p>
       </div>
