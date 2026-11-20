@@ -4112,3 +4112,22 @@ body:has(.ip-bar) .ai-nudge { bottom: 168px; }
   .iowners-dots { left: 18px; right: auto; bottom: 16px; }
 }
 @media (prefers-reduced-motion: reduce) { .iowners-q { animation: none; } .iowners-dots button.on i { animation: none; width: 100%; } }
+
+/* Why OneLaser cards with a side-by-side: figure + multiple, OneLaser vs a typical glass-tube laser as two bars, then what it means for you. */
+.ip2-grid article { display: flex; flex-direction: column; }
+.ip2-top { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; }
+.ip2-grid .ip2-top b { font-size: 34px; line-height: 42px; white-space: nowrap; }
+.ip2-top em { flex: none; font-style: normal; padding: 4px 10px; border-radius: 999px; background: var(--brand); color: #fff; font-size: 14px; line-height: 20px; font-weight: 700; white-space: nowrap; }
+.ip2-vs { margin: 16px 0 0; display: grid; gap: 10px; }
+.ip2-vs > div { display: grid; gap: 4px; }
+.ip2-vs dt { font-size: 13px; line-height: 18px; font-weight: 700; color: #6e6e73; }
+.ip2-vs .me dt { color: var(--accent-ink); }
+.ip2-vs dd { margin: 0; display: grid; gap: 4px; }
+.ip2-vs dd i { display: block; height: 8px; border-radius: 8px; background: #d4d6dc; }
+.ip2-vs .me dd i { background: linear-gradient(90deg, var(--accent), var(--accent-ink)); }
+.ip2-vs dd span { font-size: 14px; line-height: 20px; color: #515157; }
+.ip2-vs .me dd span { color: var(--title); font-weight: 600; }
+.ip2-grid article p { margin-top: auto; padding-top: 16px; font-size: 15px; line-height: 23px; color: #515157; }
+.ip2-grid article p strong { color: var(--title); }
+.ip2-note { margin-top: 14px; font-size: 13px; line-height: 19px; color: #6e6e73; }
+@media (max-width: 767px) { .ip2-grid .ip2-top b { font-size: 28px; line-height: 36px; } }

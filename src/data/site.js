@@ -260,11 +260,14 @@ export const homeVideos = [
 // Home machine proof points (after the Build quality block on thunderlaserusa.com). Machine performance only:
 // warranty, training and support are covered by the "OneLaser Standard" block with the headquarters photo.
 // Every figure is taken from the official product pages on 1laser.com (see src/data/stories.json). [figure, title, text]
+/* Why OneLaser cards: each figure next to the same spec on a typical 55W glass-tube desktop CO2 laser, taken from OneLaser's
+   published side-by-side (XRF vs a typical 55W glass-tube desktop laser: 6,000–8,000 h water-cooled tube, 600 mm/s,
+   12-month main parts / 6-month tube warranty). "Up to 4x detail" is OneLaser's own product-page claim. Years at 8 h a day. */
 export const homeProof = [
-  ["30,000 h", "RF tube life, air-cooled", "XRF and Hydra Gen2 run sealed RF metal tubes rated for up to 30,000 hours. No water chiller for the RF source."],
-  ["2,000 mm/s", "Production speed", "Hydra Gen2 engraves at up to 2,000 mm/s with 4G acceleration, so a full bed finishes sooner."],
-  ["0.07 mm", "Laser dot for fine detail", "Up to 2,000 DPI with ≤ 0.01 mm repeat positioning for small text, photos and logos."],
-  ["12 MP", "Camera and autofocus", "A top-cover camera and XFocus™ autofocus show where the job will land before you press start."],
+  { figure: "30,000 h", title: "Laser tube life", times: "About 4x", us: 100, them: 27, usLabel: "30,000 h · air-cooled", themLabel: "6,000–8,000 h · water-cooled", meaning: "At 8 hours a day that is about 10 years of work. A typical glass tube needs replacing every 2–3 years." },
+  { figure: "2,000 mm/s", title: "Engraving speed", times: "Over 3x", us: 100, them: 30, usLabel: "2,000 mm/s · Hydra Gen2", themLabel: "600 mm/s", meaning: "Big batches finish sooner, so you can take larger orders and still ship on time." },
+  { figure: "2,000 DPI", title: "Engraving detail", times: "Up to 4x", us: 100, them: 25, usLabel: "0.07 mm RF laser dot", themLabel: "Glass-tube beam", meaning: "Small text, photos and logos come out crisp, so fewer pieces end up remade." },
+  { figure: "3 years", title: "Warranty on mechanical parts", times: "3x", us: 100, them: 33, usLabel: "3-2-1 warranty · XRF and Hydra", themLabel: "12 months main parts · 6 months tube", meaning: "Longer cover means fewer surprise repair bills over the years you own it." },
 ];
 
 // Home buying FAQ (after "Questions? Answers." on thunderlaserusa.com). Answers restate the policies and pages on 1laser.com.

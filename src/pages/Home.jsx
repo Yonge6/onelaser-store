@@ -713,10 +713,19 @@ export default function Home() {
             <p>{t("What decides whether a laser keeps running job after job, year after year.")}</p>
           </div>
           <div className="ip2-grid">
-            {homeProof.map(([figure, title, text]) => (
-              <article key={figure}><b>{figure}</b><h3>{t(title)}</h3><p>{t(text)}</p></article>
+            {homeProof.map((x) => (
+              <article key={x.figure}>
+                <div className="ip2-top"><em>{t(x.times)}</em><b>{x.figure}</b></div>
+                <h3>{t(x.title)}</h3>
+                <dl className="ip2-vs">
+                  <div className="me"><dt>OneLaser</dt><dd><i style={{ width: `${x.us}%` }} /><span>{t(x.usLabel)}</span></dd></div>
+                  <div><dt>{t("Typical glass-tube laser")}</dt><dd><i style={{ width: `${x.them}%` }} /><span>{t(x.themLabel)}</span></dd></div>
+                </dl>
+                <p><strong>{t("For you:")}</strong> {t(x.meaning)}</p>
+              </article>
             ))}
           </div>
+          <p className="ip2-note">{t("Compared with the published specs of a typical 55W glass-tube desktop CO2 laser. Years estimated at 8 hours a day. Bars are for illustration.")}</p>
           <div className="icmp">
             <h3>{t("OneLaser or a typical desktop diode laser?")}</h3>
             <div className="icmp-scroll">
@@ -734,7 +743,7 @@ export default function Home() {
       <section className="ih-block iprom">
         <div className="ih-wrap">
           <p className="ist-kicker">{t("After you buy")}</p>
-          <h2 className="ih-h2 narrow">{t("Something goes wrong? You call us: U.S. engineers, not a ticket queue overseas.")}</h2>
+          <h2 className="ih-h2 narrow">{t("If something goes wrong, our U.S. engineers have you covered.")}</h2>
           <ul>
             {PROMISES.map(([icon, worry, promise, label, kind]) => (
               <li key={worry}><button type="button" onClick={() => setDlg(kind)} aria-haspopup="dialog"><span className="iprom-ico"><Icon name={icon} size={24} /></span><b>{t(worry)}</b><p>{t(promise)}</p><em>{t(label)} ›</em></button></li>
