@@ -260,10 +260,9 @@ function TrustDialog({ kind, onClose, onTrustpilot }) {
   }, [onClose]);
   const More = ({ href, to, ghost, children }) => (href ? <Link href={href} className={`tdlg-more${ghost ? " ghost" : ""}`}>{children} <Icon name="arrow" size={16} /></Link> : <Link to={to} className={`tdlg-more${ghost ? " ghost" : ""}`}>{children} <Icon name="arrow" size={16} /></Link>);
   const Head = ({ title, sub }) => {
-    const [icon, kicker] = DLG_HEAD[kind];
+    const [, kicker] = DLG_HEAD[kind];
     return (
       <header className="tdlg-head">
-        <span className="tdlg-head-ico plate-mini"><SpecIcon name={icon} /></span>
         <p className="tdlg-kicker">{t(kicker)}</p>
         <h3>{title}</h3>
         {sub && <p className="tdlg-sub">{sub}</p>}
