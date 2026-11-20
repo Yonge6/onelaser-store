@@ -621,6 +621,9 @@ const PROMISES = [ // [icon, worry, promise, link label, dialog]
 ];
 
 
+/* Featured owner quote: a real, verified XRF review (James Kirk, Judge.me), the opening of his text word for word. */
+const FEATURED = homeReviews.items.find((r) => r.name === "James Kirk");
+
 export default function Home() {
   const [reviewsOpen, setReviewsOpen] = useState(false);
   const [dlg, setDlg] = useState(null); // promise / next-step dialogs, so the visitor stays on the home page
@@ -650,8 +653,8 @@ export default function Home() {
             </button>
           </div>
           <blockquote className="iowners-quote">
-            <p>“{t("A tumbler that took 2 hours to engrave with the Xtool only took 43 minutes with the XRF.")}”</p>
-            <footer><b>{homeReviews.items[4].name}</b> · {t("Tumbler engraving business")} · {homeReviews.items[4].product}</footer>
+            <p>“{t("I started out with a Full Spectrum K40 style, upgraded to a GlowForge, dabbled with some blue diode lasers, but the XRF is amazing.")}”</p>
+            <footer><b>{FEATURED.name}</b> · {t("Verified buyer")} · {FEATURED.product}</footer>
           </blockquote>
           <div className="ih-arrows irv-arrows">
             <button type="button" aria-label={t("Previous")} onClick={() => rvSlide(-1)}><Icon name="chevron" size={16} /></button>
@@ -679,8 +682,8 @@ export default function Home() {
         <div className="ih-wrap">
           <p className="ist-kicker">{t("Why OneLaser")}</p>
           <div className="ip2-head">
-            <h2 className="ih-h2">{t("Your work deserves a faster machine.")}</h2>
-            <p>{t("The numbers that decide how long a laser earns its keep.")}</p>
+            <h2 className="ih-h2">{t("Faster, steadier, and dependable day after day.")}</h2>
+            <p>{t("What decides whether a laser keeps running job after job, year after year.")}</p>
           </div>
           <div className="ip2-grid">
             {homeProof.map(([figure, title, text]) => (

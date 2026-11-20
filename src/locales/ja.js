@@ -885,4 +885,7 @@ export default {
   "Pick a machine and a term to see a rough monthly payment right away.": "機種と回数を選ぶと、月々の目安がすぐにわかります。",
   "Real owner reviews": "オーナーの本音",
   "Don't take our word for it. Hear it from owners.": "私たちの言葉より、使っている人の声を。",
+  "I started out with a Full Spectrum K40 style, upgraded to a GlowForge, dabbled with some blue diode lasers, but the XRF is amazing.": "最初は Full Spectrum の K40 タイプから始め、GlowForge にアップグレードし、青色ダイオードレーザーもいくつか試しましたが、XRF は本当に素晴らしい。",
+  "Faster, steadier, and dependable day after day.": "より速く、より安定して、毎日頼れる。",
+  "What decides whether a laser keeps running job after job, year after year.": "レーザーが仕事を重ね、年を重ねても安定して動き続けるかを決める数字。",
 };

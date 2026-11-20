@@ -885,4 +885,7 @@ export default {
   "Pick a machine and a term to see a rough monthly payment right away.": "Wähle Maschine und Laufzeit und sieh sofort eine ungefähre Monatsrate.",
   "Real owner reviews": "Echte Kundenstimmen",
   "Don't take our word for it. Hear it from owners.": "Glaub nicht nur uns. Hör, was Besitzer sagen.",
+  "I started out with a Full Spectrum K40 style, upgraded to a GlowForge, dabbled with some blue diode lasers, but the XRF is amazing.": "Ich habe mit einem Full Spectrum im K40-Stil angefangen, bin auf einen GlowForge umgestiegen und habe ein paar blaue Diodenlaser ausprobiert, aber der XRF ist großartig.",
+  "Faster, steadier, and dependable day after day.": "Schneller, stabiler und zuverlässig, Tag für Tag.",
+  "What decides whether a laser keeps running job after job, year after year.": "Was entscheidet, ob ein Laser Auftrag für Auftrag, Jahr für Jahr zuverlässig läuft.",
 };

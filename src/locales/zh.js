@@ -1039,4 +1039,7 @@ export default {
   "Pick a machine and a term to see a rough monthly payment right away.": "选机器、选期数，当场看到每月大概要付多少。",
   "Real owner reviews": "真实买家评价",
   "Don't take our word for it. Hear it from owners.": "别光听我们说，听听买家怎么说。",
+  "I started out with a Full Spectrum K40 style, upgraded to a GlowForge, dabbled with some blue diode lasers, but the XRF is amazing.": "我从 Full Spectrum 的 K40 起步，后来升级到 GlowForge，也玩过几台蓝光二极管激光机，但 XRF 真的太棒了。",
+  "Faster, steadier, and dependable day after day.": "更快、更稳，天天开机都靠得住。",
+  "What decides whether a laser keeps running job after job, year after year.": "决定一台激光机能不能一单接一单、一年接一年稳定运行的关键数据。",
 };
