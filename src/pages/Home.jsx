@@ -643,10 +643,6 @@ const PROMISES = [ // [icon, worry, promise, link label, dialog]
   ["card", "Budget tight?", "$0-down business financing and installments at checkout.", "See financing", "financing"],
 ];
 
-const QUICK = [
-  ["All machines", "/collections/machines"], ["Accessories", "/collections/accessories"], ["Materials", "/collections/materials"],
-  ["Compare models", "/compare"], ["Financing", "/pages/financing"], ["Support", "https://zohodesk.1laser.com/portal/en/newticket"], ["Blog", "https://www.1laser.com/blogs/topic"],
-];
 
 export default function Home() {
   const [reviewsOpen, setReviewsOpen] = useState(false);
@@ -776,10 +772,6 @@ export default function Home() {
             ))}
           </ul>
           {dlg && <TrustDialog kind={dlg} onClose={() => setDlg(null)} onTrustpilot={() => { setDlg(null); setReviewsOpen(true); }} />}
-          <nav className="iquick" aria-label={t("Explore the store")}>
-            <p>{t("Explore the store")}</p>
-            <ul>{QUICK.map(([l, u]) => <li key={l}>{/^https?:/.test(u) ? <Link href={u}>{t(l)}<Icon name="arrow" size={16} /></Link> : <Link to={u}>{t(l)}<Icon name="arrow" size={16} /></Link>}</li>)}</ul>
-          </nav>
         </div>
       </section>
     </div>
