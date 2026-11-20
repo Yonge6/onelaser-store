@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { t } from "../i18n.js";
-import { asset, byHandle, frontImg, img, lockScroll, money } from "../lib.js";
+import { asset, byHandle, frontImg, img, lockScroll, money, products } from "../lib.js";
 import { AddButton, Icon, Link } from "./ui.jsx";
 import { contact } from "../data/site.js";
 import { M, STEPS, rank as rankAll, roundFocus, hasRound, ready } from "./finderRules.js";
@@ -78,7 +78,18 @@ const CONFETTI = Array.from({ length: 64 }, (_, i) => {
   };
 });
 
+/* Warm the browser cache with every machine's front picture (preview and result sizes) once the finder is on the page,
+   so the "best match" picture swaps instantly while the visitor answers instead of popping in late. */
+let warmed = false;
+const warmFronts = () => {
+  if (warmed || typeof Image === "undefined") return;
+  warmed = true;
+  const go = () => products.filter((p) => p.kind === "machine").forEach((p) => [600, 900].forEach((w) => { const i = new Image(); i.decoding = "async"; i.src = img(frontImg(p), w); }));
+  (window.requestIdleCallback || ((f) => setTimeout(f, 300)))(go);
+};
+
 export default function FinderCard({ modal = false }) {
+  useEffect(warmFronts, []);
   const scope = modal ? ".tdlg .fx" : ".ih-products .fx";
   const [answers, setAnswersRaw] = useState(memo.answers);
   const [step, setStepRaw] = useState(memo.step);

@@ -4606,3 +4606,6 @@ body:has(.ip-bar) .ai-pill, .pdp ~ .ai-pill { bottom: 104px; }
 .tdlg-train-pic { background: #050505; align-items: center; }
 .tdlg-train-pic img { height: auto; min-height: 0; aspect-ratio: 1; object-fit: contain; object-position: center; }
 @media (max-width: 767px) { .tdlg-train-pic { height: auto; } .tdlg-train-pic img { width: 100%; max-height: 300px; } }
+
+/* best-match picture: no fade-in on every answer (the card re-keys per machine); the picture is already cached */
+.fx-peek-card { animation-duration: .2s; }
