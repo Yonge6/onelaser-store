@@ -4402,3 +4402,11 @@ body:has(.ip-bar) .ai-pill, .pdp ~ .ai-pill { bottom: 104px; }
 /* Product cards: the "Save $x" tag always sits on its own line under the price, so every card's price block lines up. */
 .ih-card-break { flex-basis: 100%; height: 0; }
 .ih-card-price em { margin-top: 2px; }
+
+/* Back-to-top matches the assistant pill: same height (56 desktop / 50 phone), same bottom line, 12px apart. */
+.to-top { width: 56px; height: 56px; bottom: 28px; }
+.ai-pill { right: 92px; }
+@media (max-width: 767px) {
+  .to-top { width: 50px; height: 50px; right: 14px; bottom: calc(14px + env(safe-area-inset-bottom)); }
+  .ai-pill { right: 74px; }
+}
