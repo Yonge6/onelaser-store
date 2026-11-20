@@ -334,7 +334,7 @@ function Videos() {
 /* "Built for every ambition" (official heading and segment copy) with a pill switch for Makers / Business / Education.
    Each segment is one full-bleed row: an intro card with the official photo and copy, then that segment's videos, which open
    in a dialog on this page. */
-function Makers() {
+function Makers({ sub = false }) {
   const [seg, setSeg] = useState(0);
   const [open, setOpen] = useState(null);
   const row = useDragScroll();
@@ -351,13 +351,19 @@ function Makers() {
   const A = homeAmbition;
   const cur = A.segments[seg];
   return (
-    <section className="ih-block iu">
+    <section className={sub ? "iu iu-sub" : "ih-block iu"}>
       <div className="ih-wrap">
-        <p className="ist-kicker">{t(A.kicker)}</p>
-        <div className="ip2-head">
-          <h2 className="ih-h2">{t(A.title)}</h2>
-          <p>{t(A.text)}</p>
-        </div>
+        {sub ? (
+          <h3 className="iu-subhead">{t("What they make with it")}</h3>
+        ) : (
+          <>
+            <p className="ist-kicker">{t(A.kicker)}</p>
+            <div className="ip2-head">
+              <h2 className="ih-h2">{t(A.title)}</h2>
+              <p>{t(A.text)}</p>
+            </div>
+          </>
+        )}
         <div className="iu-bar">
           <div className="iu-seg" role="tablist">
             {A.segments.map((g, n) => <button key={g.label} type="button" role="tab" aria-selected={n === seg} className={n === seg ? "on" : ""} onClick={() => setSeg(n)}>{t(g.label)}</button>)}
@@ -440,10 +446,41 @@ function ReviewsDialog({ onClose }) {
   );
 }
 
+/* Why OneLaser, against the category most first-time buyers compare with. Category traits only (no brand named);
+   diode light passes through clear acrylic, so diode lasers cannot cut it. OneLaser figures are from the catalog. */
+const COMPARE = [
+  ["Laser source", "CO₂ glass tube or RF metal tube", "Semiconductor diode"],
+  ["Laser power", "38W to 150W", "Usually under 40W"],
+  ["Cuts clear acrylic", true, false],
+  ["Engraves glass, stone and coated metal", true, "Limited"],
+  ["Engraving speed", "Up to 2,000 mm/s (Hydra Gen2)", "Usually much slower"],
+  ["RF tube life", "Up to 30,000 h, air-cooled (XRF, Hydra)", "—"],
+  ["Support and warranty", "U.S. engineers · 3-2-1 warranty (XRF, Hydra)", "Varies by brand"],
+];
+const tick = (v) => (v === true ? <span className="icmp-yes"><Icon name="check" size={18} />{t("Yes")}</span> : v === false ? <span className="icmp-no">✕ {t("No")}</span> : t(v));
+
+/* Ownership promises, each one a door to the policy or service behind it. Copy speaks to the buyer's worry first. */
+const PROMISES = [
+  ["refresh", "Worried about choosing wrong?", "30-day returns. Use it on real jobs first.", "Refund policy", "https://www.1laser.com/pages/refund-policy"],
+  ["shield", "Something breaks?", "3-2-1 warranty on XRF and Hydra: 3 years mechanical, 2 electrical, 1 optics.", "Warranty policy", "https://www.1laser.com/pages/warranty-policy"],
+  ["headset", "Stuck on a job?", "Call U.S. engineers who build, tune and repair these machines.", "Contact support", "https://zohodesk.1laser.com/portal/en/newticket"],
+  ["user", "First laser?", "One-on-one training, so you are not figuring it out alone.", "1-on-1 training", "/products/engineer-1-on-1-training-support"],
+  ["card", "Budget tight?", "$0-down business financing and installments at checkout.", "See financing", "/pages/financing"],
+];
+
+const QUICK = [
+  ["All machines", "/collections/machines"], ["Accessories", "/collections/accessories"], ["Materials", "/collections/materials"],
+  ["Compare models", "/compare"], ["Financing", "/pages/financing"], ["Support", "https://zohodesk.1laser.com/portal/en/newticket"], ["Blog", "https://www.1laser.com/blogs/topic"],
+];
+
 export default function Home() {
   const [reviewsOpen, setReviewsOpen] = useState(false);
   const rv = useDragScroll();
   const rvSlide = (dir) => rv.current?.scrollBy({ left: dir * rv.current.clientWidth * 0.8, behavior: "smooth" });
+  const toFinder = () => {
+    window.dispatchEvent(new Event("onelaser:finder")); // switches the product tabs back to a machine tab
+    setTimeout(() => document.querySelector(".fx")?.scrollIntoView({ behavior: "smooth", block: "center" }), 60);
+  };
   return (
     <div className="ih">
       <Hero />
@@ -453,35 +490,25 @@ export default function Home() {
       <Credibility />
       <Videos />
 
-      <section className="ih-block ip2">
+      {/* Owners: real words on top, what they make below */}
+      <section className="ih-block irv iowners">
         <div className="ih-wrap">
-          <div className="ip2-head">
-            <h2 className="ih-h2">{t("Built for the thousandth job, not just the first.")}</h2>
-            <p>{t("The numbers that decide how long a laser earns its keep.")}</p>
-          </div>
-          <div className="ip2-grid">
-            {homeProof.map(([figure, title, text]) => (
-              <article key={figure}><b>{figure}</b><h3>{t(title)}</h3><p>{t(text)}</p></article>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <Makers />
-
-      <section className="ih-block irv">
-        <div className="ih-wrap">
+          <p className="ist-kicker">{t("Makers like you")}</p>
           <div className="irv-head">
-            <h2 className="ih-h2">{t("Owners say it better.")}</h2>
-            <Link href={homeReviews.url} className="irv-score">
+            <h2 className="ih-h2">{t("Is it right for someone like me? Ask the people who bought one.")}</h2>
+            <button type="button" className="irv-score" onClick={() => setReviewsOpen(true)}>
               <span className="irv-stars" aria-hidden="true">★★★★★</span>
               <b>{homeReviews.average}</b>
               <em>{t("out of 5")} · {homeReviews.count} {t("machine reviews")}</em>
-            </Link>
-            <div className="ih-arrows">
-              <button type="button" aria-label={t("Previous")} onClick={() => rvSlide(-1)}><Icon name="chevron" size={16} /></button>
-              <button type="button" aria-label={t("Next")} onClick={() => rvSlide(1)}><Icon name="chevron" size={16} /></button>
-            </div>
+            </button>
+          </div>
+          <blockquote className="iowners-quote">
+            <p>“{t("A tumbler that took 2 hours to engrave with the Xtool only took 43 minutes with the XRF.")}”</p>
+            <footer><b>{homeReviews.items[4].name}</b> · {t("Tumbler engraving business")} · {homeReviews.items[4].product}</footer>
+          </blockquote>
+          <div className="ih-arrows irv-arrows">
+            <button type="button" aria-label={t("Previous")} onClick={() => rvSlide(-1)}><Icon name="chevron" size={16} /></button>
+            <button type="button" aria-label={t("Next")} onClick={() => rvSlide(1)}><Icon name="chevron" size={16} /></button>
           </div>
         </div>
         <div className="ih-scroller irv-row" ref={rv}>
@@ -494,21 +521,49 @@ export default function Home() {
             ))}
         </div>
         <div className="ih-wrap">
-          <p className="fd-links"><button type="button" onClick={() => setReviewsOpen(true)}>{t("Read all reviews")} ›</button></p>
+          <p className="fd-links"><button type="button" onClick={() => setReviewsOpen(true)}>{t("Read all reviews")} ›</button><Link href={trustpilot.url}>{t("See us on Trustpilot")} ›</Link></p>
           {reviewsOpen && <ReviewsDialog onClose={() => setReviewsOpen(false)} />}
+        </div>
+        <Makers sub />
+      </section>
+
+      {/* Why OneLaser: the numbers, then an honest comparison with the category most buyers weigh us against */}
+      <section className="ih-block ip2 iwhy">
+        <div className="ih-wrap">
+          <p className="ist-kicker">{t("Why OneLaser")}</p>
+          <div className="ip2-head">
+            <h2 className="ih-h2">{t("Your work deserves a faster machine.")}</h2>
+            <p>{t("The numbers that decide how long a laser earns its keep.")}</p>
+          </div>
+          <div className="ip2-grid">
+            {homeProof.map(([figure, title, text]) => (
+              <article key={figure}><b>{figure}</b><h3>{t(title)}</h3><p>{t(text)}</p></article>
+            ))}
+          </div>
+          <div className="icmp">
+            <h3>{t("OneLaser or a typical desktop diode laser?")}</h3>
+            <div className="icmp-scroll">
+              <table>
+                <thead><tr><th /><th className="me">OneLaser</th><th>{t("Typical diode laser")}</th></tr></thead>
+                <tbody>{COMPARE.map(([k, ours, theirs]) => <tr key={k}><th>{t(k)}</th><td className="me">{tick(ours)}</td><td>{tick(theirs)}</td></tr>)}</tbody>
+              </table>
+            </div>
+            <p className="icmp-note">{t("Category traits in general; individual models vary. OneLaser figures are from our product specs.")} <Link to="/compare">{t("Compare every OneLaser spec")} ›</Link></p>
+          </div>
         </div>
       </section>
 
-      <section className="ih-block ist">
+      {/* Ownership: five promises, each one opens the policy or service behind it */}
+      <section className="ih-block iprom">
         <div className="ih-wrap">
-          <div className="ist-photo"><img src={img(homeStandard.image, 2400)} alt="OneLaser U.S. headquarters, Lake Forest, California" loading="lazy" /></div>
-          <p className="ist-kicker">{t(homeStandard.kicker)}</p>
-          <h2 className="ih-h2">{t(homeStandard.title)}</h2>
-          <p className="ist-text">{t(homeStandard.text)}</p>
-          <ol className="ist-points">
-            {homeStandard.points.map(([title, text], n) => <li key={title}><i>{String(n + 1).padStart(2, "0")}</i><h3>{t(title)}</h3><p>{t(text)}</p></li>)}
-          </ol>
-          <p className="fd-links"><Link href={homeStandard.cta[1]}>{t(homeStandard.cta[0])} ›</Link></p>
+          <p className="ist-kicker">{t("After you buy")}</p>
+          <h2 className="ih-h2 narrow">{t("Something goes wrong? You call us: U.S. engineers, not a ticket queue overseas.")}</h2>
+          <ul>
+            {PROMISES.map(([icon, worry, promise, label, url]) => {
+              const body = (<><span className="iprom-ico"><Icon name={icon} size={24} /></span><b>{t(worry)}</b><p>{t(promise)}</p><em>{t(label)} ›</em></>);
+              return <li key={worry}>{/^https?:/.test(url) ? <Link href={url}>{body}</Link> : <Link to={url}>{body}</Link>}</li>;
+            })}
+          </ul>
         </div>
       </section>
 
@@ -526,6 +581,18 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Next step: three ways forward, side by side */}
+      <section className="ih-block inext">
+        <div className="ih-wrap">
+          <h2 className="ih-h2">{t("Ready when you are. Pick your next step.")}</h2>
+          <ul>
+            <li><button type="button" onClick={toFinder}><span className="inext-ico"><Icon name="search" size={26} /></span><small>{t("Choose it yourself")}</small><b>{t("Find your machine in 30 seconds")}</b><em>{t("Start the finder")} →</em></button></li>
+            <li className="hot"><Link to="/pages/sales-consultation"><span className="inext-ico"><Icon name="calendar" size={26} /></span><small>{t("Talk it through")}</small><b>{t("Book a free 30-minute call with a laser expert")}</b><em>{t("Pick a time")} →</em></Link></li>
+            <li><Link to="/pages/financing"><span className="inext-ico"><Icon name="card" size={26} /></span><small>{t("Do the math")}</small><b>{t("See your monthly payment")}</b><em>{t("Open the estimator")} →</em></Link></li>
+          </ul>
+        </div>
+      </section>
+
       <section className="ih-block ifq">
         <div className="ih-wrap">
           <h2 className="ih-h2">{t("Questions? Answers.")}</h2>
@@ -534,6 +601,10 @@ export default function Home() {
               <li key={q}><details open={n === 0}><summary><span>{t(q)}</span><Icon name="chevron" size={16} /></summary><p>{t(ans)}</p></details></li>
             ))}
           </ul>
+          <nav className="iquick" aria-label={t("Explore the store")}>
+            <p>{t("Explore the store")}</p>
+            <ul>{QUICK.map(([l, u]) => <li key={l}>{/^https?:/.test(u) ? <Link href={u}>{t(l)}<Icon name="arrow" size={16} /></Link> : <Link to={u}>{t(l)}<Icon name="arrow" size={16} /></Link>}</li>)}</ul>
+          </nav>
         </div>
       </section>
     </div>

@@ -3727,3 +3727,84 @@ body:has(.ip-bar) .ai-nudge { bottom: 168px; }
   .icred-press button { border-radius: 14px; }
   .icred-text { padding: 10px 12px 12px; } .icred-text b { font-size: 14px; line-height: 19px; }
 }
+
+/* ===== Home, confidence sections (owners, why OneLaser, promises, next step, quick links) ===== */
+.iowners .irv-head { align-items: flex-end; }
+.iowners .irv-score { background: none; }
+.iowners-quote { margin: 28px 0 0; padding: 28px 32px; border-radius: 20px; background: linear-gradient(120deg, var(--brand-soft), #fff 70%); box-shadow: inset 4px 0 0 var(--brand); }
+.iowners-quote p { font-size: 28px; line-height: 38px; font-weight: 600; letter-spacing: -0.01em; color: var(--title); }
+.iowners-quote footer { margin-top: 12px; font-size: 16px; line-height: 22px; color: #6e6e73; }
+.iowners-quote footer b { color: var(--title); }
+.irv-arrows { margin-top: 24px; justify-content: flex-end; }
+.iowners .fd-links { display: flex; flex-wrap: wrap; gap: 8px 28px; }
+.iu-sub { margin-top: 48px; }
+.iu-subhead { font-size: 24px; line-height: 32px; font-weight: 700; color: var(--title); margin-bottom: 16px; }
+
+.iwhy .icmp { margin-top: 40px; padding: 28px 32px; border-radius: 20px; background: var(--page); }
+.icmp h3 { font-size: 22px; line-height: 30px; font-weight: 700; color: var(--title); }
+.icmp-scroll { margin-top: 16px; overflow-x: auto; }
+.icmp table { width: 100%; min-width: 560px; border-collapse: separate; border-spacing: 0; background: #fff; border-radius: 14px; overflow: hidden; box-shadow: 0 0 0 1px #e6e8ec; }
+.icmp th, .icmp td { padding: 14px 18px; text-align: left; font-size: 16px; line-height: 22px; border-bottom: 1px solid #eef0f3; }
+.icmp tr:last-child th, .icmp tr:last-child td { border-bottom: 0; }
+.icmp thead th { font-size: 15px; font-weight: 700; color: #6e6e73; background: #fafbfc; }
+.icmp thead th.me { color: var(--brand); }
+.icmp tbody th { width: 30%; font-weight: 500; color: #6e6e73; }
+.icmp td.me { background: var(--brand-soft); font-weight: 600; color: var(--title); }
+.icmp td:not(.me) { color: #4b4b52; }
+.icmp-yes { display: inline-flex; align-items: center; gap: 6px; color: var(--green); font-weight: 700; }
+.icmp-no { color: #6e6e73; }
+.icmp-note { margin-top: 12px; font-size: 14px; line-height: 20px; color: #6e6e73; }
+.icmp-note a { color: var(--accent-ink); font-weight: 600; }
+
+.iprom ul { list-style: none; margin: 32px 0 0; padding: 0; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 14px; }
+.iprom li a { height: 100%; display: flex; flex-direction: column; gap: 8px; padding: 24px 20px; border-radius: 18px; background: var(--page); color: var(--title); transition: transform .2s, box-shadow .2s, background .2s; }
+.iprom li a:hover { transform: translateY(-3px); background: #fff; box-shadow: 0 20px 40px -24px rgba(17, 24, 39, 0.35), 0 0 0 1px #e6e8ec; }
+.iprom-ico { width: 48px; height: 48px; display: grid; place-items: center; border-radius: 14px; background: #fff; color: var(--brand); box-shadow: 0 4px 12px -6px rgba(17, 24, 39, 0.2); margin-bottom: 6px; }
+.iprom b { font-size: 18px; line-height: 24px; font-weight: 700; }
+.iprom p { flex: 1; font-size: 15px; line-height: 22px; color: #4b4b52; }
+.iprom em { font-style: normal; font-size: 15px; font-weight: 600; color: var(--accent-ink); }
+
+.inext ul { list-style: none; margin: 28px 0 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.inext li > a, .inext li > button { width: 100%; height: 100%; display: flex; flex-direction: column; align-items: flex-start; gap: 6px; padding: 28px; border-radius: 20px; background: var(--page); text-align: left; color: var(--title); transition: transform .2s, box-shadow .2s; }
+.inext li > a:hover, .inext li > button:hover { transform: translateY(-3px); box-shadow: 0 20px 40px -24px rgba(17, 24, 39, 0.35); }
+.inext li.hot > a { background: #111113; color: #fff; }
+.inext-ico { width: 52px; height: 52px; display: grid; place-items: center; border-radius: 50%; background: #fff; color: var(--brand); margin-bottom: 10px; }
+.inext small { font-size: 14px; line-height: 20px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--brand); }
+.inext li.hot small { color: #ff8a6e; }
+.inext b { flex: 1; font-size: 22px; line-height: 30px; font-weight: 700; }
+.inext em { margin-top: 10px; font-style: normal; font-size: 16px; font-weight: 600; color: var(--accent-ink); }
+.inext li.hot em { color: #fff; }
+
+.iquick { margin-top: 48px; }
+.iquick p { font-size: 14px; line-height: 20px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: #6e6e73; }
+.iquick ul { list-style: none; margin: 14px 0 0; padding: 0; display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 10px; }
+.iquick a { height: 100%; display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 16px 18px; border-radius: 14px; background: var(--page); font-size: 16px; line-height: 22px; font-weight: 600; color: var(--title); transition: background .2s; }
+.iquick a:hover { background: #eceff3; }
+.iquick a svg { flex: none; color: var(--accent-ink); }
+
+@media (max-width: 1180px) {
+  .iprom ul { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .iquick ul { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .iowners-quote p { font-size: 24px; line-height: 32px; }
+}
+@media (max-width: 860px) {
+  .iowners-quote { padding: 20px 18px; border-radius: 16px; } .iowners-quote p { font-size: 19px; line-height: 27px; }
+  .iowners-quote footer { font-size: 14px; }
+  .iu-sub { margin-top: 32px; } .iu-subhead { font-size: 20px; line-height: 26px; }
+  .iwhy .icmp { margin-top: 28px; padding: 18px 14px; border-radius: 16px; margin-left: -4px; margin-right: -4px; }
+  .icmp h3 { font-size: 18px; line-height: 24px; }
+  .icmp table { min-width: 0; }
+  .icmp th, .icmp td { padding: 10px 10px; font-size: 14px; line-height: 19px; }
+  .icmp tbody th { width: 34%; }
+  .iprom ul { grid-template-columns: minmax(0, 1fr); gap: 10px; margin-top: 20px; }
+  .iprom li a { display: grid; grid-template-columns: 44px minmax(0, 1fr); column-gap: 14px; row-gap: 4px; padding: 16px; border-radius: 14px; }
+  .iprom-ico { grid-row: span 3; width: 44px; height: 44px; margin: 0; }
+  .iprom b { font-size: 17px; } .iprom p { font-size: 15px; }
+  .inext ul { grid-template-columns: minmax(0, 1fr); gap: 10px; margin-top: 20px; }
+  .inext li > a, .inext li > button { padding: 20px; border-radius: 16px; }
+  .inext b { font-size: 19px; line-height: 26px; }
+  .iquick { margin-top: 32px; }
+  .iquick ul { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+  .iquick a { padding: 14px; font-size: 15px; }
+}
+.iprom .ih-h2.narrow { max-width: 920px; }
