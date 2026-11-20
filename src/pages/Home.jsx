@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useRef, useState } from "react";
 import { t } from "../i18n.js";
 import { asset, byHandle, img, money, products, frontImg } from "../lib.js";
-import { contact, footer, heroSlides, homeAmbition, homeFaq, homeProof, homeReviews, homeStandard, homeTabs, trustpilot, newHandles, promo, shortSlogans } from "../data/site.js";
+import { contact, footer, heroSlides, homeFaq, homeProof, homeReviews, homeStandard, homeTabs, trustpilot, newHandles, promo, shortSlogans } from "../data/site.js";
 import { AddButton, Countdown, Icon, Link, useDragScroll } from "../components/ui.jsx";
 import FinderCard, { FinderHelp } from "../components/Finder.jsx";
 
@@ -153,7 +153,7 @@ function HomeCard({ p }) {
         {p.priceVaries && <span>{t("From")}</span>}
         <b>{money(p.price)}</b>
         {p.compareAt > p.price && <s>{money(p.compareAt)}</s>}
-        {p.compareAt > p.price && <em>{t("Save")} {money(p.compareAt - p.price)}</em>}
+        {p.compareAt > p.price && <><span className="ih-card-break" aria-hidden="true" /><em>{t("Save")} {money(p.compareAt - p.price)}</em></>}
       </p>
       {p.kind === "machine" && (
         <p className="ih-card-monthly">{t("or")} <b>${(p.price / FINANCE_MONTHS).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</b>{t("/mo for 24 months")}</p>
@@ -484,79 +484,6 @@ function Credibility() {
   );
 }
 
-/* "Built for every ambition" (official heading and segment copy) with a pill switch for Makers / Business / Education.
-   Each segment is one full-bleed row: an intro card with the official photo and copy, then that segment's videos, which open
-   in a dialog on this page. */
-function Makers({ sub = false }) {
-  const [seg, setSeg] = useState(0);
-  const [open, setOpen] = useState(null);
-  const row = useDragScroll();
-  const slide = (dir) => row.current?.scrollBy({ left: dir * row.current.clientWidth * 0.8, behavior: "smooth" });
-  useEffect(() => { row.current?.scrollTo({ left: 0 }); }, [seg]);
-  useEffect(() => {
-    if (!open) return undefined;
-    const onKey = (e) => e.key === "Escape" && setOpen(null);
-    window.addEventListener("keydown", onKey);
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    return () => { window.removeEventListener("keydown", onKey); document.body.style.overflow = prev; };
-  }, [open]);
-  const A = homeAmbition;
-  const cur = A.segments[seg];
-  return (
-    <section className={sub ? "iu iu-sub" : "ih-block iu"}>
-      <div className="ih-wrap">
-        {sub ? (
-          <h3 className="iu-subhead">{t("What they make with it")}</h3>
-        ) : (
-          <>
-            <p className="ist-kicker">{t(A.kicker)}</p>
-            <div className="ip2-head">
-              <h2 className="ih-h2">{t(A.title)}</h2>
-              <p>{t(A.text)}</p>
-            </div>
-          </>
-        )}
-        <div className="iu-bar">
-          <div className="iu-seg" role="tablist">
-            {A.segments.map((g, n) => <button key={g.label} type="button" role="tab" aria-selected={n === seg} className={n === seg ? "on" : ""} onClick={() => setSeg(n)}>{t(g.label)}</button>)}
-          </div>
-          <div className="ih-arrows">
-            <button type="button" aria-label={t("Previous")} onClick={() => slide(-1)}><Icon name="chevron" size={18} /></button>
-            <button type="button" aria-label={t("Next")} onClick={() => slide(1)}><Icon name="chevron" size={18} /></button>
-          </div>
-        </div>
-      </div>
-      <div className="ih-scroller iu-row" ref={row} key={seg}>
-        <Link to={A.cta[1]} className="iu-intro">
-          <img src={img(cur.image, 1000)} alt="" loading="lazy" />
-          <span><small>{t(cur.label)}</small><b>{t(cur.title)}</b><em>{t(cur.text)}</em><i>{t(A.cta[0])} ›</i></span>
-        </Link>
-        {cur.videos.map(([id, title, channel, what, machine]) => (
-          <button key={id} type="button" className="iu-card" onClick={() => setOpen([id, title])} aria-label={`${t("Play video")}: ${title}`}>
-            <span className="iu-thumb">
-              <img src={thumb(id)} onError={(e) => thumbFallback(e, id)} alt="" loading="lazy" />
-              <i aria-hidden="true" />
-              <em>{machine}</em>
-            </span>
-            <span className="iu-what">{t(what)}</span>
-            <b>{title}</b>
-            <small>{channel}</small>
-          </button>
-        ))}
-      </div>
-      {open && (
-        <div className="is-modal" role="dialog" aria-modal="true" aria-label={open[1]} onClick={() => setOpen(null)}>
-          <button type="button" aria-label={t("Close video")}>×</button>
-          <div onClick={(e) => e.stopPropagation()}>
-            <iframe src={`https://www.youtube-nocookie.com/embed/${open[0]}?autoplay=1&rel=0`} title={open[1]} allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowFullScreen />
-          </div>
-        </div>
-      )}
-    </section>
-  );
-}
-
 /** "Read all reviews": the Trustpilot profile figures and a selection of reviews in a dialog, so the visitor stays on the page. */
 function ReviewsDialog({ onClose }) {
   useEffect(() => {
@@ -727,7 +654,7 @@ export default function Home() {
           </div>
         </div>
         <div className="ih-scroller irv-row" ref={rv}>
-            {[...homeReviews.items, ...trustpilot.items.map((r) => ({ ...r, product: "Trustpilot" }))].map((r) => (
+            {[...homeReviews.items, ...trustpilot.items.map((r) => ({ ...r, product: "Trustpilot" }))].filter((r) => !QUOTES.some((x) => x.name === r.name)).map((r) => (
               <figure key={r.product + r.name}>
                 <span className="irv-stars" aria-label={`${r.rating || 5} / 5`}>{"★".repeat(r.rating || 5)}</span>
                 <blockquote>“{r.text}”</blockquote>
@@ -739,7 +666,6 @@ export default function Home() {
           <p className="fd-links"><button type="button" onClick={() => setReviewsOpen(true)}>{t("Read all reviews")} ›</button><Link href={trustpilot.url}>{t("See us on Trustpilot")} ›</Link></p>
           {reviewsOpen && <ReviewsDialog onClose={() => setReviewsOpen(false)} />}
         </div>
-        <Makers sub />
       </section>
 
       {/* Why OneLaser: the numbers, then an honest comparison with the category most buyers weigh us against */}
