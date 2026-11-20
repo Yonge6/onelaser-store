@@ -570,6 +570,7 @@ const QUOTES = [
 const words = (s) => (/\s/.test(s) ? s.split(/(?<=\s)/) : s.match(/.{1,2}/gu) || [s]);
 function QuoteReel() {
   const [i, setI] = useState(0);
+  const touch = useRef(null); // swipe left / right on phones
   const [hold, setHold] = useState(false);
   useEffect(() => {
     if (hold || window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) return undefined;
@@ -578,7 +579,7 @@ function QuoteReel() {
   }, [i, hold]);
   const r = QUOTES[i];
   return (
-    <blockquote className="iowners-quote" onMouseEnter={() => setHold(true)} onMouseLeave={() => setHold(false)} onFocus={() => setHold(true)} onBlur={() => setHold(false)} aria-live="polite">
+    <blockquote className="iowners-quote" onTouchStart={(e) => { touch.current = { x: e.touches[0].clientX, y: e.touches[0].clientY }; setHold(true); }} onTouchEnd={(e) => { const s = touch.current; touch.current = null; setHold(false); if (!s) return; const dx = e.changedTouches[0].clientX - s.x, dy = e.changedTouches[0].clientY - s.y; if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy) * 1.2) setI((n) => (n + (dx < 0 ? 1 : QUOTES.length - 1)) % QUOTES.length); }} onMouseEnter={() => setHold(true)} onMouseLeave={() => setHold(false)} onFocus={() => setHold(true)} onBlur={() => setHold(false)} aria-live="polite">
       <span className="iowners-mark" aria-hidden="true">“</span>
       <div className="iowners-q" key={i}>
         <span className="iowners-stars" aria-label={t("5 out of 5 stars")}>{[0, 1, 2, 3, 4].map((n) => <i key={n} style={{ "--s": n }} aria-hidden="true">★</i>)}</span>
@@ -681,7 +682,7 @@ export default function Home() {
             ))}
         </div>
         <div className="ih-wrap">
-          <p className="fd-links"><button type="button" onClick={() => setReviewsOpen(true)}>{t("Read all reviews")} ›</button><Link href={trustpilot.url}>{t("See us on Trustpilot")} ›</Link></p>
+          <p className="fd-links"><button type="button" onClick={() => setReviewsOpen(true)}>{t("Read all reviews")} ›</button></p>
           {reviewsOpen && <ReviewsDialog onClose={() => setReviewsOpen(false)} />}
         </div>
       </section>

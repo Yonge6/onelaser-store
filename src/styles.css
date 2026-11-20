@@ -4473,3 +4473,9 @@ body:has(.ip-bar) .ai-pill, .pdp ~ .ai-pill { bottom: 104px; }
   .ai-fine { border-top: 0; }
 }
 @media (prefers-reduced-motion: reduce) { .ai-input::after { animation: none; } }
+
+/* Quote reel: the line wraps inside the card (the word spans made it as wide as the whole sentence on phones);
+   horizontal swipes change the quote, vertical scrolling still scrolls the page. */
+.iowners-q { width: 100%; }
+.iowners-quote .iowners-q p { width: 100%; max-width: 100%; overflow-wrap: anywhere; }
+.iowners-quote { touch-action: pan-y; }
