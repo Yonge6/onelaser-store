@@ -1163,9 +1163,9 @@ ul { list-style: none; }
 
 .ih-products { margin-top: 64px; }
 .ih-sticky { position: sticky; top: 64px; z-index: 20; background: #fff; margin-top: 16px; }
-.ih-tabs { display: flex; gap: 16px; padding: 16px 0; overflow-x: auto; scrollbar-width: none; }
+.ih-tabs { display: flex; gap: 8px; padding: 16px 0; overflow-x: auto; scrollbar-width: none; }
 .ih-tabs::-webkit-scrollbar, .ih-scroller::-webkit-scrollbar { display: none; }
-.ih-tabs button { flex: none; height: 40px; padding: 0 24px; border-radius: 50px; background: #edeff2; color: #262629; font-size: 16px; line-height: 40px; white-space: nowrap; transition: background .2s, color .2s; }
+.ih-tabs button { flex: none; height: 40px; padding: 0 20px; border-radius: 50px; background: #edeff2; color: #262629; font-size: 16px; line-height: 40px; white-space: nowrap; transition: background .2s, color .2s; }
 .ih-tabs button:hover { background: #e2e5ea; }
 .ih-tabs button.on { background: #262629; color: #fff; }
 .ih-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 32px; padding-top: 16px; animation: panel-in .35s ease; }
@@ -1314,7 +1314,7 @@ ul { list-style: none; }
   .ih-btns .ih-btn.ghost { line-height: 34px; } .ih-btns .ih-btn svg { width: 15px; height: 15px; }
   .ih-pages { left: 18px; right: 18px; bottom: 16px; } .ih-pages button { flex: 1 1 0; padding: 0 3px; } .ih-pages em, .ih-hero-arrow { display: none; }
   .ih-sticky { top: 49px; margin-top: 16px; }
-  .ih-tabs { gap: 16px; padding: 8px 0; }
+  .ih-tabs { gap: 6px; padding: 8px 0; }
   .ih-tabs button { height: 36px; padding: 0 16px; font-size: 14px; line-height: 36px; }
   /* phones: product cards in one swipe row (next card peeks) instead of a 6-card stack */
   .ih-grid { display: flex; gap: 12px; padding: 24px 24px 4px; margin: 0 -24px; overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding-left: 24px; scrollbar-width: none; }
