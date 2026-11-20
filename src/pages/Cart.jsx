@@ -1,4 +1,5 @@
-import { byHandle, frontImg, img, money } from "../lib.js";
+import { useEffect, useState } from "react";
+import { byHandle, frontImg, img, lockScroll, money } from "../lib.js";
 import { t } from "../i18n.js";
 import { useCart } from "../cart.jsx";
 import { Icon, Link } from "../components/ui.jsx";
@@ -22,6 +23,53 @@ const addOnsFor = (p) => {
   if (GLASS.includes(p.series) && !/hydra-7/.test(p.handle)) list.unshift(CHILLER);
   return list.map((h) => byHandle[h]).filter(Boolean);
 };
+/* Arrival offer after Insta360's cart "Protect your device with FlexiCare" dialog: shown once per visit when a machine is in
+   the cart, listing real OneLaser services/parts with points taken from their own product descriptions. */
+const OFFER = {
+  "engineer-1-on-1-training-support": ["1 hour on live video with a OneLaser technician", "Machine assembly and software setup", "Troubleshooting, so you avoid costly mistakes"],
+  "lightburn-software-pro-license-key": ["The \u201ceverything\u201d license of LightBurn", "Works on Windows and macOS"],
+  [CHILLER]: ["1400W cooling capacity", "\u00b10.3\u00b0C temperature control", "Water-flow and temperature alarms"],
+};
+const OFFER_KEY = "onelaser-cart-offer-seen";
+
+function Offer({ list, onClose }) {
+  const { add } = useCart();
+  const [sel, setSel] = useState(() => new Set([list[0].handle]));
+  useEffect(() => {
+    const unlock = lockScroll();
+    const esc = (e) => e.key === "Escape" && onClose();
+    window.addEventListener("keydown", esc);
+    return () => { unlock(); window.removeEventListener("keydown", esc); };
+  }, []);
+  const flip = (h) => setSel((s) => { const n = new Set(s); n.has(h) ? n.delete(h) : n.add(h); return n; });
+  const confirm = () => { list.forEach((a) => sel.has(a.handle) && add(a.handle, a.variants[0].id, 1)); onClose(); };
+  return (
+    <div className="ic-offer-scrim" onClick={onClose}>
+      <div className="ic-offer" role="dialog" aria-modal="true" aria-labelledby="ic-offer-h" onClick={(e) => e.stopPropagation()}>
+        <h2 id="ic-offer-h">{t("Get your machine running right, the first time")}</h2>
+        <p className="ic-offer-sub">{t("Optional extras that fit this machine.")}</p>
+        <ul>
+          {list.map((a, n) => (
+            <li key={a.handle}>
+              <label className={sel.has(a.handle) ? "on" : ""}>
+                <input type="checkbox" checked={sel.has(a.handle)} onChange={() => flip(a.handle)} />
+                {n === 0 && <em className="ic-offer-rec">{t("Recommended")}</em>}
+                <img src={img(a.images[0], 120)} alt="" />
+                <span className="ic-offer-name"><b>{a.name}</b><span>{money(a.price)}{a.compareAt > a.price && <s>{money(a.compareAt)}</s>}</span></span>
+                <ul>{OFFER[a.handle].map((x) => <li key={x}><Icon name="check" size={14} />{t(x)}</li>)}</ul>
+              </label>
+            </li>
+          ))}
+        </ul>
+        <div className="ic-offer-btns">
+          <button type="button" className="ic-ghost" onClick={onClose}>{t("Not now")}</button>
+          <button type="button" className="ic-checkout" disabled={!sel.size} onClick={confirm}>{t("Add to cart")}{sel.size > 1 ? ` (${sel.size})` : ""}</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 const picture = (p, v) => (p.kind === "machine" ? frontImg(p) : v?.image || p.images[0]);
 
 function Suggestions({ exclude = [] }) {
@@ -47,6 +95,18 @@ function Suggestions({ exclude = [] }) {
 export default function Cart() {
   const { items, picked, setQty, add, subtotal, savings, toggle, toggleAll } = useCart();
   const inCart = items.map((i) => i.product.handle);
+  const hasMachine = items.find((i) => i.product.kind === "machine");
+  const offer = hasMachine ? Object.keys(OFFER).filter((h) => addOnsFor(hasMachine.product).some((a) => a.handle === h) && !inCart.includes(h)).map((h) => byHandle[h]) : [];
+  const [showOffer, setShowOffer] = useState(false);
+  useEffect(() => {
+    let seen = false;
+    try { seen = sessionStorage.getItem(OFFER_KEY) === "1"; } catch {}
+    if (offer.length && !seen) {
+      const id = setTimeout(() => setShowOffer(true), 600);
+      return () => clearTimeout(id);
+    }
+  }, []);
+  const closeOffer = () => { setShowOffer(false); try { sessionStorage.setItem(OFFER_KEY, "1"); } catch {} };
   if (!items.length)
     return (
       <section className="ic">
@@ -108,8 +168,9 @@ export default function Cart() {
                       <ul className="ic-addons" aria-label={t("Recommended with this machine")}>
                         {addOns.map((a) => (
                           <li key={a.handle}>
-                            <img src={img(a.images[0], 120)} alt="" />
-                            <span><b>{a.name}</b><Link to={`/products/${a.handle}`}>{t("Learn more")}</Link></span>
+                            <img src={img(a.images[0], 160)} alt="" />
+                            <span><b>{a.name}</b>{OFFER[a.handle] && <small>{t(OFFER[a.handle][0])}</small>}<Link to={`/products/${a.handle}`}>{t("Learn more")}</Link></span>
+                            <i className="ic-addons-x">× 1</i>
                             <em>{money(a.price)}{a.compareAt > a.price && <s>{money(a.compareAt)}</s>}</em>
                             <button type="button" onClick={() => add(a.handle, a.variants[0].id)}>{t("Add")}</button>
                           </li>
@@ -151,6 +212,7 @@ export default function Cart() {
         <p><small>{t("Estimated total")}</small><b>{money(subtotal)}</b></p>
         {picked.length ? <Link to="/checkout" className="ic-checkout">{t("Check out")} ({pickedQty})</Link> : <span className="ic-checkout off">{t("Check out")}</span>}
       </div>
+      {showOffer && offer.length > 0 && <Offer list={offer} onClose={closeOffer} />}
     </section>
   );
 }
