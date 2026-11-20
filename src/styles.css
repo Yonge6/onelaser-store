@@ -4044,3 +4044,8 @@ body:has(.ip-bar) .ai-nudge { bottom: 168px; }
   .inext li p { font-size: 15px; line-height: 22px; }
   .inext em { margin-top: 14px; }
 }
+
+/* Per-machine ratings as stars filled to the average (not bars sized by review count, which read as a worse score for fewer reviews). */
+.tdlg-bars i.tdlg-stars { position: relative; height: auto; width: max-content; border-radius: 0; background: none; overflow: visible; font-style: normal; font-size: 18px; line-height: 1; letter-spacing: 2px; }
+.tdlg-bars i.tdlg-stars > span { color: #e3e3e8; }
+.tdlg-bars i.tdlg-stars > em { position: absolute; inset: 0 auto 0 0; height: auto; border-radius: 0; background: none; overflow: hidden; white-space: nowrap; color: #f5a623; }

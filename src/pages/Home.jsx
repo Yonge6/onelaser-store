@@ -277,7 +277,7 @@ function TrustDialog({ kind, onClose, onTrustpilot }) {
       <>
         <Head title={<span className="tdlg-score"><b>{homeReviews.average}</b><span className="tdlg-stars" aria-hidden="true">★★★★★</span></span>} sub={`${t("Average of")} ${homeReviews.count} ${t("owner reviews on 1laser.com product pages (Judge.me).")}`} />
         <ul className="tdlg-bars">
-          {REVIEW_BREAKDOWN.map(([m, avg, n]) => <li key={m}><span>{m}</span><i><em style={{ width: `${(n / 49) * 100}%` }} /></i><b>{avg}</b><small>{n} {t("reviews")}</small></li>)}
+          {REVIEW_BREAKDOWN.map(([m, avg, n]) => <li key={m}><span>{m}</span><i className="tdlg-stars" aria-label={`${avg} / 5`}><span aria-hidden="true">★★★★★</span><em aria-hidden="true" style={{ width: `${(Number(avg) / 5) * 100}%` }}>★★★★★</em></i><b>{avg}</b><small>{n} {t("reviews")}</small></li>)}
         </ul>
         <div className="tdlg-qhead"><b>{t("In their words")}</b><span><button type="button" aria-label={t("Previous")} onClick={() => quotes.current?.scrollBy({ left: -300, behavior: "smooth" })}><Icon name="chevron" size={16} /></button><button type="button" aria-label={t("Next")} onClick={() => quotes.current?.scrollBy({ left: 300, behavior: "smooth" })}><Icon name="chevron" size={16} /></button></span></div>
         <ul className="tdlg-quotes row" ref={quotes}>
