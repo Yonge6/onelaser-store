@@ -1092,7 +1092,8 @@ ul { list-style: none; }
 .ih { background: #fff; color: #262629; padding-bottom: 96px; }
 .ih-wrap { padding: 0 64px; max-width: 1440px; margin: 0 auto; }
 .ih-h2 { font-size: 40px; line-height: 44px; font-weight: 600; color: #262629; }
-.ih-h2.narrow { max-width: 560px; }
+.ih-h2.narrow { max-width: 66.667%; }
+@media (max-width: 767px) { .ih-h2.narrow { max-width: none; } }
 .ih-block { margin-top: 64px; }
 .ih-btn { display: inline-flex; align-items: center; justify-content: center; height: 48px; padding: 0 24px; border-radius: 6px; font-size: 16px; line-height: 48px; font-weight: 500; letter-spacing: .5px; white-space: nowrap; transition: background .2s, color .2s, opacity .2s; }
 .ih-btn.light { background: #f5f5f7; color: #000; }
