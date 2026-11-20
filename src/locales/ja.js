@@ -922,4 +922,6 @@ export default {
   "Tech support is not only here in America but the team is dedicated and passionate and it shows!": "テクニカルサポートはアメリカ国内にあるだけでなく、チームが熱心で情熱的なのが伝わってくる！",
   "I like having the RF tube because I'm able to run the laser at higher power and not having any water cooling.": "RF 管が気に入っています。高出力で動かせて、水冷も要らないから。",
   "No doubt this have to be one of the best laser in the market for sure. I don't regret it one second.": "間違いなく市場で最高のレーザーのひとつ。一秒たりとも後悔していない。",
+  "OneLaser headquarters": "OneLaser 本社",
+  "On TV and at industry shows": "テレビと業界イベントで",
 };

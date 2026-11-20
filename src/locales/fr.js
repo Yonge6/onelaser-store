@@ -922,4 +922,6 @@ export default {
   "Tech support is not only here in America but the team is dedicated and passionate and it shows!": "Le support technique est non seulement ici en Amérique, mais l'équipe est dévouée et passionnée, et ça se voit !",
   "I like having the RF tube because I'm able to run the laser at higher power and not having any water cooling.": "J'aime avoir le tube RF : je peux faire tourner le laser à plus forte puissance, sans refroidissement à eau.",
   "No doubt this have to be one of the best laser in the market for sure. I don't regret it one second.": "Sans aucun doute l'un des meilleurs lasers du marché. Je ne le regrette pas une seconde.",
+  "OneLaser headquarters": "Siège de OneLaser",
+  "On TV and at industry shows": "À la télé et sur les salons",
 };

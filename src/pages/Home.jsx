@@ -447,37 +447,35 @@ function Credibility() {
       <div className="ih-wrap">
         <p className="icred-kicker">{t("Who stands behind your machine")}</p>
         <h2 className="ih-h2 narrow">{t("Headquartered in California, with a team you can actually reach.")}</h2>
-        <div className="icred-grid">
-          <figure className={`icred-hq${playing === BRAND_FILM[0] ? " playing" : ""}`}>
-            {playing === BRAND_FILM[0] ? embed(...BRAND_FILM) : (
-              <>
-                <img src={img(homeStandard.image, 1200)} alt={t("OneLaser headquarters in the United States")} loading="lazy" />
-                <button type="button" className="icred-film" onClick={() => setPlaying(BRAND_FILM[0])}>
-                  <i aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.5v13l11-6.5z" /></svg></i>
-                  <span><small>{t("Brand film")}</small><b>{t("What makes OneLaser different")}</b></span>
-                </button>
-              </>
-            )}
-            {playing !== BRAND_FILM[0] && <figcaption>
-              <b>{t("OneLaser headquarters, USA")}</b>
-              <ul>{homeStandard.points.filter((_, n) => n !== 2).map(([h]) => <li key={h}><Icon name="check" size={16} />{t(h)}</li>)}</ul>
-            </figcaption>}
-          </figure>
-          <ul className="icred-press">
-            {PRESS.map(([id, tag, title]) => (
-              <li key={id}>
-                <div className={`icred-tile${playing === id ? " playing" : ""}`}>
-                  {playing === id ? <span className="icred-thumb">{embed(id, title)}</span> : (
-                    <button type="button" className="icred-thumb" onClick={() => setPlaying(id)} aria-label={`${t("Play video")}: ${t(title)}`}>
-                      <img src={thumb(id)} onError={(e) => thumbFallback(e, id)} alt="" loading="lazy" /><i aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.5v13l11-6.5z" /></svg></i>
-                    </button>
-                  )}
-                  <span className="icred-text"><small>{t(tag)}</small><b>{t(title)}</b></span>
-                </div>
-              </li>
-            ))}
-          </ul>
-        </div>
+        <figure className={`icred-film-card${playing === BRAND_FILM[0] ? " playing" : ""}`}>
+          {playing === BRAND_FILM[0] ? embed(...BRAND_FILM) : (
+            <button type="button" className="icred-film-btn" onClick={() => setPlaying(BRAND_FILM[0])} aria-label={`${t("Play video")}: ${t("What makes OneLaser different")}`}>
+              <img src={img(homeStandard.image, 1600)} alt="" loading="lazy" />
+              <span className="icred-film-copy">
+                <small>{t("Brand film")}</small>
+                <b>{t("What makes OneLaser different")}</b>
+                <span className="icred-film-pts">{homeStandard.points.filter((_, n) => n !== 2).map(([x]) => <span key={x}><Icon name="check" size={16} />{t(x)}</span>)}</span>
+                <span className="icred-film-addr"><Icon name="pin" size={16} />{t("OneLaser headquarters")} · Lake Forest, California</span>
+              </span>
+              <span className="icred-film-play" aria-hidden="true"><svg width="30" height="30" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.5v13l11-6.5z" /></svg></span>
+            </button>
+          )}
+        </figure>
+        <p className="icred-press-label">{t("On TV and at industry shows")}</p>
+        <ul className="icred-press">
+          {PRESS.map(([id, tag, title]) => (
+            <li key={id}>
+              <div className={`icred-tile${playing === id ? " playing" : ""}`}>
+                {playing === id ? <span className="icred-thumb">{embed(id, title)}</span> : (
+                  <button type="button" className="icred-thumb" onClick={() => setPlaying(id)} aria-label={`${t("Play video")}: ${t(title)}`}>
+                    <img src={thumb(id)} onError={(e) => thumbFallback(e, id)} alt="" loading="lazy" /><i aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.5v13l11-6.5z" /></svg></i>
+                  </button>
+                )}
+                <span className="icred-text"><small>{t(tag)}</small><b>{t(title)}</b></span>
+              </div>
+            </li>
+          ))}
+        </ul>
       </div>
     </section>
   );
@@ -598,18 +596,6 @@ function ReviewsDialog({ onClose }) {
   );
 }
 
-/* Why OneLaser, against the category most first-time buyers compare with. Category traits only (no brand named);
-   diode light passes through clear acrylic, so diode lasers cannot cut it. OneLaser figures are from the catalog. */
-const COMPARE = [
-  ["Laser source", "CO₂ glass tube or RF metal tube", "Semiconductor diode"],
-  ["Laser power", "38W to 150W", "Usually under 40W"],
-  ["Cuts clear acrylic", true, false],
-  ["Engraves glass, stone and coated metal", true, "Limited"],
-  ["Engraving speed", "Up to 2,000 mm/s (Hydra Gen2)", "Usually much slower"],
-  ["RF tube life", "Up to 30,000 h, air-cooled (XRF, Hydra)", "—"],
-  ["Support and warranty", "U.S. engineers · 3-2-1 warranty (XRF, Hydra)", "Varies by brand"],
-];
-const tick = (v) => (v === true ? <span className="icmp-yes"><Icon name="check" size={18} />{t("Yes")}</span> : v === false ? <span className="icmp-no">✕ {t("No")}</span> : t(v));
 
 /* Ownership promises, each one a door to the policy or service behind it. Copy speaks to the buyer's worry first. */
 const PROMISES = [ // [icon, worry, promise, link label, dialog]
@@ -644,12 +630,21 @@ function QuoteReel() {
   const r = QUOTES[i];
   return (
     <blockquote className="iowners-quote" onMouseEnter={() => setHold(true)} onMouseLeave={() => setHold(false)} onFocus={() => setHold(true)} onBlur={() => setHold(false)} aria-live="polite">
+      <span className="iowners-mark" aria-hidden="true">“</span>
       <div className="iowners-q" key={i}>
-        <p>“{t(r.q)}”</p>
-        <footer><b>{r.name}</b> · {r.product}</footer>
+        <span className="iowners-stars" aria-label={t("5 out of 5 stars")}>★★★★★</span>
+        <p>{t(r.q)}</p>
+        <footer>
+          <span className="iowners-avatar" aria-hidden="true">{r.name.replace(/[^A-Za-z ]/g, "").split(" ").filter(Boolean).slice(0, 2).map((w) => w[0]).join("")}</span>
+          <span><b>{r.name}</b><small>{r.product}</small></span>
+        </footer>
       </div>
-      <div className="iowners-dots" role="tablist" aria-label={t("Owner quotes")}>
-        {QUOTES.map((x, n) => <button key={n} type="button" role="tab" aria-selected={n === i} aria-label={`${n + 1} / ${QUOTES.length}`} className={n === i ? (hold ? "on held" : "on") : ""} onClick={() => setI(n)}><i /></button>)}
+      <div className="iowners-nav">
+        <button type="button" className="iowners-step" aria-label={t("Previous")} onClick={() => setI((i + QUOTES.length - 1) % QUOTES.length)}><Icon name="chevron" size={16} /></button>
+        <div className="iowners-dots" role="tablist" aria-label={t("Owner quotes")}>
+          {QUOTES.map((x, n) => <button key={n} type="button" role="tab" aria-selected={n === i} aria-label={`${n + 1} / ${QUOTES.length}`} className={n === i ? (hold ? "on held" : "on") : ""} onClick={() => setI(n)}><i /></button>)}
+        </div>
+        <button type="button" className="iowners-step next" aria-label={t("Next")} onClick={() => setI((i + 1) % QUOTES.length)}><Icon name="chevron" size={16} /></button>
       </div>
     </blockquote>
   );
@@ -727,16 +722,6 @@ export default function Home() {
             ))}
           </div>
           <p className="ip2-note">{t("Compared with the published specs of a typical 55W glass-tube desktop CO2 laser. Years estimated at 8 hours a day. Bars are for illustration.")}</p>
-          <div className="icmp">
-            <h3>{t("OneLaser or a typical desktop diode laser?")}</h3>
-            <div className="icmp-scroll">
-              <table>
-                <thead><tr><th /><th className="me">OneLaser</th><th>{t("Typical diode laser")}</th></tr></thead>
-                <tbody>{COMPARE.map(([k, ours, theirs]) => <tr key={k}><th>{t(k)}</th><td className="me">{tick(ours)}</td><td>{tick(theirs)}</td></tr>)}</tbody>
-              </table>
-            </div>
-            <p className="icmp-note">{t("Category traits in general; individual models vary. OneLaser figures are from our product specs.")} <Link to="/compare">{t("Compare every OneLaser spec")} ›</Link></p>
-          </div>
         </div>
       </section>
 

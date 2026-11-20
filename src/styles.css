@@ -4159,3 +4159,68 @@ body:has(.ip-bar) .ai-nudge { bottom: 168px; }
 @keyframes fx-tick { 0% { transform: scale(.6); } 60% { transform: scale(1.2); } 100% { transform: scale(1); } }
 .fx-options button:active { transform: scale(.98); }
 @media (prefers-reduced-motion: reduce) { .fx-options button, .fx-options button > *, .fx-options button.on i { animation: none !important; } }
+
+/* Credibility, re-laid: one wide cinematic brand-film card (HQ photo, copy on a dark fade at left, a big play button),
+   then a labelled row of four press and show clips. Each plays in place. */
+.icred-film-card { position: relative; margin: 32px 0 0; border-radius: 24px; overflow: hidden; background: #111; aspect-ratio: 21 / 9; }
+.icred-film-card.playing { aspect-ratio: 16 / 9; }
+.icred-film-card iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+.icred-film-btn { position: absolute; inset: 0; width: 100%; padding: 0; border: 0; text-align: left; color: #fff; cursor: pointer; }
+.icred-film-btn img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform .8s cubic-bezier(.2, .7, .2, 1); }
+.icred-film-btn:hover img { transform: scale(1.03); }
+.icred-film-btn::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(10, 10, 12, 0.86) 0%, rgba(10, 10, 12, 0.55) 42%, rgba(10, 10, 12, 0.05) 75%); }
+.icred-film-copy { position: absolute; z-index: 1; left: 48px; top: 50%; transform: translateY(-50%); max-width: 46%; display: grid; gap: 12px; }
+.icred-film-copy small { font-size: 14px; line-height: 20px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: #ff8a6e; }
+.icred-film-copy b { font-size: 36px; line-height: 44px; font-weight: 700; letter-spacing: -0.01em; }
+.icred-film-pts { display: grid; gap: 8px; margin-top: 4px; }
+.icred-film-pts span, .icred-film-addr { display: flex; align-items: center; gap: 8px; font-size: 16px; line-height: 22px; color: rgba(255, 255, 255, 0.9); }
+.icred-film-pts svg { flex: none; color: #8be0a8; }
+.icred-film-addr { margin-top: 6px; font-size: 14px; color: rgba(255, 255, 255, 0.7); }
+.icred-film-play { position: absolute; z-index: 1; left: 68%; top: 50%; width: 88px; height: 88px; margin: -44px 0 0 -44px; display: grid; place-items: center; border-radius: 50%; background: var(--brand); color: #fff; padding-left: 4px; box-shadow: 0 0 0 10px rgba(231, 49, 14, 0.25), 0 20px 40px -12px rgba(0, 0, 0, 0.6); transition: transform .25s; }
+.icred-film-play::before { content: ""; position: absolute; inset: -10px; border-radius: 50%; border: 2px solid rgba(255, 255, 255, 0.55); animation: icred-ring 2.4s ease-out infinite; }
+@keyframes icred-ring { 0% { transform: scale(.9); opacity: .9; } 100% { transform: scale(1.5); opacity: 0; } }
+.icred-film-btn:hover .icred-film-play { transform: scale(1.08); }
+.icred-press-label { margin-top: 36px; font-size: 14px; line-height: 20px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: #6e6e73; }
+.icred .icred-press { margin-top: 14px; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+@media (max-width: 1180px) {
+  .icred-film-card { aspect-ratio: 16 / 9; }
+  .icred-film-copy { left: 32px; max-width: 56%; } .icred-film-copy b { font-size: 28px; line-height: 34px; }
+  .icred .icred-press { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 767px) {
+  .icred-film-card { aspect-ratio: auto; height: 460px; margin-top: 20px; border-radius: 16px; }
+  .icred-film-card.playing { height: auto; aspect-ratio: 16 / 9; }
+  .icred-film-btn::after { background: linear-gradient(180deg, rgba(10, 10, 12, 0.1) 0%, rgba(10, 10, 12, 0.55) 45%, rgba(10, 10, 12, 0.9) 100%); }
+  .icred-film-copy { left: 18px; right: 18px; top: auto; bottom: 20px; transform: none; max-width: none; gap: 8px; }
+  .icred-film-copy b { font-size: 24px; line-height: 30px; }
+  .icred-film-pts span { font-size: 15px; }
+  .icred-film-play { left: 50%; top: 30%; width: 68px; height: 68px; margin: -34px 0 0 -34px; }
+  .icred-press-label { margin-top: 24px; }
+  .icred .icred-press { gap: 10px; }
+}
+@media (prefers-reduced-motion: reduce) { .icred-film-play::before { animation: none; } }
+
+/* Quote reel, redesigned: a centred testimonial on a soft warm card, big brand quote mark, stars, the line, an initials
+   avatar with name and machine, then prev / timer dots / next. Replaces the left red bar layout. */
+.iowners-quote { position: relative; margin: 28px 0 0; min-height: 0; padding: 48px 48px 28px; border-radius: 24px; background: radial-gradient(120% 140% at 0% 0%, #fff1ec 0%, #f6f7fa 55%, #f3f6fb 100%); box-shadow: none; display: flex; flex-direction: column; align-items: center; text-align: center; overflow: hidden; }
+.iowners-mark { position: absolute; left: 28px; top: -18px; font-family: Georgia, "Times New Roman", serif; font-size: 180px; line-height: 1; color: var(--brand); opacity: .14; pointer-events: none; }
+.iowners-q { padding-right: 0; display: flex; flex-direction: column; align-items: center; gap: 14px; max-width: 880px; min-height: 200px; justify-content: center; }
+.iowners-stars { color: #f5a623; font-size: 20px; letter-spacing: 3px; }
+.iowners-quote .iowners-q p { font-size: 30px; line-height: 40px; font-weight: 600; letter-spacing: -0.01em; color: var(--title); text-wrap: balance; }
+.iowners-q footer { margin-top: 4px; display: flex; align-items: center; gap: 12px; text-align: left; font-size: 16px; line-height: 22px; color: #6e6e73; }
+.iowners-q footer > span:last-child { display: grid; }
+.iowners-q footer b { color: var(--title); font-weight: 700; }
+.iowners-q footer small { font-size: 14px; line-height: 20px; color: #6e6e73; }
+.iowners-avatar { width: 44px; height: 44px; display: grid; place-items: center; border-radius: 50%; background: linear-gradient(135deg, var(--brand), #ff8a5c); color: #fff; font-size: 16px; font-weight: 700; letter-spacing: .02em; }
+.iowners-nav { margin-top: 22px; display: flex; align-items: center; gap: 14px; }
+.iowners-quote .iowners-dots { position: static; }
+.iowners-step { width: 36px; height: 36px; display: grid; place-items: center; border-radius: 50%; background: #fff; color: var(--title); box-shadow: 0 0 0 1px #e3e5ea; transition: box-shadow .2s, transform .2s; }
+.iowners-step:first-child svg { transform: rotate(180deg); }
+.iowners-step:hover { box-shadow: 0 0 0 1.5px var(--title); }
+@media (max-width: 767px) {
+  .iowners-quote { padding: 32px 18px 20px; border-radius: 16px; }
+  .iowners-mark { font-size: 120px; left: 12px; top: -10px; }
+  .iowners-q { min-height: 230px; gap: 12px; }
+  .iowners-quote .iowners-q p { font-size: 21px; line-height: 29px; }
+  .iowners-nav { margin-top: 16px; }
+}

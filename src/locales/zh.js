@@ -1076,4 +1076,6 @@ export default {
   "Tech support is not only here in America but the team is dedicated and passionate and it shows!": "技术支持不仅就在美国，而且团队用心又热情，看得出来！",
   "I like having the RF tube because I'm able to run the laser at higher power and not having any water cooling.": "我喜欢 RF 管：可以用更高的功率跑，而且完全不用水冷。",
   "No doubt this have to be one of the best laser in the market for sure. I don't regret it one second.": "毫无疑问，这绝对是市面上最好的激光机之一。我一秒都没后悔过。",
+  "OneLaser headquarters": "OneLaser 总部",
+  "On TV and at industry shows": "电视报道与行业展会",
 };
