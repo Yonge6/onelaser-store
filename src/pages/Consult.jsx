@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { t } from "../i18n.js";
+import { t, tf, getLang } from "../i18n.js";
 import { img } from "../lib.js";
 import { Icon, Link } from "../components/ui.jsx";
 import { contact, homeReviews } from "../data/site.js";
@@ -82,10 +82,13 @@ const guessZone = () => {
     return HQ;
   }
 };
-const fmt = (at, tz, opts) => new Intl.DateTimeFormat("en-US", { timeZone: tz, ...opts }).format(at);
+// Dates and times shown to people follow the page language; fmtEn is for parsing (offsets, day numbers) only.
+const LOCALE = { en: "en-US", zh: "zh-CN", ja: "ja-JP", es: "es-ES", fr: "fr-FR", de: "de-DE" };
+const fmt = (at, tz, opts) => new Intl.DateTimeFormat(LOCALE[getLang()] || "en-US", { timeZone: tz, ...opts }).format(at);
+const fmtEn = (at, tz, opts) => new Intl.DateTimeFormat("en-US", { timeZone: tz, ...opts }).format(at);
 const zoneLabel = (tz) => {
   const known = ZONES.find(([id]) => id === tz);
-  const gmt = fmt(new Date(), tz, { timeZoneName: "shortOffset" }).split(" ").pop();
+  const gmt = fmtEn(new Date(), tz, { timeZoneName: "shortOffset" }).split(" ").pop();
   return `${known ? t(known[1]) : tz.replace(/_/g, " ").split("/").pop()} (${gmt})`;
 };
 
@@ -157,7 +160,7 @@ function Booking() {
               <div>
                 {soon.map(([n, at]) => (
                   <button key={at.getTime()} type="button" onClick={() => pickSoon(n, at)}>
-                    <small>{t(fmt(at, zone, { weekday: "short" }))} {fmt(at, zone, { month: "short", day: "numeric" })}</small>
+                    <small>{fmt(at, zone, { weekday: "short" })} {fmt(at, zone, { month: "short", day: "numeric" })}</small>
                     <b>{fmt(at, zone, { hour: "numeric", minute: "2-digit" })}</b>
                   </button>
                 ))}
@@ -183,9 +186,9 @@ function Booking() {
               const d = dayLabel(ymd);
               return (
                 <button key={ymd.join("-")} type="button" role="option" aria-selected={n === day} className={n === day ? "on" : ""} onClick={() => pickDay(n)}>
-                  <small>{t(fmt(d, "UTC", { weekday: "short" }))}</small>
+                  <small>{fmt(d, "UTC", { weekday: "short" })}</small>
                   <b>{d.getUTCDate()}</b>
-                  <small>{t(fmt(d, "UTC", { month: "short" }))}</small>
+                  <small>{fmt(d, "UTC", { month: "short" })}</small>
                 </button>
               );
             })}
@@ -194,11 +197,11 @@ function Booking() {
           <div className="cs-slots">
             {slots.map((at) => {
               const on = slot && slot.getTime() === at.getTime();
-              const otherDay = fmt(at, zone, { day: "numeric" }) !== String(days[day][2]);
+              const otherDay = fmtEn(at, zone, { day: "numeric" }) !== String(days[day][2]);
               return (
                 <button key={at.getTime()} type="button" className={on ? "on" : ""} aria-pressed={on} onClick={() => setSlot(at)}>
                   {fmt(at, zone, { hour: "numeric", minute: "2-digit" })}
-                  {otherDay && <small>{t(fmt(at, zone, { weekday: "short" }))}</small>}
+                  {otherDay && <small>{fmt(at, zone, { weekday: "short" })}</small>}
                 </button>
               );
             })}
@@ -339,7 +342,7 @@ export default function Consult() {
 
       <section className="cs-proof" aria-label={t("Why OneLaser")}>
         <ul className="cs-wrap">
-          <li><b>{homeReviews.average}<em>★</em></b><span>{t("Average from")} {homeReviews.count} {t("owner reviews")}</span></li>
+          <li><b>{homeReviews.average}<em>★</em></b><span>{tf("Average from {n} owner reviews", { n: homeReviews.count })}</span></li>
           <li><b>{t("30 min")}</b><span>{t("Free, no obligation")}</span></li>
           <li><b>3-2-1</b><span>{t("Year warranty: mechanical, electrical, optics")}</span></li>
           <li><b>{t("U.S.")}</b><span>{t("Support from laser engineers")}</span></li>
@@ -392,7 +395,7 @@ export default function Consult() {
           <p className="cs-kicker">{t("From OneLaser owners")}</p>
           <div className="cs-rev-head">
             <h2 className="cs-h2">{t("Help that keeps going after you buy.")}</h2>
-            <p><b>{homeReviews.average} ★</b> {t("from")} {homeReviews.count} {t("owner reviews")} · <Link href={homeReviews.url}>{t("Read all reviews")} ›</Link></p>
+            <p><b>{homeReviews.average} ★</b> {tf("from {n} owner reviews", { n: homeReviews.count })} · <Link href={homeReviews.url}>{t("Read all reviews")} ›</Link></p>
           </div>
           <ul className="cs-revs">
             {[2, 4, 1].map((n) => homeReviews.items[n]).map((r) => (

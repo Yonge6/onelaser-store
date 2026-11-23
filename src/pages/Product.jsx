@@ -223,7 +223,7 @@ export default function Product({ handle }) {
           <div className="ip-ship">
             <h2>{t("Shipped by OneLaser")}</h2>
             <p><Icon name="truck" size={20} /><span><b>{t("Delivery by address")}</b>{t("Estimate and shipping rate are shown at checkout. See the")} <a href="https://www.1laser.com/pages/shipping-policy" target="_blank" rel="noreferrer">{t("Shipping Policy")}</a>.</span></p>
-            <p><Icon name="refresh" size={20} /><span><b>30-day return period</b>{t("See the")} <a href="https://www.1laser.com/pages/refund-policy" target="_blank" rel="noreferrer">{t("Refund Policy")}</a> for conditions.</span></p>
+            <p><Icon name="refresh" size={20} /><span><b>{t("30-day return period")}</b>{t("See the")} <a href="https://www.1laser.com/pages/refund-policy" target="_blank" rel="noreferrer">{t("Refund Policy")}</a> {t("for conditions.")}</span></p>
             <p><Icon name="lock" size={20} /><span><b>{t("Pay your way")}</b>{t("Card, PayPal, Shop Pay or financing.")}</span></p>
           </div>
         </div>

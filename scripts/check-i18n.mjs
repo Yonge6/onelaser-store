@@ -13,10 +13,22 @@ const walk = (d) => fs.readdirSync(d, { withFileTypes: true }).flatMap((e) => (e
 for (const f of walk(path.join(root, "src"))) {
   const s = fs.readFileSync(f, "utf8");
   const code = s.replace(/\/\*[\s\S]*?\*\//g, "").replace(/(^|[^:"'`])\/\/.*$/gm, "$1"); // skip comments
-  for (const m of code.matchAll(/\bt\("((?:[^"\\]|\\.)+)"/g)) keys.add(JSON.parse(`"${m[1]}"`));
-  for (const m of code.matchAll(/\bt\('((?:[^'\\]|\\.)+)'/g)) keys.add(m[1].replace(/\\'/g, "'"));
+  for (const m of code.matchAll(/\btf?\("((?:[^"\\]|\\.)+)"/g)) keys.add(JSON.parse(`"${m[1]}"`));
+  for (const m of code.matchAll(/\btf?\('((?:[^'\\]|\\.)+)'/g)) keys.add(m[1].replace(/\\'/g, "'"));
 }
-const same = new Set(fs.existsSync(path.join(root, "scripts/i18n-same.json")) ? JSON.parse(fs.readFileSync(path.join(root, "scripts/i18n-same.json"), "utf8")) : []);
+const sameFile = JSON.parse(fs.readFileSync(path.join(root, "scripts/i18n-same.json"), "utf8"));
+const same = new Set([...sameFile.text, ...(sameFile.ids || [])]);
+// Read the code structure too: strings in t(a ? "x" : "y"), text kept in data and shown through t(variable),
+// and English written straight into the markup (which never gets translated).
+const { scan } = await import(pathToFileURL(path.join(root, "scripts/i18n-scan.mjs")).href);
+const sources = ["src/pages", "src/components"].flatMap((d) => fs.readdirSync(path.join(root, d)).filter((f) => /\.jsx?$/.test(f)).map((f) => path.join(root, d, f))).concat([path.join(root, "src/App.jsx")]);
+const found = scan(sources);
+found.needed.forEach((k) => keys.add(k));
+const loose = found.hardcoded.filter((h) => !sameFile.markup.includes(h.text));
+if (loose.length) {
+  console.error("\n[i18n] English written straight into the page, so it never gets translated. Wrap it in t(\"...\") and add translations (or, for a brand name, list it under \"markup\" in scripts/i18n-same.json):\n  " + loose.map((h) => `${path.relative(root, h.file)}: ${JSON.stringify(h.text)}`).join("\n  "));
+  process.exit(1);
+}
 const debtFile = path.join(root, "scripts/i18n-debt.json");
 const debt = fs.existsSync(debtFile) ? JSON.parse(fs.readFileSync(debtFile, "utf8")) : {};
 const missing = {};

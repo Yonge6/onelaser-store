@@ -308,7 +308,7 @@ export const ServiceStrip = () => (
   <div className="service-strip">
     <div className="page">
       <div><Icon name="truck" size={40} /><p>{t("Shipping Options at Checkout")}<br />{t("Delivery Estimated by Address")}</p></div>
-      <div><Icon name="card" size={40} /><p>{t("We accept credit cards, PayPal")}<br />and financing</p></div>
+      <div><Icon name="card" size={40} /><p>{t("We accept credit cards, PayPal")}<br />{t("and financing")}</p></div>
       <div><Icon name="headset" size={40} /><p>{t("U.S.-Based Support:")} <Link href="https://www.1laser.com/pages/contact-us">{t("Contact Us")}</Link></p></div>
     </div>
   </div>

@@ -48,3 +48,6 @@ export const t = (s) => {
   if (hit == null) missing.add(s);
   return hit ?? s;
 };
+
+/** Translate a sentence with {name} slots, so word order can differ per language: tf("Total over {n} months", { n: 24 }). */
+export const tf = (s, vars = {}) => Object.entries(vars).reduce((out, [k, v]) => out.split(`{${k}}`).join(v), t(s));

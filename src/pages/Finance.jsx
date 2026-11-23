@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { t } from "../i18n.js";
+import { t, tf } from "../i18n.js";
 import { byHandle, frontImg, img, money } from "../lib.js";
 import { Icon, Link } from "../components/ui.jsx";
 
@@ -145,7 +145,7 @@ function Estimator({ amount, setAmount, handle, setHandle }) {
         </label>
         <div className="fi-row">
           <span>{t("Term")}</span>
-          <div className="fi-seg">{TERMS.map((n) => <button key={n} type="button" className={n === term ? "on" : ""} aria-pressed={n === term} onClick={() => setTerm(n)}>{n} {t("mo")}</button>)}</div>
+          <div className="fi-seg">{TERMS.map((n) => <button key={n} type="button" className={n === term ? "on" : ""} aria-pressed={n === term} onClick={() => setTerm(n)}>{tf("{n} months", { n })}</button>)}</div>
         </div>
         <label className="fi-row">
           <span>{t("APR")} <b>{apr}%</b></span>
@@ -154,7 +154,7 @@ function Estimator({ amount, setAmount, handle, setHandle }) {
         </label>
         <div className="fi-result" aria-live="polite">
           <div><small>{t("Estimated monthly payment")}</small><b>{money(Math.round(pay))}<em>/{t("mo")}</em></b></div>
-          <div><small>{t("Total over")} {term} {t("months")}</small><span>{money(Math.round(total))}</span></div>
+          <div><small>{tf("Total over {n} months", { n: term })}</small><span>{money(Math.round(total))}</span></div>
         </div>
         <p className="fi-fine">{t("Estimate only, not an offer of credit. Your actual rate, term and payment are set by the lender after you apply.")}</p>
       </div>
@@ -193,7 +193,7 @@ export default function Finance({ query }) {
             <ul className="fi-points">
               <li><b>$0</b><span>{t("down payment options")}</span></li>
               <li><b>{t("Minutes")}</b><span>{t("to a decision with ClickLease")}</span></li>
-              <li><b>60 {t("mo")}</b><span>{t("longest loan term")}</span></li>
+              <li><b>{tf("{n} months", { n: 60 })}</b><span>{t("longest loan term")}</span></li>
             </ul>
             <div className="fi-cta">
               <button type="button" className="fi-btn" onClick={() => go("options")}>{t("Find my option")}<Icon name="arrow" size={18} /></button>

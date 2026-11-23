@@ -83,7 +83,7 @@ export function Price({ product, variant, from = false }) {
   const v = variant || product;
   return (
     <span className="price">
-      {from && product.priceVaries && "From "}
+      {from && product.priceVaries && `${t("From")} `}
       <span>{usd(v.price)} USD</span>
       {v.compareAt && <s>{usd(v.compareAt)} USD</s>}
     </span>
@@ -109,9 +109,9 @@ export function ProductCard({ product }) {
     <article className="pcard">
       <Link to={`/products/${product.handle}`} className="pcard-media"><img src={img(product.images[0], 500)} alt="" loading="lazy" /></Link>
       <div className="pcard-body">
-        <p className="pcard-series">{product.compareAt && <span>Sale · </span>}{productLabel(product)}</p>
+        <p className="pcard-series">{product.compareAt && <span>{t("Sale")} · </span>}{productLabel(product)}</p>
         <h3><Link to={`/products/${product.handle}`}>{product.name}</Link></h3>
-        <span className="pcard-price"><strong>{product.priceVaries ? "From " : ""}USD {usd(product.price)}</strong></span>
+        <span className="pcard-price"><strong>{product.priceVaries ? `${t("From")} ` : ""}USD {usd(product.price)}</strong></span>
       </div>
     </article>
   );
@@ -139,7 +139,7 @@ export function CollectionCard({ product }) {
         <span className="ccard-content">
           <span className="ccard-details">
             <span className="ccard-title">{product.name}</span>
-            <span className="ccard-price">{product.priceVaries && "From "}USD <b>{money(product.price)}</b>{product.compareAt && <s>USD {money(product.compareAt)}</s>}</span>
+            <span className="ccard-price">{product.priceVaries && `${t("From")} `}USD <b>{money(product.price)}</b>{product.compareAt && <s>USD {money(product.compareAt)}</s>}</span>
           </span>
           {!quick && <span className="ccard-action"><span>{t("Shop")}</span><Icon name="arrow" size={18} /></span>}
         </span>
@@ -150,7 +150,7 @@ export function CollectionCard({ product }) {
             <button type="button" disabled>{t("Sold Out")}</button>
           ) : single ? (
             <button type="button" className={added ? "added" : ""} onClick={addNow} aria-live="polite">
-              <Icon name={added ? "check" : "cart"} size={18} />{added ? "Added to Cart" : "Add to Cart"}
+              <Icon name={added ? "check" : "cart"} size={18} />{t(added ? "Added to cart" : "Add to cart")}
             </button>
           ) : (
             <Link to={`/products/${product.handle}`}>{t("Select Options")}<Icon name="arrow" size={16} /></Link>

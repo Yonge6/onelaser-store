@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useRef, useState } from "react";
-import { t } from "../i18n.js";
+import { t, tf } from "../i18n.js";
 import { asset, byHandle, img, lockScroll, money, products, frontImg } from "../lib.js";
 import { contact, footer, heroSlides, homeFaq, homeProof, homeReviews, homeStandard, homeTabs, trustpilot, newHandles, promo, shortSlogans } from "../data/site.js";
 import { AddButton, Countdown, Icon, Link, SpecIcon, useDragScroll } from "../components/ui.jsx";
@@ -407,7 +407,7 @@ function TrustDialog({ kind, onClose, onTrustpilot }) {
         <Head title={t("Spread the cost four ways")} />
         <div className="tdlg-calc">
           <label><span>{t("Machine")}</span><select value={fin.h} onChange={(e) => setFin((f) => ({ ...f, h: e.target.value }))}>{FIN_MACHINES.map((h) => byHandle[h] && <option key={h} value={h}>{byHandle[h].name} · {money(byHandle[h].price)}</option>)}</select></label>
-          <div className="tdlg-seg">{[12, 24, 36, 60].map((n) => <button key={n} type="button" className={fin.n === n ? "on" : ""} onClick={() => setFin((f) => ({ ...f, n }))}>{n} {t("mo")}</button>)}</div>
+          <div className="tdlg-seg">{[12, 24, 36, 60].map((n) => <button key={n} type="button" className={fin.n === n ? "on" : ""} onClick={() => setFin((f) => ({ ...f, n }))}>{tf("{n} months", { n })}</button>)}</div>
           <p className="tdlg-pay"><b>{money(Math.round(pay))}</b><span>/{t("mo")}</span><small>{t("Estimate at 15% APR. Your rate is set by the lender.")}</small></p>
         </div>
         <ul className="tdlg-fin">
