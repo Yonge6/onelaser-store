@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useRef, useState } from "react";
-import { t, tf } from "../i18n.js";
+import { t, tf, localeTag } from "../i18n.js";
 import { asset, byHandle, img, lockScroll, money, products, frontImg, useFocusTrap, isTopDialog } from "../lib.js";
-import { contact, footer, heroSlides, homeFaq, homeProof, homeReviews, homeStandard, homeTabs, trustpilot, newHandles, promo, shortSlogans } from "../data/site.js";
+import { contact, footer, heroSlides, homeFaq, homeProof, homeReviews, homeStandard, homeTabs, trustpilot, newHandles, promo, shortSlogans, homeProofSources } from "../data/site.js";
 import { AddButton, Countdown, Icon, Link, SpecIcon, useDragScroll } from "../components/ui.jsx";
 import FinderCard, { FinderHelp } from "../components/Finder.jsx";
 
@@ -222,7 +222,7 @@ const faqText = (q) => homeFaq.find(([k]) => k.startsWith(q))?.[1] || "";
 const DLG_HEAD = {
   reviews: ["star", "Owner reviews"], company: ["flag", "U.S. company"], warranty: ["shield", "Warranty and returns"],
   returns: ["refresh", "Picked the wrong one?"], support: ["headset", "Stuck on a job?"], training: ["user", "First laser?"],
-  financing: ["card", "Budget tight?"], fox: ["tv", "TV feature"], call: ["calendar", "How the call works"],
+  financing: ["card", "Budget tight?"], fox: ["tv", "TV feature"], call: ["calendar", "How the call works"], sources: ["search", "Sources"],
 };
 const FIN_MACHINES = ["onelaser-xrf-desktop-laser-machine", "cobra-10-100w-co2-laser-engraver-cutter", "hydra-9-gen-2-70w-rf-co2-dual-laser-machine", "hydra-16-gen-2-70w-rf-co2-dual-laser-machine"];
 const perMonth = (amount, apr, n) => { const r = apr / 1200; return r ? (amount * r) / (1 - (1 + r) ** -n) : amount / n; };
@@ -398,6 +398,28 @@ export function TrustDialog({ kind, onClose, onTrustpilot, onBook }) {
               </div>
             </div>}
           </div>
+        </div>
+      </>
+    );
+  } else if (kind === "sources") {
+    body = (
+      <>
+        <Head title={t("Where these numbers come from")} sub={t("All figures come from OneLaser's product pages. The comparison is the side-by-side table on the XRF page, against a typical 55W glass-tube desktop laser. Model figures come from each model's own page.")} />
+        <ol className="tdlg-src">
+          {homeProofSources.map(([fig, title, applies, compared, note]) => (
+            <li key={title}>
+              <p className="tdlg-src-head"><b>{t(fig)}</b><span>{t(title)}</span></p>
+              <dl>
+                <div><dt>{t("Applies to")}</dt><dd>{t(applies)}</dd></div>
+                <div><dt>{t("Compared with")}</dt><dd>{t(compared)}</dd></div>
+                <div><dt>{t("Good to know")}</dt><dd>{t(note)}</dd></div>
+              </dl>
+            </li>
+          ))}
+        </ol>
+        <div className="tdlg-links">
+          <More to="/products/onelaser-xrf-desktop-laser-machine">{t("See the XRF product page")}</More>
+          <More href="https://www.1laser.com/pages/warranty-policy" ghost>{t("Warranty policy")}</More>
         </div>
       </>
     );
@@ -649,7 +671,7 @@ function CountUp({ text }) {
     return () => cancelAnimationFrame(raf);
   }, [seen]);
   if (!num) return t(text);
-  return <>{(seen ? v : 0).toLocaleString("en-US")}{unit && <> {t(unit)}</>}</>;
+  return <>{(seen ? v : 0).toLocaleString(localeTag())}{unit && <> {t(unit)}</>}</>;
 }
 
 export default function Home() {
@@ -717,12 +739,13 @@ export default function Home() {
                 <h3>{t(x.title)}</h3>
                 <dl className="ip2-vs">
                   <div className="me"><dt>OneLaser</dt><dd><i><u style={{ width: `${x.us}%` }} /></i><span>{t(x.usLabel)}</span></dd></div>
-                  <div><dt>{t("Typical glass-tube laser")}</dt><dd><i><u style={{ width: `${x.them}%` }} /></i><span>{t(x.themLabel)}</span></dd></div>
+                  <div><dt>{t("Typical glass-tube laser")}</dt><dd>{x.them ? <i><u style={{ width: `${x.them}%` }} /></i> : null}<span>{t(x.themLabel)}</span></dd></div>
                 </dl>
                 <p>{t(x.meaning)}</p>
               </article>
             ))}
           </ProofGrid>
+          <button type="button" className="ip2-src" onClick={() => setDlg("sources")} aria-haspopup="dialog"><Icon name="search" size={16} />{t("Where these numbers come from")}<Icon name="arrow" size={14} /></button>
         </div>
       </section>
 
@@ -759,7 +782,7 @@ export default function Home() {
           <h2 className="ih-h2">{t("Three easy ways to start.")}</h2>
           <ul>
             <li><button type="button" className="plate" onClick={() => setDlg("finder")} aria-haspopup="dialog"><span className="spec-idx"><span>01 / {t("Finder")}</span><span>{t("6 questions")}</span></span><SpecIcon name="search" /><small>{t("Do it yourself")}</small><b>{t("Find your machine in 30 seconds")}</b><p>{t("Answer six quick questions about what you make, and we'll suggest a machine.")}</p><em>{t("Start the finder")}<Icon name="chevron" size={16} /></em></button></li>
-            <li><Link to="/pages/sales-consultation" className="plate"><span className="spec-idx"><span>02 / {t("Call")}</span><span>{t("Free")}</span></span><SpecIcon name="calendar" /><small>{t("Ask an expert")}</small><b>{t("Free 30-minute call with a laser expert")}</b><p>{t("Talk through your materials, space and budget before you choose.")}</p><em>{t("Pick a time")}<Icon name="chevron" size={16} /></em></Link></li>
+            <li><button type="button" className="plate" onClick={() => setDlg("call")} aria-haspopup="dialog"><span className="spec-idx"><span>02 / {t("Call")}</span><span>{t("Free")}</span></span><SpecIcon name="calendar" /><small>{t("Ask an expert")}</small><b>{t("Free 30-minute call with a laser expert")}</b><p>{t("Talk through your materials, space and budget before you choose.")}</p><em>{t("Pick a time")}<Icon name="chevron" size={16} /></em></button></li>
             <li><button type="button" className="plate" onClick={() => setDlg("financing")} aria-haspopup="dialog"><span className="spec-idx"><span>03 / {t("Finance")}</span><span>{t("Estimate")}</span></span><SpecIcon name="card" /><small>{t("Check the cost")}</small><b>{t("Estimate your monthly payment")}</b><p>{t("Pick a machine and a term to see an estimated monthly payment.")}</p><em>{t("Estimate my payment")}<Icon name="chevron" size={16} /></em></button></li>
           </ul>
         </div>

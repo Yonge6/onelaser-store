@@ -266,8 +266,19 @@ export const homeVideos = [
 export const homeProof = [
   { figure: "30,000 h", title: "Laser tube life", times: "About 4x", us: 100, them: 27, usLabel: "30,000 h · air-cooled", themLabel: "6,000–8,000 h · water-cooled", meaning: "At 8 hours a day that is about 10 years of work. A typical glass tube needs replacing every 2–3 years." },
   { figure: "2,000 mm/s", title: "Engraving speed", times: "Over 3x", us: 100, them: 30, usLabel: "2,000 mm/s · Hydra Gen2", themLabel: "600 mm/s", meaning: "Big batches finish sooner, so you can take larger orders and still ship on time." },
-  { figure: "2,000 DPI", title: "Engraving detail", times: "Up to 4x", us: 100, them: 25, usLabel: "0.07 mm RF laser dot", themLabel: "Glass-tube beam", meaning: "Small text, photos and logos come out sharp, so you remake fewer pieces." },
+  { figure: "2,000 DPI", title: "Engraving detail", times: "Up to 4x", us: 100, them: 0, usLabel: "0.07 mm RF laser dot", themLabel: "No DPI listed in the XRF comparison", meaning: "Small text, photos and logos come out sharp, so you remake fewer pieces." },
   { figure: "3 years", title: "Warranty on mechanical parts", times: "3x", us: 100, them: 33, usLabel: "3-2-1 warranty · X Series and Hydra", themLabel: "12 months main parts · 6 months tube", meaning: "On X Series and Hydra, mechanical parts are covered for 3 years, not 1." },
+];
+
+/* "Where these numbers come from" dialog under the Why OneLaser cards. Read from the product pages in stories.json:
+   the XRF side-by-side table (XRF vs a typical 55W glass-tube desktop laser), the Hydra Gen2 page (2,000 mm/s, 4G,
+   2,000 DPI, "up to 4x sharper detail"), the VertiGo page (800 mm/s, 1,000 DPI) and the warranty policy.
+   Each entry says where the figure applies and where it does not. [figure, title, applies, compared, note] */
+export const homeProofSources = [
+  ["Up to 30,000 h", "Laser source life", "Air-cooled RF tubes in XRF and Hydra Gen2.", "6,000–8,000 hours for a water-cooled glass tube.", "“About 4x” is 30,000 h against 6,000–8,000 h, which works out to 3.75x to 5x. Cobra and the Hydra Hybrid cutting tube use glass CO₂ tubes, not RF tubes."],
+  ["2,000 mm/s", "Raster engraving speed", "Hydra Gen2. XRF reaches 1,200 mm/s and VertiGo 800 mm/s.", "600 mm/s for a typical 55W glass-tube desktop laser.", "Comparing published top speeds, XRF is 1,200 against 600 mm/s: 2x. Test conditions may differ."],
+  ["Up to 2,000 DPI", "Engraving detail", "XRF and Hydra Gen2, with a 0.07 mm laser dot. VertiGo engraves at up to 1,000 DPI.", "The glass-tube laser lists 0.01 mm processing precision, not a DPI figure.", "“Up to 4x sharper detail” is OneLaser's own claim on the Hydra Gen2 page, not a side-by-side test."],
+  ["3 years", "Mechanical-parts warranty", "X Series (XRF, XT) and Hydra: 3 years mechanical, 2 years electrical, 1 year optics and laser source.", "12 months on main components and 6 months on the tube.", "Cobra has 1 year on mechanical and electrical parts; optical lenses are not covered. VertiGo has 1 year on mechanical and electrical parts, 6 months on the laser source and 1 month on lens and mirror."],
 ];
 
 // Home buying FAQ (after "Questions? Answers." on thunderlaserusa.com). Answers restate the policies and pages on 1laser.com.

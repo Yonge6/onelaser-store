@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { t, tf, getLang } from "../i18n.js";
+import { t, tf, localeTag } from "../i18n.js";
 import { img } from "../lib.js";
 import { Icon, Link } from "../components/ui.jsx";
 import { ReviewsDialog, TrustDialog } from "./Home.jsx";
@@ -84,8 +84,7 @@ const guessZone = () => {
   }
 };
 // Dates and times shown to people follow the page language; fmtEn is for parsing (offsets, day numbers) only.
-const LOCALE = { en: "en-US", zh: "zh-CN", ja: "ja-JP", es: "es-ES", fr: "fr-FR", de: "de-DE" };
-const fmt = (at, tz, opts) => new Intl.DateTimeFormat(LOCALE[getLang()] || "en-US", { timeZone: tz, ...opts }).format(at);
+const fmt = (at, tz, opts) => new Intl.DateTimeFormat(localeTag(), { timeZone: tz, ...opts }).format(at);
 const fmtEn = (at, tz, opts) => new Intl.DateTimeFormat("en-US", { timeZone: tz, ...opts }).format(at);
 const zoneLabel = (tz) => {
   const known = ZONES.find(([id]) => id === tz);
@@ -328,6 +327,17 @@ export default function Consult() {
   const toBook = () => document.getElementById("book")?.scrollIntoView({ behavior: "smooth", block: "start" });
   const [dlg, setDlg] = useState(null); // proof-strip dialogs: reviews, call, warranty, support (same dialogs as the home page)
   const [tpOpen, setTpOpen] = useState(false);
+  // "Pick a time" in the call dialog: once the dialog has closed (and its focus trap has handed focus back),
+  // scroll to the booking card and focus the first thing to do there. Runs as an effect, so nothing is left
+  // pending if the visitor leaves the page.
+  const [toBooking, setToBooking] = useState(false);
+  useEffect(() => {
+    if (!toBooking || dlg) return;
+    setToBooking(false);
+    const book = document.getElementById("book");
+    book?.scrollIntoView({ behavior: "smooth", block: "start" });
+    (book?.querySelector(".cs-soon button, .cs-days button") || book?.querySelector("input[name=first]") || book?.querySelector(".cs-next"))?.focus({ preventScroll: true });
+  }, [toBooking, dlg]);
   return (
     <div className="cs">
       <section className="cs-hero">
@@ -456,7 +466,7 @@ export default function Consult() {
         </div>
       </section>
 
-      {dlg && <TrustDialog kind={dlg} onClose={() => setDlg(null)} onTrustpilot={() => { setDlg(null); setTpOpen(true); }} onBook={() => { setDlg(null); setTimeout(() => { toBook(); (document.querySelector("#book .cs-soon button, #book .cs-days button") || document.querySelector("#book input[name=first]") || document.querySelector("#book .cs-next"))?.focus({ preventScroll: true }); }, 60); }} />}
+      {dlg && <TrustDialog kind={dlg} onClose={() => setDlg(null)} onTrustpilot={() => { setDlg(null); setTpOpen(true); }} onBook={() => { setDlg(null); setToBooking(true); }} />}
       {tpOpen && <ReviewsDialog onClose={() => setTpOpen(false)} />}
       <div className={`cs-bar${bookInView ? " off" : ""}`}><button type="button" className="cs-next" onClick={toBook}><Icon name="calendar" size={18} />{t("Book a free 30-minute call")}</button></div>
     </div>

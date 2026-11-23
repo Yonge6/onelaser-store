@@ -20,19 +20,34 @@ const returnsJsx = (fn) => {
   walk(fn.body);
   return found;
 };
+// memo(() => <x/>), React.memo(...), forwardRef(...): the function inside is still a component.
+const wrapped = (init) => init && init.type === "CallExpression" && ["memo", "forwardRef"].includes(init.callee.name ?? init.callee.property?.name) && init.arguments[0] && /Function/.test(init.arguments[0].type) ? init.arguments[0] : null;
+// Only names used as an element (<Name />, i.e. createElement(Name, …)) are components; Name() called as a plain
+// function is not remounted and is fine.
+const usedAsElement = (ast) => {
+  const names = new Set();
+  const walk = (n) => { if (!n || typeof n.type !== "string") return; if (n.type === "CallExpression" && n.callee.type === "MemberExpression" && n.callee.property.name === "createElement" && n.arguments[0]?.type === "Identifier") names.add(n.arguments[0].name); for (const k of Object.keys(n)) { const v = n[k]; if (Array.isArray(v)) v.forEach(walk); else if (v && typeof v.type === "string") walk(v); } };
+  walk(ast);
+  return names;
+};
 const found = [];
 for (const dir of ["src/pages", "src/components"]) {
   for (const f of fs.readdirSync(path.join(root, dir)).filter((x) => /\.jsx$/.test(x))) {
     const rel = `${dir}/${f}`;
     const js = esbuild.transformSync(fs.readFileSync(path.join(root, rel), "utf8"), { loader: "jsx", jsx: "transform" }).code;
+    const ast = parseAst(js);
+    const asElement = usedAsElement(ast);
     const visit = (n, insideFn) => {
       if (!n || typeof n.type !== "string") return;
       const isFn = n.type === "FunctionDeclaration" || n.type === "FunctionExpression" || n.type === "ArrowFunctionExpression";
-      if (insideFn && n.type === "VariableDeclarator" && n.id.type === "Identifier" && /^[A-Z]/.test(n.id.name) && n.init && (n.init.type === "ArrowFunctionExpression" || n.init.type === "FunctionExpression") && returnsJsx(n.init)) found.push(`${rel}: ${n.id.name}`);
-      if (insideFn && n.type === "FunctionDeclaration" && n.id && /^[A-Z]/.test(n.id.name) && returnsJsx(n)) found.push(`${rel}: ${n.id.name}`);
+      if (insideFn && n.type === "VariableDeclarator" && n.id.type === "Identifier" && /^[A-Z]/.test(n.id.name) && asElement.has(n.id.name)) {
+        const fn = n.init && (n.init.type === "ArrowFunctionExpression" || n.init.type === "FunctionExpression") ? n.init : wrapped(n.init);
+        if (fn && returnsJsx(fn)) found.push(`${rel}: ${n.id.name}`);
+      }
+      if (insideFn && n.type === "FunctionDeclaration" && n.id && /^[A-Z]/.test(n.id.name) && asElement.has(n.id.name) && returnsJsx(n)) found.push(`${rel}: ${n.id.name}`);
       for (const k of Object.keys(n)) { if (k === "start" || k === "end") continue; const v = n[k]; if (Array.isArray(v)) v.forEach((c) => visit(c, insideFn || isFn)); else if (v && typeof v.type === "string") visit(v, insideFn || isFn); }
     };
-    visit(parseAst(js), false);
+    visit(ast, false);
   }
 }
 if (process.argv.includes("--write-debt")) {

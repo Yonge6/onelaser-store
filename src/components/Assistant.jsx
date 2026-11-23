@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { getLang, t, tf, tx as txNodes } from "../i18n.js";
-import { lockScroll, byHandle, frontImg, img, money, products, useFocusTrap, isTopDialog } from "../lib.js";
+import { lockScroll, byHandle, frontImg, img, money, products, useFocusTrap, isTopDialog, dialogOpen } from "../lib.js";
 import { useCart } from "../cart.jsx";
 import { AddButton, Icon, Link } from "./ui.jsx";
 import { M, STEPS, rank } from "./finderRules.js";
@@ -345,7 +345,7 @@ export default function Assistant({ product }) {
     if (!open) return undefined;
     // phones and tablets: do not focus, so the keyboard does not jump up and cover the welcome and quick picks
     if (!window.matchMedia("(max-width: 860px), (pointer: coarse)").matches) input.current?.focus({ preventScroll: true });
-    const key = (e) => e.key === "Escape" && (!sheet || isTopDialog(panel.current)) && close();
+    const key = (e) => e.key === "Escape" && (sheet ? isTopDialog(panel.current) : !dialogOpen() && panel.current?.contains(document.activeElement)) && close();
     window.addEventListener("keydown", key);
     const unlock = sheet ? lockScroll() : () => {}; // follows the sheet, so crossing 860px while open updates it
     return () => { window.removeEventListener("keydown", key); unlock(); };
@@ -403,7 +403,7 @@ export default function Assistant({ product }) {
         <span className="ai-avatar"><Icon name="sparkle" size={20} /></span>
         <span className="ai-pill-text" key={label}>{say(labels[label % labels.length])}</span>
       </button>
-      {open && <div className="ai-backdrop" onClick={close} aria-hidden="true" />}
+      {open && <div className="ai-backdrop" data-dialog-backdrop="" onClick={close} aria-hidden="true" />}
       {open && (
         <div ref={panel} className={`ai-panel${msgs.length ? " chatting" : ""}${dy ? " dragging" : ""}`} role="dialog" aria-modal={sheet ? "true" : "false"} aria-label={t("OneLaser shopping assistant")} style={dy ? { transform: `translateY(${dy}px)` } : undefined}>
           <div className="ai-grab" onTouchStart={onTouchStart} onTouchMove={onTouchMove} onTouchEnd={onTouchEnd} aria-hidden="true"><i /></div>

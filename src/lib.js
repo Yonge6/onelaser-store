@@ -116,11 +116,12 @@ export const go = (path) => {
 
 /** Freeze the page behind a dialog. overflow:hidden alone still lets iOS Safari scroll the page under a sheet, so the body is
     pinned with position:fixed at the current offset and put back exactly where it was on release. Nested dialogs share one lock. */
-let locks = 0, lockedAt = 0;
+let locks = 0, lockedAt = 0, lockedRoute = "";
 export function lockScroll() {
   if (typeof document === "undefined") return () => {};
   if (locks++ === 0) {
     lockedAt = window.scrollY;
+    lockedRoute = location.hash;
     const b = document.body.style;
     Object.assign(b, { position: "fixed", top: `-${lockedAt}px`, left: "0", right: "0", width: "100%", overflow: "hidden" });
   }
@@ -130,7 +131,9 @@ export function lockScroll() {
     if (--locks === 0) {
       const b = document.body.style;
       Object.assign(b, { position: "", top: "", left: "", right: "", width: "", overflow: "" });
-      window.scrollTo({ top: lockedAt, left: 0, behavior: "instant" });
+      // Put the page back only if we are still on it. When a link inside the dialog moved to another page
+      // (e.g. "Pick a time" to the booking page), the new page keeps its own scroll position.
+      if (location.hash === lockedRoute) window.scrollTo({ top: lockedAt, left: 0, behavior: "instant" });
     }
   };
 }
@@ -144,13 +147,43 @@ const FOCUSABLE = 'a[href], button:not([disabled]), input:not([disabled]):not([t
 const dialogs = [];
 /** True when el is the dialog on top (or no trapped dialog is open). Use it to guard Escape handlers. */
 export const isTopDialog = (el) => !dialogs.length || dialogs[dialogs.length - 1] === el;
+/** True while any focus-trapped dialog is open. */
+export const dialogOpen = () => dialogs.length > 0;
+
+/** Make everything outside the TOP dialog unreachable (inert): siblings of it and of each of its ancestors up to <body>.
+    Recomputed from scratch whenever a dialog opens or closes, so two dialogs can never lock each other out
+    (for example the assistant turning into a phone sheet while another dialog is open). A dialog's own backdrop
+    is marked data-dialog-backdrop and stays clickable. */
+let inertApplied = [];
+function refreshInert() {
+  inertApplied.forEach((x) => { x.inert = false; });
+  inertApplied = [];
+  const top = dialogs[dialogs.length - 1];
+  for (let node = top; node && node !== document.body; node = node.parentElement) {
+    const parent = node.parentElement;
+    if (!parent) break;
+    for (const sib of parent.children) {
+      if (sib === node || sib.inert || sib.hasAttribute("data-dialog-backdrop") || sib.hasAttribute("data-focus-sentinel") || ["SCRIPT", "STYLE", "LINK"].includes(sib.tagName)) continue;
+      sib.inert = true; inertApplied.push(sib);
+    }
+  }
+}
 export function useFocusTrap(ref, on = true) {
   useEffect(() => {
     const el = ref.current;
     if (!on || !el) return undefined;
     const back = document.activeElement;
     dialogs.push(el);
-    const items = () => [...el.querySelectorAll(FOCUSABLE)].filter((x) => x.tabIndex >= 0 && x.getClientRects().length > 0 && getComputedStyle(x).visibility !== "hidden");
+    // The page behind can no longer be reached by Tab, click or a screen reader.
+    refreshInert();
+    // Sentinels at both ends: focus leaving an embedded player (a YouTube iframe swallows our Tab key)
+    // lands on one of them and is sent back into the dialog.
+    const mk = () => { const s = document.createElement("span"); s.tabIndex = 0; s.setAttribute("aria-hidden", "true"); s.dataset.focusSentinel = ""; s.style.cssText = "position:fixed;width:1px;height:1px;opacity:0;pointer-events:none"; return s; };
+    const head = mk(), tail = mk();
+    el.prepend(head); el.append(tail);
+    const items = () => [...el.querySelectorAll(FOCUSABLE)].filter((x) => !("focusSentinel" in x.dataset) && x.tabIndex >= 0 && x.getClientRects().length > 0 && getComputedStyle(x).visibility !== "hidden");
+    head.addEventListener("focus", () => { const l = items(); (l[l.length - 1] || el).focus({ preventScroll: true }); });
+    tail.addEventListener("focus", () => { (items()[0] || el).focus({ preventScroll: true }); });
     if (!el.contains(document.activeElement)) {
       if (!el.hasAttribute("tabindex")) el.setAttribute("tabindex", "-1");
       (items()[0] || el).focus({ preventScroll: true });
@@ -167,6 +200,8 @@ export function useFocusTrap(ref, on = true) {
     return () => {
       document.removeEventListener("keydown", onKey, true);
       const at = dialogs.lastIndexOf(el); if (at >= 0) dialogs.splice(at, 1);
+      head.remove(); tail.remove();
+      refreshInert();
       if (back && typeof back.focus === "function" && document.contains(back)) back.focus({ preventScroll: true });
     };
   }, [ref, on]);

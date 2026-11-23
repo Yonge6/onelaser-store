@@ -4732,3 +4732,21 @@ body:has(.ip-bar) .ai-pill, .pdp ~ .ai-pill { bottom: 104px; }
 .cs-proof-more { position: absolute; top: 6px; right: 8px; display: grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; background: rgba(255, 255, 255, 0.1); color: #fff; opacity: .75; transition: opacity .2s, transform .2s, background .2s; }
 .cs-proof li > button:hover .cs-proof-more { opacity: 1; background: var(--brand); transform: rotate(90deg); }
 .cs-proof li > button:hover span { color: #fff; }
+
+/* Why OneLaser: link under the four cards, and the "Where these numbers come from" dialog. */
+.ip2-src { margin: 20px auto 0; display: flex; align-items: center; gap: 8px; padding: 10px 16px; border-radius: 8px; font-size: 15px; line-height: 20px; font-weight: 600; color: #075f91; transition: background .2s; }
+.ip2-src:hover { background: var(--accent-soft); }
+.ip2-src svg:last-child { transition: transform .2s; }
+.ip2-src:hover svg:last-child { transform: translateX(3px); }
+.tdlg-src { list-style: none; margin: 18px 0 0; padding: 0; display: grid; gap: 12px; counter-reset: src; }
+.tdlg-src > li { padding: 16px 18px; border-radius: 12px; background: #f6f7f9; }
+.tdlg-src-head { display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 10px; }
+.tdlg-src-head b { font-family: var(--mono); font-size: 18px; line-height: 24px; color: var(--accent-ink); }
+.tdlg-src-head span { font-size: 16px; line-height: 22px; font-weight: 600; color: var(--title); }
+.tdlg-src dl { margin: 10px 0 0; display: grid; gap: 8px; }
+.tdlg-src dl > div { display: grid; grid-template-columns: 120px minmax(0, 1fr); gap: 12px; }
+.tdlg-src dt { font-size: 13px; line-height: 21px; font-weight: 600; color: var(--muted); }
+.tdlg-src dd { margin: 0; font-size: 15px; line-height: 21px; color: var(--title); }
+@media (max-width: 640px) {
+  .tdlg-src dl > div { grid-template-columns: minmax(0, 1fr); gap: 2px; }
+}
