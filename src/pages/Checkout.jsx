@@ -20,6 +20,12 @@ const Field = ({ label, name, value, onChange, bad, required = true, className =
     <span>{label}{required && <i> *</i>}</span>
   </label>
 );
+/** (555) 555-0123 for a 10-digit U.S. number; anything else is shown as typed. */
+const usPhone = (v = "") => {
+  if (/^\s*\+(?!1\b|1\s|1\d)/.test(v)) return v; // another country code: leave it as typed
+  const d = v.replace(/\D/g, "").replace(/^1(?=\d{10}$)/, "");
+  return d.length === 10 ? `(${d.slice(0, 3)}) ${d.slice(3, 6)}-${d.slice(6)}` : v;
+};
 const picture = (i) => (i.product.kind === "machine" ? frontImg(i.product) : i.variant.image || i.product.images[0]);
 
 export default function Checkout() {
@@ -81,7 +87,7 @@ export default function Checkout() {
       </div>
       {codeMsg && <p className="ik-code-msg" role="status">{codeMsg}</p>}
       <dl>
-        <div><dt>{t("Subtotal")}</dt><dd>{money(subtotal + savings)}</dd></div>
+        <div><dt>{t("Price")}</dt><dd>{money(subtotal + savings)}</dd></div>
         {savings > 0 && <div className="save"><dt>{t("Savings")}</dt><dd>−{money(savings)}</dd></div>}
         <div><dt>{t("Shipping")}</dt><dd>{step > 0 ? t(machines ? "Quoted after address review" : "Calculated after address") : t("Enter your address")}</dd></div>
         <div><dt>{t("Tax")}</dt><dd>{step > 0 ? t("Calculated after address") : t("Enter your address")}</dd></div>
@@ -110,7 +116,7 @@ export default function Checkout() {
               {step === 0 ? (
                 <>
                   <Field label={t("Email Address")} name="email" type="email" autoComplete="email" value={f.email} onChange={set} bad={err.email} />
-                  <p className="ik-hint">{t("We'll send the order confirmation and updates here.")} {t("Have an account?")} <Link href="https://www.1laser.com/account/login">{t("LOG IN")}</Link></p>
+                  <p className="ik-hint">{t("We'll send the order confirmation and updates here.")} {t("Have an account?")} <Link href="https://www.1laser.com/account/login">{t("Log in")}</Link></p>
                   <h2 className="ik-divided">{t("Shipping details")}</h2>
                   <div className="ik-grid">
                     <label className="ik-field ik-static c2"><span>{t("Country/Region")}<i> *</i></span><b>{t("United States")}</b></label>
@@ -133,7 +139,7 @@ export default function Checkout() {
                 </>
               ) : (
                 <div className="ik-saved">
-                  <span><b>{f.first} {f.last}</b> · {f.email} · {f.phone}<br />{f.street}{f.apt ? `, ${f.apt}` : ""}, {f.city}, {f.state} {f.zip}</span>
+                  <span><b>{f.first} {f.last}</b> · {f.email} · {usPhone(f.phone)}<br />{f.street}{f.apt ? `, ${f.apt}` : ""}, {f.city}, {f.state} {f.zip}</span>
                   <button type="button" onClick={() => setStep(0)}>{t("Edit")}</button>
                 </div>
               )}

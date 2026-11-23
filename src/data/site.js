@@ -5,7 +5,7 @@ export const promo = {
   headline: "Save up to $3,000",
   image: "https://www.1laser.com/cdn/shop/files/exec-051cb678-d9c0-4c36-b080-528914f5f413.png?v=1794186467",
   endsAt: "2026-12-01T07:59:59Z", // Nov 30, 11:59 PM PT
-  link: "https://www.1laser.com/pages/bfcm26", // official Black Friday page
+  link: "/collections/deals", // the store's own Black Friday deals, so visitors stay in the store (official page: 1laser.com/pages/bfcm26)
 };
 
 export const collections = {
@@ -47,13 +47,13 @@ export const nav = [
     more: [["All laser machines", "/collections/machines"], ["Accessories", "/collections/accessories"], ["Compare machines", "/compare"]],
   },
   { label: "Accessories", to: "/collections/accessories" },
-  { label: "Material", to: "/collections/materials" },
+  { label: "Materials", to: "/collections/materials" },
   { label: "Black Friday", to: "/collections/deals", hot: true },
   {
-    label: "Support", href: `${SITE}/pages/sales-consultation`,
+    label: "Support", to: "/pages/sales-consultation",
     // Two picture cards plus a link list, as on 1laser.com.
     cards: [
-      ["Get a Quote", `${SITE}/products/sales-consultation-call`, `${SITE}/cdn/shop/files/Consultation_Call_Session_f357d165-c36d-445e-8589-cd76cb193639.png?v=1764916744`],
+      ["Get a Quote", "/pages/sales-consultation", `${SITE}/cdn/shop/files/Consultation_Call_Session_f357d165-c36d-445e-8589-cd76cb193639.png?v=1764916744`],
       ["1-on-1 Support", `${SITE}/products/engineer-1-on-1-training-support`, `${SITE}/cdn/shop/files/1-on-1_training.png?v=1764920272`],
     ],
     links: [["Contact Support", "https://zohodesk.1laser.com/portal/en/newticket"], ["Financing", "/pages/financing"], ["Policy", `${SITE}/pages/shipping-policy`], ["Blogs", `${SITE}/blogs/topic`], ["Product Knowledge Base", "https://wiki.1laser.com"]],
@@ -265,7 +265,7 @@ export const homeVideos = [
    12-month main parts / 6-month tube warranty). "Up to 4x detail" is OneLaser's own product-page claim. Years at 8 h a day. */
 export const homeProof = [
   { figure: "30,000 h", title: "Laser tube life", times: "About 4x", us: 100, them: 27, usLabel: "30,000 h · air-cooled", themLabel: "6,000–8,000 h · water-cooled", meaning: "At 8 hours a day that is about 10 years of work. A typical glass tube needs replacing every 2–3 years." },
-  { figure: "2,000 mm/s", title: "Engraving speed", times: "Over 3x", us: 100, them: 30, usLabel: "2,000 mm/s · Hydra Gen2", themLabel: "600 mm/s", meaning: "Big batches finish sooner, so you can take larger orders and still ship on time." },
+  { figure: "1,200 mm/s", title: "Engraving speed", times: "2x", us: 100, them: 50, usLabel: "1,200 mm/s · XRF", themLabel: "600 mm/s", meaning: "Big batches finish sooner, so you can take larger orders and still ship on time." },
   { figure: "2,000 DPI", title: "Engraving detail", times: "Up to 4x", us: 100, them: 0, usLabel: "0.07 mm RF laser dot", themLabel: "No DPI listed in the XRF comparison", meaning: "Small text, photos and logos come out sharp, so you remake fewer pieces." },
   { figure: "3 years", title: "Warranty on mechanical parts", times: "3x", us: 100, them: 33, usLabel: "3-2-1 warranty · X Series and Hydra", themLabel: "12 months main parts · 6 months tube", meaning: "On X Series and Hydra, mechanical parts are covered for 3 years, not 1." },
 ];
@@ -276,7 +276,7 @@ export const homeProof = [
    Each entry says where the figure applies and where it does not. [figure, title, applies, compared, note] */
 export const homeProofSources = [
   ["Up to 30,000 h", "Laser source life", "Air-cooled RF tubes in XRF and Hydra Gen2.", "6,000–8,000 hours for a water-cooled glass tube.", "“About 4x” is 30,000 h against 6,000–8,000 h, which works out to 3.75x to 5x. Cobra and the Hydra Hybrid cutting tube use glass CO₂ tubes, not RF tubes."],
-  ["2,000 mm/s", "Raster engraving speed", "Hydra Gen2. XRF reaches 1,200 mm/s and VertiGo 800 mm/s.", "600 mm/s for a typical 55W glass-tube desktop laser.", "Comparing published top speeds, XRF is 1,200 against 600 mm/s: 2x. Test conditions may differ."],
+  ["1,200 mm/s", "Raster engraving speed", "XRF, on the same table. Hydra Gen2 reaches up to 2,000 mm/s and VertiGo 800 mm/s.", "600 mm/s for a typical 55W glass-tube desktop laser.", "Both are published top speeds, so “2x” compares like with like. Test conditions may differ."],
   ["Up to 2,000 DPI", "Engraving detail", "XRF and Hydra Gen2, with a 0.07 mm laser dot. VertiGo engraves at up to 1,000 DPI.", "The glass-tube laser lists 0.01 mm processing precision, not a DPI figure.", "“Up to 4x sharper detail” is OneLaser's own claim on the Hydra Gen2 page, not a side-by-side test."],
   ["3 years", "Mechanical-parts warranty", "X Series (XRF, XT) and Hydra: 3 years mechanical, 2 years electrical, 1 year optics and laser source.", "12 months on main components and 6 months on the tube.", "Cobra has 1 year on mechanical and electrical parts; optical lenses are not covered. VertiGo has 1 year on mechanical and electrical parts, 6 months on the laser source and 1 month on lens and mirror."],
 ];
@@ -288,7 +288,7 @@ export const homeFaq = [
   ["Can I return a machine?", "OneLaser offers 30-day easy returns. See the Refund Policy on 1laser.com for conditions."],
   ["Is financing available?", "Yes. OneLaser works with Shop Pay Installments, Affirm and ClickLease. Rates and terms depend on the lender's approval."],
   ["Which software does it work with?", "OneLaser machines work with LightBurn, MakerBoost AI and RDWorks on Windows and macOS."],
-  ["How does support work after I buy?", "You talk to U.S.-based engineers who have built, tuned and repaired these machines. Contact them from the Support page."],
+  ["How does support work after I buy?", "You talk to U.S.-based support engineers by phone, email or a support ticket. Contact them from the Support page."],
   ["How much is shipping?", "The shipping rate and delivery estimate are shown at checkout once you enter your address. See the Shipping Policy for details."],
 ];
 

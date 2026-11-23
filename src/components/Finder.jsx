@@ -450,7 +450,7 @@ export function FinderHelp() {
           <h3>{t("Not sure which one fits?")}</h3>
           <p>{t("Tell a OneLaser engineer what you make. We'll point you to the right machine.")}</p>
         </div>
-        <Link to="/pages/sales-consultation" className="ih-btn dark">{t("Schedule a call")}</Link>
+        <Link to="/pages/sales-consultation" className="ih-btn dark">{t("Book a free call")}</Link>
       </div>
     </>
   );

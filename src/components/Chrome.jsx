@@ -18,6 +18,19 @@ const fitCrop = (c) => {
   return { width: pct(size), left: pct(0.5 - (size * (l + r)) / 2), top: pct((1 / 3 - ((size / a) * (t + b)) / 2) * 1.5) };
 };
 
+/** On the booking page the "Book a free call" button would link to itself; there it scrolls to the calendar instead. */
+const toBooking = (e, before) => {
+  const book = document.getElementById("book");
+  // Ctrl/Cmd/Shift/middle click keep their normal meaning (open in a new tab or window).
+  if (!book || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+  e.preventDefault();
+  before?.(); // e.g. close the phone menu first, so it does not cover the calendar
+  requestAnimationFrame(() => {
+    book.scrollIntoView({ behavior: "smooth", block: "start" });
+    book.querySelector(".cs-soon button, .cs-days button, input[name=first]")?.focus({ preventScroll: true });
+  });
+};
+
 export function Header({ path }) {
   const { count } = useCart();
   const [open, setOpen] = useState(null); // mega menu label
@@ -69,7 +82,7 @@ export function Header({ path }) {
       <header className={`site-header${overlay ? " overlay" : ""}`} onMouseLeave={() => { setOpen(null); setHover(false); }}>
         {promoOn && (
           <div className={`promo-bar${top ? "" : " away"}`}>
-            <Link href={promo.link} className="promo-bar-link" tabIndex={top ? 0 : -1}>
+            <Link to={promo.link} className="promo-bar-link" tabIndex={top ? 0 : -1}>
               <span className="promo-bar-copy"><small>{t(promo.label)}</small><b>{t(promo.headline)}</b></span>
               <Countdown endsAt={promo.endsAt} />
               <img src={img(promo.image, 400)} alt="" />
@@ -87,7 +100,7 @@ export function Header({ path }) {
           </nav>
           <div className="site-actions">
             <Link href={`tel:${contact.tel}`} className="header-phone"><Icon name="phone" size={16} /><span>{contact.phone}</span></Link>
-            <Link to="/pages/sales-consultation" className="store-btn"><Icon name="calendar" size={16} /><span>{t("Schedule a Sales Call")}</span></Link>
+            <Link to="/pages/sales-consultation" className="store-btn" onClick={toBooking}><Icon name="calendar" size={16} /><span>{t("Book a free call")}</span></Link>
             <button type="button" className="icon-btn" aria-label={t("Search")} onClick={() => setSearch((s) => !s)}><Icon name="search" size={22} /></button>
             <Link href="https://www.1laser.com/account/login" className="icon-btn hide-mobile" aria-label={t("Account")}><Icon name="user" size={22} /></Link>
             <Link to="/cart" className="icon-btn cart-btn" aria-label={`Cart, ${count} items`}><Icon name="cart" size={22} />{count > 0 && <em>{count}</em>}</Link>
@@ -203,7 +216,7 @@ export function Header({ path }) {
               ))}
             </div>
             <div className="drawer-foot">
-              <Link to="/pages/sales-consultation" className="store-btn"><Icon name="calendar" size={16} /><span>{t("Schedule a Sales Call")}</span></Link>
+              <Link to="/pages/sales-consultation" className="store-btn" onClick={(e) => toBooking(e, () => setMobile(false))}><Icon name="calendar" size={16} /><span>{t("Book a free call")}</span></Link>
               <Link href={`tel:${contact.tel}`} className="drawer-phone"><Icon name="phone" size={16} />{contact.phone}</Link>
               <details className="drawer-lang">
                 <summary><Icon name="globe" size={20} /><span>{current.label}</span><Icon name="chevron" size={16} /></summary>

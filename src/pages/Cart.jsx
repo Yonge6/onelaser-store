@@ -207,7 +207,7 @@ export default function Cart() {
             </ul>
           </aside>
         </div>
-        <Suggestions exclude={inCart} />
+        <Suggestions exclude={[...inCart, ...items.flatMap((i) => addOnsFor(i.product).map((a) => a.handle))]} />
       </div>
       <div className="ic-bar">
         <label><input type="checkbox" checked={all} onChange={(e) => toggleAll(e.target.checked)} /><span>{t("All")}</span></label>

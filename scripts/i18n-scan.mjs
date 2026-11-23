@@ -36,6 +36,27 @@ const stringsDeep = (node) => { const out = []; walk(node, (n) => { if (n.type =
 const isT = (n) => n.type === "CallExpression" && n.callee.type === "Identifier" && ["t", "tf", "tx", "txNodes"].includes(n.callee.name);
 const isEl = (n) => n.type === "CallExpression" && n.callee.type === "MemberExpression" && n.callee.property.name === "createElement";
 
+/** Only the named top-level exports of a data file (e.g. site.js) are scanned: the ones the pages show through t(). */
+export function scanExports(file, names) {
+  const js = esbuild.transformSync(fs.readFileSync(file, "utf8"), { loader: "js" }).code;
+  const ast = parseAst(js);
+  const needed = new Set();
+  for (const st of ast.body) {
+    if (st.type !== "ExportNamedDeclaration" || !st.declaration || st.declaration.type !== "VariableDeclaration") continue;
+    for (const d of st.declaration.declarations) {
+      if (!names.includes(d.id.name)) continue;
+      walk(d.init, (n, parent, key) => {
+        if (n.type === "TemplateLiteral" && n.expressions.length === 0 && looksLikeText(n.quasis[0].value.cooked)) { needed.add(n.quasis[0].value.cooked); return; }
+        if (n.type !== "Literal" || typeof n.value !== "string" || !looksLikeText(n.value)) return;
+        if (parent?.type === "Property" && key === "key") return;
+        if (parent?.type === "Property" && key === "value") { const name = parent.key?.name ?? parent.key?.value; if (CODE_KEYS.has(name)) return; }
+        needed.add(n.value);
+      });
+    }
+  }
+  return needed;
+}
+
 export function scan(files) {
   const needed = new Set(), hardcoded = [], childText = new Set();
   for (const f of files) {

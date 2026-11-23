@@ -24,6 +24,11 @@ const { scan } = await import(pathToFileURL(path.join(root, "scripts/i18n-scan.m
 const sources = ["src/pages", "src/components"].flatMap((d) => fs.readdirSync(path.join(root, d)).filter((f) => /\.jsx?$/.test(f)).map((f) => path.join(root, d, f))).concat([path.join(root, "src/App.jsx")]);
 const found = scan(sources);
 found.needed.forEach((k) => keys.add(k));
+// site.js data the pages show through t(variable). Exports not listed here are either not shown or quoted
+// word for word (reviews, video titles); add an export here when a page starts showing it.
+const { scanExports } = await import(pathToFileURL(path.join(root, "scripts/i18n-scan.mjs")).href);
+const SHOWN = ["promo", "nav", "footer", "heroSlides", "homeTabs", "shortSlogans", "homeProof", "homeProofSources", "homeFaq", "homeStandard", "faq"];
+scanExports(path.join(root, "src/data/site.js"), SHOWN).forEach((k) => keys.add(k));
 const loose = found.hardcoded.filter((h) => !sameFile.markup.includes(h.text));
 if (loose.length) {
   console.error("\n[i18n] English written straight into the page, so it never gets translated. Wrap it in t(\"...\") and add translations (or, for a brand name, list it under \"markup\" in scripts/i18n-same.json):\n  " + loose.map((h) => `${path.relative(root, h.file)}: ${JSON.stringify(h.text)}`).join("\n  "));
