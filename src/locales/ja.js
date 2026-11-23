@@ -1352,4 +1352,6 @@ export default {
   "You may speak with one of them": "この中の担当者がお電話します",
   "From OneLaser customers": "OneLaserのお客様の声",
   "What customers say about our team.": "お客様から見た私たちのチーム。",
+  "How the call works": "通話の流れ",
+  "Monday to Friday, 10:00–11:30 AM and 2:00–4:30 PM Pacific time. No obligation to buy.": "太平洋時間の月〜金、10:00–11:30と14:00–16:30。購入の義務はありません。",
 };

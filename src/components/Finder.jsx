@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { t } from "../i18n.js";
-import { asset, byHandle, frontImg, img, lockScroll, money, products } from "../lib.js";
+import { asset, byHandle, frontImg, img, lockScroll, money, products, useFocusTrap, isTopDialog } from "../lib.js";
 import { AddButton, Icon, Link } from "./ui.jsx";
 import { contact } from "../data/site.js";
 import { M, STEPS, rank as rankAll, roundFocus, hasRound, ready } from "./finderRules.js";
@@ -300,13 +300,15 @@ const CODES = [["+1", "US"], ["+44", "UK"], ["+61", "AU"], ["+49", "DE"], ["+33"
 /** Lead form in a dialog over the page, laid out after the 1laser.com Black Friday "Talk to a laser expert" pop-up.
     Design draft: nothing is stored or sent. */
 export function LeadDialog({ mode = "quote", product, lines = [], onClose }) {
+  const box = useRef(null);
+  useFocusTrap(box);
   const [sent, setSent] = useState(false);
   const [err, setErr] = useState({});
   const first = useRef(null);
   useEffect(() => {
     const unlock = lockScroll();
     first.current?.focus();
-    const key = (e) => e.key === "Escape" && onClose();
+    const key = (e) => e.key === "Escape" && isTopDialog(box.current) && onClose();
     window.addEventListener("keydown", key);
     return () => { unlock(); window.removeEventListener("keydown", key); };
   }, [onClose]);
@@ -323,7 +325,7 @@ export function LeadDialog({ mode = "quote", product, lines = [], onClose }) {
   };
   const call = mode === "call";
   return createPortal(
-    <div className="lead" role="dialog" aria-modal="true" aria-labelledby="lead-title" onMouseDown={(e) => e.target === e.currentTarget && onClose()}>
+    <div ref={box} className="lead" role="dialog" aria-modal="true" aria-labelledby="lead-title" onMouseDown={(e) => e.target === e.currentTarget && onClose()}>
       <div className="lead-box">
         <button type="button" className="lead-x" aria-label={t("Close")} onClick={onClose}>×</button>
         <div className="lead-art">

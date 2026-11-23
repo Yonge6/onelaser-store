@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { t, tf, getLang } from "../i18n.js";
 import { img } from "../lib.js";
 import { Icon, Link } from "../components/ui.jsx";
+import { ReviewsDialog, TrustDialog } from "./Home.jsx";
 import { contact, homeReviews, trustpilot } from "../data/site.js";
 
 /* Free sales consultation, redesigned from 1laser.com/pages/sales-consultation.
@@ -306,6 +307,11 @@ const FAQ = [
   ["What if none of the times work?", "Call us or email sales@1laser.com and we will find a time that suits you."],
 ];
 
+/** One fact in the dark proof strip; opens its explainer dialog. Defined outside Consult so it is not rebuilt on every render. */
+function Fact({ kind, onOpen, children }) {
+  return <li><button type="button" onClick={() => onOpen(kind)} aria-haspopup="dialog">{children}<i className="cs-proof-more" aria-hidden="true"><Icon name="plus" size={14} /></i></button></li>;
+}
+
 export default function Consult() {
   useEffect(() => { document.title = "Free Sales Consultation | OneLaser"; return () => { document.title = "OneLaser Store — Redesign Draft"; }; }, []);
   const [bookInView, setBookInView] = useState(true);
@@ -320,6 +326,8 @@ export default function Consult() {
     return () => { window.removeEventListener("scroll", check); window.removeEventListener("resize", check); };
   }, []);
   const toBook = () => document.getElementById("book")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  const [dlg, setDlg] = useState(null); // proof-strip dialogs: reviews, call, warranty, support (same dialogs as the home page)
+  const [tpOpen, setTpOpen] = useState(false);
   return (
     <div className="cs">
       <section className="cs-hero">
@@ -351,10 +359,10 @@ export default function Consult() {
 
       <section className="cs-proof" aria-label={t("Why OneLaser")}>
         <ul className="cs-wrap">
-          <li><b>{homeReviews.average}<em>★</em></b><span>{tf("Average from {n} owner reviews", { n: homeReviews.count })}</span></li>
-          <li><b>{t("30 min")}</b><span>{t("Free, no obligation")}</span></li>
-          <li><b>3-2-1</b><span>{t("Year warranty on X Series and Hydra")}</span></li>
-          <li><b>{t("U.S.")}</b><span>{t("Support from laser engineers")}</span></li>
+          <Fact onOpen={setDlg} kind="reviews"><b>{homeReviews.average}<em>★</em></b><span>{tf("Average from {n} owner reviews", { n: homeReviews.count })}</span></Fact>
+          <Fact onOpen={setDlg} kind="call"><b>{t("30 min")}</b><span>{t("Free, no obligation")}</span></Fact>
+          <Fact onOpen={setDlg} kind="warranty"><b>3-2-1</b><span>{t("Year warranty on X Series and Hydra")}</span></Fact>
+          <Fact onOpen={setDlg} kind="support"><b>{t("U.S.")}</b><span>{t("Support from laser engineers")}</span></Fact>
         </ul>
       </section>
 
@@ -448,6 +456,8 @@ export default function Consult() {
         </div>
       </section>
 
+      {dlg && <TrustDialog kind={dlg} onClose={() => setDlg(null)} onTrustpilot={() => { setDlg(null); setTpOpen(true); }} onBook={() => { setDlg(null); setTimeout(() => { toBook(); (document.querySelector("#book .cs-soon button, #book .cs-days button") || document.querySelector("#book input[name=first]") || document.querySelector("#book .cs-next"))?.focus({ preventScroll: true }); }, 60); }} />}
+      {tpOpen && <ReviewsDialog onClose={() => setTpOpen(false)} />}
       <div className={`cs-bar${bookInView ? " off" : ""}`}><button type="button" className="cs-next" onClick={toBook}><Icon name="calendar" size={18} />{t("Book a free 30-minute call")}</button></div>
     </div>
   );

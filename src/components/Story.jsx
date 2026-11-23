@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { t } from "../i18n.js";
-import { img } from "../lib.js";
+import { img, useFocusTrap, isTopDialog } from "../lib.js";
 import { Icon } from "./ui.jsx";
 
 /* Product overview, laid out after the black overview on the Insta360 Store product page
@@ -141,21 +141,27 @@ function Gallery({ b }) {
 
 const PROMISE_ICONS = ["refresh", "shield", "headset"];
 
-export default function Story({ blocks }) {
-  const [video, setVideo] = useState(null);
-  useEffect(() => {
-    if (!video) return undefined;
-    const close = (e) => e.key === "Escape" && setVideo(null);
-    window.addEventListener("keydown", close);
-    return () => window.removeEventListener("keydown", close);
-  }, [video]);
-  let splits = 0;
-  const Play = ({ id, thumb }) => (
-    <button type="button" className="is-video" onClick={() => setVideo(id)} aria-label={t("Play video")}>
+/** Video thumbnail button. Defined outside Story so opening a video does not rebuild it, and focus can return to it on close. */
+function Play({ id, thumb, onPlay }) {
+  return (
+    <button type="button" className="is-video" onClick={() => onPlay(id)} aria-label={t("Play video")}>
       <img src={thumb ? img(thumb, 1400) : `https://i.ytimg.com/vi/${id}/hqdefault.jpg`} alt="" loading="lazy" />
       <span aria-hidden="true" />
     </button>
   );
+}
+
+export default function Story({ blocks }) {
+  const [video, setVideo] = useState(null);
+  const videoBox = useRef(null);
+  useFocusTrap(videoBox, !!video);
+  useEffect(() => {
+    if (!video) return undefined;
+    const close = (e) => e.key === "Escape" && isTopDialog(videoBox.current) && setVideo(null);
+    window.addEventListener("keydown", close);
+    return () => window.removeEventListener("keydown", close);
+  }, [video]);
+  let splits = 0;
   return (
     <>
       {blocks.map((b, i) => {
@@ -172,7 +178,7 @@ export default function Story({ blocks }) {
           case "split":
             return (
               <Reveal className={`is-split${splits++ % 2 ? " flip" : ""}`} key={i}>
-                <div className="is-media">{b.video && ytId(b.video) ? <Play id={ytId(b.video)} thumb={b.image} /> : <Media item={b} />}</div>
+                <div className="is-media">{b.video && ytId(b.video) ? <Play onPlay={setVideo} id={ytId(b.video)} thumb={b.image} /> : <Media item={b} />}</div>
                 <Head b={b} />
               </Reveal>
             );
@@ -185,14 +191,14 @@ export default function Story({ blocks }) {
             return (
               <Reveal className="is-videos" key={i}>
                 <Head b={b} />
-                <ul>{b.videos.map((v) => <li key={v.id}><Play id={v.id} thumb={v.img} /></li>)}</ul>
+                <ul>{b.videos.map((v) => <li key={v.id}><Play onPlay={setVideo} id={v.id} thumb={v.img} /></li>)}</ul>
               </Reveal>
             );
           case "table":
             return (
               <Reveal className="is-feature" key={i}>
                 <Head b={b} />
-                {b.video && ytId(b.video) && <div className="is-media"><Play id={ytId(b.video)} /></div>}
+                {b.video && ytId(b.video) && <div className="is-media"><Play onPlay={setVideo} id={ytId(b.video)} /></div>}
                 {b.rows?.length > 1 && (
                   <div className="is-table-scroll">
                     <table className="is-table">
@@ -216,7 +222,7 @@ export default function Story({ blocks }) {
         }
       })}
       {video && (
-        <div className="is-modal" role="dialog" aria-modal="true" aria-label={t("Video")} onClick={() => setVideo(null)}>
+        <div ref={videoBox} className="is-modal" role="dialog" aria-modal="true" aria-label={t("Video")} onClick={() => setVideo(null)}>
           <button type="button" aria-label={t("Close video")}>×</button>
           <div onClick={(e) => e.stopPropagation()}>
             <iframe src={`https://www.youtube-nocookie.com/embed/${video}?autoplay=1&rel=0`} title={t("Video")} allow="autoplay; encrypted-media; picture-in-picture" allowFullScreen />

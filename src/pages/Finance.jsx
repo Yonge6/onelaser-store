@@ -162,6 +162,16 @@ function Estimator({ amount, setAmount, handle, setHandle }) {
   );
 }
 
+/** One quiz question. Top-level (not inside Finance) so its buttons keep keyboard focus when an answer is picked. */
+function Q({ k, label, opts, ans, setAns }) {
+  return (
+    <div className="fi-q">
+      <span>{t(label)}</span>
+      <div className="fi-seg">{opts.map(([v, l]) => <button key={v} type="button" className={ans[k] === v ? "on" : ""} aria-pressed={ans[k] === v} onClick={() => setAns((a) => ({ ...a, [k]: v }))}>{t(l)}</button>)}</div>
+    </div>
+  );
+}
+
 export default function Finance({ query }) {
   useEffect(() => { document.title = "Financing | OneLaser"; return () => { document.title = "OneLaser Store — Redesign Draft"; }; }, []);
   const start = byHandle[query?.get("p")] ? query.get("p") : "hydra-9-gen-2-70w-rf-co2-dual-laser-machine";
@@ -173,12 +183,6 @@ export default function Finance({ query }) {
   const best = OPTIONS.filter((o) => fit[o.id][0]);
   const go = (id) => document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
   const showDetails = (id) => { setTab(id); go("how"); };
-  const Q = ({ k, label, opts }) => (
-    <div className="fi-q">
-      <span>{t(label)}</span>
-      <div className="fi-seg">{opts.map(([v, l]) => <button key={v} type="button" className={ans[k] === v ? "on" : ""} aria-pressed={ans[k] === v} onClick={() => setAns((a) => ({ ...a, [k]: v }))}>{t(l)}</button>)}</div>
-    </div>
-  );
   const d = DETAILS[tab];
   const cur = OPTIONS.find((o) => o.id === tab);
 
@@ -213,9 +217,9 @@ export default function Finance({ query }) {
           <p className="fi-kicker">{t("Choose your option")}</p>
           <h2 className="fi-h2">{t("Three questions, and we'll show what fits.")}</h2>
           <div className="fi-quiz">
-            <Q k="buyer" label="Buying as" opts={[["business", "A business"], ["personal", "An individual"]]} />
-            {ans.buyer === "business" && <Q k="credit" label="Credit score" opts={[["good", "600 or higher"], ["building", "Under 600 or not sure"]]} />}
-            {ans.buyer === "business" && <Q k="years" label="Time in business" opts={[["est", "2 years or more"], ["new", "Under 2 years"]]} />}
+            <Q ans={ans} setAns={setAns} k="buyer" label="Buying as" opts={[["business", "A business"], ["personal", "An individual"]]} />
+            {ans.buyer === "business" && <Q ans={ans} setAns={setAns} k="credit" label="Credit score" opts={[["good", "600 or higher"], ["building", "Under 600 or not sure"]]} />}
+            {ans.buyer === "business" && <Q ans={ans} setAns={setAns} k="years" label="Time in business" opts={[["est", "2 years or more"], ["new", "Under 2 years"]]} />}
             <p className="fi-quiz-amt">{t("Amount")}: <b>{money(Math.round(amount))}</b> <button type="button" onClick={() => go("estimate")}>{t("Change")}</button></p>
           </div>
           <p className="fi-match" aria-live="polite"><Icon name="check" size={18} />{best.length} {t(best.length === 1 ? "option fits your answers" : "options fit your answers")}</p>

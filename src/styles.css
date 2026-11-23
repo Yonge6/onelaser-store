@@ -2267,7 +2267,7 @@ ul { list-style: none; }
 }
 
 /* ===== Lead dialog, after the 1laser.com Black Friday "Talk to a laser expert" pop-up ===== */
-.lead { position: fixed; inset: 0; z-index: 120; display: grid; place-items: center; padding: 24px; background: rgba(8, 8, 10, 0.72); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); animation: is-fade .2s ease; overscroll-behavior: contain; }
+.lead { position: fixed; inset: 0; z-index: 140; display: grid; place-items: center; padding: 24px; background: rgba(8, 8, 10, 0.72); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); animation: is-fade .2s ease; overscroll-behavior: contain; }
 .lead-box { position: relative; width: min(100%, 1000px); max-height: calc(100dvh - 48px); display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1fr); border-radius: 20px; overflow: hidden; background: #111113; border-top: 4px solid var(--brand); box-shadow: 0 40px 100px -30px rgba(0, 0, 0, 0.8); animation: lead-in .3s cubic-bezier(.2, .7, .2, 1); }
 @keyframes lead-in { from { opacity: 0; transform: translateY(16px) scale(.98); } }
 .lead-x { position: absolute; top: 14px; right: 14px; z-index: 2; width: 40px; height: 40px; border-radius: 50%; background: rgba(255, 255, 255, 0.1); color: #fff; font-size: 26px; line-height: 38px; transition: background .2s; }
@@ -4722,5 +4722,13 @@ body:has(.ip-bar) .ai-pill, .pdp ~ .ai-pill { bottom: 104px; }
   .cs-team-shot figcaption { position: static; border-radius: 0; background: #fff; }
 }
 /* Team names wrap to as many rows as the photo width needs, so names are never cut to a sliver. */
-.cs-who { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); }
+.cs-who { grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); }
 .cs-who span b, .cs-team-shot .cs-who small { white-space: normal; }
+
+/* Consultation proof strip: each fact opens the same explainer dialog as on the home page. */
+.cs-proof li { padding: 0; }
+.cs-proof li > button { position: relative; width: 100%; display: grid; justify-items: center; gap: 4px; padding: 8px 12px; border-radius: 14px; color: inherit; text-align: center; cursor: pointer; transition: background .2s; }
+.cs-proof li > button:hover, .cs-proof li > button:focus-visible { background: rgba(255, 255, 255, 0.07); }
+.cs-proof-more { position: absolute; top: 6px; right: 8px; display: grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; background: rgba(255, 255, 255, 0.1); color: #fff; opacity: .75; transition: opacity .2s, transform .2s, background .2s; }
+.cs-proof li > button:hover .cs-proof-more { opacity: 1; background: var(--brand); transform: rotate(90deg); }
+.cs-proof li > button:hover span { color: #fff; }

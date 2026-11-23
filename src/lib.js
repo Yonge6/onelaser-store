@@ -134,3 +134,40 @@ export function lockScroll() {
     }
   };
 }
+
+/** Keep keyboard focus inside an open dialog: focus moves in when it opens, Tab and Shift+Tab cycle inside it,
+    and focus goes back to the control that opened it on close. Without this, Tab reaches the page behind the
+    dialog, where Enter can submit a form the visitor cannot see. */
+const FOCUSABLE = 'a[href], button:not([disabled]), input:not([disabled]):not([type="hidden"]), select:not([disabled]), textarea:not([disabled]), summary, iframe, [tabindex]';
+// Open dialogs, innermost last. Only the top one handles Tab and Escape, so a quote form opened from the finder
+// dialog is not fought over by both.
+const dialogs = [];
+/** True when el is the dialog on top (or no trapped dialog is open). Use it to guard Escape handlers. */
+export const isTopDialog = (el) => !dialogs.length || dialogs[dialogs.length - 1] === el;
+export function useFocusTrap(ref, on = true) {
+  useEffect(() => {
+    const el = ref.current;
+    if (!on || !el) return undefined;
+    const back = document.activeElement;
+    dialogs.push(el);
+    const items = () => [...el.querySelectorAll(FOCUSABLE)].filter((x) => x.tabIndex >= 0 && x.getClientRects().length > 0 && getComputedStyle(x).visibility !== "hidden");
+    if (!el.contains(document.activeElement)) {
+      if (!el.hasAttribute("tabindex")) el.setAttribute("tabindex", "-1");
+      (items()[0] || el).focus({ preventScroll: true });
+    }
+    const onKey = (e) => {
+      if (e.key !== "Tab" || !isTopDialog(el)) return;
+      const list = items();
+      if (!list.length) { e.preventDefault(); el.focus({ preventScroll: true }); return; }
+      const first = list[0], last = list[list.length - 1], cur = document.activeElement;
+      if (e.shiftKey && (cur === first || cur === el || !el.contains(cur))) { e.preventDefault(); last.focus({ preventScroll: true }); }
+      else if (!e.shiftKey && (cur === last || !el.contains(cur))) { e.preventDefault(); first.focus({ preventScroll: true }); }
+    };
+    document.addEventListener("keydown", onKey, true);
+    return () => {
+      document.removeEventListener("keydown", onKey, true);
+      const at = dialogs.lastIndexOf(el); if (at >= 0) dialogs.splice(at, 1);
+      if (back && typeof back.focus === "function" && document.contains(back)) back.focus({ preventScroll: true });
+    };
+  }, [ref, on]);
+}

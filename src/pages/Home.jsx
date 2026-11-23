@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useRef, useState } from "react";
 import { t, tf } from "../i18n.js";
-import { asset, byHandle, img, lockScroll, money, products, frontImg } from "../lib.js";
+import { asset, byHandle, img, lockScroll, money, products, frontImg, useFocusTrap, isTopDialog } from "../lib.js";
 import { contact, footer, heroSlides, homeFaq, homeProof, homeReviews, homeStandard, homeTabs, trustpilot, newHandles, promo, shortSlogans } from "../data/site.js";
 import { AddButton, Countdown, Icon, Link, SpecIcon, useDragScroll } from "../components/ui.jsx";
 import FinderCard, { FinderHelp } from "../components/Finder.jsx";
@@ -222,7 +222,7 @@ const faqText = (q) => homeFaq.find(([k]) => k.startsWith(q))?.[1] || "";
 const DLG_HEAD = {
   reviews: ["star", "Owner reviews"], company: ["flag", "U.S. company"], warranty: ["shield", "Warranty and returns"],
   returns: ["refresh", "Picked the wrong one?"], support: ["headset", "Stuck on a job?"], training: ["user", "First laser?"],
-  financing: ["card", "Budget tight?"], fox: ["tv", "TV feature"],
+  financing: ["card", "Budget tight?"], fox: ["tv", "TV feature"], call: ["calendar", "How the call works"],
 };
 const FIN_MACHINES = ["onelaser-xrf-desktop-laser-machine", "cobra-10-100w-co2-laser-engraver-cutter", "hydra-9-gen-2-70w-rf-co2-dual-laser-machine", "hydra-16-gen-2-70w-rf-co2-dual-laser-machine"];
 const perMonth = (amount, apr, n) => { const r = apr / 1200; return r ? (amount * r) / (1 - (1 + r) ** -n) : amount / n; };
@@ -246,14 +246,16 @@ function useSwipeClose(onClose) {
   };
 }
 
-function TrustDialog({ kind, onClose, onTrustpilot }) {
+export function TrustDialog({ kind, onClose, onTrustpilot, onBook }) {
   const [film, setFilm] = useState(false);
   const [clip, setClip] = useState(PRESS[0]);
   const [fin, setFin] = useState({ h: FIN_MACHINES[2], n: 36 });
   const quotes = useRef(null);
   const swipe = useSwipeClose(onClose);
+  const box = useRef(null);
+  useFocusTrap(box);
   useEffect(() => {
-    const onKey = (e) => e.key === "Escape" && onClose();
+    const onKey = (e) => e.key === "Escape" && isTopDialog(box.current) && onClose();
     window.addEventListener("keydown", onKey);
     const unlock = lockScroll();
     return () => { window.removeEventListener("keydown", onKey); unlock(); };
@@ -399,6 +401,22 @@ function TrustDialog({ kind, onClose, onTrustpilot }) {
         </div>
       </>
     );
+  } else if (kind === "call") {
+    // Hours and steps are the consultation page's (1laser.com/pages/sales-consultation): 30 minutes, Mon–Fri, Pacific time.
+    body = (
+      <>
+        <Head title={t("Free 30-minute phone call")} sub={t("Monday to Friday, 10:00–11:30 AM and 2:00–4:30 PM Pacific time. No obligation to buy.")} />
+        <ol className="tdlg-steps">
+          {[["Tell us what you want to make", "Share your materials, production goals, available space and budget."], ["Find the right setup", "Talk through suitable machines, configurations and accessories with our team."], ["Know your next steps", "Discuss pricing, setup needs and what to consider before making a decision."]].map(([h, x], n) => (
+            <li key={h}><b>{n + 1}</b><span><strong>{t(h)}</strong><small>{t(x)}</small></span></li>
+          ))}
+        </ol>
+        <div className="tdlg-callout"><Faces /><span><b>{t("Do I need to know which machine I want?")}</b><small>{t("No. A rough idea of what you want to make is enough.")}</small></span></div>
+        <div className="tdlg-links">
+          {onBook ? <button type="button" className="tdlg-more" onClick={onBook}>{t("Pick a time")} <Icon name="arrow" size={16} /></button> : <More to="/pages/sales-consultation">{t("Pick a time")}</More>}
+        </div>
+      </>
+    );
   } else if (kind === "financing") {
     const m = byHandle[fin.h];
     const pay = m ? perMonth(m.price, 15, fin.n) : 0;
@@ -436,7 +454,7 @@ function TrustDialog({ kind, onClose, onTrustpilot }) {
   }
   return (
     <div className="tdlg-scrim" onClick={onClose}>
-      <div className={`tdlg tdlg-${kind}`} role="dialog" aria-modal="true" onClick={(e) => e.stopPropagation()} {...swipe}>
+      <div ref={box} className={`tdlg tdlg-${kind}`} role="dialog" aria-modal="true" aria-label={t(DLG_HEAD[kind]?.[1] || "Find your machine")} onClick={(e) => e.stopPropagation()} {...swipe}>
         <span className="tdlg-grab" aria-hidden="true" />
         <button type="button" className="tdlg-x" aria-label={t("Close")} onClick={onClose}><Icon name="close" size={20} /></button>
         {body}
@@ -497,9 +515,11 @@ function Credibility() {
 }
 
 /** "Read all reviews": the Trustpilot profile figures and a selection of reviews in a dialog, so the visitor stays on the page. */
-function ReviewsDialog({ onClose }) {
+export function ReviewsDialog({ onClose }) {
+  const box = useRef(null);
+  useFocusTrap(box);
   useEffect(() => {
-    const onKey = (e) => e.key === "Escape" && onClose();
+    const onKey = (e) => e.key === "Escape" && isTopDialog(box.current) && onClose();
     window.addEventListener("keydown", onKey);
     const unlock = lockScroll();
     return () => { window.removeEventListener("keydown", onKey); unlock(); };
@@ -508,7 +528,7 @@ function ReviewsDialog({ onClose }) {
   const Stars = ({ n }) => <span className="tp-stars" aria-label={`${n} / 5`}>{[1, 2, 3, 4, 5].map((k) => <i key={k} className={k <= n ? "on" : ""}>★</i>)}</span>;
   return (
     <div className="tp-scrim" onClick={onClose}>
-      <div className="tp-dialog" role="dialog" aria-modal="true" aria-label={t("Reviews on Trustpilot")} onClick={(e) => e.stopPropagation()}>
+      <div ref={box} className="tp-dialog" role="dialog" aria-modal="true" aria-label={t("Reviews on Trustpilot")} onClick={(e) => e.stopPropagation()}>
         <button type="button" className="tp-close" aria-label={t("Close")} onClick={onClose}><Icon name="close" size={22} /></button>
         <header className="tp-head">
           <div>

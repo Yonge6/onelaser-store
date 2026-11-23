@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { byHandle, frontImg, img, lockScroll, money } from "../lib.js";
+import { useEffect, useState, useRef } from "react";
+import { byHandle, frontImg, img, lockScroll, money, useFocusTrap, isTopDialog } from "../lib.js";
 import { t } from "../i18n.js";
 import { useCart } from "../cart.jsx";
 import { Icon, Link } from "../components/ui.jsx";
@@ -35,9 +35,11 @@ const OFFER_KEY = "onelaser-cart-offer-seen";
 function Offer({ list, onClose }) {
   const { add } = useCart();
   const [sel, setSel] = useState(() => new Set([list[0].handle]));
+  const box = useRef(null);
+  useFocusTrap(box);
   useEffect(() => {
     const unlock = lockScroll();
-    const esc = (e) => e.key === "Escape" && onClose();
+    const esc = (e) => e.key === "Escape" && isTopDialog(box.current) && onClose();
     window.addEventListener("keydown", esc);
     return () => { unlock(); window.removeEventListener("keydown", esc); };
   }, []);
@@ -45,7 +47,7 @@ function Offer({ list, onClose }) {
   const confirm = () => { list.forEach((a) => sel.has(a.handle) && add(a.handle, a.variants[0].id, 1)); onClose(); };
   return (
     <div className="ic-offer-scrim" onClick={onClose}>
-      <div className="ic-offer" role="dialog" aria-modal="true" aria-labelledby="ic-offer-h" onClick={(e) => e.stopPropagation()}>
+      <div ref={box} className="ic-offer" role="dialog" aria-modal="true" aria-labelledby="ic-offer-h" onClick={(e) => e.stopPropagation()}>
         <h2 id="ic-offer-h">{t("Get your machine running right, the first time")}</h2>
         <p className="ic-offer-sub">{t("Optional extras that fit this machine.")}</p>
         <ul>

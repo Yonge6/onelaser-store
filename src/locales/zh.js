@@ -1352,4 +1352,6 @@ export default {
   "You may speak with one of them": "接你电话的会是他们中的一位",
   "From OneLaser customers": "来自 OneLaser 客户",
   "What customers say about our team.": "客户怎么评价我们的团队。",
+  "How the call works": "通话怎么进行",
+  "Monday to Friday, 10:00–11:30 AM and 2:00–4:30 PM Pacific time. No obligation to buy.": "太平洋时间周一至周五 10:00–11:30、14:00–16:30。不必购买。",
 };

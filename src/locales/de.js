@@ -1352,4 +1352,6 @@ export default {
   "You may speak with one of them": "Sie sprechen mit einer dieser Personen",
   "From OneLaser customers": "Von OneLaser-Kunden",
   "What customers say about our team.": "Was Kunden über unser Team sagen.",
+  "How the call works": "So läuft das Gespräch ab",
+  "Monday to Friday, 10:00–11:30 AM and 2:00–4:30 PM Pacific time. No obligation to buy.": "Montag bis Freitag, 10:00–11:30 und 14:00–16:30 Uhr pazifischer Zeit. Ohne Kaufverpflichtung.",
 };

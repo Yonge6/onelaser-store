@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { getLang, t, tf, tx as txNodes } from "../i18n.js";
-import { lockScroll, byHandle, frontImg, img, money, products } from "../lib.js";
+import { lockScroll, byHandle, frontImg, img, money, products, useFocusTrap, isTopDialog } from "../lib.js";
 import { useCart } from "../cart.jsx";
 import { AddButton, Icon, Link } from "./ui.jsx";
 import { M, STEPS, rank } from "./finderRules.js";
@@ -333,6 +333,11 @@ export default function Assistant({ product }) {
   const { count } = useCart();
   const body = useRef(null);
   const input = useRef(null);
+  const panel = useRef(null);
+  // A full-screen sheet on phones (modal: focus stays inside); a floating panel beside the page on desktop (not modal).
+  const [sheet, setSheet] = useState(() => typeof window !== "undefined" && window.matchMedia("(max-width: 860px)").matches);
+  useEffect(() => { const mq = window.matchMedia("(max-width: 860px)"); const on = () => setSheet(mq.matches); mq.addEventListener("change", on); return () => mq.removeEventListener("change", on); }, []);
+  useFocusTrap(panel, open && sheet);
 
   useEffect(() => { const id = setInterval(() => setLabel((n) => (n + 1) % 3), 3200); return () => clearInterval(id); }, []);
   useEffect(() => { body.current?.scrollTo({ top: body.current.scrollHeight, behavior: "smooth" }); }, [msgs, typing, open]);
@@ -340,12 +345,11 @@ export default function Assistant({ product }) {
     if (!open) return undefined;
     // phones and tablets: do not focus, so the keyboard does not jump up and cover the welcome and quick picks
     if (!window.matchMedia("(max-width: 860px), (pointer: coarse)").matches) input.current?.focus({ preventScroll: true });
-    const key = (e) => e.key === "Escape" && close();
+    const key = (e) => e.key === "Escape" && (!sheet || isTopDialog(panel.current)) && close();
     window.addEventListener("keydown", key);
-    const small = window.matchMedia("(max-width: 860px)").matches;
-    const unlock = small ? lockScroll() : () => {};
+    const unlock = sheet ? lockScroll() : () => {}; // follows the sheet, so crossing 860px while open updates it
     return () => { window.removeEventListener("keydown", key); unlock(); };
-  }, [open]);
+  }, [open, sheet]);
 
   const answer = (r) => {
     const out = { ...r, cards: r.cards?.map((p) => (typeof p === "string" ? p : p.handle)) };
@@ -401,7 +405,7 @@ export default function Assistant({ product }) {
       </button>
       {open && <div className="ai-backdrop" onClick={close} aria-hidden="true" />}
       {open && (
-        <div className={`ai-panel${msgs.length ? " chatting" : ""}${dy ? " dragging" : ""}`} role="dialog" aria-modal="true" aria-label={t("OneLaser shopping assistant")} style={dy ? { transform: `translateY(${dy}px)` } : undefined}>
+        <div ref={panel} className={`ai-panel${msgs.length ? " chatting" : ""}${dy ? " dragging" : ""}`} role="dialog" aria-modal={sheet ? "true" : "false"} aria-label={t("OneLaser shopping assistant")} style={dy ? { transform: `translateY(${dy}px)` } : undefined}>
           <div className="ai-grab" onTouchStart={onTouchStart} onTouchMove={onTouchMove} onTouchEnd={onTouchEnd} aria-hidden="true"><i /></div>
           <header className="ai-head" onTouchStart={onTouchStart} onTouchMove={onTouchMove} onTouchEnd={onTouchEnd}>
             <span className="ai-avatar sm"><Icon name="sparkle" size={16} /></span>
