@@ -51,7 +51,7 @@ function MachineMorph() {
         {SHAPES.map((x, n) => (
           <div key={x.name} className="fx-ms-item" style={{ animationDelay: `${(n * DUR) / SHAPES.length}s` }}>
             <b>{x.name}</b>
-            <dl>{x.specs.map(([k, v]) => <div key={k}><dt>{t(k)}</dt><dd>{v}</dd></div>)}</dl>
+            <dl>{x.specs.map(([k, v]) => <div key={k}><dt>{t(k)}</dt><dd>{t(v)}</dd></div>)}</dl>
           </div>
         ))}
       </div>
@@ -175,7 +175,7 @@ export default function FinderCard({ modal = false }) {
           </div>
           <Link to="/pages/sales-consultation" className="fx-call-cta">
             <span className="fx-call-ico"><Icon name="calendar" size={20} tone /></span>
-            <span><b>{t("Want to talk it through first?")}</b><em>{t("Book a free 30-minute call with a laser expert")}</em></span>
+            <span><b>{t("Want to talk it through first?")}</b><em>{t("Free 30-minute call with a laser expert")}</em></span>
             <Icon name="arrow" size={18} />
           </Link>
           <p className="fx-foot">
@@ -446,7 +446,7 @@ export function FinderHelp() {
         <span className="fd-faces" aria-hidden="true">{[1, 2, 3].map((n) => <img key={n} src={asset(`team-${n}.jpg`)} alt="" loading="lazy" />)}</span>
         <div>
           <h3>{t("Not sure which one fits?")}</h3>
-          <p>{t("Talk it through with a OneLaser laser engineer. Tell us what you make and we'll point you to the right machine.")}</p>
+          <p>{t("Tell a OneLaser engineer what you make. We'll point you to the right machine.")}</p>
         </div>
         <Link to="/pages/sales-consultation" className="ih-btn dark">{t("Schedule a call")}</Link>
       </div>

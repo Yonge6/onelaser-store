@@ -179,7 +179,7 @@ function ProductBlock() {
   const list = (tab.picks ? tab.picks.map((h) => byHandle[h]) : products.filter((p) => p.category === tab.collection || (tab.collection === "materials" && p.kind === "material"))).filter(Boolean).slice(0, 6);
   return (
     <section className="ih-products">
-      <div className="ih-wrap"><h2 className="ih-h2 narrow">{t("Laser machines for makers and growing businesses.")}</h2></div>
+      <div className="ih-wrap"><h2 className="ih-h2 narrow">{t("Find the laser that fits your work.")}</h2></div>
       <div className="ih-sticky">
         <div className="ih-wrap">
           <div className="ih-tabs" role="tablist" ref={tabsRef}>
@@ -221,7 +221,7 @@ const faqText = (q) => homeFaq.find(([k]) => k.startsWith(q))?.[1] || "";
     the financing options and OneLaser's own videos. The payment figure is a plain estimate, marked as such. */
 const DLG_HEAD = {
   reviews: ["star", "Owner reviews"], company: ["flag", "U.S. company"], warranty: ["shield", "Warranty and returns"],
-  returns: ["refresh", "Worried about choosing wrong?"], support: ["headset", "Stuck on a job?"], training: ["user", "First laser?"],
+  returns: ["refresh", "Picked the wrong one?"], support: ["headset", "Stuck on a job?"], training: ["user", "First laser?"],
   financing: ["card", "Budget tight?"], fox: ["tv", "TV feature"],
 };
 const FIN_MACHINES = ["onelaser-xrf-desktop-laser-machine", "cobra-10-100w-co2-laser-engraver-cutter", "hydra-9-gen-2-70w-rf-co2-dual-laser-machine", "hydra-16-gen-2-70w-rf-co2-dual-laser-machine"];
@@ -466,8 +466,8 @@ function Credibility() {
   return (
     <section className="ih-block icred">
       <div className="ih-wrap">
-        <p className="icred-kicker">{t("Who stands behind your machine")}</p>
-        <h2 className="ih-h2 narrow">{t("A real U.S. company, seen on TV.")}</h2>
+        <p className="icred-kicker">{t("Who we are")}</p>
+        <h2 className="ih-h2 narrow">{t("A California company, featured on FOX and Discovery.")}</h2>
         <div className="icv">
           <div className="icv-main">
             <div className="icv-player">
@@ -542,10 +542,10 @@ function ReviewsDialog({ onClose }) {
 /* spec-plate labels per promise: [section code, figure] */
 const PROMISE_SPEC = { returns: ["Returns", "30 days"], warranty: ["Warranty", "3·2·1"], support: ["Support", "U.S."], training: ["Training", "1:1"] };
 const PROMISES = [ // [icon, worry, promise, link label, dialog]
-  ["refresh", "Worried about choosing wrong?", "30-day returns. Use it on real jobs first.", "Refund policy", "returns"],
+  ["refresh", "Picked the wrong one?", "30-day returns. Try it on real jobs first.", "Refund policy", "returns"],
   ["shield", "Something breaks?", "3-2-1 warranty on X Series and Hydra: 3 years mechanical, 2 electrical, 1 optics and laser source.", "Warranty policy", "warranty"],
-  ["headset", "Stuck on a job?", "Call U.S. engineers who build, tune and repair these machines.", "Contact support", "support"],
-  ["user", "First laser?", "One-on-one training, so you are not figuring it out alone.", "1-on-1 training", "training"],
+  ["headset", "Stuck on a job?", "Talk directly with U.S.-based support engineers.", "Contact support", "support"],
+  ["user", "First laser?", "Book a 1-hour, one-on-one video session with an engineer.", "1-on-1 training", "training"],
 ];
 
 
@@ -654,7 +654,7 @@ export default function Home() {
         <div className="ih-wrap">
           <p className="ist-kicker">{t("Real owner reviews")}</p>
           <div className="irv-head">
-            <h2 className="ih-h2">{t("Hear it from owners.")}</h2>
+            <h2 className="ih-h2">{t("What owners say.")}</h2>
             <button type="button" className="irv-score" onClick={() => setReviewsOpen(true)}>
               <span className="irv-stars" aria-hidden="true">★★★★★</span>
               <b>{homeReviews.average}</b>
@@ -687,8 +687,8 @@ export default function Home() {
         <div className="ih-wrap">
           <p className="ist-kicker">{t("Why OneLaser")}</p>
           <div className="ip2-head">
-            <h2 className="ih-h2">{t("Faster, steadier, and dependable day after day.")}</h2>
-            <p>{t("What decides whether a laser keeps running job after job, year after year.")}</p>
+            <h2 className="ih-h2">{t("Built to keep running, year after year.")}</h2>
+            <p>{t("How OneLaser compares with a typical glass-tube laser.")}</p>
           </div>
           <ProofGrid>
             {homeProof.map((x, n) => (
@@ -710,7 +710,7 @@ export default function Home() {
       <section className="ih-block iprom">
         <div className="ih-wrap">
           <p className="ist-kicker">{t("After you buy")}</p>
-          <h2 className="ih-h2 narrow">{t("U.S. engineers have you covered.")}</h2>
+          <h2 className="ih-h2 narrow">{t("Help from U.S. engineers, long after you buy.")}</h2>
           <ul>
             {PROMISES.map(([icon, worry, promise, label, kind], n) => (
               <li key={worry}><button type="button" className="plate" onClick={() => setDlg(kind)} aria-haspopup="dialog"><span className="spec-idx"><span>{String(n + 1).padStart(2, "0")} / {t(PROMISE_SPEC[kind][0])}</span><span>{t(PROMISE_SPEC[kind][1])}</span></span><SpecIcon name={icon} /><b>{t(worry)}</b><p>{t(promise)}</p><em className="spec-cta">{t(label)}<span aria-hidden="true">↗</span></em></button></li>
@@ -736,18 +736,18 @@ export default function Home() {
       {/* Next step: three ways forward, side by side */}
       <section className="ih-block inext">
         <div className="ih-wrap">
-          <h2 className="ih-h2">{t("Your next step.")}</h2>
+          <h2 className="ih-h2">{t("Three easy ways to start.")}</h2>
           <ul>
-            <li><button type="button" className="plate" onClick={() => setDlg("finder")} aria-haspopup="dialog"><span className="spec-idx"><span>01 / {t("Finder")}</span><span>{t("6 questions")}</span></span><SpecIcon name="search" /><small>{t("Choose it yourself")}</small><b>{t("Find your machine in 30 seconds")}</b><p>{t("Answer a few questions about your materials and jobs, and get a matched machine.")}</p><em>{t("Start the finder")}<Icon name="chevron" size={16} /></em></button></li>
-            <li><Link to="/pages/sales-consultation" className="plate"><span className="spec-idx"><span>02 / {t("Call")}</span><span>{t("Free")}</span></span><SpecIcon name="calendar" /><small>{t("Talk it through")}</small><b>{t("Book a free 30-minute call with a laser expert")}</b><p>{t("Talk through your materials, space and budget before you choose.")}</p><em>{t("Pick a time")}<Icon name="chevron" size={16} /></em></Link></li>
-            <li><button type="button" className="plate" onClick={() => setDlg("financing")} aria-haspopup="dialog"><span className="spec-idx"><span>03 / {t("Finance")}</span><span>{t("Estimate")}</span></span><SpecIcon name="card" /><small>{t("Do the math")}</small><b>{t("See your monthly payment")}</b><p>{t("Pick a machine and a term to see a rough monthly payment right away.")}</p><em>{t("Open the estimator")}<Icon name="chevron" size={16} /></em></button></li>
+            <li><button type="button" className="plate" onClick={() => setDlg("finder")} aria-haspopup="dialog"><span className="spec-idx"><span>01 / {t("Finder")}</span><span>{t("6 questions")}</span></span><SpecIcon name="search" /><small>{t("Do it yourself")}</small><b>{t("Find your machine in 30 seconds")}</b><p>{t("Answer six quick questions about what you make, and we'll suggest a machine.")}</p><em>{t("Start the finder")}<Icon name="chevron" size={16} /></em></button></li>
+            <li><Link to="/pages/sales-consultation" className="plate"><span className="spec-idx"><span>02 / {t("Call")}</span><span>{t("Free")}</span></span><SpecIcon name="calendar" /><small>{t("Ask an expert")}</small><b>{t("Free 30-minute call with a laser expert")}</b><p>{t("Talk through your materials, space and budget before you choose.")}</p><em>{t("Pick a time")}<Icon name="chevron" size={16} /></em></Link></li>
+            <li><button type="button" className="plate" onClick={() => setDlg("financing")} aria-haspopup="dialog"><span className="spec-idx"><span>03 / {t("Finance")}</span><span>{t("Estimate")}</span></span><SpecIcon name="card" /><small>{t("Check the cost")}</small><b>{t("Estimate your monthly payment")}</b><p>{t("Pick a machine and a term to see an estimated monthly payment.")}</p><em>{t("Estimate my payment")}<Icon name="chevron" size={16} /></em></button></li>
           </ul>
         </div>
       </section>
 
       <section className="ih-block ifq">
         <div className="ih-wrap">
-          <h2 className="ih-h2">{t("Questions? Answers.")}</h2>
+          <h2 className="ih-h2">{t("Common questions")}</h2>
           <ul className="iw-faq">
             {homeFaq.map(([q, ans], n) => (
               <li key={q}><details open={n === 0}><summary><span>{t(q)}</span><Icon name="chevron" size={16} /></summary><p>{t(ans)}</p></details></li>

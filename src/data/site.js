@@ -104,10 +104,10 @@ export const homeStandard = {
 // is really playing, because YouTube shows a "sign in to confirm" wall to some visitors. Those visitors keep seeing `video`/`image`.
 // TODO(team): supply source files for Hydra Gen2 and VertiGo so these two do not depend on YouTube.
 export const heroSlides = [
-  { eyebrow: "Black Friday · Ends Nov 30", title: "XRF 38W", text: "All-in-one RF desktop laser — $1,000 off", image: "home-hero-xrf.jpg", video: "https://cdn.shopify.com/videos/c/vp/83a53061dc8c49e1a386ab106791b6a7/83a53061dc8c49e1a386ab106791b6a7.HD-720p-1.6Mbps-100665744.mp4", to: "/products/onelaser-xrf-desktop-laser-machine", dark: true, countdown: true },
-  { eyebrow: "Industrial RF", title: "Hydra Gen2", text: "RF and hybrid dual-laser systems.", image: "home-product-hydra-gen2-scene.webp", youtube: "HdP62cQVzs0", start: 8, video: "https://www.1laser.com/cdn/shop/videos/c/vp/3977d55943864ca0a399b0baf55908c6/3977d55943864ca0a399b0baf55908c6.HD-1080p-4.8Mbps-97794816.mp4?v=0", to: "/collections/hydra-gen2", dark: true },
-  { eyebrow: "Workshop Essential", title: "Cobra Series", text: "Glass CO₂ cutting power from $3,999.", image: "home-product-cobra-scene.webp", video: "https://www.1laser.com/cdn/shop/videos/c/vp/3c358b3af0db43979541e8293ed489ce/3c358b3af0db43979541e8293ed489ce.HD-1080p-7.2Mbps-81776550.mp4?v=0", to: "/collections/cobra-series", dark: true },
-  { eyebrow: "Built for drinkware", title: "VertiGo", text: "Built-in vertical rotary. No setup, no alignment.", image: "home-product-vertigo-scene.webp", youtube: "CwMCGw1aPTA", start: 15, to: "/products/vertigo-vertical-laser-engraver", dark: true },
+  { eyebrow: "Black Friday · Ends Nov 30", title: "XRF 38W", text: "Desktop RF laser, now $1,000 off.", image: "home-hero-xrf.jpg", video: "https://cdn.shopify.com/videos/c/vp/83a53061dc8c49e1a386ab106791b6a7/83a53061dc8c49e1a386ab106791b6a7.HD-720p-1.6Mbps-100665744.mp4", to: "/products/onelaser-xrf-desktop-laser-machine", dark: true, countdown: true },
+  { eyebrow: "Built for daily production", title: "Hydra Gen2", text: "70W RF or RF + glass-tube hybrid, built to run every day.", image: "home-product-hydra-gen2-scene.webp", youtube: "HdP62cQVzs0", start: 8, video: "https://www.1laser.com/cdn/shop/videos/c/vp/3977d55943864ca0a399b0baf55908c6/3977d55943864ca0a399b0baf55908c6.HD-1080p-4.8Mbps-97794816.mp4?v=0", to: "/collections/hydra-gen2", dark: true },
+  { eyebrow: "Cutting on a budget", title: "Cobra Series", text: "90–130W CO₂ cutting from $3,999.", image: "home-product-cobra-scene.webp", video: "https://www.1laser.com/cdn/shop/videos/c/vp/3c358b3af0db43979541e8293ed489ce/3c358b3af0db43979541e8293ed489ce.HD-1080p-7.2Mbps-81776550.mp4?v=0", to: "/collections/cobra-series", dark: true },
+  { eyebrow: "Built for drinkware", title: "VertiGo", text: "Tumblers stand upright. The rotary is built in.", image: "home-product-vertigo-scene.webp", youtube: "CwMCGw1aPTA", start: 15, to: "/products/vertigo-vertical-laser-engraver", dark: true },
 ];
 
 export const categoryRail = [
@@ -183,11 +183,11 @@ export const addOns = {
 /* Home product tabs: machines grouped by what the buyer needs (desktop → value → industrial → clearance), not by series name;
    the series name stays in each tab's note line. */
 export const homeTabs = [
-  { label: "Most Popular", all: "/collections/machines", picks: ["onelaser-xrf-desktop-laser-machine", "hydra-9-gen-2-70w-rf-co2-dual-laser-machine", "cobra-10-100w-co2-laser-engraver-cutter", "vertigo-vertical-laser-engraver", "hydra-7-gen-2-70w-rf-co2-dual-laser-machine", "cobra-8-90w-co2-laser-engraver-cutter"] },
-  { label: "Desktop Studio", note: "XRF and VertiGo · all-in-one 38W RF for a home studio or first business", all: "/collections/machines", picks: ["onelaser-xrf-desktop-laser-machine", "vertigo-vertical-laser-engraver"] },
-  { label: "Value Line", note: "Cobra Series · 90–130W glass CO₂ cutting power at an entry price", all: "/collections/cobra-series", picks: ["cobra-8-90w-co2-laser-engraver-cutter", "cobra-10-100w-co2-laser-engraver-cutter", "cobra-14-130w-co2-laser-engraver-cutter"] },
-  { label: "Industrial Performance", note: "Hydra Gen2 · RF and hybrid dual-laser systems for daily production", all: "/collections/hydra-gen2", picks: ["hydra-7-gen-2-70w-rf-co2-dual-laser-machine", "hydra-9-gen-2-70w-rf-co2-dual-laser-machine", "hydra-13-gen-2-70w-rf-co2-dual-laser-machine", "hydra-16-gen-2-70w-rf-co2-dual-laser-machine"] },
-  { label: "Last Units", note: "Previous generation · proven machines, very limited inventory", all: "/collections/previous-generation", picks: ["onelaser-xt-desktop-laser-machine", "onelaser-hydra-9-laser-engraving-machine", "onelaser-hydra-16-cabinet-dual-laser-system-with150w-glass-tube-and-38w-rf-metal-tube"] },
+  { label: "Most popular", all: "/collections/machines", picks: ["onelaser-xrf-desktop-laser-machine", "hydra-9-gen-2-70w-rf-co2-dual-laser-machine", "cobra-10-100w-co2-laser-engraver-cutter", "vertigo-vertical-laser-engraver", "hydra-7-gen-2-70w-rf-co2-dual-laser-machine", "cobra-8-90w-co2-laser-engraver-cutter"] },
+  { label: "Desktop", note: "XRF and VertiGo: 38W RF lasers for a home studio or a first business.", all: "/collections/machines", picks: ["onelaser-xrf-desktop-laser-machine", "vertigo-vertical-laser-engraver"] },
+  { label: "CO₂ cutters", note: "Cobra Series: 90–130W glass-tube CO₂ for cutting.", all: "/collections/cobra-series", picks: ["cobra-8-90w-co2-laser-engraver-cutter", "cobra-10-100w-co2-laser-engraver-cutter", "cobra-14-130w-co2-laser-engraver-cutter"] },
+  { label: "Production", note: "Hydra Gen2: 70W RF, or RF + glass-tube hybrid, for daily production.", all: "/collections/hydra-gen2", picks: ["hydra-7-gen-2-70w-rf-co2-dual-laser-machine", "hydra-9-gen-2-70w-rf-co2-dual-laser-machine", "hydra-13-gen-2-70w-rf-co2-dual-laser-machine", "hydra-16-gen-2-70w-rf-co2-dual-laser-machine"] },
+  { label: "Previous models", note: "Previous generation. Limited stock.", all: "/collections/previous-generation", picks: ["onelaser-xt-desktop-laser-machine", "onelaser-hydra-9-laser-engraving-machine", "onelaser-hydra-16-cabinet-dual-laser-system-with150w-glass-tube-and-38w-rf-metal-tube"] },
   { label: "Materials", all: "/collections/materials", collection: "materials" },
   { label: "Rotary Attachments", all: "/collections/rotary", collection: "rotary" },
   { label: "Fume Extractors", all: "/collections/fume", collection: "fume" },
@@ -195,7 +195,7 @@ export const homeTabs = [
   { label: "Lens & Optics", all: "/collections/optics", collection: "optics" },
 ];
 export const newHandles = ["onelaser-xrf-desktop-laser-machine", "vertigo-vertical-laser-engraver"];
-export const homeFeature = { title: "Hydra 9 Gen2", text: ["70W RF + CO₂ dual laser.", "Save up to $3,000 this Black Friday."], image: "promo-hydra9.jpg", to: "/products/hydra-9-gen-2-70w-rf-co2-dual-laser-machine" };
+export const homeFeature = { title: "Hydra 9 Gen2", text: ["70W RF, or RF + glass-tube hybrid.", "Save up to $3,000 this Black Friday."], image: "promo-hydra9.jpg", to: "/products/hydra-9-gen-2-70w-rf-co2-dual-laser-machine" };
 export const interests = [
   ["Wood décor", "home-project-walnut-mountain-wall.webp", "/collections/hydra-gen2"],
   ["Leather goods", "home-project-batch-leather-gifts.webp", "/collections/xrf-series"],
@@ -210,21 +210,21 @@ export const homeStories = [
   ["XRF 38W: an RF laser for the desktop", "Air-cooled RF, true 3G acceleration and a 0.07 mm laser spot.", "hot-xrf.jpg", "/products/onelaser-xrf-desktop-laser-machine"],
   ["Hydra Gen2: RF precision at industrial scale", "70W RF Pro or 38W RF + glass-tube Hybrid configurations.", "hot-hydra7.jpg", "/collections/hydra-gen2"],
   ["Cobra Series: workshop cutting power", "90W to 130W glass CO₂ for wood, acrylic and leather.", "hot-cobra8.jpg", "/collections/cobra-series"],
-  ["VertiGo: built for drinkware", "Built-in vertical rotary. No setup, no alignment.", "hot-vertigo.jpg", "/products/vertigo-vertical-laser-engraver"],
+  ["VertiGo: built for drinkware", "Tumblers stand upright. The rotary is built in.", "hot-vertigo.jpg", "/products/vertigo-vertical-laser-engraver"],
   ["PiBurn OMNI: rotary engraving", "Roller and chuck modes with two drive systems and two motors.", "hot-piburn.jpg", "/products/piburn-omni-for-onelaser"],
 ];
 
 // One-line card slogans (Insta360 cards carry a single short line). Facts come from the product names and specs.
 export const shortSlogans = {
-  "onelaser-xrf-desktop-laser-machine": "38W RF desktop laser.",
-  "vertigo-vertical-laser-engraver": "Vertical laser for drinkware.",
-  "cobra-8-90w-co2-laser-engraver-cutter": "90W CO₂ workshop laser.",
-  "cobra-10-100w-co2-laser-engraver-cutter": "100W CO₂ laser cutter.",
-  "cobra-14-130w-co2-laser-engraver-cutter": "130W large-format CO₂ laser.",
-  "hydra-7-gen-2-70w-rf-co2-dual-laser-machine": "Compact RF dual-laser system.",
-  "hydra-9-gen-2-70w-rf-co2-dual-laser-machine": "RF + CO₂ dual-laser system.",
-  "hydra-13-gen-2-70w-rf-co2-dual-laser-machine": "Large-format dual-laser system.",
-  "hydra-16-gen-2-70w-rf-co2-dual-laser-machine": "Our largest dual-laser system.",
+  "onelaser-xrf-desktop-laser-machine": "38W RF desktop laser for crisp detail.",
+  "vertigo-vertical-laser-engraver": "Engraves tumblers standing up.",
+  "cobra-8-90w-co2-laser-engraver-cutter": "90W CO₂, the entry Cobra.",
+  "cobra-10-100w-co2-laser-engraver-cutter": "100W CO₂ for more cutting power.",
+  "cobra-14-130w-co2-laser-engraver-cutter": "130W CO₂ with a large bed.",
+  "hydra-7-gen-2-70w-rf-co2-dual-laser-machine": "The smallest Hydra, with a 70W RF laser.",
+  "hydra-9-gen-2-70w-rf-co2-dual-laser-machine": "70W RF, or RF + glass-tube hybrid.",
+  "hydra-13-gen-2-70w-rf-co2-dual-laser-machine": "A bigger bed for bigger jobs.",
+  "hydra-16-gen-2-70w-rf-co2-dual-laser-machine": "The largest Hydra.",
 };
 
 // Home video module. Lists supplied by the team on 2026-11-18; titles and channels read from YouTube. [id, title, channel]
@@ -266,8 +266,8 @@ export const homeVideos = [
 export const homeProof = [
   { figure: "30,000 h", title: "Laser tube life", times: "About 4x", us: 100, them: 27, usLabel: "30,000 h · air-cooled", themLabel: "6,000–8,000 h · water-cooled", meaning: "At 8 hours a day that is about 10 years of work. A typical glass tube needs replacing every 2–3 years." },
   { figure: "2,000 mm/s", title: "Engraving speed", times: "Over 3x", us: 100, them: 30, usLabel: "2,000 mm/s · Hydra Gen2", themLabel: "600 mm/s", meaning: "Big batches finish sooner, so you can take larger orders and still ship on time." },
-  { figure: "2,000 DPI", title: "Engraving detail", times: "Up to 4x", us: 100, them: 25, usLabel: "0.07 mm RF laser dot", themLabel: "Glass-tube beam", meaning: "Small text, photos and logos come out crisp, so fewer pieces end up remade." },
-  { figure: "3 years", title: "Warranty on mechanical parts", times: "3x", us: 100, them: 33, usLabel: "3-2-1 warranty · X Series and Hydra", themLabel: "12 months main parts · 6 months tube", meaning: "Longer cover means fewer surprise repair bills over the years you own it." },
+  { figure: "2,000 DPI", title: "Engraving detail", times: "Up to 4x", us: 100, them: 25, usLabel: "0.07 mm RF laser dot", themLabel: "Glass-tube beam", meaning: "Small text, photos and logos come out sharp, so you remake fewer pieces." },
+  { figure: "3 years", title: "Warranty on mechanical parts", times: "3x", us: 100, them: 33, usLabel: "3-2-1 warranty · X Series and Hydra", themLabel: "12 months main parts · 6 months tube", meaning: "On X Series and Hydra, mechanical parts are covered for 3 years, not 1." },
 ];
 
 // Home buying FAQ (after "Questions? Answers." on thunderlaserusa.com). Answers restate the policies and pages on 1laser.com.

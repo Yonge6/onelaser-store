@@ -330,13 +330,13 @@ export function Footer() {
     <footer className="site-footer">
       <div className="footer-cta">
         <div className="footer-rep">
-          <h2>{t("Talk to a Rep")}</h2>
-          <p>{t("Have questions or need help?")}</p>
-          <Link to="/pages/sales-consultation" className="footer-pill">{t("Book A Free Call")}</Link>
+          <h2>{t("Talk to a person")}</h2>
+          <p>{t("Questions? We're happy to help.")}</p>
+          <Link to="/pages/sales-consultation" className="footer-pill">{t("Book a free call")}</Link>
         </div>
         <form className="footer-news" onSubmit={(e) => { e.preventDefault(); setSent(true); }}>
-          <h2>{t("Unlock Exclusive Updates & Savings!")}</h2>
-          <p>{t("Receive tips, promotions, and project inspiration.")}</p>
+          <h2>{t("Get deals and project ideas by email.")}</h2>
+          <p>{t("Occasional laser tips and sales.")}</p>
           <div className="footer-field">
             <input type="email" required placeholder={t("Email")} aria-label={t("Email")} onChange={() => sent && setSent(false)} />
             <button type="submit" className="footer-pill">{t("Subscribe")}</button>
