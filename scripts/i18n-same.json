@@ -1,5 +1,5 @@
 {
- "_why": "Strings that read the same in every language: brand and product names, people, U.S. states, units and sizes, document titles, verbatim review quotes and video titles. Everything else needs a translation in src/locales. \"ids\" are internal keys in [label, id] pairs that look like words but are never shown.",
+ "_why": "Strings that read the same in every language: brand and product names, people, U.S. states, units and sizes, document titles, verbatim review quotes and video titles. Everything else needs a translation in src/locales. \"ids\" are internal keys in [label, id] pairs that look like words but are never shown. Review quotes stay word for word in English, as on the rest of the site.",
  "text": [
   "Visa",
   "Mastercard",
@@ -86,7 +86,14 @@
   "West Virginia",
   "Wisconsin",
   "Wyoming",
-  "+1 US"
+  "+1 US",
+  "Greg Nelson",
+  "Heather",
+  "Josia Timothy",
+  "Mark Lee",
+  "First class experience. Not sure what you are paying Murphy, but he deserves a raise!",
+  "I was very pleased when I had a tech call with you guys. The tech “ Sean “ was very helpful … He was very knowledgeable, helpful and patient with me as I am a newbie.",
+  "One Laser has been nothing short of spectacular with any questions or concerns I have. They are top notch and always make me feel important. … Thank you One Laser and Murphy (you are amazing!)."
  ],
  "markup": [
   "alt=\"OneLaser\"",
@@ -98,7 +105,9 @@
   "OneLaser",
   "OneLaser Store",
   "/mo",
-  "USD"
+  "USD",
+  "Trustpilot",
+  "Trustpilot ·"
  ],
  "ids": [
   "acrylic",

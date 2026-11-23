@@ -13,8 +13,8 @@ const walk = (d) => fs.readdirSync(d, { withFileTypes: true }).flatMap((e) => (e
 for (const f of walk(path.join(root, "src"))) {
   const s = fs.readFileSync(f, "utf8");
   const code = s.replace(/\/\*[\s\S]*?\*\//g, "").replace(/(^|[^:"'`])\/\/.*$/gm, "$1"); // skip comments
-  for (const m of code.matchAll(/\btf?\("((?:[^"\\]|\\.)+)"/g)) keys.add(JSON.parse(`"${m[1]}"`));
-  for (const m of code.matchAll(/\btf?\('((?:[^'\\]|\\.)+)'/g)) keys.add(m[1].replace(/\\'/g, "'"));
+  for (const m of code.matchAll(/\bt[fx]?\("((?:[^"\\]|\\.)+)"/g)) keys.add(JSON.parse(`"${m[1]}"`));
+  for (const m of code.matchAll(/\bt[fx]?\('((?:[^'\\]|\\.)+)'/g)) keys.add(m[1].replace(/\\'/g, "'"));
 }
 const sameFile = JSON.parse(fs.readFileSync(path.join(root, "scripts/i18n-same.json"), "utf8"));
 const same = new Set([...sameFile.text, ...(sameFile.ids || [])]);
@@ -36,6 +36,21 @@ for (const l of langs) {
   const dict = (await import(pathToFileURL(path.join(root, `src/locales/${l}.js`)).href)).default;
   missing[l] = [...keys].filter((k) => !(k in dict) && !same.has(k) && /[A-Za-z]{2}/.test(k)).sort();
 }
+// A translation must keep every {slot} of its English key, or tf/tx would drop the price, link or number it stands for.
+const slotErrors = [];
+for (const l of langs) {
+  const dict = (await import(pathToFileURL(path.join(root, `src/locales/${l}.js`)).href)).default;
+  for (const [k, v] of Object.entries(dict)) {
+    const want = (k.match(/\{\w+\}/g) || []).sort().join(" ");
+    const got = (String(v).match(/\{\w+\}/g) || []).sort().join(" ");
+    if (want !== got) slotErrors.push(`${l}: ${JSON.stringify(k)} -> ${JSON.stringify(v)} (needs ${want || "no slots"})`);
+  }
+}
+if (slotErrors.length) {
+  console.error("\n[i18n] Translations that lose or add a {slot}. Keep the same {name} slots as the English key:\n  " + slotErrors.join("\n  "));
+  process.exit(1);
+}
+
 if (process.argv.includes("--write-debt")) {
   // Only shrinks the recorded debt: entries that are translated now are dropped, new gaps are never added.
   const next = Object.fromEntries(langs.map((l) => [l, debt[l] ? missing[l].filter((k) => debt[l].includes(k)) : missing[l]]));

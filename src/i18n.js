@@ -51,3 +51,7 @@ export const t = (s) => {
 
 /** Translate a sentence with {name} slots, so word order can differ per language: tf("Total over {n} months", { n: 24 }). */
 export const tf = (s, vars = {}) => Object.entries(vars).reduce((out, [k, v]) => out.split(`{${k}}`).join(v), t(s));
+
+/** Like tf, but slots may be elements (links, bold prices): tx("See the {policy} for conditions.", { policy: <a …/> }).
+    Returns an array of children, so each language places the slot where its grammar needs it. */
+export const tx = (s, vars = {}) => t(s).split(/(\{\w+\})/).filter((part) => part !== "").map((part) => { const m = /^\{(\w+)\}$/.exec(part); return m && m[1] in vars ? vars[m[1]] : part; });

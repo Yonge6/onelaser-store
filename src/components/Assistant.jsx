@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { getLang, t } from "../i18n.js";
+import { getLang, t, tf, tx as txNodes } from "../i18n.js";
 import { lockScroll, byHandle, frontImg, img, money, products } from "../lib.js";
 import { useCart } from "../cart.jsx";
 import { AddButton, Icon, Link } from "./ui.jsx";
@@ -230,7 +230,7 @@ function Cards({ list, why = {} }) {
         <div key={p.handle} className="ai-card">
           <Link to={`/products/${p.handle}`} className="ai-card-img"><img src={img(p.kind === "machine" ? frontImg(p) : p.images[0], 300)} alt="" loading="lazy" /></Link>
           <b>{p.name}</b>
-          <p>{p.priceVaries && <small>{t("From")} </small>}{money(p.price)}{p.compareAt > p.price && <s>{money(p.compareAt)}</s>}</p>
+          <p>{p.priceVaries ? txNodes("From {price}", { price: money(p.price) }) : money(p.price)}{p.compareAt > p.price && <s>{money(p.compareAt)}</s>}</p>
           {[].concat(why[p.handle] || []).map((w) => <em key={w} className="ai-why"><Icon name="check" size={12} />{t(w)}</em>)}
           <div className="ai-card-btns">
             <AddButton product={p} className="ai-add" drop="up" iconSize={14} />
@@ -417,7 +417,7 @@ export default function Assistant({ product }) {
                   <h2>{t("Questions about this one?")}</h2>
                   <div className="ai-product">
                     <img src={img(product.kind === "machine" ? frontImg(product) : product.images[0], 200)} alt="" />
-                    <span><b>{product.name}</b><small>{product.priceVaries && `${t("From")} `}{money(product.price)}{product.compareAt > product.price && <s>{money(product.compareAt)}</s>}</small></span>
+                    <span><b>{product.name}</b><small>{product.priceVaries ? tf("From {price}", { price: money(product.price) }) : money(product.price)}{product.compareAt > product.price && <s>{money(product.compareAt)}</s>}</small></span>
                     {product.compareAt > product.price && <em>{t("Save")} {money(product.compareAt - product.price)}</em>}
                   </div>
                   <p>{t("I know its specs, today's price, what fits it and how to pay for it.")}</p>

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { t } from "../i18n.js";
+import { t, tf, tx } from "../i18n.js";
 import { img, money } from "../lib.js";
 import { useCart } from "../cart.jsx";
 
@@ -83,8 +83,7 @@ export function Price({ product, variant, from = false }) {
   const v = variant || product;
   return (
     <span className="price">
-      {from && product.priceVaries && `${t("From")} `}
-      <span>{usd(v.price)} USD</span>
+      {from && product.priceVaries ? tx("From {price}", { price: <span key="p">{usd(v.price)} USD</span> }) : <span>{usd(v.price)} USD</span>}
       {v.compareAt && <s>{usd(v.compareAt)} USD</s>}
     </span>
   );
@@ -111,7 +110,7 @@ export function ProductCard({ product }) {
       <div className="pcard-body">
         <p className="pcard-series">{product.compareAt && <span>{t("Sale")} · </span>}{productLabel(product)}</p>
         <h3><Link to={`/products/${product.handle}`}>{product.name}</Link></h3>
-        <span className="pcard-price"><strong>{product.priceVaries ? `${t("From")} ` : ""}USD {usd(product.price)}</strong></span>
+        <span className="pcard-price"><strong>{product.priceVaries ? tf("From {price}", { price: `USD ${usd(product.price)}` }) : `USD ${usd(product.price)}`}</strong></span>
       </div>
     </article>
   );
@@ -139,7 +138,7 @@ export function CollectionCard({ product }) {
         <span className="ccard-content">
           <span className="ccard-details">
             <span className="ccard-title">{product.name}</span>
-            <span className="ccard-price">{product.priceVaries && `${t("From")} `}USD <b>{money(product.price)}</b>{product.compareAt && <s>USD {money(product.compareAt)}</s>}</span>
+            <span className="ccard-price">{product.priceVaries ? tx("From {price}", { price: <span key="p">USD <b>{money(product.price)}</b></span> }) : <>USD <b>{money(product.price)}</b></>}{product.compareAt && <s>USD {money(product.compareAt)}</s>}</span>
           </span>
           {!quick && <span className="ccard-action"><span>{t("Shop")}</span><Icon name="arrow" size={18} /></span>}
         </span>

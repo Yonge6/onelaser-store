@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { t } from "../i18n.js";
+import { t, tf, tx } from "../i18n.js";
 import { byHandle, go, img, machines, products } from "../lib.js";
 import { useCart } from "../cart.jsx";
 import { addOns, faq, promo } from "../data/site.js";
@@ -223,7 +223,7 @@ export default function Product({ handle }) {
           <div className="ip-ship">
             <h2>{t("Shipped by OneLaser")}</h2>
             <p><Icon name="truck" size={20} /><span><b>{t("Delivery by address")}</b>{t("Estimate and shipping rate are shown at checkout. See the")} <a href="https://www.1laser.com/pages/shipping-policy" target="_blank" rel="noreferrer">{t("Shipping Policy")}</a>.</span></p>
-            <p><Icon name="refresh" size={20} /><span><b>{t("30-day return period")}</b>{t("See the")} <a href="https://www.1laser.com/pages/refund-policy" target="_blank" rel="noreferrer">{t("Refund Policy")}</a> {t("for conditions.")}</span></p>
+            <p><Icon name="refresh" size={20} /><span><b>{t("30-day return period")}</b>{tx("See the {policy} for conditions.", { policy: <a key="policy" href="https://www.1laser.com/pages/refund-policy" target="_blank" rel="noreferrer">{t("Refund Policy")}</a> })}</span></p>
             <p><Icon name="lock" size={20} /><span><b>{t("Pay your way")}</b>{t("Card, PayPal, Shop Pay or financing.")}</span></p>
           </div>
         </div>
@@ -304,7 +304,7 @@ export default function Product({ handle }) {
             {likes.map((a) => (
               <article key={a.handle}>
                 <Link to={`/products/${a.handle}`}><img src={img(a.images[0], 600)} alt="" loading="lazy" /><b>{a.name}</b></Link>
-                <p>{a.variants.length > 1 ? `${t("From")} ` : ""}{usd(a.price)}</p>
+                <p>{a.variants.length > 1 ? tf("From {price}", { price: usd(a.price) }) : usd(a.price)}</p>
                 {!a.available ? <button type="button" disabled>{t("Out of stock")}</button>
                   : a.variants.length > 1 ? <Link to={`/products/${a.handle}`} className="btn">{t("Select options")}</Link>
                   : <button type="button" onClick={() => { add(a.handle, a.variants[0].id, 1); setAdded(a.handle); }}>{added === a.handle ? t("Added") : t("Add to cart")}</button>}

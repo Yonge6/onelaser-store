@@ -33,7 +33,7 @@ function walk(node, visit, parent, key) {
 // String literals that t() can return: follows a ? b : c and a || b, but not comparisons (x === "up") or nested calls (t(faqText("key"))).
 const strings = (node) => { const out = []; const visit = (n) => { if (!n) return; if (n.type === "ConditionalExpression") return visit(n.consequent), visit(n.alternate); if (n.type === "LogicalExpression") return visit(n.left), visit(n.right); if (n.type === "Literal" && typeof n.value === "string") out.push(n.value); if (n.type === "TemplateLiteral" && n.expressions.length === 0) out.push(n.quasis[0].value.cooked); }; visit(node); return out; };
 const stringsDeep = (node) => { const out = []; walk(node, (n) => { if (n.type === "Literal" && typeof n.value === "string") out.push(n.value); if (n.type === "TemplateLiteral" && n.expressions.length === 0) out.push(n.quasis[0].value.cooked); }); return out; };
-const isT = (n) => n.type === "CallExpression" && n.callee.type === "Identifier" && (n.callee.name === "t" || n.callee.name === "tf");
+const isT = (n) => n.type === "CallExpression" && n.callee.type === "Identifier" && ["t", "tf", "tx", "txNodes"].includes(n.callee.name);
 const isEl = (n) => n.type === "CallExpression" && n.callee.type === "MemberExpression" && n.callee.property.name === "createElement";
 
 export function scan(files) {

@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { t, tf, getLang } from "../i18n.js";
 import { img } from "../lib.js";
 import { Icon, Link } from "../components/ui.jsx";
-import { contact, homeReviews } from "../data/site.js";
+import { contact, homeReviews, trustpilot } from "../data/site.js";
 
 /* Free sales consultation, redesigned from 1laser.com/pages/sales-consultation.
    Content, team and opening hours are the live page's: a 30-minute phone call, Monday to Friday,
@@ -16,16 +16,16 @@ const TEAM = [
   ["Sakura Huang", "Customer Support", "An experienced customer service specialist for laser engraving machines.", "onelaser-team-gray-longhair-2026.png"],
 ];
 const FOR = [
-  ["search", "You're just beginning your research and want to know where to start."],
-  ["compare", "You're comparing OneLaser with another brand."],
-  ["up", "You're ready to upgrade from a hobby machine."],
-  ["shop", "You run a business and need a machine that fits your workload."],
-  ["school", "You're choosing a laser for a school, makerspace or institution."],
-  ["quote", "You're ready to purchase and want to discuss a quote."],
+  ["search", "Just starting your research."],
+  ["compare", "Comparing OneLaser with another brand."],
+  ["up", "Upgrading from a hobby machine."],
+  ["shop", "Buying for a business and need steady output."],
+  ["school", "Choosing a laser for a school or makerspace."],
+  ["quote", "Ready to buy and want a quote."],
 ];
 const STEPS = [
   ["Tell us what you want to make", "Share your materials, production goals, available space and budget."],
-  ["Explore the right setup", "Talk through suitable machines, configurations and accessories with our team."],
+  ["Find the right setup", "Talk through suitable machines, configurations and accessories with our team."],
   ["Know your next steps", "Discuss pricing, setup needs and what to consider before making a decision."],
 ];
 const ZONES = [
@@ -128,9 +128,6 @@ function Booking() {
     if (!String(f.get("last") || "").trim()) bad.last = true;
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(f.get("email") || ""))) bad.email = true;
     if (String(f.get("phone") || "").replace(/\D/g, "").length < 7) bad.phone = true;
-    if (!machines.length) bad.machines = true;
-    if (!f.get("timeline")) bad.timeline = true;
-    if (!f.get("budget")) bad.budget = true;
     setErr(bad);
     if (Object.keys(bad).length) {
       e.currentTarget.querySelector(".bad input, .bad button, .bad")?.scrollIntoView({ behavior: "smooth", block: "center" });
@@ -233,8 +230,9 @@ function Booking() {
             <input type="checkbox" name="sms" />
             <span><b>{t("Optional: text reminders.")}</b> {t("Text me a reminder about this appointment at the number above. Consent is not a condition of booking or purchase. Message and data rates may apply. Reply STOP to opt out.")}</span>
           </label>
-          <fieldset className={`cs-group${err.machines ? " bad" : ""}`}>
-            <legend>{t("Which machine(s) are you interested in?")} <i>*</i> <small>{t("Pick any")}</small></legend>
+          <p className="cs-optional"><b>{t("Optional")}</b> {t("These help us prepare for your call.")}</p>
+          <fieldset className="cs-group">
+            <legend>{t("Which machine(s) are you interested in?")} <small>{t("Pick any")}</small></legend>
             <div className="cs-tiles">
               {MACHINES.map(([m, sub]) => {
                 const on = machines.includes(m);
@@ -246,16 +244,16 @@ function Booking() {
               })}
             </div>
           </fieldset>
-          <label className="cs-field"><span>{t("Do you own a laser now? If so, which brand and model?")} <small>{t("Optional")}</small></span><input name="current" placeholder={t("e.g. a 10W diode, or none yet")} /></label>
-          <fieldset className={`cs-group${err.timeline ? " bad" : ""}`}>
-            <legend>{t("When do you plan to get started?")} <i>*</i></legend>
+          <label className="cs-field"><span>{t("Do you own a laser now? If so, which brand and model?")}</span><input name="current" placeholder={t("e.g. a 10W diode, or none yet")} /></label>
+          <fieldset className="cs-group">
+            <legend>{t("When do you plan to get started?")}</legend>
             <div className="cs-radios">{TIMELINE.map((x) => <label key={x}><input type="radio" name="timeline" value={x} /><span>{t(x)}</span></label>)}</div>
           </fieldset>
-          <fieldset className={`cs-group${err.budget ? " bad" : ""}`}>
-            <legend>{t("What is your budget?")} <i>*</i></legend>
+          <fieldset className="cs-group">
+            <legend>{t("What is your budget?")}</legend>
             <div className="cs-radios two">{BUDGETS.map((x) => <label key={x}><input type="radio" name="budget" value={x} /><span>{t(x)}</span></label>)}</div>
           </fieldset>
-          <label className="cs-field"><span>{t("Anything we should know?")} <small>{t("Optional")}</small></span><textarea name="note" rows={2} placeholder={t("What you want to make, materials, space…")} /></label>
+          <label className="cs-field"><span>{t("Anything we should know?")}</span><textarea name="note" rows={2} placeholder={t("What you want to make, materials, space…")} /></label>
           {Object.keys(err).length > 0 && <p className="cs-err" role="alert">{t("Please fill in the fields marked *.")}</p>}
           <button type="submit" className="cs-next">{t("Confirm booking")}</button>
           <p className="cs-fine">{t("By submitting, you agree to receive follow-ups from the OneLaser team (human or AI) by email, phone, or text regarding your inquiry.")}</p>
@@ -290,10 +288,19 @@ const FOR_ICONS = {
   quote: <><path d="M6 3.5h9l3 3v14H6zM9 10h6M9 14h6M9 18h3" /></>,
 };
 
-// Real owner reviews (Judge.me, 1laser.com product pages), from homeReviews in site.js. The hero quote is shortened with "…" only.
-const QUOTE = { ...homeReviews.items[0], text: "I absolutely love this laser. … Tech support is fantastic and quick to respond, material quality is great." };
+// Real Trustpilot reviews (site.js, read 2026-11-18) about talking to the OneLaser team; Murphy and Sean are on this page.
+// Quoted word for word, cut only where "…" shows.
+// A review that is no longer in the data is skipped, so a data refresh can never break the page.
+const tp = (name) => trustpilot.items.find((r) => r.name === name);
+const QUOTE = tp("Josia Timothy") || trustpilot.items.find((r) => r.rating === 5);
+const CALLED = [
+  [tp("Heather"), "One Laser has been nothing short of spectacular with any questions or concerns I have. They are top notch and always make me feel important. … Thank you One Laser and Murphy (you are amazing!)."],
+  [tp("Mark Lee"), "First class experience. Not sure what you are paying Murphy, but he deserves a raise!"],
+  [tp("Greg Nelson"), "I was very pleased when I had a tech call with you guys. The tech “ Sean “ was very helpful … He was very knowledgeable, helpful and patient with me as I am a newbie."],
+].filter(([r]) => r);
 const FAQ = [
   ["Is the call really free?", "Yes. It is a free 30-minute phone call with the OneLaser team, with no obligation to buy."],
+  ["Do I need to know which machine I want?", "No. A rough idea of what you want to make is enough."],
   ["What should I have ready?", "An idea of what you want to make: your materials, the size of your pieces, your space and your budget. A rough idea is fine."],
   ["Can I get a quote on the call?", "Yes. If you are ready to purchase, we can go through pricing, configurations and accessories, and discuss a quote."],
   ["What if none of the times work?", "Call us or email sales@1laser.com and we will find a time that suits you."],
@@ -318,21 +325,23 @@ export default function Consult() {
       <section className="cs-hero">
         <div className="cs-wrap cs-hero-grid">
           <div className="cs-intro">
-            <p className="cs-kicker">{t("Free 30-minute call · No pressure")}</p>
+            <p className="cs-kicker">{t("Free 30-minute phone call")}</p>
             <h1>{t("Not sure which laser is right for you?")}</h1>
-            <p className="cs-sub">{t("Let's figure it out together, for free.")}</p>
+            <p className="cs-sub">{t("Tell us what you want to make. We'll help you pick the right machine.")}</p>
             <ul className="cs-ticks">
-              {["A clear machine recommendation, without pressure.", "Straightforward guidance on pricing and setup.", "Answers from the OneLaser team, with no obligation."].map((x) => <li key={x}><Icon name="check" size={18} />{t(x)}</li>)}
+              {["Help matching a machine to your materials, space and budget.", "Plain answers on pricing, setup and accessories.", "No pressure to buy."].map((x) => <li key={x}><Icon name="check" size={18} />{t(x)}</li>)}
             </ul>
-            <blockquote className="cs-quote">
+            {QUOTE && <blockquote className="cs-quote">
               <p>“{QUOTE.text}”</p>
-              <footer><span className="cs-stars" aria-label={t("5 out of 5 stars")}>★★★★★</span><b>{QUOTE.name}</b><small>{QUOTE.product}</small></footer>
-            </blockquote>
+              <footer><span className="cs-stars" aria-label={t("5 out of 5 stars")}>★★★★★</span><b>{QUOTE.name}</b><small>Trustpilot</small></footer>
+            </blockquote>}
             <figure className="cs-team-shot">
               <img src={img(`${CDN}onelaser-team-gray-group-2026.png`, 1000)} alt={t("The OneLaser team")} />
               <figcaption>
-                <span className="cs-faces">{TEAM.map(([n, , , f]) => <img key={n} src={img(`${CDN}${f}`, 120)} alt="" />)}</span>
-                <span><b>{t("You'll talk with the OneLaser team")}</b><small>{t("Real people, ready to help you compare machines and plan your next step.")}</small></span>
+                <b>{t("You may speak with one of them")}</b>
+                <ul className="cs-who">
+                  {TEAM.map(([n, role, , f]) => <li key={n}><img src={img(`${CDN}${f}`, 120)} alt="" /><span><b>{n}</b><small>{t(role)}</small></span></li>)}
+                </ul>
               </figcaption>
             </figure>
           </div>
@@ -344,26 +353,31 @@ export default function Consult() {
         <ul className="cs-wrap">
           <li><b>{homeReviews.average}<em>★</em></b><span>{tf("Average from {n} owner reviews", { n: homeReviews.count })}</span></li>
           <li><b>{t("30 min")}</b><span>{t("Free, no obligation")}</span></li>
-          <li><b>3-2-1</b><span>{t("Year warranty: mechanical, electrical, optics")}</span></li>
+          <li><b>3-2-1</b><span>{t("Year warranty on X Series and Hydra")}</span></li>
           <li><b>{t("U.S.")}</b><span>{t("Support from laser engineers")}</span></li>
         </ul>
       </section>
 
       <section className="cs-sec">
         <div className="cs-wrap">
-          <p className="cs-kicker">{t("Who this call is for")}</p>
-          <h2 className="cs-h2">{t("No pressure. Just honest answers.")}</h2>
-          <ul className="cs-for">
-            {FOR.map(([k, x]) => <li key={k}><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{FOR_ICONS[k]}</svg><p>{t(x)}</p></li>)}
-          </ul>
-          <p className="cs-note">{t("Wherever you are in the process, we'll help you understand your options and plan your next step.")}</p>
+          <div className="cs-for-wrap">
+            <div>
+              <p className="cs-kicker">{t("Who it's for")}</p>
+              <h2 className="cs-h2">{t("Is this call for you?")}</h2>
+              <p className="cs-lede">{t("Sound familiar? Pick a time that works for you.")}</p>
+              <button type="button" className="cs-next" onClick={toBook}><Icon name="calendar" size={18} />{t("Pick a time")}</button>
+            </div>
+            <ul className="cs-for">
+              {FOR.map(([k, x]) => <li key={k}><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{FOR_ICONS[k]}</svg><p>{t(x)}</p></li>)}
+            </ul>
+          </div>
         </div>
       </section>
 
       <section className="cs-sec soft">
         <div className="cs-wrap">
           <p className="cs-kicker">{t("Here's how it works")}</p>
-          <h2 className="cs-h2">{t("Three steps. About 30 minutes.")}</h2>
+          <h2 className="cs-h2">{t("What happens on the call.")}</h2>
           <p className="cs-lede">{t("Bring your questions or an idea. We'll help you work through the details.")}</p>
           <ol className="cs-steps">
             {STEPS.map(([h, p], n) => <li key={h}><span>{String(n + 1).padStart(2, "0")}</span><h3>{t(h)}</h3><p>{t(p)}</p></li>)}
@@ -371,38 +385,19 @@ export default function Consult() {
         </div>
       </section>
 
-      <section className="cs-sec">
-        <div className="cs-wrap">
-          <p className="cs-kicker">{t("Who you'll speak with")}</p>
-          <h2 className="cs-h2">{t("Meet the team behind your next step.")}</h2>
-          <p className="cs-lede">{t("Get help comparing machines, matching materials to your projects, and planning a setup that fits your space and budget.")}</p>
-          <ul className="cs-team">
-            {TEAM.map(([n, role, bio, f]) => (
-              <li key={n}>
-                <div className="cs-team-img"><img src={img(`${CDN}${f}`, 700)} alt={n} loading="lazy" /></div>
-                <h3>{n}</h3>
-                <p className="cs-role">{t(role)}</p>
-                <p>{t(bio)}</p>
-              </li>
-            ))}
-          </ul>
-          <div className="cs-again"><button type="button" className="cs-next" onClick={toBook}><Icon name="calendar" size={18} />{t("Pick a time for your free call")}</button></div>
-        </div>
-      </section>
-
       <section className="cs-sec soft">
         <div className="cs-wrap">
-          <p className="cs-kicker">{t("From OneLaser owners")}</p>
+          <p className="cs-kicker">{t("From OneLaser customers")}</p>
           <div className="cs-rev-head">
-            <h2 className="cs-h2">{t("Help that keeps going after you buy.")}</h2>
-            <p><b>{homeReviews.average} ★</b> {tf("from {n} owner reviews", { n: homeReviews.count })} · <Link href={homeReviews.url}>{t("Read all reviews")} ›</Link></p>
+            <h2 className="cs-h2">{t("What customers say about our team.")}</h2>
+            <p><Link href={trustpilot.url}>{t("See all reviews on Trustpilot")} ›</Link></p>
           </div>
           <ul className="cs-revs">
-            {[2, 4, 1].map((n) => homeReviews.items[n]).map((r) => (
+            {CALLED.map(([r, text]) => (
               <li key={r.name}>
                 <span className="cs-stars" aria-label={t("5 out of 5 stars")}>★★★★★</span>
-                <p>“{r.text}”</p>
-                <footer><b>{r.name}</b><small>{r.product} · {r.date}</small></footer>
+                <p>“{text}”</p>
+                <footer><b>{r.name}</b><small>Trustpilot · {r.date}</small></footer>
               </li>
             ))}
           </ul>
@@ -430,7 +425,7 @@ export default function Consult() {
       <section className="cs-sec soft">
         <div className="cs-wrap">
           <p className="cs-kicker">{t("Not ready for a call?")}</p>
-          <h2 className="cs-h2">{t("Start the conversation another way.")}</h2>
+          <h2 className="cs-h2">{t("Prefer to write?")}</h2>
           <ul className="cs-ways">
             <li><a href="mailto:sales@1laser.com"><Icon name="mail" size={24} /><h3>{t("Email our team")}</h3><p>{t("Tell us about your projects, materials and machine questions. Contact our sales team by email.")}</p><span>sales@1laser.com<Icon name="arrow" size={16} /></span></a></li>
             <li><Link href="https://www.1laser.com/pages/contact-us"><Icon name="quote" size={24} /><h3>{t("Write to us")}</h3><p>{t("Send your question through our contact form so our team can follow up on your inquiry.")}</p><span>{t("Open the contact form")}<Icon name="arrow" size={16} /></span></Link></li>
@@ -443,8 +438,8 @@ export default function Consult() {
         <div className="cs-wrap">
           <div>
             <p className="cs-kicker">{t("Financing")}</p>
-            <h2>{t("Make the right machine fit your budget.")}</h2>
-            <p>{t("Ask about current financing options on the call, and we'll include them in your quote.")}</p>
+            <h2>{t("Want to pay over time?")}</h2>
+            <p>{t("Ask about current financing options on the call.")}</p>
           </div>
           <div className="cs-fin-btns">
             <button type="button" className="cs-next" onClick={toBook}><Icon name="calendar" size={18} />{t("Book my free call")}</button>

@@ -4687,3 +4687,40 @@ body:has(.ip-bar) .ai-pill, .pdp ~ .ai-pill { bottom: 104px; }
 .fi-points li > b { word-break: keep-all; overflow-wrap: normal; }
 /* Term buttons ("12 months", "12 Monate", "12 个月"): never squeeze a label; wrap to a second row instead. */
 .fi-seg button, .tdlg-seg button { min-width: max-content; }
+
+/* Consultation page, second pass (2026-11-23): team names under the photo, a compact "Is this call for you?" list,
+   and an "Optional" divider in the booking form. */
+.cs-team-shot figcaption { flex-direction: column; align-items: stretch; gap: 10px; padding: 14px 16px; }
+.cs-team-shot figcaption > b { font-size: 14px; line-height: 18px; font-weight: 600; color: var(--muted); }
+.cs-who { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.cs-who li { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.cs-who img { flex: none; width: 40px; height: 40px; border-radius: 50%; object-fit: cover; object-position: 50% 15%; background: #dcdde0; }
+.cs-who span { display: grid; min-width: 0; }
+.cs-who span b { font-size: 14px; line-height: 18px; color: var(--title); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cs-team-shot .cs-who small { display: block; font-size: 13px; line-height: 17px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+.cs-for-wrap { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 56px; align-items: center; }
+.cs-for-wrap .cs-next { display: inline-flex; width: auto; margin-top: 28px; padding: 0 28px; }
+.cs-for-wrap .cs-for { margin: 0; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.cs-for-wrap .cs-for li { grid-template-columns: auto minmax(0, 1fr); align-items: center; gap: 14px; padding: 18px 20px; border-radius: 14px; }
+.cs-for-wrap .cs-for svg { width: 40px; height: 40px; padding: 9px; border-radius: 10px; background: #fff; box-shadow: 0 0 0 1px var(--line); }
+.cs-for-wrap .cs-for p { font-size: 16px; line-height: 23px; }
+
+.cs-optional { margin-top: 22px; padding-top: 18px; border-top: 1px dashed var(--line); font-size: 14px; line-height: 20px; color: var(--muted); }
+.cs-optional b { margin-right: 4px; color: var(--title); }
+
+@media (max-width: 860px) {
+  .cs-for-wrap { grid-template-columns: minmax(0, 1fr); gap: 24px; }
+  .cs-for-wrap .cs-for { grid-template-columns: minmax(0, 1fr); gap: 8px; }
+  .cs-for-wrap .cs-for li { padding: 14px 16px; }
+  .cs-for-wrap .cs-next { display: none; } /* the sticky "Book" bar is already on screen */
+}
+@media (max-width: 560px) {
+  .cs-who { grid-template-columns: minmax(0, 1fr); gap: 8px; }
+  .cs-team-shot { aspect-ratio: auto; }
+  .cs-team-shot > img { position: static; aspect-ratio: 4 / 3; }
+  .cs-team-shot figcaption { position: static; border-radius: 0; background: #fff; }
+}
+/* Team names wrap to as many rows as the photo width needs, so names are never cut to a sliver. */
+.cs-who { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); }
+.cs-who span b, .cs-team-shot .cs-who small { white-space: normal; }

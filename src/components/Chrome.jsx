@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { LANGS, getLang, setLang, t } from "../i18n.js";
+import { LANGS, getLang, setLang, t, tf } from "../i18n.js";
 import { asset, byHandle, go, img, products, frontImg } from "../lib.js";
 import { useCart } from "../cart.jsx";
 import { nav, promo, benefits, contact, footer } from "../data/site.js";
@@ -116,7 +116,7 @@ export function Header({ path }) {
                           <span className="mega-series-img"><img src={img(frontImg(list.find((x) => g.to.endsWith(x.handle)) || list[0]), 800)} alt="" style={fitCrop(g.crop)} /></span>
                           <b>{t(g.title)}</b>
                           <em>{t(g.desc)}</em>
-                          <strong>{t("From")} {usd(from)}</strong>
+                          <strong>{tf("From {price}", { price: usd(from) })}</strong>
                         </Go>
                         {list.length > 1 && (
                           <p className="mega-models"><span>{t("Models")}</span>{list.map((p) => <Link key={p.handle} to={`/products/${p.handle}`} title={p.name}>{(p.name.match(/\d+/) || [p.name])[0]}</Link>)}</p>
@@ -185,7 +185,7 @@ export function Header({ path }) {
                             <Go url={g.to} className="mnav-row">
                               <span className="mnav-thumb"><img src={img(frontImg(list.find((x) => g.to.endsWith(x.handle)) || list[0]), 200)} alt="" /></span>
                               <span className="mnav-text"><b>{t(g.title)}</b><em>{t(g.desc)}</em></span>
-                              <strong>{t("From")} {usd(Math.min(...list.map((p) => p.price))).replace(".00", "")}</strong>
+                              <strong>{tf("From {price}", { price: usd(Math.min(...list.map((p) => p.price))).replace(".00", "") })}</strong>
                             </Go>
                             {list.length > 1 && <p className="mega-models"><span>{t("Models")}</span>{list.map((p) => <Link key={p.handle} to={`/products/${p.handle}`} title={p.name}>{(p.name.match(/\d+/) || [p.name])[0]}</Link>)}</p>}
                           </article>

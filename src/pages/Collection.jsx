@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { t } from "../i18n.js";
+import { t, tf } from "../i18n.js";
 import { img, money, products } from "../lib.js";
 import { useCart } from "../cart.jsx";
 import { collections, newHandles } from "../data/site.js";
@@ -42,7 +42,7 @@ function Card({ product }) {
       </p>
       <h3><Link to={to}>{product.name}</Link></h3>
       <div className="il-card-foot">
-        <span className="il-price">{product.priceVaries && `${t("From")} `}{money(product.price)}{product.compareAt && <s>{money(product.compareAt)}</s>}</span>
+        <span className="il-price">{product.priceVaries ? tf("From {price}", { price: money(product.price) }) : money(product.price)}{product.compareAt && <s>{money(product.compareAt)}</s>}</span>
         {!product.available ? (
           <button type="button" className="il-pill muted" disabled>{t("Notify me")}</button>
         ) : machine || !single ? (
