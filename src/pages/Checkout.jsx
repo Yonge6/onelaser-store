@@ -232,7 +232,10 @@ export default function Checkout() {
       <OfferGate />
       <div className="ik-bar">
         <p><small>{t("Total")}</small><b>{money(subtotal)}</b></p>
-        <button type="button" className="ik-pill" disabled={step < 2 || ended} onClick={place}>{t("Place order")}</button>
+        {/* phones: the bar always does the next thing (save the address, continue to payment, place the order) */}
+        {step === 0 && <button type="button" className="ik-pill" onClick={saveAddress}>{t("Save and continue")}</button>}
+        {step === 1 && <button type="button" className="ik-pill" onClick={() => setStep(2)}>{t("Continue to payment")}</button>}
+        {step === 2 && <button type="button" className="ik-pill" disabled={ended} onClick={place}>{t("Place order")}</button>}
       </div>
     </div>
   );

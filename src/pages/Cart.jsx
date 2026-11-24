@@ -224,7 +224,7 @@ export default function Cart() {
         <p><small>{t("Estimated total")}</small><b>{money(subtotal)}</b></p>
         {picked.length ? <Link to="/checkout" className="ic-checkout">{t("Check out")} ({pickedQty})</Link> : <span className="ic-checkout off">{t("Check out")}</span>}
       </div>
-      <OfferGate />
+      {/* the add-on offer opens when the buyer moves on to checkout (OfferGate in Checkout.jsx), not on top of the cart */}
     </section>
   );
 }

@@ -4992,3 +4992,133 @@ body:has(.ip-bar) .ai-pill, .pdp ~ .ai-pill { bottom: 104px; }
 .fx-ms-item dt { font-size: 11px; white-space: nowrap; }
 .fx-ms-item dd { margin: 0; font-size: 13px; white-space: nowrap; text-align: right; }
 @media (max-width: 860px) { .fx-peek .fx-ms { height: 120px; } }
+
+/* ===== Phone pass (≤760px): shorter pages, same content. Stacked card lists become swipe rows or compact rows;
+   decoration that only works on wide screens is left out. Everything here is phone-only. ===== */
+@media (max-width: 760px) {
+  /* swipe rows: one card and a peek of the next, snapping */
+  body .ih .iprom ul, body .ih .icv-list, body .cs-revs, body .ic-more ul {
+    display: flex; grid-template-columns: none; gap: 10px; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none;
+    margin-left: -16px; margin-right: -16px; padding: 2px 16px 6px; scroll-padding-left: 16px;
+  }
+  body .ih .iprom ul::-webkit-scrollbar, body .ih .icv-list::-webkit-scrollbar, body .cs-revs::-webkit-scrollbar, body .ic-more ul::-webkit-scrollbar { display: none; }
+  body .ih .iprom ul > li, body .cs-revs > li { flex: 0 0 78%; scroll-snap-align: start; }
+
+  /* home: finder keeps its questions, options in two columns; the lineup animation is a wide-screen extra */
+  body .ih-products .fx .fx-peek { display: none; }
+  body .ih-products .fx-options { gap: 6px; }
+  body .ih-products .fd-links { display: flex; justify-content: center; flex-wrap: wrap; gap: 4px 18px; margin-top: 10px; }
+  body .ih-products .fd-links a { margin: 0; }
+  body .ih-products .fd-help { display: none; }
+  body .ih-acc { margin: 14px -16px 0; padding: 0 16px; display: flex; flex-wrap: nowrap; gap: 6px 16px; overflow-x: auto; white-space: nowrap; scrollbar-width: none; justify-content: flex-start; }
+  body .ih-acc::-webkit-scrollbar { display: none; }
+
+  /* home: video list under the player, as a swipe row of thumbnails with the title below */
+  body .ih .icv-list { margin-top: 14px; }
+  body .ih .icv-list > li { flex: 0 0 44%; scroll-snap-align: start; }
+  body .ih .icv-list > li > button { display: flex; flex-direction: column; align-items: stretch; gap: 6px; width: 100%; padding: 0; text-align: left; }
+  body .ih .icv-list .icv-thumb { width: 100%; aspect-ratio: 16 / 9; height: auto; }
+  body .ih .icv-list .icv-text small { font-size: 11px; line-height: 14px; }
+  body .ih .icv-list .icv-text b { font-size: 13px; line-height: 17px; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; }
+
+  /* home: the big quote repeats the review cards below it */
+  body .iowners-quote, body .irv-arrows { display: none; }
+
+  /* home: after-you-buy cards, short */
+  body .ih .iprom li > button.plate { height: 100%; padding: 16px 16px 14px; gap: 4px; }
+  body .ih .iprom li > button.plate .spec-idx { display: none; }
+  body .ih .iprom li > button.plate .spec-ico { width: 56px; height: 42px; margin: 0 0 2px; }
+  body .ih .iprom li > button.plate p { font-size: 14px; line-height: 20px; }
+
+  /* home: Black Friday banner, shorter */
+  body .ih-banner { height: 340px; }
+  body .ih-banner > img { height: 52%; }
+  body .ih-banner-copy { padding-top: 24px; left: 20px; right: 20px; }
+  body .ih-banner-copy .ih-btn { margin-top: 14px; }
+
+  /* home: three ways to start as compact rows (icon, title, action) */
+  body .ih .inext ul { gap: 8px; }
+  body .ih .inext li > button.plate { display: grid; grid-template-columns: 48px minmax(0, 1fr) auto; align-items: center; column-gap: 12px; padding: 14px 14px; }
+  body .ih .inext li > button.plate::before { display: none; }
+  body .ih .inext li > button.plate .spec-idx, body .ih .inext li > button.plate small, body .ih .inext li > button.plate p { display: none; }
+  body .ih .inext li > button.plate .spec-ico { width: 48px; height: 36px; margin: 0; }
+  body .ih .inext li > button.plate b { font-size: 16px; line-height: 21px; margin: 0; }
+  body .ih .inext li > button.plate em { width: 34px; height: 34px; padding: 0; display: flex; align-items: center; justify-content: center; border-radius: 50%; font-size: 0; line-height: 0; margin: 0; }
+  body .ih .inext li > button.plate em svg { width: 16px; height: 16px; }
+}
+
+/* ===== Phone pass: booking page (≤760px). The time picker stays first; everything after it is shorter. ===== */
+@media (max-width: 760px) {
+  body .cs-sec { padding-top: 40px; padding-bottom: 40px; }
+  body .cs-h2 { font-size: 26px; line-height: 32px; }
+  /* the quote repeats the reviews further down; the group photo becomes the row of faces */
+  body .cs-quote { display: none; }
+  body .cs-team-shot { margin-top: 18px; aspect-ratio: auto; border-radius: 0; overflow: visible; background: none; }
+  body .cs-team-shot > img { display: none; }
+  body .cs-team-shot figcaption { position: static; display: block; padding: 0; border-radius: 0; background: none; backdrop-filter: none; -webkit-backdrop-filter: none; color: var(--title); }
+  body .cs-team-shot small { display: block; }
+  body .cs-who { display: flex; gap: 10px; overflow-x: auto; scrollbar-width: none; margin: 8px -16px 0; padding: 0 16px; }
+  body .cs-who::-webkit-scrollbar { display: none; }
+  body .cs-who li { flex: none; }
+  /* who it's for: tight one-line rows */
+  body .cs-for-wrap .cs-for { margin-top: 16px; grid-template-columns: minmax(0, 1fr); gap: 6px; }
+  body .cs-for-wrap .cs-for li { padding: 10px 14px; gap: 12px; }
+  body .cs-for-wrap .cs-for svg { width: 32px; height: 32px; padding: 7px; }
+  body .cs-for-wrap .cs-for li p { font-size: 15px; line-height: 20px; }
+  body .cs-for-wrap .cs-next { display: none; }
+  /* how it works: numbered rows */
+  body .cs-steps { gap: 8px; margin-top: 18px; }
+  body .cs-steps li { padding: 14px 16px; display: grid; grid-template-columns: 32px minmax(0, 1fr); column-gap: 10px; row-gap: 2px; }
+  body .cs-steps li > span { grid-row: span 2; font-size: 15px; }
+  body .cs-steps li h3 { font-size: 16px; line-height: 21px; margin: 0; }
+  body .cs-steps li p { font-size: 14px; line-height: 20px; margin: 0; }
+  /* reviews: swipe row (see the shared rule above) */
+  body .cs-revs { margin-top: 16px; }
+  body .cs-revs > li { margin: 0; }
+  body .cs-faq .cs-next { display: none; }
+  /* other ways to reach us: one-line rows */
+  body .cs-ways { gap: 8px; margin-top: 16px; }
+  body .cs-ways a { display: grid; grid-template-columns: 28px minmax(0, 1fr); align-items: center; column-gap: 12px; row-gap: 2px; padding: 14px 16px; min-height: 0; }
+  body .cs-ways a > svg { grid-row: span 2; }
+  body .cs-ways a p { display: none; }
+  body .cs-ways a h3 { font-size: 16px; line-height: 21px; margin: 0; }
+  body .cs-ways a > span { margin: 0; font-size: 14px; }
+}
+
+/* ===== Phone pass: footer (≤760px). Contact folds like the other link groups; the social icons stay visible. ===== */
+@media (max-width: 760px) {
+  body .site-footer .footer-contact { margin-top: 0; border-bottom: 1px solid rgba(255, 255, 255, 0.14); }
+  body .site-footer .footer-contact h3 { margin: 0; }
+  body .site-footer .footer-contact:not(.open) > p { display: none; }
+  body .site-footer .footer-social { margin: 16px 0 4px; }
+  body .site-footer .footer-cta { gap: 28px; }
+  body .site-footer .footer-bottom { margin-top: 20px; }
+  /* the booking page is the "talk to a person" page: no second invitation in its footer */
+  main:has(.cs) + .site-footer .footer-rep { display: none; }
+}
+
+/* ===== Phone pass: cart and checkout (≤760px) ===== */
+@media (max-width: 760px) {
+  /* cart: the shipping note repeats "Shipping: calculated at checkout" in the order details */
+  body .ic-note { display: none; }
+  /* cart: "Shipped by OneLaser" as a 2 × 2 grid of short lines */
+  body .ic-details h3 { margin: 18px 0 10px; padding-top: 16px; }
+  body .ic-details > ul { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px 10px; }
+  body .ic-details > ul li { gap: 8px; align-items: flex-start; font-size: 12px; line-height: 17px; }
+  body .ic-details > ul li > svg { width: 18px; height: 18px; flex: none; }
+  body .ic-details > ul li > span { display: grid; gap: 2px; color: var(--muted); }
+  body .ic-details > ul li b { font-size: 13px; line-height: 18px; }
+  body .ic-details > ul li .ic-pay i { font-size: 10px; padding: 1px 4px; }
+  /* cart: suggestions as a swipe row (shared rule above) */
+  body .ic-more { margin-top: 32px; }
+  body .ic-more h2 { font-size: 22px; line-height: 28px; }
+  body .ic-more ul > li { flex: 0 0 44%; scroll-snap-align: start; padding: 12px; }
+  body .ic-more h3 { font-size: 13px; line-height: 18px; margin-top: 8px; }
+  body .ic-more-add { height: 36px; font-size: 13px; }
+
+  /* checkout: pairs side by side (first / last name, city / state); the bottom bar carries the step button */
+  body .ik-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+  body .ik-left .ik-actions { display: none; }
+  body .ik-grid.ik-cardfields { grid-template-columns: 1fr; }
+  body .ik-note { font-size: 12px; line-height: 17px; }
+}

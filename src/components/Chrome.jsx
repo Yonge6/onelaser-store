@@ -357,8 +357,8 @@ export function Footer() {
             {links.map(([l, url]) => <Go key={l} url={url}>{t(l)}</Go>)}
           </div>
         ))}
-        <div className="footer-col footer-contact">
-          <h3>{t("Contact Us")}</h3>
+        <div className={`footer-col footer-contact${col === "Contact Us" ? " open" : ""}`}>
+          <h3><button type="button" aria-expanded={col === "Contact Us"} onClick={() => setCol(col === "Contact Us" ? null : "Contact Us")}>{t("Contact Us")}<Icon name="chevron" size={16} /></button></h3>
           {footer.contact.map(([label, value, url]) => <p key={label}><Icon name={/^tel:/.test(url) ? "phone" : "mail"} size={16} /><span>{t(label)}: <Go url={url}>{value}</Go></span></p>)}
           <p><Icon name="pin" size={16} /><span>{t("Headquarters")}: {footer.address}</span></p>
           <div className="footer-social">
