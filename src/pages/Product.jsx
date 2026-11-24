@@ -145,7 +145,7 @@ export default function Product({ handle }) {
 
         <div className="ip-col">
           <h1>{product.name}</h1>
-          <p className="ip-sub">{[variant.title, isMachine ? product.seriesName : null, product.tagline].filter(Boolean).map((t) => <span key={t}>{t}</span>)}</p>
+          <p className="ip-sub">{[variant.title, isMachine ? product.seriesName : null, isMachine ? t(product.tagline) : product.tagline].filter(Boolean).map((t) => <span key={t}>{t}</span>)}</p>
 
           {saved > 0 && (
             <Link to="/collections/deals" className="ip-promo">
@@ -188,7 +188,7 @@ export default function Product({ handle }) {
                     <img src={img(v.image || product.images[0], 200)} alt="" />
                     <span><b>{v.title || product.name}{!v.available && " (Sold out)"}</b><i>{usd(v.price)}{v.compareAt && <s>{usd(v.compareAt)}</s>}</i></span>
                   </span>
-                  {v.id === variant.id && <span className="ip-option-body"><span>{product.tagline}</span>{product.bestFor && <span>{t("Best for")}: {product.bestFor}</span>}</span>}
+                  {v.id === variant.id && <span className="ip-option-body"><span>{t(product.tagline)}</span>{product.bestFor && <span>{t("Best for")}: {t(product.bestFor)}</span>}</span>}
                 </button>
               ))}
             </div>

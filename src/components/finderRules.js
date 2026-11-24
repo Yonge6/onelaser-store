@@ -92,7 +92,7 @@ export function rank(a, available = () => true, price = () => 0) {
         // VertiGo: cylinders only, engraving only, small pieces only
         if (answered && (!focus || a.work === "cut" || big)) out = true;
         if (focus) add(8, "Built-in vertical rotary for drinkware");
-        if (a.work === "engrave") add(2, "RF source: fast, clean engraving");
+        if (a.work === "engrave") add(2, "RF laser: fast, clean engraving");
         if (a.work === "both") add(0.5);
         if (a.shop === "side") add(2, "Desktop size and price to start with");
         if (a.shop === "full") add(1.5);
@@ -121,10 +121,10 @@ export function rank(a, available = () => true, price = () => 0) {
       }
       if (mats.includes("leather")) add(1, rf ? "Clean RF edges on leather, fabric and paper" : undefined);
       if (mats.includes("stone")) add(0.5);
-      if (mats.includes("coated")) add(rf ? 2 : 0.5, rf ? "RF tube: crisp marks on coated and anodized metal" : undefined);
-      if (mats.includes("photo")) add(m.dpi >= 2000 ? 3 : 0, "2,000 DPI for photos and fine detail");
+      if (mats.includes("coated")) add(rf ? 2 : 0.5, rf ? "Crisp RF marks on coated and anodized metal" : undefined);
+      if (mats.includes("photo")) add(m.dpi >= 2000 ? 3 : 0, "Ultra-fine detail for photos and small text (2,000 DPI)");
 
-      if (a.work === "engrave") add(rf ? 3 : 1, rf ? "RF source: fast, clean engraving" : undefined);
+      if (a.work === "engrave") add(rf ? 3 : 1, rf ? "RF laser: fast, clean engraving" : undefined);
       if (a.work === "both") {
         if (m.tube === "hybrid") add(3, "RF for engraving, glass tube for cutting");
         else if (m.tube === "glass") add(2, "Glass CO₂ power for cutting wood and acrylic");
@@ -137,8 +137,8 @@ export function rank(a, available = () => true, price = () => 0) {
         else if (m.tube === "rf70") add(1.5, "70W RF power for cutting with clean edges");
       }
 
-      if (a.shop === "side") add(m.tier === 1 ? 3 : m.tier === 2 ? 2 : 0, m.tier === 1 ? "Desktop size and price to start with" : "Workshop capacity at an entry price");
-      if (a.shop === "full") add(m.tier === 3 ? 2.5 : m.tier === 2 ? 2 : 0.5, m.tier === 3 ? "2,000 mm/s and 4G for daily production" : "Sized for a full-time workshop");
+      if (a.shop === "side") add(m.tier === 1 ? 3 : m.tier === 2 ? 2 : 0, m.tier === 1 ? "Desktop size and price to start with" : "Full-shop capacity at a starter price");
+      if (a.shop === "full") add(m.tier === 3 ? 2.5 : m.tier === 2 ? 2 : 0.5, m.tier === 3 ? "Up to 2,000 mm/s for all-day production" : "Sized for a full-time workshop");
       if (a.shop === "high") add(m.tier === 3 ? 4 : m.tier === 2 ? 1.5 : 0, "Industrial speed for high-volume runs");
       return { key, score, out, reasons: tidy(reasons) };
     })

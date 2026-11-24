@@ -166,7 +166,7 @@ export default function FinderCard({ modal = false }) {
           <p className="fx-kicker"><Icon name="check" size={14} />{t("Your match is ready")}</p>
           <p className="fx-sub">{fill(t("Based on {n} of {total} answers"), { n: lines.length, total: STEPS.length })}</p>
           <h3 className="fx-name"><Link to={`/products/${top.handle}`}>{top.name}</Link></h3>
-          <p className="fx-tag">{top.tagline}</p>
+          <p className="fx-tag">{t(top.tagline)}</p>
           {reasons.length > 0 && <ul className="fx-why">{reasons.map((r) => <li key={r}><Icon name="check" size={14} />{t(r)}</li>)}</ul>}
           <p className="fx-price"><b>{money(top.price)}</b>{top.compareAt > top.price && <><s>{money(top.compareAt)}</s><em>{t("Save")} {money(top.compareAt - top.price)}</em></>}<span>{t("or")} ${monthly(top)}{t("/mo for 24 months")}</span></p>
           <div className="fx-cta">

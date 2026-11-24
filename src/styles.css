@@ -4771,3 +4771,4 @@ body:has(.ip-bar) .ai-pill, .pdp ~ .ai-pill { bottom: 104px; }
   .ai-call { padding: 0 10px 0 8px; gap: 6px; }
   .ai-panel.chatting .ai-head .ai-avatar.sm { display: none; }
 }
+.ai-bot > p { white-space: pre-line; } /* multi-line replies (line-up list) */

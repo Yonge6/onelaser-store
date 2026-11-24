@@ -29,6 +29,11 @@ found.needed.forEach((k) => keys.add(k));
 const { scanExports } = await import(pathToFileURL(path.join(root, "scripts/i18n-scan.mjs")).href);
 const SHOWN = ["promo", "nav", "footer", "heroSlides", "homeTabs", "shortSlogans", "homeProof", "homeProofSources", "homeFaq", "homeStandard", "faq"];
 scanExports(path.join(root, "src/data/site.js"), SHOWN).forEach((k) => keys.add(k));
+// Text the code builds at runtime and shows through t(variable), which the scan above cannot follow:
+// the assistant's "Based on" source labels (src: [...]) and the machine finder's reasons (add(score, "reason")).
+const lits = (str) => [...str.matchAll(/"((?:[^"\\]|\\.)*)"/g)].map((m) => JSON.parse(`"${m[1]}"`)).filter((x) => /[A-Za-z]{2}/.test(x) && / /.test(x));
+for (const m of fs.readFileSync(path.join(root, "src/components/Assistant.jsx"), "utf8").matchAll(/\bsrc: \[([^\]]*)\]/g)) lits(m[1]).forEach((k) => keys.add(k));
+for (const line of fs.readFileSync(path.join(root, "src/components/finderRules.js"), "utf8").split("\n")) if (/\badd\(/.test(line)) lits(line.slice(line.indexOf("add("))).forEach((k) => keys.add(k));
 const loose = found.hardcoded.filter((h) => !sameFile.markup.includes(h.text));
 if (loose.length) {
   console.error("\n[i18n] English written straight into the page, so it never gets translated. Wrap it in t(\"...\") and add translations (or, for a brand name, list it under \"markup\" in scripts/i18n-same.json):\n  " + loose.map((h) => `${path.relative(root, h.file)}: ${JSON.stringify(h.text)}`).join("\n  "));

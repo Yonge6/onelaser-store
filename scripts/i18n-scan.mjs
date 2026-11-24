@@ -13,6 +13,8 @@ const SHOWN_PROPS = new Set(["aria-label", "placeholder", "title", "alt"]);
 const CODE_KEYS = new Set(["className", "href", "to", "id", "key", "type", "src", "image", "video", "youtube", "handle", "url", "link", "icon", "name", "art", "role", "rel", "target", "autoComplete", "inputMode", "loading", "decoding", "lang", "code", "tz", "value", "htmlFor", "kind", "series", "category", "filter", "all", "collection", "mobile", "img", "poster", "anchor", "pattern", "method", "aria-haspopup", "aria-live", "aria-controls", "aria-labelledby", "aria-describedby", "sizes", "srcSet", "fetchPriority", "dir", "k", "opt", "as", "preload", "crossOrigin"]);
 // Calls whose string arguments are code or lookup keys, never shown as typed.
 const CODE_CALLS = new Set(["querySelector", "querySelectorAll", "addEventListener", "removeEventListener", "getItem", "setItem", "removeItem", "matchMedia", "split", "join", "replace", "includes", "startsWith", "endsWith", "toLocaleString", "toLocaleDateString", "toLocaleTimeString", "DateTimeFormat", "NumberFormat", "require", "fetch", "go", "add", "setQty", "scrollTo", "postMessage", "open", "test", "match", "has", "faq", "indexOf", "get", "set", "getAttribute", "setAttribute", "closest", "dispatchEvent", "Event", "CustomEvent"]);
+// site.js exports holding interface text (see SHOWN in check-i18n.mjs); their fields must be shown through t().
+const SITE_TEXT = new Set(["promo", "homeProof", "homeFaq", "homeStandard", "heroSlides", "homeTabs", "shortSlogans", "faq"]);
 const looksLikeCode = (s) =>
   /^\s/.test(s) || // className fragments like " open"
   /^[Mm][\d.\s-]/.test(s) || // SVG paths
@@ -75,6 +77,8 @@ export function scan(files) {
       if (isEl(n)) {
         // JSX text, including {cond ? "A" : "B"} and {cond && "A"} written straight into the markup.
         n.arguments.slice(2).forEach((c) => strings(c).forEach((v) => { if (/[A-Za-z]{2}/.test(v) && !looksLikeCode(v.trim())) { hardcoded.push({ file: f, text: v.trim() }); childText.add(v); } }));
+        // site.js text written straight into the markup ({promo.headline}) skips t() just like a literal would.
+        n.arguments.slice(2).forEach((c) => { if (c?.type === "MemberExpression" && c.object.type === "Identifier" && SITE_TEXT.has(c.object.name) && !c.computed) hardcoded.push({ file: f, text: `{${c.object.name}.${c.property.name}}` }); });
         const props = n.arguments[1];
         if (props?.type === "ObjectExpression") for (const p of props.properties) {
           const name = p.key?.name ?? p.key?.value;

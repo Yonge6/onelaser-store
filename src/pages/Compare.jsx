@@ -25,7 +25,7 @@ export default function Compare() {
               </tr>
             </thead>
             <tbody>
-              <tr><th>{t("Best for")}</th>{list.map((m) => <td key={m.handle}>{m.bestFor}</td>)}</tr>
+              <tr><th>{t("Best for")}</th>{list.map((m) => <td key={m.handle}>{t(m.bestFor)}</td>)}</tr>
               {rows.map((r) => <tr key={r}><th>{r}</th>{list.map((m) => <td key={m.handle}>{m.specs[r]}</td>)}</tr>)}
             </tbody>
           </table>
