@@ -1465,6 +1465,7 @@ export default {
   "Answer four quick questions about what you make, and we'll suggest a machine.": "Répondez à quatre questions rapides sur ce que vous fabriquez, et nous vous suggérerons une machine.",
   "Answer two questions to see your match": "Répondez à deux questions pour voir votre machine idéale",
   "Answer three questions to see your match": "Répondez à trois questions pour voir votre machine idéale",
+  "{name} reviews": "Avis sur {name}",
   "At a glance": "En un coup d'œil",
   "Bare metal": "Métal nu",
   "Best for cutting": "Idéal pour la découpe",

@@ -217,7 +217,6 @@ const thumbFallback = (e, id) => { if (!e.target.dataset.fb) { e.target.dataset.
 /* Trust strip right above the videos: four facts, each a door to its proof. All real:
    Judge.me owner rating (homeReviews), U.S. company (homeStandard), 3-2-1 warranty on XRF + Hydra and 30-day returns
    (homeFaq), FOX & Discovery coverage (the OneLaser videos below). */
-/* Judge.me averages per product page (read 2026-11-18, as in site.js homeReviews): the 4.92 is review-weighted across these. */
 const faqText = (q) => homeFaq.find(([k]) => k.startsWith(q))?.[1] || "";
 
 /** One dialog per trust fact or promise, so visitors stay on the home page; each ends with a link to the full page.
@@ -292,12 +291,17 @@ export function TrustDialog({ kind, onClose, onTrustpilot, onBook }) {
     body = (
       <>
         <Head title={<span className="tdlg-score"><b>{homeReviews.average}</b><span className="tdlg-stars" aria-hidden="true">★★★★★</span></span>} sub={`${t("Average of")} ${homeReviews.count} ${t("owner reviews on 1laser.com product pages (Judge.me).")}`} />
+        {/* where the average comes from: each machine's own score, linked to that machine's review section on 1laser.com */}
+        <ul className="tdlg-rated">
+          {homeReviews.machines.map((m) => (
+            <li key={m.handle}><Link href={m.url}><b>{m.name}</b><span className="tdlg-stars sm" aria-hidden="true">★</span><em>{m.avg}</em><small>{m.count} {t("reviews")}</small><Icon name="arrow" size={14} /></Link></li>
+          ))}
+        </ul>
         <div className="tdlg-qhead"><b>{t("In their words")}</b><span><button type="button" aria-label={t("Previous")} onClick={() => quotes.current?.scrollBy({ left: -300, behavior: "smooth" })}><Icon name="chevron" size={16} /></button><button type="button" aria-label={t("Next")} onClick={() => quotes.current?.scrollBy({ left: 300, behavior: "smooth" })}><Icon name="chevron" size={16} /></button></span></div>
         <ul className="tdlg-quotes row" ref={quotes}>
           {homeReviews.items.map((r) => <li key={r.name}><span className="tdlg-stars sm" aria-hidden="true">★★★★★</span><p>“{r.text}”</p><small>{r.name} · {r.product} · {r.date}</small></li>)}
         </ul>
         <div className="tdlg-links">
-          <More href={homeReviews.url}>{t("Read all owner reviews")}</More>
           <button type="button" className="tdlg-more ghost" onClick={onTrustpilot}>{t("Trustpilot")}: {trustpilot.score} · {trustpilot.count} {t("reviews")} <Icon name="arrow" size={16} /></button>
         </div>
       </>
@@ -701,7 +705,9 @@ export default function Home() {
           <p className="ist-kicker">{t("Real owner reviews")}</p>
           <div className="irv-head">
             <h2 className="ih-h2">{t("What owners say.")}</h2>
-            <button type="button" className="irv-score" onClick={() => setReviewsOpen(true)}>
+            {/* 4.92 is the Judge.me owner average, so it opens the dialog about those reviews (same number); Trustpilot is a
+                separate source with its own score and is labelled as such below and inside that dialog. */}
+            <button type="button" className="irv-score" onClick={() => setDlg("reviews")}>
               <span className="irv-stars" aria-hidden="true">★★★★★</span>
               <b>{homeReviews.average}</b>
               <em>{t("out of 5")} · {homeReviews.count} {t("machine reviews")}</em>
@@ -723,7 +729,7 @@ export default function Home() {
             ))}
         </div>
         <div className="ih-wrap">
-          <p className="fd-links"><button type="button" onClick={() => setReviewsOpen(true)}>{t("Read all reviews")} ›</button></p>
+          <p className="fd-links"><button type="button" onClick={() => setReviewsOpen(true)}>{t("Trustpilot")}: {trustpilot.score} · {trustpilot.count} {t("reviews")} ›</button></p>
           {reviewsOpen && <ReviewsDialog onClose={() => setReviewsOpen(false)} />}
         </div>
       </section>

@@ -287,10 +287,22 @@ export const homeFaq = [
 ];
 
 // Home owner reviews. Real reviews copied word for word (shortened only with "…") from the Judge.me widgets on the 1laser.com
-// product pages, read 2026-11-18. verified = Judge.me "verified buyer" flag. Rating = review-weighted average of the four machines
-// that have reviews: XRF 4.94 (49), Hydra 9 4.89 (19), XT 4.89 (18), Hydra 16 5.00 (4). The Gen2, Cobra and VertiGo pages have none yet.
+// product pages, read 2026-11-18. verified = Judge.me "verified buyer" flag.
+// The rating is not typed in: it is the review-weighted average of the per-machine Judge.me figures below (read 2026-11-24 from
+// each product page), so the headline, its count and the per-machine links can never disagree. There is no single 1laser.com page
+// with an overall score (the testimonials page has none), so every "see the reviews" link goes to one machine's review section.
+// The Gen2, Cobra and VertiGo pages have no reviews yet.
+const REVIEWED = [
+  ["onelaser-xrf-desktop-laser-machine", "XRF 38W", 4.94, 50],
+  ["onelaser-hydra-9-laser-engraving-machine", "Hydra 9", 4.9, 20],
+  ["onelaser-xt-desktop-laser-machine", "XT", 4.89, 18],
+  ["onelaser-hydra-16-cabinet-dual-laser-system-with150w-glass-tube-and-38w-rf-metal-tube", "Hydra 16", 5, 4],
+].map(([handle, name, avg, count]) => ({ handle, name, avg: avg.toFixed(2), count, url: `https://www.1laser.com/products/${handle}#judgeme_product_reviews` }));
+const reviewTotal = REVIEWED.reduce((n, m) => n + m.count, 0);
 export const homeReviews = {
-  average: "4.92", count: 90, url: "https://www.1laser.com/pages/testimonials",
+  machines: REVIEWED,
+  count: reviewTotal,
+  average: (REVIEWED.reduce((s, m) => s + Number(m.avg) * m.count, 0) / reviewTotal).toFixed(2),
   items: [
     { name: "Thomas M Eichhorn", product: "XRF 38W", date: "May 2026", verified: true, text: "I absolutely love this laser. And for the record, I have four other lasers, none of which are OneLasers. If I had the funds, I would replace several of the other lasers I have with OneLasers. Tech support is fantastic and quick to respond, material quality is great." },
     { name: "Chris Vaughn", product: "Hydra 9", date: "May 2025", verified: false, text: "Finally got to use my glass tube (100w) in my Hydra 9 today! Man what a difference it makes when cutting! So much faster and reliable to cut! Really stoked on my purchase with this machine" },

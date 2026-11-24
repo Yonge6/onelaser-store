@@ -1465,6 +1465,7 @@ export default {
   "Answer four quick questions about what you make, and we'll suggest a machine.": "回答四个简单问题，说说你做什么，我们帮你推荐一台机器。",
   "Answer two questions to see your match": "回答两个问题，看看哪台适合你",
   "Answer three questions to see your match": "回答三个问题，看看哪台适合你",
+  "{name} reviews": "{name} 评价",
   "At a glance": "一眼看懂",
   "Bare metal": "裸金属",
   "Best for cutting": "最适合切割",

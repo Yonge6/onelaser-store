@@ -1465,6 +1465,7 @@ export default {
   "Answer four quick questions about what you make, and we'll suggest a machine.": "作りたいものについて4つの簡単な質問にお答えいただくと、マシンをご提案します。",
   "Answer two questions to see your match": "2つの質問に答えて、あなたに合う機種を見る",
   "Answer three questions to see your match": "3つの質問に答えて、あなたに合う機種を見る",
+  "{name} reviews": "{name} のレビュー",
   "At a glance": "ひと目でわかる",
   "Bare metal": "むき出しの金属",
   "Best for cutting": "切断に最適",

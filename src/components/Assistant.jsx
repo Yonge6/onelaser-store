@@ -153,21 +153,16 @@ const productChips = (p) => (p.kind === "machine"
 
 /* Owner reviews: Judge.me averages per product page (site.js, read 2026-11-18). Gen2, Cobra and VertiGo pages have none yet,
    so for those we say so and show reviews of other OneLaser machines, labelled with the machine they are about. */
-const REVIEW_STATS = {
-  "onelaser-xrf-desktop-laser-machine": ["4.94", 49, "XRF 38W"],
-  "onelaser-hydra-9-laser-engraving-machine": ["4.89", 19, "Hydra 9"],
-  "onelaser-xt-desktop-laser-machine": ["4.89", 18, "XT"],
-  "onelaser-hydra-16-cabinet-dual-laser-system-with150w-glass-tube-and-38w-rf-metal-tube": ["5.00", 4, "Hydra 16"],
-};
+const REVIEW_STATS = Object.fromEntries(homeReviews.machines.map((m) => [m.handle, [m.avg, m.count, m.name, m.url]]));
 function reviewsReply(p) {
   const own = p && REVIEW_STATS[p.handle];
   if (own) {
     const quotes = homeReviews.items.filter((r) => r.product === own[2] || r.product.startsWith(own[2])).slice(0, 3);
-    return { text: tx("Owners rate the {name} {avg} out of 5 from {n} reviews. In their words:", { name: short(p), avg: own[0], n: own[1] }), quotes, links: [["Read all reviews", homeReviews.url]], src: ["Owner reviews on 1laser.com (Judge.me)"] };
+    return { text: tx("Owners rate the {name} {avg} out of 5 from {n} reviews. In their words:", { name: short(p), avg: own[0], n: own[1] }), quotes, links: [["Read all reviews", own[3]]], src: ["Owner reviews on 1laser.com (Judge.me)"] };
   }
   return {
     text: [p && tx("The {name} has no owner reviews on its page yet.", { name: short(p) }), tx("OneLaser owners rate us {avg} out of 5 from {n} reviews. Here's what a few of them say, with the machine each one bought:", { avg: homeReviews.average, n: homeReviews.count })],
-    quotes: homeReviews.items.slice(0, 3), links: [["Read all reviews", homeReviews.url]], src: ["Owner reviews on 1laser.com (Judge.me)"],
+    quotes: homeReviews.items.slice(0, 3), links: homeReviews.machines.slice(0, 2).map((m) => [tx("{name} reviews", { name: m.name }), m.url]), src: ["Owner reviews on 1laser.com (Judge.me)"],
   };
 }
 const ROWS = ["Laser source", "Work area", "Max engraving speed", "Max resolution"];
