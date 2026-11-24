@@ -1464,6 +1464,7 @@ export default {
   "Answer 4 quick questions about what you make, your space and your budget. We'll match you to a machine.": "回答 4 个简单问题：做什么、场地多大、预算多少。我们帮你配一台机器。",
   "Answer four quick questions about what you make, and we'll suggest a machine.": "回答四个简单问题，说说你做什么，我们帮你推荐一台机器。",
   "Answer two questions to see your match": "回答两个问题，看看哪台适合你",
+  "Answer three questions to see your match": "回答三个问题，看看哪台适合你",
   "At a glance": "一眼看懂",
   "Bare metal": "裸金属",
   "Best for cutting": "最适合切割",

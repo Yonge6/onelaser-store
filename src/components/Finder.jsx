@@ -116,6 +116,9 @@ export default function FinderCard({ modal = false }) {
   const ranked = useMemo(() => rank(answers), [answers]);
   const lines = summary(answers);
   const answered = lines.length > 0;
+  /* The side panel keeps the machine animation running until three questions are answered, so no machine is suggested
+     on the first pick; then it shows the best match so far. */
+  const peek = lines.length >= 3;
   const top = ranked[0] && byHandle[M[ranked[0].key].handle];
   const has = (s) => (s.multi ? (answers[s.id] || []).length > 0 : !!answers[s.id]);
   const reveal = () => setTimeout(() => document.getElementById(modal ? "fc-result-modal" : "fc-result")?.scrollIntoView({ behavior: "smooth", block: "start" }), 80);
@@ -244,23 +247,23 @@ export default function FinderCard({ modal = false }) {
           </span>
         </div>
       </div>
-      <aside className={`fx-peek${answered ? " live" : ""}`} aria-live="polite">
-        <p className="fx-peek-label">{answered ? t("Best match so far") : t("Your match appears here")}</p>
-        {!answered && <MachineMorph />}
-        {answered && top && (
+      <aside className={`fx-peek${peek ? " live" : ""}`} aria-live="polite">
+        <p className="fx-peek-label">{peek ? t("Best match so far") : t("Your match appears here")}</p>
+        {!peek && <MachineMorph />}
+        {peek && top && (
           <Link to={`/products/${top.handle}`} className="fx-peek-card" key={top.handle}>
             <span className="fx-peek-img"><img src={img(frontImg(top), 600)} alt="" /></span>
             <b>{top.name}</b>
             <span className="fx-peek-price">{money(top.price)}{top.compareAt > top.price && <s>{money(top.compareAt)}</s>}</span>
           </Link>
         )}
-        {answered ? (
+        {peek ? (
           <>
             <ul className="fx-peek-why">{ranked[0].reasons.slice(0, 2).map((r) => <li key={r}><Icon name="check" size={12} />{t(r)}</li>)}</ul>
             <p className="fx-meter" aria-hidden="true"><i style={{ width: `${(lines.length / STEPS.length) * 100}%` }} /></p>
           </>
         ) : (
-          <p className="fx-peek-note">{t("Your best match updates with every answer.")}</p>
+          <p className="fx-peek-note">{t("Answer three questions to see your match")}</p>
         )}
         <a href={`tel:${contact.tel}`} className="fx-expert"><Icon name="phone" size={14} />{t("Rather talk to an expert?")}</a>
       </aside>

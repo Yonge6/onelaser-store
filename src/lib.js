@@ -36,9 +36,11 @@ const MODEL_FRONT = {
   "hydra-9-gen-2-70w-rf-co2-dual-laser-machine": "hydra-9-gen2-front",
   "hydra-13-gen-2-70w-rf-co2-dual-laser-machine": "hydra-13-gen2-front",
   "hydra-16-gen-2-70w-rf-co2-dual-laser-machine": "hydra-16-gen2-front",
+  /* XT's catalog photo has "XT Standalone" printed above the machine, which ran into the card subtitle; this is that photo cut to the machine. */
+  "onelaser-xt-desktop-laser-machine": "xt-front.png",
 };
 /** Front view of exactly this model when we have one, then the series front view, otherwise its first product photo. */
-export const frontImg = (p) => (MODEL_FRONT[p?.handle] && asset(`front/${MODEL_FRONT[p.handle]}.webp`)) || (p?.kind === "machine" && FRONT[p.series]) || p?.images?.[0];
+export const frontImg = (p) => (MODEL_FRONT[p?.handle] && asset(`front/${MODEL_FRONT[p.handle]}${MODEL_FRONT[p.handle].includes(".") ? "" : ".webp"}`)) || (p?.kind === "machine" && FRONT[p.series]) || p?.images?.[0];
 export const money = (n) =>
   `$${Number(n).toLocaleString("en-US", { minimumFractionDigits: n % 1 ? 2 : 0, maximumFractionDigits: 2 })}`;
 export const saving = (p) => (p.compareAt ? p.compareAt - p.price : 0);

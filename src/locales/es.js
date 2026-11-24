@@ -1464,6 +1464,7 @@ export default {
   "Answer 4 quick questions about what you make, your space and your budget. We'll match you to a machine.": "Responde 4 preguntas rápidas sobre lo que haces, tu espacio y tu presupuesto. Te recomendaremos una máquina.",
   "Answer four quick questions about what you make, and we'll suggest a machine.": "Responde cuatro preguntas rápidas sobre lo que haces y te sugeriremos una máquina.",
   "Answer two questions to see your match": "Responde dos preguntas para ver tu opción ideal",
+  "Answer three questions to see your match": "Responde tres preguntas para ver tu opción ideal",
   "At a glance": "De un vistazo",
   "Bare metal": "Metal sin recubrir",
   "Best for cutting": "Ideal para cortar",
