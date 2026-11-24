@@ -284,7 +284,8 @@ function Table({ data }) {
 
 const STORE = "onelaser-ai-v1";
 // A chat saved during Black Friday is dropped once the sale is over, so no old reply shows an expired price.
-const load = () => { try { const v = JSON.parse(sessionStorage.getItem(STORE)) || {}; return v.sale === saleOn ? v : {}; } catch { return {}; } };
+// Chats saved before this check existed carry no `sale` flag; they date from the sale.
+const load = () => { try { const v = JSON.parse(sessionStorage.getItem(STORE)) || {}; return (v.sale ?? true) === saleOn ? v : {}; } catch { return {}; } };
 const keep = (v) => { try { sessionStorage.setItem(STORE, JSON.stringify(v)); } catch { /* private mode: this page only */ } };
 const wide = () => typeof window !== "undefined" && !window.matchMedia("(max-width: 860px)").matches;
 
