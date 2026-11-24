@@ -40,7 +40,7 @@ export const collections = {
 const SITE = "https://www.1laser.com";
 export const nav = [
   {
-    label: "Machines", to: "/collections/machines",
+    label: "Lasers", to: "/collections/machines",
     // Series cards as in the new 1laser.com theme preview (render, name, one-line description, starting price) plus a "More" column.
     // Added here: each card lists its models as direct links, and "Help me choose" opens the machine finder on the home page.
     // crop = where the machine sits inside its front-view photo (frontImg): [left, top, right, bottom] as fractions, then the photo's width ÷ height.
@@ -60,20 +60,12 @@ export const nav = [
     label: "Support", to: "/pages/sales-consultation",
     // Two picture cards plus a link list, as on 1laser.com.
     cards: [
-      ["Get a Quote", "/pages/sales-consultation", `${SITE}/cdn/shop/files/Consultation_Call_Session_f357d165-c36d-445e-8589-cd76cb193639.png?v=1764916744`],
+      ["Book a free call", "/pages/sales-consultation", `${SITE}/cdn/shop/files/Consultation_Call_Session_f357d165-c36d-445e-8589-cd76cb193639.png?v=1764916744`],
       ["1-on-1 Support", `${SITE}/products/engineer-1-on-1-training-support`, `${SITE}/cdn/shop/files/1-on-1_training.png?v=1764920272`],
     ],
-    links: [["Contact Support", "https://zohodesk.1laser.com/portal/en/newticket"], ["Financing", "/pages/financing"], ["Policy", `${SITE}/pages/shipping-policy`], ["Blogs", `${SITE}/blogs/topic`], ["Product Knowledge Base", "https://wiki.1laser.com"]],
+    // Community and Contact used to be top-level items; they live here so the bar has room for "Find my machine".
+    links: [["Contact Support", "https://zohodesk.1laser.com/portal/en/newticket"], ["Contact us", `${SITE}/pages/contact-us`], ["Financing", "/pages/financing"], ["Community", `${SITE}/pages/laser-engraving-community`], ["Policy", `${SITE}/pages/shipping-policy`], ["Blogs", `${SITE}/blogs/topic`], ["Product Knowledge Base", "https://wiki.1laser.com"]],
   },
-  {
-    label: "Community", href: `${SITE}/pages/laser-engraving-community`,
-    cards: [
-      ["Become Affiliate", "https://af.uppromote.com/OneLaser/register", `${SITE}/cdn/shop/files/3_154dd9e8-536b-43e4-9e64-5e1532331fdd.png?v=1782712883`],
-      ["Purchase Rewards", `${SITE}/pages/onelaser-rewards`, `${SITE}/cdn/shop/files/OneLaser_Forum_4979b167-4ed1-476c-a24f-bd1b496f235a.png?v=1782714101`],
-    ],
-    links: [["Join Community", `${SITE}/pages/laser-engraving-community`], ["Testimonials", `${SITE}/pages/testimonials`]],
-  },
-  { label: "Contact", href: `${SITE}/pages/contact-us` },
 ];
 export const contact = { phone: "626 800 4130", tel: "+16268004130", call: "/pages/sales-consultation" };
 
@@ -95,12 +87,12 @@ export const footer = {
 export const homeStandard = {
   image: `${SITE}/cdn/shop/files/onelaser-us-headquarters.webp?v=1788363337`,
   kicker: "The OneLaser Standard", title: "Make better with one.",
-  text: "Ownership is backed by a U.S. company, local guidance, training, official policy coverage, and technical support after delivery.",
+  text: "A U.S. company stands behind every machine: training to get you started, a written warranty, 30-day returns and technical support after delivery.",
   points: [
-    ["U.S. company and local team", "An accountable OneLaser team for sales, service, and product guidance in the U.S."],
-    ["Training that gets work moving", "One-on-one training and knowledge resources help teams move from setup to real jobs."],
-    ["Warranty and easy returns", "Official warranty coverage and a 30-day return policy provide a clearer ownership path."],
-    ["Technical support after delivery", "Support continues through real technicians, service resources, and available parts."],
+    ["U.S. company and team", "Sales, service and product advice from a OneLaser team in the U.S."],
+    ["Training to get you started", "1-on-1 training and how-to guides take you from setup to your first real job."],
+    ["Warranty and 30-day returns", "A written warranty and a 30-day return policy, so you know what's covered."],
+    ["Support after delivery", "Real technicians, service guides and spare parts when you need them."],
   ],
   cta: ["Explore OneLaser support", `${SITE}/products/sales-consultation-call`],
 };
@@ -162,7 +154,7 @@ export const seriesBlocks = [
 
 // TODO(team): confirm each promise with the boss before launch.
 export const benefits = [
-  ["30-Day Easy Returns", "Shop with confidence."],
+  ["30-Day Easy Returns", "Changed your mind? Conditions apply."],
   ["3-2-1 Warranty", "3-year mechanical, 2-year electrical, 1-year optics on X Series and Hydra."],
   ["U.S.-Based Support", "Talk to real laser engineers."],
   ["Official Accessories", "Tested for OneLaser machines."],
@@ -192,14 +184,9 @@ export const addOns = {
 export const homeTabs = [
   { label: "Most popular", all: "/collections/machines", picks: ["onelaser-xrf-desktop-laser-machine", "hydra-9-gen-2-70w-rf-co2-dual-laser-machine", "cobra-10-100w-co2-laser-engraver-cutter", "vertigo-vertical-laser-engraver", "hydra-7-gen-2-70w-rf-co2-dual-laser-machine", "cobra-8-90w-co2-laser-engraver-cutter"] },
   { label: "Desktop", note: "XRF and VertiGo: 38W RF lasers for a home studio or a first business.", all: "/collections/machines", picks: ["onelaser-xrf-desktop-laser-machine", "vertigo-vertical-laser-engraver"] },
-  { label: "CO₂ cutters", note: "Cobra Series: 90–130W glass-tube CO₂ for cutting.", all: "/collections/cobra-series", picks: ["cobra-8-90w-co2-laser-engraver-cutter", "cobra-10-100w-co2-laser-engraver-cutter", "cobra-14-130w-co2-laser-engraver-cutter"] },
-  { label: "Production", note: "Hydra Gen2: 70W RF, or RF + glass-tube hybrid, for daily production.", all: "/collections/hydra-gen2", picks: ["hydra-7-gen-2-70w-rf-co2-dual-laser-machine", "hydra-9-gen-2-70w-rf-co2-dual-laser-machine", "hydra-13-gen-2-70w-rf-co2-dual-laser-machine", "hydra-16-gen-2-70w-rf-co2-dual-laser-machine"] },
-  { label: "Previous models", note: "Previous generation. Limited stock.", all: "/collections/previous-generation", picks: ["onelaser-xt-desktop-laser-machine", "onelaser-hydra-9-laser-engraving-machine", "onelaser-hydra-16-cabinet-dual-laser-system-with150w-glass-tube-and-38w-rf-metal-tube"] },
-  { label: "Materials", all: "/collections/materials", collection: "materials" },
-  { label: "Rotary Attachments", all: "/collections/rotary", collection: "rotary" },
-  { label: "Fume Extractors", all: "/collections/fume", collection: "fume" },
-  { label: "Chillers", all: "/collections/cooling", collection: "cooling" },
-  { label: "Lens & Optics", all: "/collections/optics", collection: "optics" },
+  { label: "Best for cutting", note: "Cobra Series: 90–130W glass-tube CO₂ for cutting wood and acrylic.", all: "/collections/cobra-series", picks: ["cobra-8-90w-co2-laser-engraver-cutter", "cobra-10-100w-co2-laser-engraver-cutter", "cobra-14-130w-co2-laser-engraver-cutter"] },
+  { label: "All-day production", note: "Hydra Gen2: 70W RF, or RF + glass-tube hybrid, for daily production.", all: "/collections/hydra-gen2", picks: ["hydra-7-gen-2-70w-rf-co2-dual-laser-machine", "hydra-9-gen-2-70w-rf-co2-dual-laser-machine", "hydra-13-gen-2-70w-rf-co2-dual-laser-machine", "hydra-16-gen-2-70w-rf-co2-dual-laser-machine"] },
+  { label: "Previous models", note: "Previous generation, lower price. Limited stock.", all: "/collections/previous-generation", picks: ["onelaser-xt-desktop-laser-machine", "onelaser-hydra-9-laser-engraving-machine", "onelaser-hydra-16-cabinet-dual-laser-system-with150w-glass-tube-and-38w-rf-metal-tube"] },
 ];
 export const newHandles = ["onelaser-xrf-desktop-laser-machine", "vertigo-vertical-laser-engraver"];
 export const homeFeature = { title: "Hydra 9 Gen2", text: ["70W RF, or RF + glass-tube hybrid.", "Save up to $3,000 this Black Friday."], image: "promo-hydra9.jpg", to: "/products/hydra-9-gen-2-70w-rf-co2-dual-laser-machine" };
@@ -290,13 +277,13 @@ export const homeProofSources = [
 
 // Home buying FAQ (after "Questions? Answers." on thunderlaserusa.com). Answers restate the policies and pages on 1laser.com.
 export const homeFaq = [
-  ["Which machine is right for me?", "Answer the six questions in “Find your machine” above, compare every model side by side, or schedule a call with a OneLaser engineer."],
+  ["Which machine is right for me?", "Tap “Find my machine” at the top of any page and answer four quick questions, compare every model side by side, or book a call with a OneLaser engineer."],
   ["What warranty is included?", "X Series (XRF, XT) and Hydra: 3-year mechanical parts, 2-year electrical components, 1-year optics and laser source. Cobra: 1-year mechanical and electrical (optical lenses not covered). VertiGo: 1-year mechanical and electrical, 6-month laser source, 1-month lens and mirror."],
   ["Can I return a machine?", "OneLaser offers 30-day easy returns. See the Refund Policy on 1laser.com for conditions."],
   ["Is financing available?", "Yes. OneLaser works with Shop Pay Installments, Affirm and ClickLease. Rates and terms depend on the lender's approval."],
   ["Which software does it work with?", "OneLaser machines work with LightBurn, MakerBoost AI and RDWorks on Windows and macOS."],
   ["How does support work after I buy?", "You talk to U.S.-based support engineers by phone, email or a support ticket. Contact them from the Support page."],
-  ["How much is shipping?", "The shipping rate and delivery estimate are shown at checkout once you enter your address. See the Shipping Policy for details."],
+  ["How much is shipping?", "Machines ship by freight: the rate and delivery date are confirmed after we review your address. For smaller items, shipping is calculated at checkout. See the Shipping Policy for details."],
 ];
 
 // Home owner reviews. Real reviews copied word for word (shortened only with "…") from the Judge.me widgets on the 1laser.com
@@ -340,13 +327,13 @@ export const trustpilot = {
 // videos: [id, title, channel, what it shows, machine]
 const IND = "https://www.1laser.com/cdn/shop/files/home-industry-";
 export const homeAmbition = {
-  kicker: "Built for every ambition", title: "Different goals. A clearer machine path.",
-  text: "Choose the environment that looks most like yours, then explore the OneLaser path designed around it.",
+  kicker: "Who it's for", title: "Pick the one that sounds like you.",
+  text: "See what people like you make, and which machine they use.",
   cta: ["Let's Talk with Our Experts", "/pages/sales-consultation"],
   segments: [
     {
-      label: "Makers", title: "Turn ideas into finished objects.", image: `${IND}makers-v3.webp?v=1788447362`,
-      text: "Move from one-off experiments to polished gifts, home décor, signs, and personal work with a machine matched to the projects you actually want to make.",
+      label: "Makers", title: "Gifts, décor and signs at home.", image: `${IND}makers-v3.webp?v=1788447362`,
+      text: "Make one-off gifts, home décor and signs. A desktop machine is usually enough to start.",
       videos: [
         ["0gGxQMZZhOs", "How To Make Leather Patch Hats", "Wrico Goods", "Leather patch hats", "Hydra 9"],
         ["vBxXG9vpgIQ", "Laser ideas to make and sell online", "Peachy Creations", "Products to sell online", "XRF"],
@@ -358,8 +345,8 @@ export const homeAmbition = {
       ],
     },
     {
-      label: "Business", title: "Build a workflow you can repeat.", image: `${IND}business-v3.webp?v=1788447362`,
-      text: "Choose the right platform for personalization, broader catalogs, repeat orders, and dependable daily production—without pretending every shop needs the same machine.",
+      label: "Business", title: "Orders you can repeat every day.", image: `${IND}business-v3.webp?v=1788447362`,
+      text: "Personalized products and repeat orders. The right machine depends on your piece size and how many you make a day.",
       videos: [
         ["WD5has9K3IY", "This Firefighter Made A Six Figure Business With A Laser", "OneLaser", "Six-figure laser business", "OneLaser"],
         ["HdP62cQVzs0", "The Machine Behind His Best-Selling Maps", "OneLaser", "Best-selling maps", "Hydra 16"],
@@ -372,8 +359,8 @@ export const homeAmbition = {
       ],
     },
     {
-      label: "Education", title: "Make learning tangible.", image: `${IND}education-v3.webp?v=1788447362`,
-      text: "Bring prototyping, design, and hands-on STEM work into classrooms, labs, and maker spaces with training and support close at hand.",
+      label: "Education", title: "Hands-on projects in class.", image: `${IND}education-v3.webp?v=1788447362`,
+      text: "Prototyping, design and STEM projects for classrooms, labs and maker spaces, with training and support from our team.",
       // No classroom videos featuring OneLaser were found on YouTube; these are the training videos a class would start with.
       videos: [
         ["EszLHwtuEUw", "Why Your Laser Engraving Looks Terrible (And How to Fix It!)", "OneLaser", "Engraving settings", "OneLaser"],

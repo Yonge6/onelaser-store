@@ -27,7 +27,7 @@ found.needed.forEach((k) => keys.add(k));
 // site.js data the pages show through t(variable). Exports not listed here are either not shown or quoted
 // word for word (reviews, video titles); add an export here when a page starts showing it.
 const { scanExports } = await import(pathToFileURL(path.join(root, "scripts/i18n-scan.mjs")).href);
-const SHOWN = ["promo", "nav", "footer", "heroSlides", "homeTabs", "shortSlogans", "homeProof", "homeProofSources", "homeFaq", "homeStandard", "faq"];
+const SHOWN = ["promo", "nav", "footer", "benefits", "heroSlides", "homeTabs", "shortSlogans", "homeProof", "homeProofSources", "homeFaq", "homeStandard", "faq"];
 scanExports(path.join(root, "src/data/site.js"), SHOWN).forEach((k) => keys.add(k));
 // Text the code builds at runtime and shows through t(variable), which the scan above cannot follow:
 // the assistant's "Based on" source labels (src: [...]) and the machine finder's reasons (add(score, "reason")).

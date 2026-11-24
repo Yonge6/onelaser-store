@@ -1,11 +1,14 @@
 import { useEffect, useMemo, useState } from "react";
 import { t, tf, tx } from "../i18n.js";
-import { byHandle, go, img, machines, products } from "../lib.js";
+import { byHandle, frontImg, go, img, machines, products } from "../lib.js";
 import { useCart } from "../cart.jsx";
 import { addOns, faq, promo } from "../data/site.js";
-import { Icon, Link, QtyStepper, usd } from "../components/ui.jsx";
+import { Icon, Link, usd } from "../components/ui.jsx";
 import stories from "../data/stories.json";
 import Story, { Look } from "../components/Story.jsx";
+import Glance from "../components/Glance.jsx";
+import { quickAnswers } from "../components/answers.js";
+import { contact } from "../data/site.js";
 
 /* The whole page follows the Insta360 Store product page (store.insta360.com/product/x5, measured 2026-11-17 at 1440 and 390):
    full-bleed gray stage on the left (sticky) | 464px column: 32px title, option summary line, promo card, info card with icon rows,
@@ -63,18 +66,18 @@ export default function Product({ handle }) {
   const { add } = useCart();
   const [variantId, setVariantId] = useState(null);
   const [photo, setPhoto] = useState(0);
-  const [picked, setPicked] = useState({});
+  const [allSpecs, setAllSpecs] = useState(false);
   const qty = 1;
   const [details, setDetails] = useState(null);
   const [active, setActive] = useState("overview");
   const [added, setAdded] = useState(null);
   useEffect(() => {
-    setVariantId(null); setPhoto(0); setPicked({}); setDetails(null); setActive("overview");
+    setVariantId(null); setPhoto(0); setAllSpecs(false); setDetails(null); setActive("specs");
   }, [handle]);
   useEffect(() => {
     const spy = () => {
-      const ids = ["overview", "compare", "specs", "faq", "accessories"];
-      let current = "overview";
+      const ids = ["specs", "compare", "answers", "overview", "faq", "accessories"];
+      let current = "specs";
       for (const id of ids) {
         const el = document.getElementById(`pdp-${id}`);
         if (el && el.getBoundingClientRect().top < 200) current = id;
@@ -89,18 +92,18 @@ export default function Product({ handle }) {
   if (!product) return <div className="container section-pad"><h1>{t("Product not found")}</h1><Link to="/">{t("Back to store")}</Link></div>;
 
   const variant = product.variants.find((v) => v.id === variantId) || product.variants.find((v) => v.available) || product.variants[0];
-  const gallery = variant.image && !product.images.includes(variant.image) ? [variant.image, ...product.images] : product.images;
+  // machines open on the clean full-machine front view: several official first photos are close-ups that cut the machine off
+  const base = product.kind === "machine" && frontImg(product) && !product.images.includes(frontImg(product)) ? [frontImg(product), ...product.images] : product.images;
+  const gallery = variant.image && !base.includes(variant.image) ? [base[0], variant.image, ...base.slice(1)] : base;
   const pickVariant = (v) => {
     setVariantId(v.id);
     const at = gallery.indexOf(v.image);
     setPhoto(at >= 0 ? at : 0);
   };
-  const addOnTotal = options.reduce((s, a) => s + (picked[a.handle] || 0) * a.price, 0);
-  const total = variant.price * qty + addOnTotal;
+  const total = variant.price * qty;
   const saved = variant.compareAt ? (variant.compareAt - variant.price) * qty : 0;
   const commit = (thenCheckout) => {
-    add(product.handle, variant.id, qty);
-    options.forEach((a) => picked[a.handle] && add(a.handle, a.variants[0].id, picked[a.handle]));
+    add(product.handle, variant.id, qty); // add-ons are offered in the cart and at checkout, not here
     go(thenCheckout ? "/checkout" : "/cart");
   };
   const isMachine = product.kind === "machine";
@@ -113,7 +116,9 @@ export default function Product({ handle }) {
   const closer = story.highlights.slice(0, story.highlights.length >= 8 ? 8 : 4).map(({ title, text, img: src, video }) => ({ title, text, img: src, video }));
   const stats = isMachine && product.specs ? ["Max engraving speed", "Positioning accuracy", "Max resolution"].filter((k) => product.specs[k]).map((k) => [k, product.specs[k]]) : [];
   const likes = (isMachine ? [...options, ...products.filter((p) => p.kind === "accessory" && p.available && !options.includes(p))] : products.filter((p) => p.kind === product.kind && p.handle !== product.handle && p.available)).slice(0, 4);
-  const sections = [["overview", "Overview"], compare.length > 1 && ["compare", "Compare"], specGroups && ["specs", "Specs"], ["faq", "FAQ"], likes.length && ["accessories", "Accessories"]].filter(Boolean);
+  const answers = quickAnswers(product);
+  // specs and plain answers come first; the long story follows for those who want it
+  const sections = [specGroups && ["specs", "Specs"], compare.length > 1 && ["compare", "Compare"], answers.length && ["answers", "Common questions"], ["overview", "Overview"], ["faq", "FAQ"], likes.length && ["accessories", "Accessories"]].filter(Boolean);
   const jump = (id) => {
     setActive(id);
     document.getElementById(`pdp-${id}`)?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -155,9 +160,11 @@ export default function Product({ handle }) {
             </Link>
           )}
 
+          {isMachine && <Glance product={product} />}
+
           <div className="ip-info">
-            <div><Icon name="truck" size={20} /><ul><li>{t("Delivery estimate and rate shown at checkout")}</li><li>{t("30-day easy returns")}{isMachine && ` | ${t("3-2-1 warranty")}`}</li><li>{t("U.S.-based support from laser engineers")}</li></ul></div>
-            <div><Icon name="check" size={20} /><ul>{bullets.slice(0, 4).map((b) => <li key={b}>{b}</li>)}{product.fit && <li>{t("Fits:")} {product.fit}</li>}</ul></div>
+            <div><Icon name="truck" size={20} /><ul><li>{t(isMachine ? "Ships by freight; rate and date confirmed after address review" : "Delivery estimate and rate shown at checkout")}</li><li>{t("30-day easy returns")}</li><li>{t("U.S.-based support from laser engineers")}</li></ul></div>
+            {!isMachine && <div><Icon name="check" size={20} /><ul>{bullets.slice(0, 4).map((b) => <li key={b}>{b}</li>)}{product.fit && <li>{t("Fits:")} {product.fit}</li>}</ul></div>}
             <div><Icon name="card" size={20} /><ul><li>{t("Financing available at checkout")} — <a href={`#/pages/financing?p=${product.handle}`}>{t("learn more")}</a></li></ul></div>
           </div>
 
@@ -194,30 +201,13 @@ export default function Product({ handle }) {
             </div>
           )}
 
-          {options.length > 0 && (
-            <>
-              <div className="ip-label"><span>{t("Frequently bought together")}</span></div>
-              <div className="ip-addons">
-                {options.map((a) => (
-                  <article key={a.handle} className={picked[a.handle] ? "on" : ""}>
-                    <label><input type="checkbox" checked={!!picked[a.handle]} onChange={(e) => setPicked((s) => ({ ...s, [a.handle]: e.target.checked ? 1 : 0 }))} aria-label={`Add ${a.name}`} /></label>
-                    <img src={img(a.images[0], 200)} alt="" loading="lazy" />
-                    <div><h3>{a.name}</h3><p>{usd(a.price)}</p></div>
-                    <QtyStepper value={picked[a.handle] || 0} onChange={(n) => setPicked((s) => ({ ...s, [a.handle]: n }))} />
-                    <p className="ip-addon-text">{a.tagline} <Link to={`/products/${a.handle}`}>{t("Learn more")}</Link></p>
-                  </article>
-                ))}
-              </div>
-            </>
-          )}
-
           <div className="ip-summary">
             <h2>{product.name}</h2>
             <p>{variant.title || (isMachine ? t(product.tagline) : product.tagline)}</p>
-            {options.filter((a) => picked[a.handle]).map((a) => <p key={a.handle} className="ip-summary-line"><span>{a.name} × {picked[a.handle]}</span><span>{usd(a.price * picked[a.handle])}</span></p>)}
             <p className="ip-summary-total"><span>{t("Total")}</span><b>{usd(total)}</b></p>
             {saved > 0 && <p className="ip-summary-save">{t("You save")} {usd(saved)}</p>}
             <div className="buy-group">{buttons}</div>
+            {isMachine && <p className="ip-talk"><Icon name="headset" size={18} /><span>{t("Not sure it's the right one?")} <a href={`tel:${contact.tel}`}>{t("Call a U.S.-based engineer")}</a> {t("or")} <Link to="/pages/sales-consultation">{t("book a free call")}</Link></span></p>}
           </div>
 
           <div className="ip-ship">
@@ -236,7 +226,45 @@ export default function Product({ handle }) {
         </div>
       </menu>
 
-      <div className="is" id="pdp-overview">
+      <div className="is">
+        {specGroups && (
+          <section id="pdp-specs" className="is-specs">
+            <h3>{t("Specs")}</h3>
+            {(allSpecs ? specGroups : specGroups.slice(0, 2)).map((g) => (
+              <div key={g.group}>
+                <h4>{g.group}</h4>
+                <dl>{g.rows.map(([k, v]) => <div key={k}><dt>{k}</dt><dd>{v}</dd></div>)}</dl>
+              </div>
+            ))}
+            {specGroups.length > 2 && <button type="button" className="is-specs-more" onClick={() => setAllSpecs((v) => !v)}>{t(allSpecs ? "Show fewer specs" : "Show all specs")}<Icon name="chevron" size={16} /></button>}
+          </section>
+        )}
+        {compare.length > 1 && (
+          <section id="pdp-compare" className="is-compare">
+            <h2>{t("Compare models")}</h2>
+            <div className="is-compare-scroll">
+              <div className={`is-compare-grid n${compare.length}`}>
+                {compare.map((m) => <Link key={m.handle} to={`/products/${m.handle}`} className="is-compare-img"><img src={img(m.images[0], 500)} alt="" loading="lazy" /></Link>)}
+                {compare.map((m, n) => (
+                  <div key={m.handle} className="is-compare-head">
+                    <b>{m.name}</b>
+                    <strong>{usd(m.price).replace(".00", "")}</strong>
+                    {n === 0 ? <span>{t("Now Viewing")}</span> : <Link to={`/products/${m.handle}`}>{t("Learn more")}</Link>}
+                  </div>
+                ))}
+                {COMPARE_ROWS.map((r) => compare.map((m) => <div key={r + m.handle} className="is-compare-cell"><b>{m.specs[r]}</b><span>{t(r)}</span></div>))}
+              </div>
+            </div>
+          </section>
+        )}
+
+        {answers.length > 0 && (
+          <section id="pdp-answers" className="ip-answers">
+            <h3>{t("Common questions")}</h3>
+            <dl>{answers.map(([q, a]) => <div key={q}><dt>{t(q)}</dt><dd>{typeof a === "string" ? t(a) : tf(a.tpl, a.v)}</dd></div>)}</dl>
+          </section>
+        )}
+        <div id="pdp-overview">
         {story.blocks.length > 0 ? (
           <>
             <Story key={`${handle}-a`} blocks={story.blocks.slice(0, 1)} />
@@ -260,36 +288,7 @@ export default function Product({ handle }) {
           </section>
         )}
 
-        {compare.length > 1 && (
-          <section id="pdp-compare" className="is-compare">
-            <h2>{t("Compare models")}</h2>
-            <div className="is-compare-scroll">
-              <div className={`is-compare-grid n${compare.length}`}>
-                {compare.map((m) => <Link key={m.handle} to={`/products/${m.handle}`} className="is-compare-img"><img src={img(m.images[0], 500)} alt="" loading="lazy" /></Link>)}
-                {compare.map((m, n) => (
-                  <div key={m.handle} className="is-compare-head">
-                    <b>{m.name}</b>
-                    <strong>{usd(m.price).replace(".00", "")}</strong>
-                    {n === 0 ? <span>{t("Now Viewing")}</span> : <Link to={`/products/${m.handle}`}>{t("Learn more")}</Link>}
-                  </div>
-                ))}
-                {COMPARE_ROWS.map((r) => compare.map((m) => <div key={r + m.handle} className="is-compare-cell"><b>{m.specs[r]}</b><span>{t(r)}</span></div>))}
-              </div>
-            </div>
-          </section>
-        )}
-
-        {specGroups && (
-          <section id="pdp-specs" className="is-specs">
-            <h3>{t("Specs")}</h3>
-            {specGroups.map((g) => (
-              <div key={g.group}>
-                <h4>{g.group}</h4>
-                <dl>{g.rows.map(([k, v]) => <div key={k}><dt>{k}</dt><dd>{v}</dd></div>)}</dl>
-              </div>
-            ))}
-          </section>
-        )}
+        </div>
       </div>
 
       <section id="pdp-faq" className="iw">

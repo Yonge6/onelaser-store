@@ -3,7 +3,8 @@ import { t, tf, localeTag } from "../i18n.js";
 import { asset, byHandle, img, lockScroll, money, products, frontImg, useFocusTrap, isTopDialog } from "../lib.js";
 import { contact, footer, heroSlides, homeFaq, homeProof, homeReviews, homeStandard, homeTabs, trustpilot, newHandles, promo, saleOn, shortSlogans, homeProofSources } from "../data/site.js";
 import { AddButton, Countdown, Icon, Link, SpecIcon, useDragScroll } from "../components/ui.jsx";
-import FinderCard, { FinderHelp } from "../components/Finder.jsx";
+import { FinderHelp } from "../components/Finder.jsx";
+import { openFinder } from "../components/FinderFlow.jsx";
 
 /* Module order, sizes and type follow the insta360.com homepage (measured 2026-11-17 at 1440 and 375):
    full-bleed hero 660 with segmented progress → headline + sticky pill tabs + 3-column product cards (416×554, radius 24)
@@ -170,13 +171,8 @@ function ProductBlock() {
   const tabsRef = useDragScroll({ wheel: true });
   const [ti, setTi] = useState(0);
   const tab = homeTabs[ti];
-  const machines = !!tab.picks; // the finder only belongs with the machine tabs
-  useEffect(() => {
-    const back = () => setTi((n) => (homeTabs[n].picks ? n : 0));
-    window.addEventListener("onelaser:finder", back);
-    return () => window.removeEventListener("onelaser:finder", back);
-  }, []);
-  const list = (tab.picks ? tab.picks.map((h) => byHandle[h]) : products.filter((p) => p.category === tab.collection || (tab.collection === "materials" && p.kind === "material"))).filter(Boolean).slice(0, 6);
+  // machines only: accessories and materials have their own row of links under the grid
+  const list = tab.picks.map((h) => byHandle[h]).filter(Boolean);
   return (
     <section className="ih-products">
       <div className="ih-wrap"><h2 className="ih-h2 narrow">{t("Find the laser that fits your work.")}</h2></div>
@@ -189,17 +185,25 @@ function ProductBlock() {
       </div>
       <div className="ih-wrap">
         {tab.note && <p className="ih-tab-note" key={`n${ti}`}>{t(tab.note)} · {t("from")} <b>{money(Math.min(...list.map((p) => p.price)))}</b></p>}
+        {/* the finder leads the grid as its own banner, so it never looks like another product card */}
+          <button type="button" className="ih-finder" onClick={openFinder}>
+            <span className="ih-finder-ico"><Icon name="sparkle" size={22} /></span>
+            <span className="ih-finder-text"><b>{t("Not sure which laser fits?")}</b><em>{t("Answer 4 quick questions about what you make, your space and your budget. We'll match you to a machine.")}</em></span>
+            <span className="ih-btn dark sm">{t("Find my machine")}</span>
+          </button>
         <div className="ih-grid" key={ti}>
           <div className="ih-row">
-            {list.slice(0, machines ? 4 : 6).map((p) => (
+            {list.slice(0, 4).map((p) => (
               <HomeCard key={p.handle} p={p} />
             ))}
           </div>
-          {machines && <FinderCard />}
         </div>
-        {machines && <div id="fc-result" />}
         <div className="ih-viewall"><Link to={tab.all}>{t("View all")}</Link></div>
-        {machines && <FinderHelp />}
+        <p className="ih-acc">
+          <span>{t("Accessories")}:</span>
+          {[["Rotary attachments", "/collections/rotary"], ["Fume extractors", "/collections/fume"], ["Chillers", "/collections/cooling"], ["Lenses & optics", "/collections/optics"], ["Materials", "/collections/materials"]].map(([l, u]) => <Link key={u} to={u}>{t(l)}</Link>)}
+        </p>
+        <FinderHelp />
       </div>
     </section>
   );
@@ -277,14 +281,7 @@ export function TrustDialog({ kind, onClose, onTrustpilot, onBook }) {
     </ul>
   );
   let body;
-  if (kind === "finder") {
-    body = (
-      <>
-        <div className="tdlg-finder"><FinderCard modal /></div>
-        <div id="fc-result-modal" className="tdlg-finder-result" />
-      </>
-    );
-  } else if (kind === "reviews") {
+  if (kind === "reviews") {
     body = (
       <>
         <Head title={<span className="tdlg-score"><b>{homeReviews.average}</b><span className="tdlg-stars" aria-hidden="true">★★★★★</span></span>} sub={`${t("Average of")} ${homeReviews.count} ${t("owner reviews on 1laser.com product pages (Judge.me).")}`} />
@@ -679,10 +676,6 @@ export default function Home() {
   const [dlg, setDlg] = useState(null); // promise / next-step dialogs, so the visitor stays on the home page
   const rv = useDragScroll();
   const rvSlide = (dir) => rv.current?.scrollBy({ left: dir * rv.current.clientWidth * 0.8, behavior: "smooth" });
-  const toFinder = () => {
-    window.dispatchEvent(new Event("onelaser:finder")); // switches the product tabs back to a machine tab
-    setTimeout(() => document.querySelector(".fx")?.scrollIntoView({ behavior: "smooth", block: "center" }), 60);
-  };
   return (
     <div className="ih">
       <Hero />
@@ -781,7 +774,7 @@ export default function Home() {
         <div className="ih-wrap">
           <h2 className="ih-h2">{t("Three easy ways to start.")}</h2>
           <ul>
-            <li><button type="button" className="plate" onClick={() => setDlg("finder")} aria-haspopup="dialog"><span className="spec-idx"><span>01 / {t("Finder")}</span><span>{t("6 questions")}</span></span><SpecIcon name="search" /><small>{t("Do it yourself")}</small><b>{t("Find your machine in 30 seconds")}</b><p>{t("Answer six quick questions about what you make, and we'll suggest a machine.")}</p><em>{t("Start the finder")}<Icon name="chevron" size={16} /></em></button></li>
+            <li><button type="button" className="plate" onClick={openFinder} aria-haspopup="dialog"><span className="spec-idx"><span>01 / {t("Finder")}</span><span>{t("4 questions")}</span></span><SpecIcon name="search" /><small>{t("Do it yourself")}</small><b>{t("Find your machine in 30 seconds")}</b><p>{t("Answer four quick questions about what you make, and we'll suggest a machine.")}</p><em>{t("Start the finder")}<Icon name="chevron" size={16} /></em></button></li>
             <li><button type="button" className="plate" onClick={() => setDlg("call")} aria-haspopup="dialog"><span className="spec-idx"><span>02 / {t("Call")}</span><span>{t("Free")}</span></span><SpecIcon name="calendar" /><small>{t("Ask an expert")}</small><b>{t("Free 30-minute call with a laser expert")}</b><p>{t("Talk through your materials, space and budget before you choose.")}</p><em>{t("Pick a time")}<Icon name="chevron" size={16} /></em></button></li>
             <li><button type="button" className="plate" onClick={() => setDlg("financing")} aria-haspopup="dialog"><span className="spec-idx"><span>03 / {t("Finance")}</span><span>{t("Estimate")}</span></span><SpecIcon name="card" /><small>{t("Check the cost")}</small><b>{t("Estimate your monthly payment")}</b><p>{t("Pick a machine and a term to see an estimated monthly payment.")}</p><em>{t("Estimate my payment")}<Icon name="chevron" size={16} /></em></button></li>
           </ul>

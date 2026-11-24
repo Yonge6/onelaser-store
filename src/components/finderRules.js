@@ -146,3 +146,68 @@ export function rank(a, available = () => true, price = () => 0) {
     .sort((x, y) => y.score - x.score || price(M[x.key].handle) - price(M[y.key].handle)); // tie: the lower price first
 }
 const tidy = (reasons) => reasons.sort((x, y) => y[0] - x[0]).map((r) => r[1]).filter((r, i, all) => all.indexOf(r) === i).slice(0, 3);
+
+/* "Find my machine" (header finder, Figma flow): four questions, then the existing scoring above plus a budget check.
+   The answers are mapped onto rank() inputs so both finders agree on what fits. */
+export const QUIZ = [
+  {
+    id: "make", title: "What do you want to make?", hint: "Pick everything that applies. We'll match you to the right machine.", multi: true,
+    options: [
+      ["gifts", "Personalized gifts", "Tumblers, cutting boards, keepsakes", "gift"],
+      ["photo", "Photo engraving", "Portraits on wood, stone, acrylic", "image"],
+      ["signs", "Signs & woodwork", "Cut and engrave wood and acrylic", "sign"],
+      ["metal", "Metal marking", "Jewelry, tools, serial numbers", "gem"],
+      ["batch", "Small-batch production", "Repeat orders for a business", "layers"],
+      ["unsure", "Not sure yet", "We'll suggest a versatile option", "help"],
+    ],
+  },
+  {
+    id: "mats", title: "Which materials will you work with?", hint: "Choose all that apply.", multi: true,
+    options: [["wood", "Wood", "", "layers"], ["acrylic", "Acrylic", "", "layers"], ["leather", "Leather & fabric", "", "layers"], ["glass", "Glass & stone", "", "layers"], ["coated", "Coated metal", "", "layers"], ["bare", "Bare metal", "", "gem"]],
+  },
+  {
+    id: "space", title: "Where will your laser live?", hint: "This helps us size the machine and its ventilation.",
+    options: [["home", "Home or garage", "Limited space, occasional use", "home"], ["shop", "Small shop", "Daily use, a few orders a day", "store"], ["floor", "Production floor", "All-day runs, larger batches", "factory"]],
+  },
+  {
+    id: "budget", title: "What's your budget?", hint: "Monthly payments are available on most machines.",
+    options: [["low", "Under $3,000", "", "wallet"], ["mid", "$3,000 – $6,000", "", "wallet"], ["high", "$6,000+", "", "wallet"]],
+  },
+];
+const BUDGET = { low: 3000, mid: 6000, high: Infinity };
+
+/** Map the quiz answers onto rank() inputs. */
+export function quizToRank(q) {
+  const make = q.make || [], mats = q.mats || [];
+  const material = [];
+  if (mats.includes("wood") || mats.includes("acrylic") || make.includes("signs")) material.push("wood");
+  if (mats.includes("leather")) material.push("leather");
+  if (mats.includes("glass")) material.push("stone");
+  if (mats.includes("coated") || make.includes("metal")) material.push("coated");
+  if (make.includes("photo")) material.push("photo");
+  if (make.includes("gifts")) material.push("drinkware");
+  const a = {};
+  if (material.length) a.material = material;
+  if (make.includes("signs")) a.work = "both";
+  else if (make.length && make.every((m) => ["gifts", "photo", "metal"].includes(m))) a.work = "engrave";
+  if (make.includes("gifts")) a.round = "some";
+  a.shop = { home: "side", shop: "full", floor: "high" }[q.space] || (make.includes("batch") ? "full" : undefined);
+  return a;
+}
+
+/** Best match, step-up and save-money picks for the quiz. price(handle) is today's price.
+    Returns { picks: [{ key, reasons }], best, up, save, overBudget, bareMetal }. */
+export function matchQuiz(q, available = () => true, price = () => 0) {
+  const ranked = rank(quizToRank(q), available, price);
+  const max = BUDGET[q.budget] ?? Infinity;
+  const inBudget = ranked.filter((r) => price(M[r.key].handle) <= max);
+  const overBudget = !inBudget.length && ranked.length > 0;
+  // nothing in budget: lead with the lowest-priced machine that does the job
+  const list = overBudget ? [...ranked].sort((x, y) => price(M[x.key].handle) - price(M[y.key].handle)) : inBudget;
+  const best = list[0];
+  const rest = ranked.filter((r) => r !== best);
+  const p = (r) => price(M[r.key].handle);
+  const up = best && rest.find((r) => p(r) > p(best));
+  const save = best && rest.find((r) => p(r) < p(best) && r !== up);
+  return { best, up, save, overBudget, bareMetal: (q.mats || []).includes("bare") };
+}

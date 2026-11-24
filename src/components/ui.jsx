@@ -41,9 +41,29 @@ const ICONS = {
   star: <path d="M11.5 2.8a.55.55 0 0 1 1 0l2.3 4.7a2.1 2.1 0 0 0 1.6 1.15l5.15.75a.55.55 0 0 1 .3.94l-3.73 3.63a2.1 2.1 0 0 0-.6 1.88l.88 5.13a.55.55 0 0 1-.8.58l-4.6-2.43a2.1 2.1 0 0 0-2 0l-4.6 2.43a.55.55 0 0 1-.8-.58l.88-5.13a2.1 2.1 0 0 0-.6-1.88L2.35 10.34a.55.55 0 0 1 .3-.94l5.15-.75a2.1 2.1 0 0 0 1.6-1.15z" />,
   flag: <><path d="M4.5 22V15" /><path d="M4.5 15s1-1 4-1 5 2 8 2 4-1 4-1V3.5s-1 1-4 1-5-2-8-2-4 1-4 1z" /></>,
   tv: <><rect x="2.5" y="7" width="19" height="14" rx="2.5" /><path d="m17 2.5-5 4.5-5-4.5" /></>,
+  // finder answers and spec icons (same outline style)
+  gift: <><rect x="3" y="8" width="18" height="4.5" rx="1" /><path d="M5 12.5V20a1.5 1.5 0 0 0 1.5 1.5h11A1.5 1.5 0 0 0 19 20v-7.5M12 8v13.5M12 8S10.5 3 7.8 3.6C6 4 6.3 7 8.5 8M12 8s1.5-5 4.2-4.4C18 4 17.7 7 15.5 8" /></>,
+  image: <><rect x="3" y="3" width="18" height="18" rx="2.5" /><circle cx="9" cy="9" r="1.8" /><path d="m21 15.5-4.6-4.6a1.5 1.5 0 0 0-2.1 0L5 20.5" /></>,
+  sign: <><path d="M12 2.5v19M9 21.5h6" /><path d="M4.5 5.5h13l2.5 2.75-2.5 2.75h-13zM19.5 13.5h-13L4 16.25 6.5 19h13z" /></>,
+  gem: <><path d="M6.5 3.5h11l4 5.5-9.5 11.5L2.5 9z" /><path d="M2.5 9h19M9 3.5 7.5 9l4.5 11.5L16.5 9 15 3.5" /></>,
+  layers: <><path d="m12 2.5 9.5 5-9.5 5-9.5-5z" /><path d="m2.5 12 9.5 5 9.5-5M2.5 16.5l9.5 5 9.5-5" /></>,
+  help: <><circle cx="12" cy="12" r="9.5" /><path d="M9.3 9.2a2.8 2.8 0 0 1 5.4 1c0 1.9-2.7 2.5-2.7 4" /><path d="M12 17.5h.01" strokeWidth="2.4" /></>,
+  home: <><path d="M3 10.5 12 3l9 7.5V20a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 20z" /><path d="M9.5 21.5v-6.5h5v6.5" /></>,
+  store: <><path d="M3.5 9.5V20a1.5 1.5 0 0 0 1.5 1.5h14a1.5 1.5 0 0 0 1.5-1.5V9.5" /><path d="M2.5 9.5 4.5 3h15l2 6.5c0 1.7-1.6 2.5-3 2.5s-3-.8-3-2.5c0 1.7-1.6 2.5-3 2.5s-3-.8-3-2.5c0 1.7-1.6 2.5-3 2.5s-3-.8-3-2.5M9.5 21.5v-5h5v5" /></>,
+  factory: <><path d="M2.5 21.5V10l6 3.5V10l6 3.5V4.5h7v17z" /><path d="M6.5 17.5h2M11.5 17.5h2M16.5 17.5h2" /></>,
+  wallet: <><path d="M19.5 7V5a1.5 1.5 0 0 0-1.5-1.5H5A2.5 2.5 0 0 0 2.5 6v12A2.5 2.5 0 0 0 5 20.5h14.5A1.5 1.5 0 0 0 21 19V8.5A1.5 1.5 0 0 0 19.5 7H5a2.5 2.5 0 0 1-2.5-2.5" /><path d="M16.5 14h.01" strokeWidth="2.6" /></>,
+  bolt: <path d="M13 2.5 4 14h7l-1 7.5L19 10h-7z" />,
+  area: <><rect x="2.5" y="5" width="19" height="14" rx="2" /><path d="M6 12h12M6 12l2-2M6 12l2 2M18 12l-2-2M18 12l-2 2" /></>,
+  gauge: <><path d="M3.5 17a8.5 8.5 0 1 1 17 0" /><path d="m12 17 4.2-5.2" /><path d="M12 17h.01" strokeWidth="2.8" /></>,
+  target: <><circle cx="12" cy="12" r="9.5" /><circle cx="12" cy="12" r="5.5" /><circle cx="12" cy="12" r="1.5" /></>,
+  beam: <><path d="M12 2.5v6M12 15.5v6M2.5 12h6M15.5 12h6" /><circle cx="12" cy="12" r="2.2" /></>,
+  drop: <path d="M12 2.8c3.3 4 6.5 7.8 6.5 11.7a6.5 6.5 0 0 1-13 0c0-3.9 3.2-7.7 6.5-11.7z" />,
+  cut: <><circle cx="6" cy="6" r="3" /><circle cx="6" cy="18" r="3" /><path d="M20.5 4 8.2 16M14.5 14.5l6 5.5M8.2 8l3.6 3.4" /></>,
+  download: <><path d="M12 3v12.5m-5-5 5 5 5-5" /><path d="M3.5 17v2.5a2 2 0 0 0 2 2h13a2 2 0 0 0 2-2V17" /></>,
+  box: <><path d="m12 2.5 9 4.5v10l-9 4.5-9-4.5V7z" /><path d="m3 7 9 4.5L21 7M12 11.5v10" /></>,
 };
 /* in the two-tone style these shapes get the tinted fill (open strokes such as arrows never do) */
-const TONE = new Set(["user", "cart", "trash", "truck", "shield", "headset", "lock", "card", "mail", "pin", "phone", "clock", "quote", "calendar", "globe", "star", "flag", "tv", "search"]);
+const TONE = new Set(["gift", "image", "gem", "home", "store", "factory", "wallet", "box", "drop", "user", "cart", "trash", "truck", "shield", "headset", "lock", "card", "mail", "pin", "phone", "clock", "quote", "calendar", "globe", "star", "flag", "tv", "search"]);
 export const Icon = ({ name, size = 22, tone = false }) => {
   const fill = tone && TONE.has(name);
   return (

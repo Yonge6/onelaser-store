@@ -38,7 +38,7 @@ const SHAPES = [
 ];
 const DUR = 12; // whole cycle; each machine gets a quarter
 
-function MachineMorph() {
+export function MachineMorph() {
   return (
     <div className="fx-morph" aria-hidden="true" style={{ "--dur": `${DUR}s`, "--step": `${DUR / SHAPES.length}s` }}>
       <div className="fx-art">

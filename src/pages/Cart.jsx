@@ -72,6 +72,27 @@ function Offer({ list, onClose }) {
   );
 }
 
+/** The add-on offer for the machine in the cart, once per visit. Used on the cart and on checkout ("Buy now" skips the cart),
+    so the extras the product page no longer lists still come up before paying. */
+export function OfferGate() {
+  const { items } = useCart();
+  const inCart = items.map((i) => i.product.handle);
+  const hasMachine = items.find((i) => i.product.kind === "machine");
+  const offer = hasMachine ? Object.keys(OFFER).filter((h) => addOnsFor(hasMachine.product).some((a) => a.handle === h) && !inCart.includes(h)).map((h) => byHandle[h]) : [];
+  const [show, setShow] = useState(false);
+  useEffect(() => {
+    let seen = false;
+    try { seen = sessionStorage.getItem(OFFER_KEY) === "1"; } catch {}
+    if (offer.length && !seen) {
+      const id = setTimeout(() => setShow(true), 600);
+      return () => clearTimeout(id);
+    }
+    return undefined;
+  }, []);
+  const close = () => { setShow(false); try { sessionStorage.setItem(OFFER_KEY, "1"); } catch {} };
+  return show && offer.length > 0 ? <Offer list={offer} onClose={close} /> : null;
+}
+
 const picture = (p, v) => (p.kind === "machine" ? frontImg(p) : v?.image || p.images[0]);
 
 function Suggestions({ exclude = [] }) {
@@ -98,17 +119,6 @@ export default function Cart() {
   const { items, picked, setQty, add, subtotal, savings, toggle, toggleAll } = useCart();
   const inCart = items.map((i) => i.product.handle);
   const hasMachine = items.find((i) => i.product.kind === "machine");
-  const offer = hasMachine ? Object.keys(OFFER).filter((h) => addOnsFor(hasMachine.product).some((a) => a.handle === h) && !inCart.includes(h)).map((h) => byHandle[h]) : [];
-  const [showOffer, setShowOffer] = useState(false);
-  useEffect(() => {
-    let seen = false;
-    try { seen = sessionStorage.getItem(OFFER_KEY) === "1"; } catch {}
-    if (offer.length && !seen) {
-      const id = setTimeout(() => setShowOffer(true), 600);
-      return () => clearTimeout(id);
-    }
-  }, []);
-  const closeOffer = () => { setShowOffer(false); try { sessionStorage.setItem(OFFER_KEY, "1"); } catch {} };
   if (!items.length)
     return (
       <section className="ic">
@@ -214,7 +224,7 @@ export default function Cart() {
         <p><small>{t("Estimated total")}</small><b>{money(subtotal)}</b></p>
         {picked.length ? <Link to="/checkout" className="ic-checkout">{t("Check out")} ({pickedQty})</Link> : <span className="ic-checkout off">{t("Check out")}</span>}
       </div>
-      {showOffer && offer.length > 0 && <Offer list={offer} onClose={closeOffer} />}
+      <OfferGate />
     </section>
   );
 }

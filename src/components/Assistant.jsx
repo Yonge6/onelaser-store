@@ -4,7 +4,8 @@ import { lockScroll, byHandle, frontImg, img, money, products, useFocusTrap, isT
 import { useCart } from "../cart.jsx";
 import { AddButton, Icon, Link } from "./ui.jsx";
 import { M, STEPS, rank } from "./finderRules.js";
-import { contact, homeFaq, homeReviews, promo, saleOn } from "../data/site.js";
+import { contact, faq as storeFaq, homeFaq, homeReviews, promo, saleOn } from "../data/site.js";
+import { quickAnswers } from "./answers.js";
 
 /* Floating shopping assistant, after the "Shop with AI" agent on poolinstore.com (checked 2026-11-19):
    a black pill at the bottom centre whose label rotates; it opens a dark chat panel at the bottom right
@@ -32,6 +33,33 @@ const SERIES = {
 };
 const phone = contact.phone.replace(/^(\d{3}) (\d{3}) (\d{4})$/, "$1-$2-$3");
 const faq = (q) => homeFaq.find(([k]) => k.startsWith(q))?.[1] || "";
+
+/* Plain answers to common questions, so the assistant answers what was asked instead of jumping to a machine.
+   Store FAQ plus a few general laser facts; on a product page its spec-based answers (answers.js) come first. */
+const GENERAL = [
+  ["What is the difference between an RF laser and a glass tube?", "An RF laser (a sealed metal tube) makes a very small, sharp spot, so it's best for fine engraving and photos, and it's air-cooled. A glass tube gives more power for the money, so it's best for cutting thicker wood and acrylic, and it needs a water chiller."],
+  ["Do I need ventilation for the smoke and fumes?", "Yes. Laser smoke has to go outside through a window or wall vent. If you can't vent outside, use a fume extractor such as FiltraBox."],
+  ["How thick can it cut?", "It depends on the material and the laser's power. Tell a OneLaser engineer what you cut and how thick, and they'll tell you what each machine can do."],
+  ["Is it hard to learn? I'm a beginner.", "If it's your first laser, you can book a paid 1-hour live video session with a OneLaser technician for assembly, software setup and troubleshooting. LightBurn, the usual laser software, also has plenty of free tutorials."],
+  ["What materials can it engrave or cut?", "Wood, acrylic, leather, fabric, paper, glass, stone, and coated or anodized metal. CO₂ lasers can't mark bare metal; Cobra takes an optional IR module for that."],
+  ["Where is OneLaser based?", "OneLaser is a U.S. company in Lake Forest, California, with U.S.-based support engineers."],
+  ["How long does delivery take?", "Machines ship by freight. The delivery date is confirmed after we review your address; smaller items show an estimate at checkout."],
+];
+const STOP = new Set("laser lasers machine machines onelaser the and for you your are can does what how which this that with will need about any have has get its from much many there their them they just like want would could should into also more most some than then when where who why our out not all one".split(" "));
+const words = (x) => (x.toLowerCase().match(/[a-z0-9₂]+/g) || []).filter((w) => w.length > 2 && !STOP.has(w)).map((w) => w.slice(0, 5));
+/** Best matching [question, answer] for the message, or null when nothing matches well. */
+function lookup(s, list) {
+  const q = new Set(words(s));
+  if (!q.size) return null;
+  let best = null, top = 0;
+  for (const item of list) {
+    const inQ = words(en(item[0])).filter((w) => q.has(w)).length;
+    const inA = words(en(item[1])).filter((w) => q.has(w)).length;
+    const score = inQ * 2 + Math.min(inA, 3);
+    if (inQ > 0 && score > top) { top = score; best = item; }
+  }
+  return top >= 3 ? best : null;
+}
 
 /* Translatable text. A reply is built from pieces: a plain English string (looked up with t), a template
    tx("... {name} ...", { name }) whose values can be pieces too, a list { list, sep }, or an array of pieces.
@@ -190,9 +218,13 @@ function productReply(s, p) {
 /** Preset replies. Returns { text, cards?, links?, chips? }. */
 function reply(raw, product) {
   const s = raw.toLowerCase();
-  if (has(s, ["need a chiller", "chiller"]) && has(s, ["need", "do i"])) return { text: "Only for Cobra and Hydra Hybrid: their glass tubes are water-cooled. XRF, VertiGo, Hydra 7 Gen2 and Hydra Pro use air-cooled RF lasers, so they need no chiller.", cards: products.filter((p) => p.category === "cooling"), src: ["Product specs"], next: ["Which accessories fit?", "Talk to a person"] };
+  if (!product && has(s, ["need a chiller", "chiller"]) && has(s, ["need", "do i"])) return { text: "Only for Cobra and Hydra Hybrid: their glass tubes are water-cooled. XRF, VertiGo, Hydra 7 Gen2 and Hydra Pro use air-cooled RF lasers, so they need no chiller.", cards: products.filter((p) => p.category === "cooling"), src: ["Product specs"], next: ["Which accessories fit?", "Talk to a person"] };
   const own = productReply(s, product);
   if (own) return own;
+  if (product) {
+    const hit = lookup(s, quickAnswers(product).map(([q, ans]) => [q, typeof ans === "string" ? ans : { ...ans }]));
+    if (hit) return { text: typeof hit[1] === "string" ? hit[1] : tx(hit[1].tpl, hit[1].v), src: ["Product specs", "OneLaser FAQ"] };
+  }
   const list = (hs) => hs.map((h) => byHandle[h]).filter(Boolean);
   if (has(s, ["person", "human", "call", "phone", "talk", "expert", "sales", "agent"]))
     return { src: ["OneLaser contact details"], next: ["Shipping and returns", "Can I pay monthly?"], text: tx("Happy to help. Call {phone} to talk to someone now, or pick a time for a free 30-minute call with our team. No obligation to buy.", { phone }), links: [["Book a free call", "/pages/sales-consultation"], [tx("Call {phone}", { phone }), `tel:${contact.tel}`]] };
@@ -224,11 +256,16 @@ function reply(raw, product) {
       : { text: "The line-up at a glance:\n• XRF (38W RF): a desktop laser for detailed engraving.\n• Cobra (90–130W glass tube): the budget-friendly choice for cutting wood and acrylic.\n• Hydra Gen2 (up to 2,000 mm/s): all-day production, as Pro (70W RF) or Hybrid (RF plus a glass tube).\n• VertiGo: made only for round items, like tumblers.", table: table(list(named.length > 1 ? named : ["onelaser-xrf-desktop-laser-machine", "cobra-10-100w-co2-laser-engraver-cutter", "hydra-9-gen-2-70w-rf-co2-dual-laser-machine"])), links: [["Compare every spec", "/compare"]], src: ["Product specs", "Today's prices"], next: ["Which laser fits me?", "What do owners say?"] };
   for (const k of Object.keys(SERIES)) if (s.includes(k)) return { text: tx("Here is the {series} line-up with today's prices.", { series: { tpl: k === "xrf" ? "XRF" : k === "vertigo" ? "VertiGo" : k === "cobra" ? "Cobra Series" : "Hydra Gen2" } }), cards: list(SERIES[k]) };
   if (has(s, ["rotary", "piburn", "round"]) && !has(s, ["which", "best", "recommend"])) return { text: "Rotary attachments for engraving round items:", cards: products.filter((p) => p.category === "rotary").slice(0, 6) };
-  if (has(s, ["fume", "smoke", "filter", "vent", "extract"])) return { text: "FiltraBox fume extractors, for rooms without an outside vent:", cards: products.filter((p) => p.category === "fume" && p.price > 1000) };
+  if (has(s, ["fume", "smoke", "filter", "vent", "extract"])) return { text: ["Laser smoke has to go outside through a window or wall vent. If you can't vent outside, use a fume extractor such as FiltraBox:"], cards: products.filter((p) => p.category === "fume" && p.price > 1000) };
   if (has(s, ["chiller", "cooling", "water"])) return { text: "Glass tubes need water cooling. These chillers fit Cobra and Hydra:", cards: products.filter((p) => p.category === "cooling") };
   if (has(s, ["material", "acrylic sheet", "leatherette", "blank"])) return { text: "MakerDepot materials, cut and tested for lasers:", cards: products.filter((p) => p.kind === "material").slice(0, 6) };
+  // a question gets an answer, not a machine: "can it cut acrylic?" or "do I need a chiller?"
+  const asksForPick = has(s, ["which laser", "which machine", "which one", "recommend", "best laser", "best machine", "should i get", "should i buy", "help me choose", "find my", "suggest"]);
+  const known = !asksForPick && lookup(s, [...GENERAL, ...homeFaq.slice(1), ...storeFaq]);
+  if (known) return { text: known[1], src: ["OneLaser FAQ"], next: ["Which laser fits me?", "Talk to a person"] };
   const a = parse(s);
-  if (has(s, ["which", "recommend", "best", "fit", "should i", "need", "want", "looking", "beginner", "start"]) || Object.keys(a).length) {
+  const question = /\?|^(can|does|do|is|are|how|what|why|where|when)\b/.test(s.trim());
+  if (asksForPick || (Object.keys(a).length >= 2 && !question)) {
     const top = rank(a, (h) => !!byHandle[h], (h) => byHandle[h]?.price || 0).slice(0, 3).map((r) => ({ p: byHandle[M[r.key].handle], why: r.reasons }));
     const MAT = { wood: "wood and acrylic", leather: "leather and fabric", drinkware: "tumblers", stone: "glass and stone", coated: "coated metal", photo: "photos" };
     const WORK = { engrave: "mostly engraving", cut: "mostly cutting", both: "cutting and engraving" };
@@ -398,14 +435,7 @@ export default function Assistant({ product }) {
   };
   const openWith = (q) => { closeNudge(); setOpen(true); if (q) setTimeout(() => ask(q), 250); };
   const cat = ([k, name, h, model]) => (model ? (window.location.hash = `#/products/${h}`) : ask(k === "deals" ? "Show me Black Friday deals" : k === "rotary" ? "Rotary attachments" : tx("Show me the {name}", { name: { tpl: name } })));
-  const toFinder = () => {
-    setOpen(false);
-    if (!document.querySelector(".fx")) window.location.hash = "#/"; // the finder lives on the home page
-    window.dispatchEvent(new Event("onelaser:finder"));
-    let tries = 0;
-    const seek = () => { const el = document.querySelector(".fx"); if (el) el.scrollIntoView({ behavior: "smooth", block: "center" }); else if (tries++ < 20) setTimeout(seek, 100); };
-    setTimeout(seek, 120);
-  };
+  const toFinder = () => { setOpen(false); window.dispatchEvent(new Event("onelaser:finder")); }; // opens "Find my machine" over this page
 
   return (
     <>

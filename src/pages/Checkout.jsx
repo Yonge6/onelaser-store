@@ -3,6 +3,11 @@ import { t } from "../i18n.js";
 import { asset, frontImg, img, money } from "../lib.js";
 import { useCart } from "../cart.jsx";
 import { Icon, Link } from "../components/ui.jsx";
+import { OfferGate } from "./Cart.jsx";
+
+// Tax-exempt buyers: the state's official resale certificate (OneLaser ships from California; 1laser.com has no form of its own).
+// TODO(team): finance to confirm the form and the address exemption documents go to.
+const TAX_FORM = "https://www.cdtfa.ca.gov/formspubs/cdtfa230.pdf";
 
 /* Checkout after the Insta360 Store checkout (store.insta360.com/order/confirm, checked again 2026-11-19):
    header with only the logo and "Secure"; "Check out as guest"; left column of step cards that open one after another
@@ -93,6 +98,10 @@ export default function Checkout() {
         <div><dt>{t("Tax")}</dt><dd>{step > 0 ? t("Calculated after address") : t("Enter your address")}</dd></div>
         <div className="total"><dt>{t("Total")}</dt><dd><small>USD</small> {money(subtotal)}</dd></div>
       </dl>
+      <div className="ik-tax">
+        <p><b>{t("Buying tax-exempt or for resale?")}</b>{t("Download the California resale certificate (CDTFA-230), or use your own state's exemption form. Email it to cs@1laser.com before you pay so the team can apply your exemption.")}</p>
+        <a href={TAX_FORM} target="_blank" rel="noreferrer" download><Icon name="download" size={16} />{t("Download the California form (PDF)")}</a>
+      </div>
     </>
   );
 
@@ -214,6 +223,7 @@ export default function Checkout() {
           </aside>
         </div>
       </div>
+      <OfferGate />
       <div className="ik-bar">
         <p><small>{t("Total")}</small><b>{money(subtotal)}</b></p>
         <button type="button" className="ik-pill" disabled={step < 2} onClick={place}>{t("Place order")}</button>
