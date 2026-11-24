@@ -70,6 +70,13 @@ if (process.argv.includes("--write-debt")) {
   console.log("i18n debt recorded:", Object.fromEntries(langs.map((l) => [l, missing[l].length])));
   process.exit(0);
 }
+// One name for the finder, in the visitor's own voice: "Find my machine", "My match …", "See my match". The header button,
+// the home card, the popup and the assistant must not drift back to "Find your machine" / "Find my laser" / "Your match".
+const offVoice = [...keys].filter((k) => /^(Find your (machine|laser)|Find my laser|Your (best )?match\b)/.test(k));
+if (offVoice.length) {
+  console.error("\n[i18n] Finder labels use “my”, as in the header button. Rename (and its translations):\n  " + offVoice.map((k) => JSON.stringify(k)).join("\n  ") + "\n  e.g. \"Find your machine\" → \"Find my machine\", \"Your match is ready\" → \"My match is ready\"");
+  process.exit(1);
+}
 let bad = 0;
 for (const l of langs) {
   const allowed = new Set(debt[l] || []);

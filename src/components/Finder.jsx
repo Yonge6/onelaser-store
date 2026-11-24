@@ -8,7 +8,7 @@ import { M, STEPS, rank as rankAll, roundFocus, hasRound, ready } from "./finder
 
 const rank = (a) => rankAll(a, (h) => !!byHandle[h], (h) => byHandle[h]?.price || 0);
 
-/* "Find your machine": a compact card in the last cell of the home product grid.
+/* "Find my machine": a compact card in the last cell of the home product grid.
    The questions follow the four-step finder on thunderlaserusa.com (material → work → pieces → shop → machine), adapted to the
    OneLaser line-up. What is different: single-choice steps move on by themselves, every step can be skipped or revisited, the
    current best match is named while you answer, and the card ends as a shoppable product card (reasons, price, 24-month figure,
@@ -169,7 +169,7 @@ export default function FinderCard({ modal = false }) {
     return (
       <article className="fx fx-done" aria-live="polite">
         <div className="fx-main">
-          <p className="fx-kicker"><Icon name="check" size={14} />{t("Your match is ready")}</p>
+          <p className="fx-kicker"><Icon name="check" size={14} />{t("My match is ready")}</p>
           <p className="fx-sub">{fill(t("Based on {n} of {total} answers"), { n: lines.length, total: STEPS.length })}</p>
           <h3 className="fx-name"><Link to={`/products/${top.handle}`}>{top.name}</Link></h3>
           <p className="fx-tag">{t(top.tagline)}</p>
@@ -207,7 +207,7 @@ export default function FinderCard({ modal = false }) {
     <article className="fx">
       <div className="fx-main">
         <div className="fx-top">
-          <p className="fx-kicker"><Icon name="search" size={14} />{t("Find your machine")}</p>
+          <p className="fx-kicker"><Icon name="search" size={14} />{t("Find my machine")}</p>
           <span className="fx-time">{t("6 quick questions · about 30 seconds")}</span>
         </div>
         {stepper}
@@ -240,7 +240,7 @@ export default function FinderCard({ modal = false }) {
       {/* No machine is suggested while the visitor is still answering: the lineup animation runs until the last question,
           then the card itself turns into the result. */}
       <aside className="fx-peek">
-        <p className="fx-peek-label">{t("Your match appears here")}</p>
+        <p className="fx-peek-label">{t("My match appears here")}</p>
         <MachineMorph />
         <p className="fx-peek-note">{t("You'll see your match after the last question.")}</p>
         <a href={`tel:${contact.tel}`} className="fx-expert"><Icon name="phone" size={14} />{t("Rather talk to an expert?")}</a>

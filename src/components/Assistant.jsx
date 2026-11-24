@@ -14,7 +14,7 @@ import { goToFinder } from "./Finder.jsx";
    Design draft: this static preview has no AI behind it. Replies come from preset rules over the real catalog,
    the machine finder's matching rules, and the site's own deal, warranty, return, financing and support text. */
 
-const LABELS = ["Need help choosing?", saleOn ? "See today's deals" : "Talk to a person", "Find my laser"];
+const LABELS = ["Need help choosing?", saleOn ? "See today's deals" : "Talk to a person", "Find my machine"];
 const CATS = [
   ["xrf", "XRF desktop", "onelaser-xrf-desktop-laser-machine"],
   ["cobra", "Cobra", "cobra-10-100w-co2-laser-engraver-cutter"],
@@ -329,7 +329,7 @@ const keep = (v) => { try { sessionStorage.setItem(STORE, JSON.stringify(v)); } 
 const wide = () => typeof window !== "undefined" && !window.matchMedia("(max-width: 860px)").matches;
 
 export default function Assistant({ product }) {
-  const labels = product ? [tx("Questions about the {name}?", { name: short(product) }), "Need help choosing?", product.compareAt > product.price ? "See today's deal" : "Find my laser"] : LABELS;
+  const labels = product ? [tx("Questions about the {name}?", { name: short(product) }), "Need help choosing?", product.compareAt > product.price ? "See today's deal" : "Find my machine"] : LABELS;
   const chips = product ? productChips(product) : CHIPS;
   const cats = product?.kind === "machine" && siblings(product).length > 1 ? siblings(product).map((p) => [p.handle, short(p), p.handle, true]) : CATS;
   const ctx = product?.handle || "site";

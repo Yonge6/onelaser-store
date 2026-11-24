@@ -52,7 +52,7 @@ function Result({ a, onRetake, onClose }) {
   const chips = QUIZ.flatMap((q) => [].concat(a[q.id] || []).map((id) => q.options.find((o) => o[0] === id)?.[1])).filter(Boolean);
   return (
     <div className="ff-result">
-      <p className="ff-eyebrow">{t("Your best match")}</p>
+      <p className="ff-eyebrow">{t("My best match")}</p>
       <h2>{tf("We recommend the {name}.", { name: p.name })}</h2>
       <ul className="ff-chips">{chips.map((c) => <li key={c}>{t(c)}</li>)}</ul>
       <article className="ff-best">

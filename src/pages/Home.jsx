@@ -484,7 +484,7 @@ export function TrustDialog({ kind, onClose, onTrustpilot, onBook }) {
   }
   return (
     <div className="tdlg-scrim" onClick={onClose}>
-      <div ref={box} className={`tdlg tdlg-${kind}`} role="dialog" aria-modal="true" aria-label={t(DLG_HEAD[kind]?.[1] || "Find your machine")} onClick={(e) => e.stopPropagation()} {...swipe}>
+      <div ref={box} className={`tdlg tdlg-${kind}`} role="dialog" aria-modal="true" aria-label={t(DLG_HEAD[kind]?.[1] || "Find my machine")} onClick={(e) => e.stopPropagation()} {...swipe}>
         <span className="tdlg-grab" aria-hidden="true" />
         <button type="button" className="tdlg-x" aria-label={t("Close")} onClick={onClose}><Icon name="close" size={20} /></button>
         {body}
@@ -789,7 +789,7 @@ export default function Home() {
         <div className="ih-wrap">
           <h2 className="ih-h2">{t("Three easy ways to start.")}</h2>
           <ul>
-            <li><button type="button" className="plate" onClick={() => setDlg("finder")} aria-haspopup="dialog"><span className="spec-idx"><span>01 / {t("Finder")}</span><span>{t("6 questions")}</span></span><SpecIcon name="search" /><small>{t("Do it yourself")}</small><b>{t("Find your machine in 30 seconds")}</b><p>{t("Answer six quick questions about what you make, and we'll suggest a machine.")}</p><em>{t("Start the finder")}<Icon name="chevron" size={16} /></em></button></li>
+            <li><button type="button" className="plate" onClick={() => setDlg("finder")} aria-haspopup="dialog"><span className="spec-idx"><span>01 / {t("Finder")}</span><span>{t("6 questions")}</span></span><SpecIcon name="search" /><small>{t("Do it yourself")}</small><b>{t("Find my machine in 30 seconds")}</b><p>{t("Answer six quick questions about what you make, and we'll suggest a machine.")}</p><em>{t("Start the finder")}<Icon name="chevron" size={16} /></em></button></li>
             <li><button type="button" className="plate" onClick={() => setDlg("call")} aria-haspopup="dialog"><span className="spec-idx"><span>02 / {t("Call")}</span><span>{t("Free")}</span></span><SpecIcon name="calendar" /><small>{t("Ask an expert")}</small><b>{t("Free 30-minute call with a laser expert")}</b><p>{t("Talk through your materials, space and budget before you choose.")}</p><em>{t("Pick a time")}<Icon name="chevron" size={16} /></em></button></li>
             <li><button type="button" className="plate" onClick={() => setDlg("financing")} aria-haspopup="dialog"><span className="spec-idx"><span>03 / {t("Finance")}</span><span>{t("Estimate")}</span></span><SpecIcon name="card" /><small>{t("Check the cost")}</small><b>{t("Estimate your monthly payment")}</b><p>{t("Pick a machine and a term to see an estimated monthly payment.")}</p><em>{t("Estimate my payment")}<Icon name="chevron" size={16} /></em></button></li>
           </ul>
