@@ -3,7 +3,7 @@ import { createPortal } from "react-dom";
 import { t } from "../i18n.js";
 import { asset, byHandle, frontImg, img, lockScroll, money, products, useFocusTrap, isTopDialog } from "../lib.js";
 import { AddButton, Icon, Link } from "./ui.jsx";
-import { contact } from "../data/site.js";
+import { contact, saleOn } from "../data/site.js";
 import { M, STEPS, rank as rankAll, roundFocus, hasRound, ready } from "./finderRules.js";
 
 const rank = (a) => rankAll(a, (h) => !!byHandle[h], (h) => byHandle[h]?.price || 0);
@@ -331,7 +331,7 @@ export function LeadDialog({ mode = "quote", product, lines = [], onClose }) {
         <div className="lead-art">
           <img src={asset("home-bf-lineup.jpg")} alt="" />
           {product && <p className="lead-pick"><span>{t("Your pick")}</span><b>{product.name}</b><em>{money(product.price)}{product.compareAt > product.price && <s>{money(product.compareAt)}</s>}</em></p>}
-          <p className="lead-tag">{t("Up to")} <b>$3,000</b> {t("off")}</p>
+          {saleOn && <p className="lead-tag">{t("Up to")} <b>$3,000</b> {t("off")}</p>}
         </div>
         {sent ? (
           <div className="lead-body lead-done" role="status">

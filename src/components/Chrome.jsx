@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { LANGS, getLang, setLang, t, tf } from "../i18n.js";
 import { asset, byHandle, go, img, products, frontImg } from "../lib.js";
 import { useCart } from "../cart.jsx";
-import { nav, promo, benefits, contact, footer } from "../data/site.js";
+import { nav, promo, saleOn, benefits, contact, footer } from "../data/site.js";
 import { Countdown, Icon, Link, usd } from "./ui.jsx";
 
 const hasMenu = (n) => !!(n.series || n.cards);
@@ -40,7 +40,7 @@ export function Header({ path }) {
   const [langOpen, setLangOpen] = useState(false);
   const [far, setFar] = useState(false);
   const [hover, setHover] = useState(false); // Insta360: the bar turns white as soon as the pointer is on it
-  const [promoOn, setPromoOn] = useState(() => { try { return sessionStorage.getItem("onelaser-promo-closed") !== "1"; } catch { return true; } });
+  const [promoOn, setPromoOn] = useState(() => { if (!saleOn) return false; try { return sessionStorage.getItem("onelaser-promo-closed") !== "1"; } catch { return true; } });
   useEffect(() => {
     document.documentElement.classList.toggle("has-promo", promoOn);
     return () => document.documentElement.classList.remove("has-promo");

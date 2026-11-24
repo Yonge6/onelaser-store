@@ -8,6 +8,13 @@ export const promo = {
   link: "/collections/deals", // the store's own Black Friday deals, so visitors stay in the store (official page: 1laser.com/pages/bfcm26)
 };
 
+/* Black Friday runs until promo.endsAt (checked when the page loads). Afterwards the store shows regular prices only
+   (lib.js swaps every sale price back to its compare-at price) and every Black Friday banner, link and line disappears.
+   Preview check: add ?now=2026-12-02 before the # in the address to see the store as it looks on that date. */
+const nowParam = typeof location !== "undefined" ? new URLSearchParams(location.search).get("now") : null;
+export const now = () => (nowParam && !Number.isNaN(Date.parse(nowParam)) ? Date.parse(nowParam) : Date.now());
+export const saleOn = now() < Date.parse(promo.endsAt);
+
 export const collections = {
   machines: { title: "Laser Machines", intro: "Engraving, cutting and marking machines for makers, workshops and production floors.", filter: (p) => p.kind === "machine" },
   "xrf-series": { title: "XRF Series", intro: "All-in-one RF desktop lasers.", filter: (p) => p.series === "xrf" },
@@ -25,7 +32,7 @@ export const collections = {
   materials: { title: "Materials", intro: "Laser-ready acrylic and leatherette sheets from MakerDepot.", filter: (p) => p.kind === "material" },
   acrylic: { title: "Acrylic Sheets", intro: "Frosted, translucent, glitter and mirror acrylic.", filter: (p) => p.category === "acrylic" },
   leatherette: { title: "Leatherette", intro: "Heat-activated adhesive leatherette sheets.", filter: (p) => p.category === "leatherette" },
-  deals: { title: "Black Friday Deals", intro: "Every product currently on sale.", filter: (p) => p.compareAt },
+  deals: saleOn ? { title: "Black Friday Deals", intro: "Every product currently on sale.", filter: (p) => p.compareAt } : { title: "Black Friday has ended", intro: "Thanks for shopping with us. Here are all our laser machines at today's prices.", filter: (p) => p.kind === "machine" },
 };
 
 // Top navigation: labels, order and grouping follow www.1laser.com (read 2026-11-18). Shop links point to this store's pages;
@@ -48,7 +55,7 @@ export const nav = [
   },
   { label: "Accessories", to: "/collections/accessories" },
   { label: "Materials", to: "/collections/materials" },
-  { label: "Black Friday", to: "/collections/deals", hot: true },
+  ...(saleOn ? [{ label: "Black Friday", to: "/collections/deals", hot: true }] : []),
   {
     label: "Support", to: "/pages/sales-consultation",
     // Two picture cards plus a link list, as on 1laser.com.
@@ -104,9 +111,9 @@ export const homeStandard = {
 // is really playing, because YouTube shows a "sign in to confirm" wall to some visitors. Those visitors keep seeing `video`/`image`.
 // TODO(team): supply source files for Hydra Gen2 and VertiGo so these two do not depend on YouTube.
 export const heroSlides = [
-  { eyebrow: "Black Friday · Ends Nov 30", title: "XRF 38W", text: "Desktop RF laser, now $1,000 off.", image: "home-hero-xrf.jpg", video: "https://cdn.shopify.com/videos/c/vp/83a53061dc8c49e1a386ab106791b6a7/83a53061dc8c49e1a386ab106791b6a7.HD-720p-1.6Mbps-100665744.mp4", to: "/products/onelaser-xrf-desktop-laser-machine", dark: true, countdown: true },
+  { eyebrow: saleOn ? "Black Friday · Ends Nov 30" : "Fine detail, desktop size", title: "XRF 38W", text: saleOn ? "Desktop RF laser, now $1,000 off." : "All-in-one RF desktop laser for fast, detailed engraving.", image: "home-hero-xrf.jpg", video: "https://cdn.shopify.com/videos/c/vp/83a53061dc8c49e1a386ab106791b6a7/83a53061dc8c49e1a386ab106791b6a7.HD-720p-1.6Mbps-100665744.mp4", to: "/products/onelaser-xrf-desktop-laser-machine", dark: true, countdown: true },
   { eyebrow: "Built for daily production", title: "Hydra Gen2", text: "70W RF or RF + glass-tube hybrid, built to run every day.", image: "home-product-hydra-gen2-scene.webp", youtube: "HdP62cQVzs0", start: 8, video: "https://www.1laser.com/cdn/shop/videos/c/vp/3977d55943864ca0a399b0baf55908c6/3977d55943864ca0a399b0baf55908c6.HD-1080p-4.8Mbps-97794816.mp4?v=0", to: "/collections/hydra-gen2", dark: true },
-  { eyebrow: "Cutting on a budget", title: "Cobra Series", text: "90–130W CO₂ cutting from $3,999.", image: "home-product-cobra-scene.webp", video: "https://www.1laser.com/cdn/shop/videos/c/vp/3c358b3af0db43979541e8293ed489ce/3c358b3af0db43979541e8293ed489ce.HD-1080p-7.2Mbps-81776550.mp4?v=0", to: "/collections/cobra-series", dark: true },
+  { eyebrow: "Cutting on a budget", title: "Cobra Series", text: saleOn ? "90–130W CO₂ cutting from $3,999." : "90–130W CO₂ glass-tube cutting for wood and acrylic.", image: "home-product-cobra-scene.webp", video: "https://www.1laser.com/cdn/shop/videos/c/vp/3c358b3af0db43979541e8293ed489ce/3c358b3af0db43979541e8293ed489ce.HD-1080p-7.2Mbps-81776550.mp4?v=0", to: "/collections/cobra-series", dark: true },
   { eyebrow: "Built for drinkware", title: "VertiGo", text: "Tumblers stand upright. The rotary is built in.", image: "home-product-vertigo-scene.webp", youtube: "CwMCGw1aPTA", start: 15, to: "/products/vertigo-vertical-laser-engraver", dark: true },
 ];
 

@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useRef, useState } from "react";
 import { t, tf, localeTag } from "../i18n.js";
 import { asset, byHandle, img, lockScroll, money, products, frontImg, useFocusTrap, isTopDialog } from "../lib.js";
-import { contact, footer, heroSlides, homeFaq, homeProof, homeReviews, homeStandard, homeTabs, trustpilot, newHandles, promo, shortSlogans, homeProofSources } from "../data/site.js";
+import { contact, footer, heroSlides, homeFaq, homeProof, homeReviews, homeStandard, homeTabs, trustpilot, newHandles, promo, saleOn, shortSlogans, homeProofSources } from "../data/site.js";
 import { AddButton, Countdown, Icon, Link, SpecIcon, useDragScroll } from "../components/ui.jsx";
 import FinderCard, { FinderHelp } from "../components/Finder.jsx";
 
@@ -762,7 +762,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="ih-block">
+      {saleOn && <section className="ih-block">
         <div className="ih-wrap">
           <Link to={promo.link} className="ih-banner">
             <img src={asset("home-bf-lineup.jpg")} alt="" loading="lazy" />
@@ -774,7 +774,7 @@ export default function Home() {
             </span>
           </Link>
         </div>
-      </section>
+      </section>}
 
       {/* Next step: three ways forward, side by side */}
       <section className="ih-block inext">

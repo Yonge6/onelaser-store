@@ -1,7 +1,15 @@
 import { useEffect, useState } from "react";
 import catalog from "./data/catalog.json";
 
-export const products = catalog.products;
+import { saleOn } from "./data/site.js";
+
+/* After Black Friday every item goes back to its regular (compare-at) price, so no page can show an expired discount. */
+const regular = (v) => (v.compareAt > v.price ? { ...v, price: v.compareAt, compareAt: null } : v);
+export const products = saleOn ? catalog.products : catalog.products.map((p) => {
+  const variants = p.variants.map(regular);
+  const prices = variants.map((v) => v.price);
+  return { ...p, variants, price: Math.min(...prices), compareAt: null, priceVaries: new Set(prices).size > 1 };
+});
 export const byHandle = Object.fromEntries(products.map((p) => [p.handle, p]));
 export const machines = products.filter((p) => p.kind === "machine");
 export const accessories = products.filter((p) => p.kind === "accessory");

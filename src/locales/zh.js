@@ -1440,4 +1440,11 @@ export default {
   "Large jobs at a clearance price": "清仓价做大件活",
   "Shipping cost and delivery date are confirmed after you enter your address at checkout.": "在结账页填好地址后，会确认运费和送达日期。",
   "Want to pay monthly for the {name}? You can pay in installments at checkout, subject to approval.": "想按月付 {name}？审核通过后，结账时可以选分期付款。",
+  "90–130W CO₂ glass-tube cutting for wood and acrylic.": "90–130W CO₂ 玻璃管，切木板和亚克力。",
+  "Black Friday has ended, so every price is back to regular. Here are our laser machines at today's prices:": "黑五已经结束，所有价格恢复原价。这是我们的激光机和今天的价格：",
+  "Fine detail, desktop size": "桌面尺寸，细节精细",
+  "Machines ship by freight: the rate and delivery date are confirmed after we review your address. For other items, shipping is calculated at checkout.": "机器走货运：我们核对地址后，会确认运费和送达日期。其他商品的运费在结账时计算。",
+  "See all machines": "查看全部机器",
+  "Yes. The {name} is on sale today, from {price}. Each version's price is below.": "有。{name} 今天在打折，{price} 起。每个版本的价格见下方。",
+  "Black Friday has ended": "黑五已结束",
 };

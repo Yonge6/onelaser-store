@@ -1440,4 +1440,11 @@ export default {
   "Large jobs at a clearance price": "Trabajos grandes a precio de liquidación",
   "Shipping cost and delivery date are confirmed after you enter your address at checkout.": "El costo de envío y la fecha de entrega se confirman después de ingresar tu dirección al pagar.",
   "Want to pay monthly for the {name}? You can pay in installments at checkout, subject to approval.": "¿Quieres pagar la {name} en mensualidades? Puedes pagar en cuotas al finalizar la compra, sujeto a aprobación.",
+  "90–130W CO₂ glass-tube cutting for wood and acrylic.": "Corte con tubo de vidrio CO₂ de 90–130 W para madera y acrílico.",
+  "Black Friday has ended, so every price is back to regular. Here are our laser machines at today's prices:": "El Black Friday terminó y todos los precios volvieron a la normalidad. Estas son nuestras máquinas láser a precios de hoy:",
+  "Fine detail, desktop size": "Detalle fino, tamaño de escritorio",
+  "Machines ship by freight: the rate and delivery date are confirmed after we review your address. For other items, shipping is calculated at checkout.": "Las máquinas se envían por carga: confirmamos la tarifa y la fecha de entrega después de revisar tu dirección. Para otros artículos, el envío se calcula al pagar.",
+  "See all machines": "Ver todas las máquinas",
+  "Yes. The {name} is on sale today, from {price}. Each version's price is below.": "Sí. La {name} está en oferta hoy, desde {price}. El precio de cada versión está abajo.",
+  "Black Friday has ended": "El Black Friday terminó",
 };

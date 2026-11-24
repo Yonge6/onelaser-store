@@ -85,7 +85,7 @@ export default function Collection({ handle, search }) {
   const strip = [["All", group[1]], ...group[2]];
   return (
     <section className="il">
-      <h1 className="il-sr">{col.title}</h1>
+      <h1 className="il-sr">{t(col.title)}</h1>
       <nav className="il-strip" aria-label={t("Categories")}>
         <div>
           {strip.map(([label, h]) => (

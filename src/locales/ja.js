@@ -1440,4 +1440,11 @@ export default {
   "Large jobs at a clearance price": "処分価格で大きな仕事に",
   "Shipping cost and delivery date are confirmed after you enter your address at checkout.": "チェックアウトで住所を入力すると、送料とお届け日が確定します。",
   "Want to pay monthly for the {name}? You can pay in installments at checkout, subject to approval.": "{name} を月々払いにしたいですか？審査に通れば、チェックアウトで分割払いを選べます。",
+  "90–130W CO₂ glass-tube cutting for wood and acrylic.": "90〜130W CO₂ガラス管で木材やアクリルを切断。",
+  "Black Friday has ended, so every price is back to regular. Here are our laser machines at today's prices:": "ブラックフライデーは終了し、価格はすべて通常に戻りました。本日の価格のレーザー機はこちら：",
+  "Fine detail, desktop size": "デスクトップサイズで精細に",
+  "Machines ship by freight: the rate and delivery date are confirmed after we review your address. For other items, shipping is calculated at checkout.": "マシンは貨物便で発送します。住所を確認したうえで、送料とお届け日を確定します。その他の商品の送料はチェックアウトで計算されます。",
+  "See all machines": "すべてのマシンを見る",
+  "Yes. The {name} is on sale today, from {price}. Each version's price is below.": "はい。{name} は本日セール中で、{price} から。各バージョンの価格は下にあります。",
+  "Black Friday has ended": "ブラックフライデーは終了しました",
 };

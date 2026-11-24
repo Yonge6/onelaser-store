@@ -4,7 +4,7 @@ import { lockScroll, byHandle, frontImg, img, money, products, useFocusTrap, isT
 import { useCart } from "../cart.jsx";
 import { AddButton, Icon, Link } from "./ui.jsx";
 import { M, STEPS, rank } from "./finderRules.js";
-import { contact, homeFaq, homeReviews, promo } from "../data/site.js";
+import { contact, homeFaq, homeReviews, promo, saleOn } from "../data/site.js";
 
 /* Floating shopping assistant, after the "Shop with AI" agent on poolinstore.com (checked 2026-11-19):
    a black pill at the bottom centre whose label rotates; it opens a dark chat panel at the bottom right
@@ -12,16 +12,18 @@ import { contact, homeFaq, homeReviews, promo } from "../data/site.js";
    Design draft: this static preview has no AI behind it. Replies come from preset rules over the real catalog,
    the machine finder's matching rules, and the site's own deal, warranty, return, financing and support text. */
 
-const LABELS = ["Need help choosing?", "See today's deals", "Find my laser"];
+const LABELS = ["Need help choosing?", saleOn ? "See today's deals" : "Talk to a person", "Find my laser"];
 const CATS = [
   ["xrf", "XRF desktop", "onelaser-xrf-desktop-laser-machine"],
   ["cobra", "Cobra", "cobra-10-100w-co2-laser-engraver-cutter"],
   ["hydra", "Hydra Gen2", "hydra-9-gen-2-70w-rf-co2-dual-laser-machine"],
   ["vertigo", "VertiGo", "vertigo-vertical-laser-engraver"],
-  ["deals", "Black Friday deals", null],
+  ...(saleOn ? [["deals", "Black Friday deals", null]] : []),
   ["rotary", "Rotary attachments", "piburn-v-for-onelaser"],
 ];
-const CHIPS = ["Which laser fits me?", "Show me Black Friday deals", "Cobra or Hydra?", "What do owners say?", "Can I pay monthly?", "Talk to a person"];
+/** Suggestions that lead to Black Friday are dropped once the sale is over. */
+const liveChips = (list) => (saleOn ? list : list.filter((c) => c !== "Show me Black Friday deals"));
+const CHIPS = liveChips(["Which laser fits me?", "Show me Black Friday deals", "Cobra or Hydra?", "What do owners say?", "Can I pay monthly?", "Talk to a person"]);
 const SERIES = {
   xrf: ["onelaser-xrf-desktop-laser-machine"],
   cobra: ["cobra-8-90w-co2-laser-engraver-cutter", "cobra-10-100w-co2-laser-engraver-cutter", "cobra-14-130w-co2-laser-engraver-cutter"],
@@ -29,8 +31,6 @@ const SERIES = {
   vertigo: ["vertigo-vertical-laser-engraver"],
 };
 const phone = contact.phone.replace(/^(\d{3}) (\d{3}) (\d{4})$/, "$1-$2-$3");
-/** The Black Friday end date is only mentioned while the offer runs. */
-const promoLive = () => Date.now() < Date.parse(promo.endsAt);
 const faq = (q) => homeFaq.find(([k]) => k.startsWith(q))?.[1] || "";
 
 /* Translatable text. A reply is built from pieces: a plain English string (looked up with t), a template
@@ -164,18 +164,20 @@ function guide(ans, intro = "") {
 function productReply(s, p) {
   if (!p) return null;
   const save = p.compareAt > p.price ? p.compareAt - p.price : 0;
+  if (has(s, ["ship", "deliver", "return", "refund", "warranty"])) return null; // store-wide answers, even on a product page ("how much is shipping")
+  // "Compare Cobra and Hydra by work area" on a Cobra page is a cross-series question, answered by the general rules
+  if (has(s, ["compare", " vs", "versus", "difference", " or "]) && ["xrf", "cobra", "hydra", "vertigo"].some((k) => k !== p.series && s.includes(k))) return null;
   if (has(s, ["review", "owners say", "customers say", "people say", "rating", "reliable", "worth it"])) return { ...reviewsReply(p), next: ["Key specs", "Is it on sale?", "Talk to a person"] };
   if (has(s, ["best for", "good for", "what can", "use it", "made for", "who is"])) return { text: [tx("{name}:", { name: short(p) }), p.tagline, tx("Best for: {what}.", { what: p.bestFor ? { tpl: p.bestFor } : { tpl: "see the product details" } })], src: ["Product page"], next: ["Key specs", "What do owners say?", "Which accessories fit?"] };
   if (has(s, ["compare", "other size", "bigger", "smaller", " vs", "difference"])) {
     const sib = siblings(p).filter((x) => x.handle !== p.handle);
-    const other = ["xrf", "cobra", "hydra", "vertigo"].some((k) => k !== p.series && s.includes(k)); // "Compare Hydra and Cobra" is a cross-series question
-    if (!other) return sib.length ? { text: tx("Here's how the {series} sizes compare, starting with the one you're looking at:", { series: { tpl: p.seriesName || "This series" } }), table: table([p, ...sib]), links: [["Compare every spec", "/compare"]], src: ["Product specs", "Today's prices"], next: ["Which accessories fit?", "Monthly payments for this machine", "Talk to a person"] } : null;
+    return sib.length ? { text: tx("Here's how the {series} sizes compare, starting with the one you're looking at:", { series: { tpl: p.seriesName || "This series" } }), table: table([p, ...sib]), links: [["Compare every spec", "/compare"]], src: ["Product specs", "Today's prices"], next: ["Which accessories fit?", "Monthly payments for this machine", "Talk to a person"] } : null;
   }
   if (has(s, ["spec", "work area", "speed", "power", "watt", "resolution", "dpi", "size"]) && p.specs && Object.keys(p.specs).length)
     return { text: tx("{name} key specs:", { name: short(p) }), specs: Object.entries(p.specs).filter(([k]) => k !== "Product line").slice(0, 7), links: [["Compare every spec", "/compare"]], src: ["Product specs"], next: [siblings(p).length > 1 ? "Compare the other sizes" : "What do owners say?", "Is it on sale?", "Which accessories fit?"] };
   if (has(s, ["sale", "price", "deal", "discount", "cost", "how much", "cheaper"]))
     return { text: save
-      ? [tx(p.priceVaries ? "Yes. The {name} is from {price} today. You save {save} off the regular {was}." : "Yes. The {name} is {price} today. You save {save} off the regular {was}.", { name: short(p), price: money(p.price), save: money(save), was: money(p.compareAt) }), promoLive() && "Black Friday pricing ends Cyber Monday, Nov 30."]
+      ? [tx(p.priceVaries ? "Yes. The {name} is on sale today, from {price}. Each version's price is below." : "Yes. The {name} is {price} today. You save {save} off the regular {was}.", { name: short(p), price: money(p.price), save: money(save), was: money(p.compareAt) }), saleOn && "Black Friday pricing ends Cyber Monday, Nov 30."]
       : [tx(p.priceVaries ? "{name} is from {price}." : "{name} is {price}.", { name: short(p), price: money(p.price) })], options: p.variants.length > 1 ? p.variants.map((v) => [v.title, v.price, v.compareAt]) : null, src: save ? ["Today's prices", "Black Friday offer"] : ["Today's prices"], next: p.kind === "machine" ? ["Monthly payments for this machine", "Which accessories fit?", "What do owners say?"] : ["Which machines work with it?", "Show me laser machines", "Talk to a person"] };
   if (has(s, ["option", "version", "config", "variant", "hybrid", "pro "])) return p.variants.length > 1 ? { text: tx("{name} comes in {n} configurations:", { name: short(p), n: p.variants.length }), options: p.variants.map((v) => [v.title, v.price, v.compareAt]) } : null;
   if (has(s, ["accessor", "fit", "add-on", "addon", "rotary", "chiller", "work with", "compatible", "need with"]))
@@ -196,22 +198,29 @@ function reply(raw, product) {
     return { src: ["OneLaser contact details"], next: ["Shipping and returns", "Can I pay monthly?"], text: tx("Happy to help. Call {phone} to talk to someone now, or pick a time for a free 30-minute call with our team. No obligation to buy.", { phone }), links: [["Book a free call", "/pages/sales-consultation"], [tx("Call {phone}", { phone }), `tel:${contact.tel}`]] };
   if (has(s, ["deal", "black friday", "sale", "discount", "cheap", "save", "offer", "coupon"])) {
     const deals = products.filter((p) => p.compareAt > p.price).sort((x, y) => (y.compareAt - y.price) - (x.compareAt - x.price)).slice(0, 6);
-    return { text: [promoLive() && "Black Friday: save up to $3,000 through Cyber Monday, Nov 30.", "Here are the biggest savings right now:"], cards: deals, links: [["See all deals", promo.link]], src: ["Today's prices", "Black Friday offer"], next: ["Which laser fits me?", "Can I pay monthly?", "What do owners say?"] };
+    if (!saleOn) return { text: "Black Friday has ended, so every price is back to regular. Here are our laser machines at today's prices:", cards: products.filter((p) => p.kind === "machine" && p.series !== "legacy").slice(0, 6), links: [["See all machines", "/collections/machines"]], src: ["Today's prices"], next: ["Which laser fits me?", "Can I pay monthly?", "Talk to a person"] };
+    return { text: ["Black Friday: save up to $3,000 through Cyber Monday, Nov 30.", "Here are the biggest savings right now:"], cards: deals, links: [["See all deals", promo.link]], src: ["Today's prices", "Black Friday offer"], next: ["Which laser fits me?", "Can I pay monthly?", "What do owners say?"] };
   }
   if (has(s, ["financ", "monthly", "per month", "pay over", "installment", "loan", "lease", "afford"]))
     return { text: ["Yes. You can pay over time with Shop Pay Installments, Affirm or ClickLease, subject to approval.", "Buying for a business? Loans can start at $0 down, with terms up to 60 months."], links: [["Estimate my monthly payment", "/pages/financing"]], src: ["OneLaser financing page"], next: ["Which laser fits me?", "Show me Black Friday deals"] };
   if (has(s, ["ship", "deliver", "return", "refund", "warranty", "guarantee"]))
-    return { text: [faq("What warranty"), faq("Can I return"), "Shipping cost and delivery date are confirmed after you enter your address at checkout."], links: [["Read the warranty policy", "https://www.1laser.com/pages/warranty-policy"]], src: ["OneLaser warranty and return policy"], next: ["What do owners say?", "Talk to a person"] };
+    return { text: ((x) => (has(s, ["ship", "deliver"]) ? [x[2], x[1], x[0]] : has(s, ["return", "refund"]) ? [x[1], x[0], x[2]] : x))([faq("What warranty"), faq("Can I return"), "Machines ship by freight: the rate and delivery date are confirmed after we review your address. For other items, shipping is calculated at checkout."]), links: [["Read the warranty policy", "https://www.1laser.com/pages/warranty-policy"]], src: ["OneLaser warranty and return policy"], next: ["What do owners say?", "Talk to a person"] };
   if (has(s, ["review", "owners say", "customers say", "rating", "reliable", "worth it"])) return { ...reviewsReply(null), next: ["Which laser fits me?", "Show me Black Friday deals"] };
   if (has(s, ["software", "lightburn", "mac", "windows"]))
     return { text: faq("Which software"), cards: list(["lightburn-software-pro-license-key"]) };
   if (has(s, ["support", "help after", "broken", "repair", "service"]))
     return { text: faq("How does support"), links: [["Contact support", "https://zohodesk.1laser.com/portal/en/newticket"]] };
   // the table shows the series the visitor named (one representative model each), or three by default
-  const named = Object.entries({ xrf: "onelaser-xrf-desktop-laser-machine", cobra: "cobra-10-100w-co2-laser-engraver-cutter", hydra: "hydra-9-gen-2-70w-rf-co2-dual-laser-machine", vertigo: "vertigo-vertical-laser-engraver" }).filter(([k]) => s.includes(k)).map(([, h]) => h);
+  // the table shows the models the visitor named ("Cobra 8 and Hydra 13"), else one representative per named series, else three
+  const MODEL = { xrf: "onelaser-xrf-desktop-laser-machine", vertigo: "vertigo-vertical-laser-engraver", "cobra 8": "cobra-8-90w-co2-laser-engraver-cutter", "cobra 10": "cobra-10-100w-co2-laser-engraver-cutter", "cobra 14": "cobra-14-130w-co2-laser-engraver-cutter", "hydra 7": "hydra-7-gen-2-70w-rf-co2-dual-laser-machine", "hydra 9": "hydra-9-gen-2-70w-rf-co2-dual-laser-machine", "hydra 13": "hydra-13-gen-2-70w-rf-co2-dual-laser-machine", "hydra 16": "hydra-16-gen-2-70w-rf-co2-dual-laser-machine", cobra: "cobra-10-100w-co2-laser-engraver-cutter", hydra: "hydra-9-gen-2-70w-rf-co2-dual-laser-machine" };
+  const named = [];
+  for (const series of ["xrf", "cobra", "hydra", "vertigo"]) {
+    const sizes = Object.keys(MODEL).filter((k) => k.startsWith(`${series} `) && new RegExp(`\\b${k.replace(" ", "\\s*")}\\b`).test(s));
+    if (sizes.length) named.push(...sizes.map((k) => MODEL[k])); else if (s.includes(series)) named.push(MODEL[series]);
+  }
   if (has(s, [" vs", "versus", "compare", "difference", " or "]) && has(s, ["cobra", "hydra", "xrf", "vertigo"]))
     return has(s, ["cobra"]) && has(s, ["hydra"]) && !has(s, ["xrf", "vertigo"])
-      ? { text: "Cobra (90–130W glass tube) is the budget-friendly choice, built mainly for cutting wood and acrylic. Hydra Gen2 is built for all-day production at up to 2,000 mm/s. Choose Pro (70W RF) for fine engraving, or Hybrid (38W RF plus a 100–150W glass tube) to engrave fine detail and cut heavier material.", table: table(list(["cobra-10-100w-co2-laser-engraver-cutter", "hydra-9-gen-2-70w-rf-co2-dual-laser-machine"])), links: [["Compare every spec", "/compare"]], src: ["Product specs", "Today's prices"], next: ["Which laser fits me?", "Do I need a chiller?", "What do owners say?"] }
+      ? { text: "Cobra (90–130W glass tube) is the budget-friendly choice, built mainly for cutting wood and acrylic. Hydra Gen2 is built for all-day production at up to 2,000 mm/s. Choose Pro (70W RF) for fine engraving, or Hybrid (38W RF plus a 100–150W glass tube) to engrave fine detail and cut heavier material.", table: table(list(named.length > 1 ? named : ["cobra-10-100w-co2-laser-engraver-cutter", "hydra-9-gen-2-70w-rf-co2-dual-laser-machine"])), links: [["Compare every spec", "/compare"]], src: ["Product specs", "Today's prices"], next: ["Which laser fits me?", "Do I need a chiller?", "What do owners say?"] }
       : { text: "The line-up at a glance:\n• XRF (38W RF): a desktop laser for detailed engraving.\n• Cobra (90–130W glass tube): the budget-friendly choice for cutting wood and acrylic.\n• Hydra Gen2 (up to 2,000 mm/s): all-day production, as Pro (70W RF) or Hybrid (RF plus a glass tube).\n• VertiGo: made only for round items, like tumblers.", table: table(list(named.length > 1 ? named : ["onelaser-xrf-desktop-laser-machine", "cobra-10-100w-co2-laser-engraver-cutter", "hydra-9-gen-2-70w-rf-co2-dual-laser-machine"])), links: [["Compare every spec", "/compare"]], src: ["Product specs", "Today's prices"], next: ["Which laser fits me?", "What do owners say?"] };
   for (const k of Object.keys(SERIES)) if (s.includes(k)) return { text: tx("Here is the {series} line-up with today's prices.", { series: { tpl: k === "xrf" ? "XRF" : k === "vertigo" ? "VertiGo" : k === "cobra" ? "Cobra Series" : "Hydra Gen2" } }), cards: list(SERIES[k]) };
   if (has(s, ["rotary", "piburn", "round"]) && !has(s, ["which", "best", "recommend"])) return { text: "Rotary attachments for engraving round items:", cards: products.filter((p) => p.category === "rotary").slice(0, 6) };
@@ -361,7 +370,7 @@ export default function Assistant({ product }) {
 
   const answer = (r) => {
     const out = { ...r, cards: r.cards?.map((p) => (typeof p === "string" ? p : p.handle)) };
-    if (!out.next) out.next = (product ? productChips(product) : CHIPS).slice(0, 3);
+    out.next = liveChips(out.next || (product ? productChips(product) : CHIPS).slice(0, 3));
     if (!out.src && !out.quick) out.src = ["OneLaser product info"];
     setMsgs((m) => { setLive(m.length); return [...m, out]; });
     setTyping(false);
