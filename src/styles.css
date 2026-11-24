@@ -3593,7 +3593,7 @@ body:has(.ip-bar) .ai-nudge { bottom: 168px; }
 @media (max-width: 860px) {
   .ai-icon { width: 40px; height: 40px; }
   .ai-head { gap: 8px; }
-  .ai-title small { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .ai-title small { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-left: 3px; }
 }
 @media (max-width: 380px) { .ai-head .ai-avatar.sm { display: none; } }
 /* per-model front renders are cropped tight to the machine, so they need no enlarging (the series PNGs carry wide margins) */
@@ -4749,4 +4749,25 @@ body:has(.ip-bar) .ai-pill, .pdp ~ .ai-pill { bottom: 104px; }
 .tdlg-src dd { margin: 0; font-size: 15px; line-height: 21px; color: var(--title); }
 @media (max-width: 640px) {
   .tdlg-src dl > div { grid-template-columns: minmax(0, 1fr); gap: 2px; }
+}
+/* real-person phone line in the assistant header */
+.ai-call { flex: none; display: inline-flex; align-items: center; gap: 8px; height: 40px; padding: 0 12px 0 10px; border-radius: 8px; background: #eef8ff; color: #075f91; text-decoration: none; transition: background .2s; }
+.ai-call:hover { background: #dff1fd; }
+.ai-call > span { display: grid; line-height: 1.1; }
+.ai-call small { font-size: 11px; font-weight: 500; color: #52525b; }
+.ai-call b { font-size: 14px; font-weight: 600; white-space: nowrap; }
+.ai-call-short { display: none; }
+@media (max-width: 480px) {
+  .ai-call { padding: 0 10px; gap: 6px; }
+  .ai-call small, .ai-call-num { display: none; }
+  .ai-call-short { display: inline; }
+}
+/* the phone line needs room: wider side panel, short title, one-line status */
+.ai-long { display: none; } .ai-panel .ai-short { display: inline; }
+.ai-title small { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-left: 3px; }
+@media (min-width: 861px) {
+  .ai-panel { width: 460px; }
+  .ai-head { gap: 8px; padding-right: 10px; }
+  .ai-call { padding: 0 10px 0 8px; gap: 6px; }
+  .ai-panel.chatting .ai-head .ai-avatar.sm { display: none; }
 }

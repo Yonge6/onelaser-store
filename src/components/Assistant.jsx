@@ -410,6 +410,7 @@ export default function Assistant({ product }) {
           <header className="ai-head" onTouchStart={onTouchStart} onTouchMove={onTouchMove} onTouchEnd={onTouchEnd}>
             <span className="ai-avatar sm"><Icon name="sparkle" size={16} /></span>
             <span className="ai-title"><b><span className="ai-long">{t("OneLaser Shopping Assistant")}</span><span className="ai-short">{t("OneLaser Assistant")}</span></b><small><i />{t("Online · replies instantly")}</small></span>
+            <a className="ai-call" href={`tel:${contact.tel}`}><Icon name="phone" size={16} /><span><small>{t("Talk to a person")}</small><b className="ai-call-num">{contact.phone.replace(/^(\d{3}) (\d{3}) (\d{4})$/, "$1-$2-$3")}</b><b className="ai-call-short">{t("Call")}</b></span></a>
             <Link to="/cart" className="ai-icon" aria-label={t("Cart")}><Icon name="cart" size={20} />{count > 0 && <em>{count}</em>}</Link>
             {msgs.length > 0 && <button type="button" className="ai-icon" aria-label={t("New chat")} title={t("New chat")} onClick={() => { setMsgs([]); setAns({}); setFb({}); }}><Icon name="refresh" size={18} /></button>}
             <button type="button" className="ai-icon" aria-label={t("Close")} onClick={close}><Icon name="close" size={20} /></button>
