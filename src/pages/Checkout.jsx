@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { t } from "../i18n.js";
 import { asset, frontImg, img, money } from "../lib.js";
 import { useCart } from "../cart.jsx";
@@ -43,6 +43,11 @@ export default function Checkout() {
   const [f, setF] = useState(draft.f || { state: "" });
   useEffect(() => { try { sessionStorage.setItem(DRAFT, JSON.stringify({ step, f })); } catch { /* private mode: this page only */ } }, [step, f]);
   const [err, setErr] = useState({});
+  /* Phones: the bottom bar's button changes with the step, so a quick double tap must not land on the next step's button
+     (above all on "Place order"). Taps in the first 700 ms after a step change are ignored. */
+  const stepAt = useRef(0);
+  useEffect(() => { stepAt.current = Date.now(); }, [step]);
+  const settled = (fn) => () => { if (Date.now() - stepAt.current > 700) fn(); };
   const [method, setMethod] = useState("card");
   const [sameBill, setSameBill] = useState(true);
   const [code, setCode] = useState("");
@@ -74,7 +79,11 @@ export default function Checkout() {
     if (f.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(f.email)) bad.email = true;
     if (f.zip && !/^\d{5}(-\d{4})?$/.test(f.zip.trim())) bad.zip = true;
     setErr(bad);
-    if (Object.keys(bad).length) { document.querySelector(".ik-field.bad, .ik-select.bad")?.scrollIntoView({ behavior: "smooth", block: "center" }); return; }
+    if (Object.keys(bad).length) {
+      // after React has marked the fields: bring the first one into view and put the cursor in it
+      requestAnimationFrame(() => { const el = document.querySelector(".ik-field.bad, .ik-select.bad"); el?.scrollIntoView({ behavior: "smooth", block: "center" }); el?.querySelector("input, select")?.focus({ preventScroll: true }); });
+      return;
+    }
     setStep(1);
   };
   const place = () => { try { sessionStorage.removeItem(DRAFT); } catch { /* ignore */ } setDone(subtotal); clearPicked(); window.scrollTo(0, 0); };
@@ -233,9 +242,9 @@ export default function Checkout() {
       <div className="ik-bar">
         <p><small>{t("Total")}</small><b>{money(subtotal)}</b></p>
         {/* phones: the bar always does the next thing (save the address, continue to payment, place the order) */}
-        {step === 0 && <button type="button" className="ik-pill" onClick={saveAddress}>{t("Save and continue")}</button>}
-        {step === 1 && <button type="button" className="ik-pill" onClick={() => setStep(2)}>{t("Continue to payment")}</button>}
-        {step === 2 && <button type="button" className="ik-pill" disabled={ended} onClick={place}>{t("Place order")}</button>}
+        {step === 0 && <button type="button" className="ik-pill" onClick={settled(saveAddress)}>{t("Save and continue")}</button>}
+        {step === 1 && <button type="button" className="ik-pill" onClick={settled(() => setStep(2))}>{t("Continue to payment")}</button>}
+        {step === 2 && <button type="button" className="ik-pill" disabled={ended} onClick={settled(place)}>{t("Place order")}</button>}
       </div>
     </div>
   );

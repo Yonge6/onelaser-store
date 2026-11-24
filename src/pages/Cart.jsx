@@ -75,9 +75,10 @@ function Offer({ list, onClose }) {
 /** The add-on offer for the machine in the cart, once per visit. Used on the cart and on checkout ("Buy now" skips the cart),
     so the extras the product page no longer lists still come up before paying. */
 export function OfferGate() {
-  const { items } = useCart();
+  const { items, picked } = useCart();
   const inCart = items.map((i) => i.product.handle);
-  const hasMachine = items.find((i) => i.product.kind === "machine");
+  // the machine actually being checked out (ticked), so an unticked machine's extras are never offered
+  const hasMachine = picked.find((i) => i.product.kind === "machine");
   const offer = hasMachine ? Object.keys(OFFER).filter((h) => addOnsFor(hasMachine.product).some((a) => a.handle === h) && !inCart.includes(h)).map((h) => byHandle[h]) : [];
   const [show, setShow] = useState(false);
   useEffect(() => {

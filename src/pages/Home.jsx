@@ -720,8 +720,10 @@ export default function Home() {
           </div>
         </div>
         <div className="ih-scroller irv-row" ref={rv}>
-            {[...homeReviews.items, ...trustpilot.items.map((r) => ({ ...r, product: "Trustpilot" }))].filter((r) => !QUOTES.some((x) => x.name === r.name)).map((r) => (
-              <figure key={r.product + r.name}>
+            {/* reviews already shown in the big quote above are marked "irv-dup": hidden on wide screens, shown on phones,
+                where the big quote is left out */}
+            {[...homeReviews.items, ...trustpilot.items.map((r) => ({ ...r, product: "Trustpilot" }))].map((r) => (
+              <figure key={r.product + r.name} className={QUOTES.some((x) => x.name === r.name) ? "irv-dup" : undefined}>
                 <span className="irv-stars" aria-label={`${r.rating || 5} / 5`}>{"★".repeat(r.rating || 5)}</span>
                 <blockquote>“{r.text}”</blockquote>
                 <figcaption><b>{r.name}</b><span>{r.product} · {r.date}</span></figcaption>
