@@ -66,7 +66,7 @@ function Group({ title, children }) {
 }
 
 export default function Collection({ handle, search }) {
-  const col = search != null ? { title: `Results for “${search}”`, intro: "", filter: (p) => `${p.name} ${p.title} ${p.tagline}`.toLowerCase().includes(search.toLowerCase()) } : collections[handle];
+  const col = search != null ? { title: `Results for “${search}”`, intro: "", filter: (p) => `${p.name} ${p.title} ${p.tagline} ${Object.values(p.specs || {}).join(" ")}`.toLowerCase().includes(search.toLowerCase()) } : collections[handle];
   const [sort, setSort] = useState("Recommended");
   const [onlySale, setOnlySale] = useState(false);
   const [onlyStock, setOnlyStock] = useState(false);

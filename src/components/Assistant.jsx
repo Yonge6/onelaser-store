@@ -29,6 +29,8 @@ const SERIES = {
   vertigo: ["vertigo-vertical-laser-engraver"],
 };
 const phone = contact.phone.replace(/^(\d{3}) (\d{3}) (\d{4})$/, "$1-$2-$3");
+/** The Black Friday end date is only mentioned while the offer runs. */
+const promoLive = () => Date.now() < Date.parse(promo.endsAt);
 const faq = (q) => homeFaq.find(([k]) => k.startsWith(q))?.[1] || "";
 
 /* Translatable text. A reply is built from pieces: a plain English string (looked up with t), a template
@@ -166,19 +168,20 @@ function productReply(s, p) {
   if (has(s, ["best for", "good for", "what can", "use it", "made for", "who is"])) return { text: [tx("{name}:", { name: short(p) }), p.tagline, tx("Best for: {what}.", { what: p.bestFor ? { tpl: p.bestFor } : { tpl: "see the product details" } })], src: ["Product page"], next: ["Key specs", "What do owners say?", "Which accessories fit?"] };
   if (has(s, ["compare", "other size", "bigger", "smaller", " vs", "difference"])) {
     const sib = siblings(p).filter((x) => x.handle !== p.handle);
-    return sib.length ? { text: tx("Here's how the {series} sizes compare, starting with the one you're looking at:", { series: { tpl: p.seriesName || "This series" } }), table: table([p, ...sib]), links: [["Compare every spec", "/compare"]], src: ["Product specs", "Today's prices"], next: ["Which accessories fit?", "Monthly payments for this machine", "Talk to a person"] } : null;
+    const other = ["xrf", "cobra", "hydra", "vertigo"].some((k) => k !== p.series && s.includes(k)); // "Compare Hydra and Cobra" is a cross-series question
+    if (!other) return sib.length ? { text: tx("Here's how the {series} sizes compare, starting with the one you're looking at:", { series: { tpl: p.seriesName || "This series" } }), table: table([p, ...sib]), links: [["Compare every spec", "/compare"]], src: ["Product specs", "Today's prices"], next: ["Which accessories fit?", "Monthly payments for this machine", "Talk to a person"] } : null;
   }
   if (has(s, ["spec", "work area", "speed", "power", "watt", "resolution", "dpi", "size"]) && p.specs && Object.keys(p.specs).length)
     return { text: tx("{name} key specs:", { name: short(p) }), specs: Object.entries(p.specs).filter(([k]) => k !== "Product line").slice(0, 7), links: [["Compare every spec", "/compare"]], src: ["Product specs"], next: [siblings(p).length > 1 ? "Compare the other sizes" : "What do owners say?", "Is it on sale?", "Which accessories fit?"] };
   if (has(s, ["sale", "price", "deal", "discount", "cost", "how much", "cheaper"]))
     return { text: save
-      ? [tx(p.priceVaries ? "Yes. The {name} is from {price} today. You save {save} off the regular {was}." : "Yes. The {name} is {price} today. You save {save} off the regular {was}.", { name: short(p), price: money(p.price), save: money(save), was: money(p.compareAt) }), "Black Friday pricing ends Cyber Monday, Nov 30."]
-      : [tx(p.priceVaries ? "{name} is from {price}." : "{name} is {price}.", { name: short(p), price: money(p.price) }), "Black Friday pricing ends Cyber Monday, Nov 30."], options: p.variants.length > 1 ? p.variants.map((v) => [v.title, v.price, v.compareAt]) : null, src: ["Today's prices", "Black Friday offer"], next: ["Monthly payments for this machine", "Which accessories fit?", "What do owners say?"] };
+      ? [tx(p.priceVaries ? "Yes. The {name} is from {price} today. You save {save} off the regular {was}." : "Yes. The {name} is {price} today. You save {save} off the regular {was}.", { name: short(p), price: money(p.price), save: money(save), was: money(p.compareAt) }), promoLive() && "Black Friday pricing ends Cyber Monday, Nov 30."]
+      : [tx(p.priceVaries ? "{name} is from {price}." : "{name} is {price}.", { name: short(p), price: money(p.price) })], options: p.variants.length > 1 ? p.variants.map((v) => [v.title, v.price, v.compareAt]) : null, src: save ? ["Today's prices", "Black Friday offer"] : ["Today's prices"], next: p.kind === "machine" ? ["Monthly payments for this machine", "Which accessories fit?", "What do owners say?"] : ["Which machines work with it?", "Show me laser machines", "Talk to a person"] };
   if (has(s, ["option", "version", "config", "variant", "hybrid", "pro "])) return p.variants.length > 1 ? { text: tx("{name} comes in {n} configurations:", { name: short(p), n: p.variants.length }), options: p.variants.map((v) => [v.title, v.price, v.compareAt]) } : null;
   if (has(s, ["accessor", "fit", "add-on", "addon", "rotary", "chiller", "work with", "compatible", "need with"]))
     return p.kind === "machine" ? { text: tx("These fit the {name}:", { name: short(p) }), cards: fitsWith(p), src: ["Product compatibility notes"], next: ["Do I need a chiller?", "Is it on sale?", "Talk to a person"] } : { text: "Compatibility is listed in the product description. If you're unsure which machine it fits, an expert can check for you.", links: [["Book a free call", "/pages/sales-consultation"]] };
   if (has(s, ["monthly", "financ", "pay over", "installment", "afford", "per month"]))
-    return { text: tx("Want to pay monthly for the {name}? Pay in installments at checkout, or apply for a $0-down business loan with terms up to 60 months.", { name: short(p) }), links: [[tx("Estimate payments for {name}", { name: short(p) }), `/pages/financing?p=${p.handle}`]], src: ["OneLaser financing page"], next: ["Is it on sale?", "Talk to a person"] };
+    return { text: tx(p.price >= 5000 ? "Want to pay monthly for the {name}? Pay in installments at checkout, or apply for a $0-down business loan with terms up to 60 months." : "Want to pay monthly for the {name}? You can pay in installments at checkout, subject to approval.", { name: short(p) }), links: [[tx("Estimate payments for {name}", { name: short(p) }), `/pages/financing?p=${p.handle}`]], src: ["OneLaser financing page"], next: ["Is it on sale?", "Talk to a person"] };
   return null;
 }
 
@@ -193,12 +196,12 @@ function reply(raw, product) {
     return { src: ["OneLaser contact details"], next: ["Shipping and returns", "Can I pay monthly?"], text: tx("Happy to help. Call {phone} to talk to someone now, or pick a time for a free 30-minute call with our team. No obligation to buy.", { phone }), links: [["Book a free call", "/pages/sales-consultation"], [tx("Call {phone}", { phone }), `tel:${contact.tel}`]] };
   if (has(s, ["deal", "black friday", "sale", "discount", "cheap", "save", "offer", "coupon"])) {
     const deals = products.filter((p) => p.compareAt > p.price).sort((x, y) => (y.compareAt - y.price) - (x.compareAt - x.price)).slice(0, 6);
-    return { text: ["Black Friday: save up to $3,000 through Cyber Monday, Nov 30.", "Here are the biggest savings right now:"], cards: deals, links: [["See all deals", promo.link]], src: ["Today's prices", "Black Friday offer"], next: ["Which laser fits me?", "Can I pay monthly?", "What do owners say?"] };
+    return { text: [promoLive() && "Black Friday: save up to $3,000 through Cyber Monday, Nov 30.", "Here are the biggest savings right now:"], cards: deals, links: [["See all deals", promo.link]], src: ["Today's prices", "Black Friday offer"], next: ["Which laser fits me?", "Can I pay monthly?", "What do owners say?"] };
   }
   if (has(s, ["financ", "monthly", "per month", "pay over", "installment", "loan", "lease", "afford"]))
     return { text: ["Yes. You can pay over time with Shop Pay Installments, Affirm or ClickLease, subject to approval.", "Buying for a business? Loans can start at $0 down, with terms up to 60 months."], links: [["Estimate my monthly payment", "/pages/financing"]], src: ["OneLaser financing page"], next: ["Which laser fits me?", "Show me Black Friday deals"] };
   if (has(s, ["ship", "deliver", "return", "refund", "warranty", "guarantee"]))
-    return { text: [faq("What warranty"), faq("Can I return"), "Shipping cost and delivery date show at checkout after you enter your address."], links: [["Read the warranty policy", "https://www.1laser.com/pages/warranty-policy"]], src: ["OneLaser warranty and return policy"], next: ["What do owners say?", "Talk to a person"] };
+    return { text: [faq("What warranty"), faq("Can I return"), "Shipping cost and delivery date are confirmed after you enter your address at checkout."], links: [["Read the warranty policy", "https://www.1laser.com/pages/warranty-policy"]], src: ["OneLaser warranty and return policy"], next: ["What do owners say?", "Talk to a person"] };
   if (has(s, ["review", "owners say", "customers say", "rating", "reliable", "worth it"])) return { ...reviewsReply(null), next: ["Which laser fits me?", "Show me Black Friday deals"] };
   if (has(s, ["software", "lightburn", "mac", "windows"]))
     return { text: faq("Which software"), cards: list(["lightburn-software-pro-license-key"]) };

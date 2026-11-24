@@ -1438,4 +1438,6 @@ export default {
   "Shops that want a hybrid at a clearance price": "想用清仓价买双激光机的工作室",
   "The largest previous-generation Hydra.": "上一代最大的 Hydra。",
   "Large jobs at a clearance price": "清仓价做大件活",
+  "Shipping cost and delivery date are confirmed after you enter your address at checkout.": "在结账页填好地址后，会确认运费和送达日期。",
+  "Want to pay monthly for the {name}? You can pay in installments at checkout, subject to approval.": "想按月付 {name}？审核通过后，结账时可以选分期付款。",
 };

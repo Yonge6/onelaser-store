@@ -1438,4 +1438,6 @@ export default {
   "Shops that want a hybrid at a clearance price": "処分価格でハイブリッド機が欲しい工房",
   "The largest previous-generation Hydra.": "前世代で最大の Hydra。",
   "Large jobs at a clearance price": "処分価格で大きな仕事に",
+  "Shipping cost and delivery date are confirmed after you enter your address at checkout.": "チェックアウトで住所を入力すると、送料とお届け日が確定します。",
+  "Want to pay monthly for the {name}? You can pay in installments at checkout, subject to approval.": "{name} を月々払いにしたいですか？審査に通れば、チェックアウトで分割払いを選べます。",
 };

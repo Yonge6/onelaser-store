@@ -1438,4 +1438,6 @@ export default {
   "Shops that want a hybrid at a clearance price": "Talleres que quieren una híbrida a precio de liquidación",
   "The largest previous-generation Hydra.": "La Hydra más grande de la generación anterior.",
   "Large jobs at a clearance price": "Trabajos grandes a precio de liquidación",
+  "Shipping cost and delivery date are confirmed after you enter your address at checkout.": "El costo de envío y la fecha de entrega se confirman después de ingresar tu dirección al pagar.",
+  "Want to pay monthly for the {name}? You can pay in installments at checkout, subject to approval.": "¿Quieres pagar la {name} en mensualidades? Puedes pagar en cuotas al finalizar la compra, sujeto a aprobación.",
 };

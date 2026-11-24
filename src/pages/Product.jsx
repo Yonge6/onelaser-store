@@ -213,7 +213,7 @@ export default function Product({ handle }) {
 
           <div className="ip-summary">
             <h2>{product.name}</h2>
-            <p>{variant.title || product.tagline}</p>
+            <p>{variant.title || (isMachine ? t(product.tagline) : product.tagline)}</p>
             {options.filter((a) => picked[a.handle]).map((a) => <p key={a.handle} className="ip-summary-line"><span>{a.name} × {picked[a.handle]}</span><span>{usd(a.price * picked[a.handle])}</span></p>)}
             <p className="ip-summary-total"><span>{t("Total")}</span><b>{usd(total)}</b></p>
             {saved > 0 && <p className="ip-summary-save">{t("You save")} {usd(saved)}</p>}
@@ -315,7 +315,7 @@ export default function Product({ handle }) {
       )}
 
       <div className="ip-bar">
-        <div className="ip-bar-name"><strong>{product.name}</strong><span>{variant.title || product.tagline}</span></div>
+        <div className="ip-bar-name"><strong>{product.name}</strong><span>{variant.title || (isMachine ? t(product.tagline) : product.tagline)}</span></div>
         <div className="ip-bar-price"><b>{usd(total)}</b>{saved > 0 && <small>{t("Save")} {usd(saved)}</small>}</div>
         <div className="ip-bar-btns">{buttons}</div>
       </div>
