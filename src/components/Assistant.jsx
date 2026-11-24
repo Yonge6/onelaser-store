@@ -219,12 +219,12 @@ function productReply(s, p) {
 function reply(raw, product) {
   const s = raw.toLowerCase();
   if (!product && has(s, ["need a chiller", "chiller"]) && has(s, ["need", "do i"])) return { text: "Only for Cobra and Hydra Hybrid: their glass tubes are water-cooled. XRF, VertiGo, Hydra 7 Gen2 and Hydra Pro use air-cooled RF lasers, so they need no chiller.", cards: products.filter((p) => p.category === "cooling"), src: ["Product specs"], next: ["Which accessories fit?", "Talk to a person"] };
-  const own = productReply(s, product);
-  if (own) return own;
   if (product) {
     const hit = lookup(s, quickAnswers(product).map(([q, ans]) => [q, typeof ans === "string" ? ans : { ...ans }]));
     if (hit) return { text: typeof hit[1] === "string" ? hit[1] : tx(hit[1].tpl, hit[1].v), src: ["Product specs", "OneLaser FAQ"] };
   }
+  const own = productReply(s, product);
+  if (own) return own;
   const list = (hs) => hs.map((h) => byHandle[h]).filter(Boolean);
   if (has(s, ["person", "human", "call", "phone", "talk", "expert", "sales", "agent"]))
     return { src: ["OneLaser contact details"], next: ["Shipping and returns", "Can I pay monthly?"], text: tx("Happy to help. Call {phone} to talk to someone now, or pick a time for a free 30-minute call with our team. No obligation to buy.", { phone }), links: [["Book a free call", "/pages/sales-consultation"], [tx("Call {phone}", { phone }), `tel:${contact.tel}`]] };
@@ -320,9 +320,15 @@ function Table({ data }) {
 }
 
 const STORE = "onelaser-ai-v1";
-// A chat saved during Black Friday is dropped once the sale is over, so no old reply shows an expired price.
+// A chat saved during Black Friday is kept after the sale with a note that earlier prices may have changed.
 // Chats saved before this check existed carry no `sale` flag; they date from the sale.
-const load = () => { try { const v = JSON.parse(sessionStorage.getItem(STORE)) || {}; return (v.sale ?? true) === saleOn ? v : {}; } catch { return {}; } };
+const load = () => {
+  try {
+    const v = JSON.parse(sessionStorage.getItem(STORE)) || {};
+    if ((v.sale ?? true) === saleOn || !v.msgs?.length) return v;
+    return { ...v, msgs: [...v.msgs, { divider: "Black Friday has ended. Prices earlier in this chat may have changed." }] };
+  } catch { return {}; }
+};
 const keep = (v) => { try { sessionStorage.setItem(STORE, JSON.stringify(v)); } catch { /* private mode: this page only */ } };
 const wide = () => typeof window !== "undefined" && !window.matchMedia("(max-width: 860px)").matches;
 

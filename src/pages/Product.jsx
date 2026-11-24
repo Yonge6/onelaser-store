@@ -97,8 +97,8 @@ export default function Product({ handle }) {
   const gallery = variant.image && !base.includes(variant.image) ? [base[0], variant.image, ...base.slice(1)] : base;
   const pickVariant = (v) => {
     setVariantId(v.id);
-    const at = gallery.indexOf(v.image);
-    setPhoto(at >= 0 ? at : 0);
+    const at = base.indexOf(v.image);
+    setPhoto(at >= 0 ? at : v.image ? 1 : 0); // a version photo not in the main set sits right after the first picture
   };
   const total = variant.price * qty;
   const saved = variant.compareAt ? (variant.compareAt - variant.price) * qty : 0;

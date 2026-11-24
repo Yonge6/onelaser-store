@@ -1594,4 +1594,13 @@ export default {
   "Yes, with a rotary attachment (sold separately). If drinkware is most of your work, VertiGo holds tumblers upright with its rotary built in.": "可以，需要配旋转附件（单独购买）。如果你主要做杯具，VertiGo 自带旋转装置，能让保温杯立着雕刻。",
   "Download the California form (PDF)": "下载加州表格（PDF）",
   "Laser smoke has to go outside through a window or wall vent. If you can't vent outside, use a fume extractor such as FiltraBox:": "激光烟雾需要通过窗户或墙上的排风口排到室外。如果没法排到室外，可以用 FiltraBox 这样的排烟净化器：",
+  "Black Friday has ended, so prices have changed. Refresh to see today's prices; anything you've typed will need re-entering.": "黑五已结束，价格有变化。刷新即可看到今天的价格，已填写的内容需要重新输入。",
+  "Black Friday has ended. Prices earlier in this chat may have changed.": "黑五已结束，这段对话里之前的价格可能已经变了。",
+  "Download the California resale certificate (CDTFA-230), or use your own state's exemption form. Email it to our sales team at sales@1laser.com before you pay so they can apply your exemption.": "下载加州转售证明（CDTFA-230），或使用你所在州的免税表格。付款前发邮件到销售团队 sales@1laser.com，他们会帮你办理免税。",
+  "Refresh prices": "刷新价格",
+  "Up to 12 × 12 in": "最大 12 × 12 in",
+  "Up to 24 × 12 in": "最大 24 × 12 in",
+  "Up to 36 × 24 in": "最大 36 × 24 in",
+  "Up to 51 × 35 in": "最大 51 × 35 in",
+  "Up to 63 × 39 in": "最大 63 × 39 in",
 };

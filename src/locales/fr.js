@@ -1594,4 +1594,13 @@ export default {
   "Yes, with a rotary attachment (sold separately). If drinkware is most of your work, VertiGo holds tumblers upright with its rotary built in.": "Oui, avec un module rotatif (vendu séparément). Si vous faites surtout des contenants, VertiGo tient les gobelets debout grâce à son rotatif intégré.",
   "Download the California form (PDF)": "Télécharger le formulaire de Californie (PDF)",
   "Laser smoke has to go outside through a window or wall vent. If you can't vent outside, use a fume extractor such as FiltraBox:": "La fumée du laser doit sortir par une fenêtre ou une bouche d'aération murale. Si ce n'est pas possible, utilisez un extracteur de fumées comme FiltraBox :",
+  "Black Friday has ended, so prices have changed. Refresh to see today's prices; anything you've typed will need re-entering.": "Le Black Friday est terminé et les prix ont changé. Actualisez pour voir les prix du jour ; ce que vous avez saisi devra être ressaisi.",
+  "Black Friday has ended. Prices earlier in this chat may have changed.": "Le Black Friday est terminé. Les prix cités plus haut dans ce chat ont pu changer.",
+  "Download the California resale certificate (CDTFA-230), or use your own state's exemption form. Email it to our sales team at sales@1laser.com before you pay so they can apply your exemption.": "Téléchargez le certificat de revente de Californie (CDTFA-230) ou utilisez le formulaire d'exonération de votre État. Envoyez-le à notre équipe commerciale à sales@1laser.com avant de payer pour qu'elle applique votre exonération.",
+  "Refresh prices": "Actualiser les prix",
+  "Up to 12 × 12 in": "Jusqu'à 12 × 12 in",
+  "Up to 24 × 12 in": "Jusqu'à 24 × 12 in",
+  "Up to 36 × 24 in": "Jusqu'à 36 × 24 in",
+  "Up to 51 × 35 in": "Jusqu'à 51 × 35 in",
+  "Up to 63 × 39 in": "Jusqu'à 63 × 39 in",
 };

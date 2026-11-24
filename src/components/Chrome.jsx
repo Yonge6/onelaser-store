@@ -90,7 +90,7 @@ export function Header({ path }) {
           </nav>
           <div className="site-actions">
             {/* the finder is the main action; booking a call lives under Support, and the phone stays one tap away */}
-            <button type="button" className="finder-pill" onClick={openFinder}><Icon name="sparkle" size={16} /><span>{t("Find my machine")}</span></button>
+            <button type="button" className="finder-pill" onClick={openFinder} aria-label={t("Find my machine")}><Icon name="sparkle" size={16} /><span>{t("Find my machine")}</span></button>
             <Link href={`tel:${contact.tel}`} className="header-phone" aria-label={tf("Call {phone}", { phone: contact.phone })}><Icon name="phone" size={18} /><span>{contact.phone}</span></Link>
             <button type="button" className="icon-btn" aria-label={t("Search")} onClick={() => setSearch((s) => !s)}><Icon name="search" size={22} /></button>
             <Link href="https://www.1laser.com/account/login" className="icon-btn hide-mobile" aria-label={t("Account")}><Icon name="user" size={22} /></Link>

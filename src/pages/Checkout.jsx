@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { t } from "../i18n.js";
 import { asset, frontImg, img, money } from "../lib.js";
 import { useCart } from "../cart.jsx";
@@ -6,7 +6,7 @@ import { Icon, Link } from "../components/ui.jsx";
 import { OfferGate } from "./Cart.jsx";
 
 // Tax-exempt buyers: the state's official resale certificate (OneLaser ships from California; 1laser.com has no form of its own).
-// TODO(team): finance to confirm the form and the address exemption documents go to.
+// Exemption requests go to the sales team (sales@1laser.com, as listed in the site footer). TODO(team): finance to confirm.
 const TAX_FORM = "https://www.cdtfa.ca.gov/formspubs/cdtfa230.pdf";
 
 /* Checkout after the Insta360 Store checkout (store.insta360.com/order/confirm, checked again 2026-11-19):
@@ -44,6 +44,8 @@ export default function Checkout() {
   const [code, setCode] = useState("");
   const [codeMsg, setCodeMsg] = useState("");
   const [open, setOpen] = useState(false); // phone: order summary folded
+  const [ended, setEnded] = useState(() => !!window.__saleEnded); // Black Friday ended while checkout was open: hold the order
+  useEffect(() => { const f = () => setEnded(true); window.addEventListener("onelaser:sale-ended", f); return () => window.removeEventListener("onelaser:sale-ended", f); }, []);
   const set = (k, v) => { setF((x) => ({ ...x, [k]: v })); if (err[k]) setErr((e) => ({ ...e, [k]: false })); };
   const machines = items.some((i) => i.product.kind === "machine");
   const count = items.reduce((s, i) => s + i.qty, 0);
@@ -99,7 +101,7 @@ export default function Checkout() {
         <div className="total"><dt>{t("Total")}</dt><dd><small>USD</small> {money(subtotal)}</dd></div>
       </dl>
       <div className="ik-tax">
-        <p><b>{t("Buying tax-exempt or for resale?")}</b>{t("Download the California resale certificate (CDTFA-230), or use your own state's exemption form. Email it to cs@1laser.com before you pay so the team can apply your exemption.")}</p>
+        <p><b>{t("Buying tax-exempt or for resale?")}</b>{t("Download the California resale certificate (CDTFA-230), or use your own state's exemption form. Email it to our sales team at sales@1laser.com before you pay so they can apply your exemption.")}</p>
         <a href={TAX_FORM} target="_blank" rel="noreferrer" download><Icon name="download" size={16} />{t("Download the California form (PDF)")}</a>
       </div>
     </>
@@ -213,7 +215,7 @@ export default function Checkout() {
           <aside className="ik-card ik-summary">
             <div className="ik-summary-head"><h2>{t("Order summary")}</h2><Link to="/cart">{t("Edit cart")}</Link></div>
             <div className="ik-summary-body">{summary}</div>
-            <button type="button" className="ik-pill wide" disabled={step < 2} onClick={place}>{step < 2 ? t("Complete the steps to place your order") : `${t("Place order")} · ${money(subtotal)}`}</button>
+            <button type="button" className="ik-pill wide" disabled={step < 2 || ended} onClick={place}>{step < 2 ? t("Complete the steps to place your order") : `${t("Place order")} · ${money(subtotal)}`}</button>
             <ul className="ik-trust">
               <li><Icon name="lock" size={16} />{t("Secure, encrypted checkout")}</li>
               <li><Icon name="refresh" size={16} />{t("30-day return period")}</li>
@@ -226,7 +228,7 @@ export default function Checkout() {
       <OfferGate />
       <div className="ik-bar">
         <p><small>{t("Total")}</small><b>{money(subtotal)}</b></p>
-        <button type="button" className="ik-pill" disabled={step < 2} onClick={place}>{t("Place order")}</button>
+        <button type="button" className="ik-pill" disabled={step < 2 || ended} onClick={place}>{t("Place order")}</button>
       </div>
     </div>
   );

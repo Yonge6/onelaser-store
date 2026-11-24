@@ -1594,4 +1594,13 @@ export default {
   "Yes, with a rotary attachment (sold separately). If drinkware is most of your work, VertiGo holds tumblers upright with its rotary built in.": "はい、ロータリーアタッチメント（別売）を使えばできます。ドリンクウェアが仕事の中心なら、VertiGo はロータリー内蔵でタンブラーを立てたまま彫刻できます。",
   "Download the California form (PDF)": "カリフォルニア州の書式をダウンロード（PDF）",
   "Laser smoke has to go outside through a window or wall vent. If you can't vent outside, use a fume extractor such as FiltraBox:": "レーザーの煙は窓や壁の換気口から屋外に出す必要があります。屋外に排気できない場合は、FiltraBox などの集煙機を使ってください：",
+  "Black Friday has ended, so prices have changed. Refresh to see today's prices; anything you've typed will need re-entering.": "ブラックフライデーが終了し、価格が変わりました。更新すると本日の価格が表示されます。入力中の内容は入力し直しが必要です。",
+  "Black Friday has ended. Prices earlier in this chat may have changed.": "ブラックフライデーは終了しました。このチャットの前の価格は変わっている可能性があります。",
+  "Download the California resale certificate (CDTFA-230), or use your own state's exemption form. Email it to our sales team at sales@1laser.com before you pay so they can apply your exemption.": "カリフォルニア州の再販証明書（CDTFA-230）をダウンロードするか、お住まいの州の免税書式をご利用ください。お支払い前に営業チーム（sales@1laser.com）へメールでお送りいただければ、免税を適用します。",
+  "Refresh prices": "価格を更新",
+  "Up to 12 × 12 in": "最大 12 × 12 in",
+  "Up to 24 × 12 in": "最大 24 × 12 in",
+  "Up to 36 × 24 in": "最大 36 × 24 in",
+  "Up to 51 × 35 in": "最大 51 × 35 in",
+  "Up to 63 × 39 in": "最大 63 × 39 in",
 };

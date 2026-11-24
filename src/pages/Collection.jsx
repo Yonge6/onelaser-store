@@ -16,10 +16,14 @@ const JOBS = [
   ["round", "Tumblers (built-in rotary)", (p) => p.series === "vertigo"],
   ["metal", "Coated & anodized metal", (p) => /RF/.test(src(p))],
 ];
+// "Largest piece": machines whose bed holds a piece that size, either way round (same 0.6 in allowance as the finder)
+const holds = ([w, h]) => (p) => { const a = area(p); return !!a && ((a[0] >= w - 0.6 && a[1] >= h - 0.6) || (a[0] >= h - 0.6 && a[1] >= w - 0.6)); };
 const SIZES = [
-  ["desk", "Desktop: up to 24 × 12 in", (p) => area(p) && area(p)[0] <= 24],
-  ["mid", "Mid-size: up to 40 × 24 in", (p) => area(p) && area(p)[0] > 24 && area(p)[0] <= 40],
-  ["big", "Large: over 40 × 24 in", (p) => area(p) && area(p)[0] > 40],
+  ["s", "Up to 12 × 12 in", holds([12, 12])],
+  ["m", "Up to 24 × 12 in", holds([24, 12])],
+  ["l", "Up to 36 × 24 in", holds([36, 24])],
+  ["xl", "Up to 51 × 35 in", holds([51, 35])],
+  ["xxl", "Up to 63 × 39 in", holds([63, 39])],
 ];
 const BUDGETS = [
   ["low", "Under $5,000", (p) => p.price < 5000],
@@ -99,7 +103,8 @@ export default function Collection({ handle, search }) {
   const [onlySale, setOnlySale] = useState(false);
   const [onlyStock, setOnlyStock] = useState(false);
   const [pick, setPick] = useState({ job: [], size: [], budget: [] });
-  const flip = (k, id) => setPick((s) => ({ ...s, [k]: s[k].includes(id) ? s[k].filter((x) => x !== id) : [...s[k], id] }));
+  // "Largest piece" is one answer (tap again to clear); the other groups allow several
+  const flip = (k, id) => setPick((s) => ({ ...s, [k]: s[k].includes(id) ? s[k].filter((x) => x !== id) : k === "size" ? [id] : [...s[k], id] }));
   const [filterOpen, setFilterOpen] = useState(false);
   const group = TREE.find(([, h, kids]) => h === handle || kids.some(([, k]) => k === handle)) || TREE[0];
   const list = useMemo(() => {

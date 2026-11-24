@@ -2,7 +2,8 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { t, tf } from "../i18n.js";
 import { byHandle, frontImg, img, isTopDialog, lockScroll, money, useFocusTrap } from "../lib.js";
 import { contact } from "../data/site.js";
-import { AddButton, Icon, Link } from "./ui.jsx";
+import { Icon, Link } from "./ui.jsx";
+import { useCart } from "../cart.jsx";
 import { M, QUIZ, matchQuiz } from "./finderRules.js";
 import { MachineMorph } from "./Finder.jsx";
 import Glance, { shortArea } from "./Glance.jsx";
@@ -13,21 +14,30 @@ import Glance, { shortArea } from "./Glance.jsx";
    until two questions are answered, then shows the best match so far; the full result follows the last question. */
 
 const MONTHS = 24; // same illustration as 1laser.com's "24-month payment": price ÷ 24
-const price = (h) => byHandle[h]?.price || 0;
 const available = (h) => !!byHandle[h]?.available;
+/* The version a match is about: cutting wood or acrylic on a Hydra means the Hybrid (glass tube); otherwise the lowest-priced
+   version. Its price is what the budget check, the price shown, the monthly figure and "Add to cart" all use. */
+const cuts = (a) => (a.make || []).includes("signs") || (a.mats || []).some((m) => m === "wood" || m === "acrylic");
+export function versionFor(p, a) {
+  const vs = p.variants.filter((v) => v.available);
+  if (vs.length < 2) return vs[0] || p.variants[0];
+  return (cuts(a) && vs.find((v) => /hybrid/i.test(v.title))) || vs.reduce((m, v) => (v.price < m.price ? v : m));
+}
+const priceFor = (a) => (h) => (byHandle[h] ? versionFor(byHandle[h], a).price : 0);
 const memo = { a: {}, step: 0 };
 
 export const openFinder = () => window.dispatchEvent(new Event("onelaser:finder"));
 
-function Pick({ r, kind }) {
+function Pick({ r, kind, a }) {
   const p = byHandle[M[r.key].handle];
+  const v = versionFor(p, a);
   return (
     <Link to={`/products/${p.handle}`} className="ff-alt">
       <span className="ff-alt-img"><img src={img(frontImg(p), 300)} alt="" loading="lazy" /></span>
       <span className="ff-alt-text">
         <small>{t(kind)}</small>
         <b>{p.name}</b>
-        <em>{[p.specs?.["Laser source"]?.split(/;|, or /)[0], p.series === "vertigo" ? "Ø 16–230 mm" : shortArea(p.specs?.["Work area"]), money(p.price)].filter(Boolean).join(" · ")}</em>
+        <em>{[p.specs?.["Laser source"]?.split(/;|, or /)[0], p.series === "vertigo" ? "Ø 16–230 mm" : shortArea(p.specs?.["Work area"]), money(v.price)].filter(Boolean).join(" · ")}</em>
       </span>
       <Icon name="chevron" size={18} />
     </Link>
@@ -35,9 +45,12 @@ function Pick({ r, kind }) {
 }
 
 function Result({ a, onRetake, onClose }) {
-  const m = useMemo(() => matchQuiz(a, available, price), [a]);
+  const { add } = useCart();
+  const [added, setAdded] = useState(false);
+  const m = useMemo(() => matchQuiz(a, available, priceFor(a)), [a]);
   const p = m.best && byHandle[M[m.best.key].handle];
   if (!p) return null;
+  const v = versionFor(p, a);
   const chips = QUIZ.flatMap((q) => [].concat(a[q.id] || []).map((id) => q.options.find((o) => o[0] === id)?.[1])).filter(Boolean);
   return (
     <div className="ff-result">
@@ -52,9 +65,10 @@ function Result({ a, onRetake, onClose }) {
         <div className="ff-best-body">
           <header>
             <h3>{p.name}</h3>
-            <p className="ff-price"><b>{money(p.price)}</b>{p.compareAt > p.price && <s>{money(p.compareAt)}</s>}</p>
+            <p className="ff-price"><b>{money(v.price)}</b>{v.compareAt > v.price && <s>{money(v.compareAt)}</s>}</p>
           </header>
-          <p className="ff-monthly">{tf("or about {amount}/mo over 24 months", { amount: money(Math.round(p.price / MONTHS)) })}</p>
+          {p.variants.length > 1 && v.title && <p className="ff-version">{v.title}</p>}
+          <p className="ff-monthly">{tf("or about {amount}/mo over 24 months", { amount: money(Math.round(v.price / MONTHS)) })}</p>
           {(m.best.reasons.length > 0 || m.overBudget || m.bareMetal) && (
             <>
               <p className="ff-why-title">{t("Why it fits you")}</p>
@@ -67,7 +81,7 @@ function Result({ a, onRetake, onClose }) {
           )}
           <Glance product={p} full={false} title={false} best={false} />
           <div className="ff-buy">
-            <AddButton product={p} className="ff-btn dark" />
+            <button type="button" className="ff-btn dark" onClick={() => { add(p.handle, v.id, 1); setAdded(true); }}><Icon name={added ? "check" : "cart"} size={18} />{t(added ? "Added to cart" : "Add to cart")}</button>
             <Link to={`/products/${p.handle}`} className="ff-btn line" onClick={onClose}>{t("View details")}</Link>
           </div>
         </div>
@@ -76,8 +90,8 @@ function Result({ a, onRetake, onClose }) {
         <>
           <div className="ff-alts-head"><h3>{t("Also worth a look")}</h3><button type="button" onClick={onRetake}>{t("Retake the quiz")} <Icon name="arrow" size={14} /></button></div>
           <div className="ff-alts" onClick={onClose}>
-            {m.up && <Pick r={m.up} kind="Step up" />}
-            {m.save && <Pick r={m.save} kind="Save money" />}
+            {m.up && <Pick r={m.up} kind="Step up" a={a} />}
+            {m.save && <Pick r={m.save} kind="Save money" a={a} />}
           </div>
         </>
       )}
@@ -116,7 +130,7 @@ export default function FinderFlow() {
   const q = QUIZ[Math.min(step, QUIZ.length - 1)];
   const has = (x) => (x.multi ? (a[x.id] || []).length > 0 : !!a[x.id]);
   const answered = QUIZ.filter(has).length;
-  const live = useMemo(() => (answered >= 2 ? matchQuiz(a, available, price) : null), [a, answered]);
+  const live = useMemo(() => (answered >= 2 ? matchQuiz(a, available, priceFor(a)) : null), [a, answered]);
   const liveP = live?.best && byHandle[M[live.best.key].handle];
   if (!open) return null;
 
@@ -176,7 +190,7 @@ export default function FinderFlow() {
                     <p className="ff-peek-label">{t("Best match so far")}</p>
                     <img src={img(frontImg(liveP), 600)} alt="" />
                     <b>{liveP.name}</b>
-                    <span>{money(liveP.price)}</span>
+                    <span>{money(versionFor(liveP, a).price)}</span>
                     {live.best.reasons[0] && <em><Icon name="check" size={12} />{t(live.best.reasons[0])}</em>}
                   </div>
                 ) : (

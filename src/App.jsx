@@ -13,6 +13,21 @@ import Finance from "./pages/Finance.jsx";
 import Assistant from "./components/Assistant.jsx";
 import FinderFlow from "./components/FinderFlow.jsx";
 import { byHandle } from "./lib.js";
+import { useEffect, useState } from "react";
+import { t } from "./i18n.js";
+
+/** Shown when Black Friday ends while the page is open: prices on screen are the old ones until the visitor refreshes. */
+function SaleEnded() {
+  const [on, setOn] = useState(() => typeof window !== "undefined" && !!window.__saleEnded);
+  useEffect(() => { const f = () => setOn(true); window.addEventListener("onelaser:sale-ended", f); return () => window.removeEventListener("onelaser:sale-ended", f); }, []);
+  if (!on) return null;
+  return (
+    <div className="sale-ended" role="status">
+      <span>{t("Black Friday has ended, so prices have changed. Refresh to see today's prices; anything you've typed will need re-entering.")}</span>
+      <button type="button" onClick={() => window.location.reload()}>{t("Refresh prices")}</button>
+    </div>
+  );
+}
 
 function Page({ path, query }) {
   const [, section, handle] = path.split("/");
@@ -31,6 +46,7 @@ export default function App() {
   const lang = useLang(); // every t() call re-reads the language on re-render
   return (
     <CartProvider>
+      <SaleEnded />
       {path === "/checkout" ? (
         <Checkout key={lang} />
       ) : (

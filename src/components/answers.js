@@ -24,4 +24,3 @@ export function quickAnswers(p) {
   out.push(["Can I pay monthly?", faqText("Is financing available")]);
   return out.map(([q, a]) => [q, a, name]);
 }
-

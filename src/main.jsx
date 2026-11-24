@@ -10,12 +10,13 @@ import "./styles.css";
 
 import { now, promo, saleOn } from "./data/site.js";
 
-// Prices are fixed when the page loads. A tab left open past the end of Black Friday reloads, so the cart and checkout
-// switch to regular prices at once (checked every minute and whenever the tab comes back into view).
+// Prices are fixed when the page loads. A tab left open past the end of Black Friday is told so (an event the app shows as
+// a banner, and checkout holds "Place order") instead of reloading on its own, so nothing someone is typing gets lost.
 if (saleOn) {
   const ends = Date.parse(promo.endsAt);
-  const check = () => { if (now() >= ends) window.location.reload(); };
-  setInterval(check, 60000);
+  let told = false;
+  const check = () => { if (!told && now() >= ends) { told = true; window.__saleEnded = true; window.dispatchEvent(new Event("onelaser:sale-ended")); } };
+  setInterval(check, 30000);
   document.addEventListener("visibilitychange", () => document.visibilityState === "visible" && check());
 }
 
