@@ -10,8 +10,8 @@ import Glance, { shortArea } from "./Glance.jsx";
 
 /* "Find my machine", Figma version (Q1–Q4 + Results), on its own page (/find-my-machine) so the team can compare it with
    the original finder card on the home page, which the header button and "Help me choose" still open.
-   One question per screen with a 4-part progress bar. On wide screens a side panel keeps the machine animation running
-   until two questions are answered, then shows the best match so far; the full result follows the last question. */
+   One question per screen with a 4-part progress bar. On wide screens a side panel keeps the machine animation running;
+   no machine is suggested until the last question is answered. */
 
 const available = (h) => !!byHandle[h]?.available;
 /* The version a match is about: cutting wood or acrylic on a Hydra means the Hybrid (glass tube); otherwise the lowest-priced
@@ -111,9 +111,6 @@ export default function FinderFlow() {
   const done = step >= QUIZ.length;
   const q = QUIZ[Math.min(step, QUIZ.length - 1)];
   const has = (x) => (x.multi ? (a[x.id] || []).length > 0 : !!a[x.id]);
-  const answered = QUIZ.filter(has).length;
-  const live = useMemo(() => (answered >= 2 ? matchQuiz(a, available, priceFor(a)) : null), [a, answered]);
-  const liveP = live?.best && byHandle[M[live.best.key].handle];
   const pick = (id) => {
     if (q.multi) {
       const cur = a[q.id] || [];
@@ -163,22 +160,10 @@ export default function FinderFlow() {
                   <button type="button" className="ff-btn dark" disabled={!has(q)} onClick={() => setStep(step + 1)}>{t(step === QUIZ.length - 1 ? "See my match" : "Next")}</button>
                 </div>
               </section>
-              {/* wide screens: the animation runs until two answers are in, then the best match so far */}
-              <aside className={`ff-side${liveP ? " live" : ""}`} aria-live="polite">
-                {liveP ? (
-                  <div className="ff-peek" key={liveP.handle}>
-                    <p className="ff-peek-label">{t("Best match so far")}</p>
-                    <img src={img(frontImg(liveP), 600)} alt="" />
-                    <b>{liveP.name}</b>
-                    <span>{money(versionFor(liveP, a).price)}</span>
-                    {live.best.reasons[0] && <em><Icon name="check" size={12} />{t(live.best.reasons[0])}</em>}
-                  </div>
-                ) : (
-                  <>
-                    <p className="ff-peek-label">{t("Answer two questions to see your match")}</p>
-                    <MachineMorph />
-                  </>
-                )}
+              {/* wide screens: the lineup animation runs until the last answer; no machine is suggested before the result */}
+              <aside className="ff-side" aria-hidden="true">
+                <p className="ff-peek-label">{t("You'll see your match after the last question.")}</p>
+                <MachineMorph />
               </aside>
             </>
           )}

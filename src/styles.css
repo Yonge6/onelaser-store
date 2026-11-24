@@ -4984,3 +4984,11 @@ body:has(.ip-bar) .ai-pill, .pdp ~ .ai-pill { bottom: 104px; }
 .tdlg-rated small { color: #76767f; font-size: 13px; }
 .tdlg-rated svg { align-self: center; color: #76767f; }
 @media (max-width: 560px) { .tdlg-rated { grid-template-columns: 1fr; } }
+
+/* Finder lineup animation: specs as label / value rows, so long values (work area) never wrap or clip in the narrow side panel */
+.fx-ms { height: 124px; }
+.fx-ms-item dl { grid-template-columns: 1fr; }
+.fx-ms-item dl > div { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; padding: 6px 12px; text-align: left; }
+.fx-ms-item dt { font-size: 11px; white-space: nowrap; }
+.fx-ms-item dd { margin: 0; font-size: 13px; white-space: nowrap; text-align: right; }
+@media (max-width: 860px) { .fx-peek .fx-ms { height: 120px; } }

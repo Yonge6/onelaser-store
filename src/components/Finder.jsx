@@ -60,8 +60,8 @@ export function MachineMorph() {
 }
 
 /** Machine finder: spans two cells of the home product grid (one row below on phones).
-    Left: one question at a time with a labelled stepper. Right: the best match so far, which updates with every answer,
-    so the visitor sees where the answers lead before the end. When done, the card shows the pick and the full
+    Left: one question at a time with a labelled stepper. Right: the lineup animation; no machine is suggested until the
+    last question is answered. When done, the card shows the pick and the full
     result opens under the grid (FinderResult). */
 const memo = { answers: {}, step: 0 };
 
@@ -116,9 +116,6 @@ export default function FinderCard({ modal = false }) {
   const ranked = useMemo(() => rank(answers), [answers]);
   const lines = summary(answers);
   const answered = lines.length > 0;
-  /* The side panel keeps the machine animation running until three questions are answered, so no machine is suggested
-     on the first pick; then it shows the best match so far. */
-  const peek = lines.length >= 3;
   const top = ranked[0] && byHandle[M[ranked[0].key].handle];
   const has = (s) => (s.multi ? (answers[s.id] || []).length > 0 : !!answers[s.id]);
   const reveal = () => setTimeout(() => document.getElementById(modal ? "fc-result-modal" : "fc-result")?.scrollIntoView({ behavior: "smooth", block: "start" }), 80);
@@ -247,24 +244,12 @@ export default function FinderCard({ modal = false }) {
           </span>
         </div>
       </div>
-      <aside className={`fx-peek${peek ? " live" : ""}`} aria-live="polite">
-        <p className="fx-peek-label">{peek ? t("Best match so far") : t("Your match appears here")}</p>
-        {!peek && <MachineMorph />}
-        {peek && top && (
-          <Link to={`/products/${top.handle}`} className="fx-peek-card" key={top.handle}>
-            <span className="fx-peek-img"><img src={img(frontImg(top), 600)} alt="" /></span>
-            <b>{top.name}</b>
-            <span className="fx-peek-price">{money(top.price)}{top.compareAt > top.price && <s>{money(top.compareAt)}</s>}</span>
-          </Link>
-        )}
-        {peek ? (
-          <>
-            <ul className="fx-peek-why">{ranked[0].reasons.slice(0, 2).map((r) => <li key={r}><Icon name="check" size={12} />{t(r)}</li>)}</ul>
-            <p className="fx-meter" aria-hidden="true"><i style={{ width: `${(lines.length / STEPS.length) * 100}%` }} /></p>
-          </>
-        ) : (
-          <p className="fx-peek-note">{t("Answer three questions to see your match")}</p>
-        )}
+      {/* No machine is suggested while the visitor is still answering: the lineup animation runs until the last question,
+          then the card itself turns into the result. */}
+      <aside className="fx-peek">
+        <p className="fx-peek-label">{t("Your match appears here")}</p>
+        <MachineMorph />
+        <p className="fx-peek-note">{t("You'll see your match after the last question.")}</p>
         <a href={`tel:${contact.tel}`} className="fx-expert"><Icon name="phone" size={14} />{t("Rather talk to an expert?")}</a>
       </aside>
       {leadDialog}

@@ -728,10 +728,8 @@ export default function Home() {
               </figure>
             ))}
         </div>
-        <div className="ih-wrap">
-          <p className="fd-links"><button type="button" onClick={() => setReviewsOpen(true)}>{t("Trustpilot")}: {trustpilot.score} · {trustpilot.count} {t("reviews")} ›</button></p>
-          {reviewsOpen && <ReviewsDialog onClose={() => setReviewsOpen(false)} />}
-        </div>
+        {/* Trustpilot dialog: still reachable from the owner-reviews dialog's Trustpilot button */}
+        {reviewsOpen && <ReviewsDialog onClose={() => setReviewsOpen(false)} />}
       </section>
 
       {/* Why OneLaser: the numbers, then an honest comparison with the category most buyers weigh us against */}
