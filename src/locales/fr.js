@@ -1603,4 +1603,6 @@ export default {
   "Up to 36 × 24 in": "Jusqu'à 36 × 24 in",
   "Up to 51 × 35 in": "Jusqu'à 51 × 35 in",
   "Up to 63 × 39 in": "Jusqu'à 63 × 39 in",
+  "Black Friday has ended, so prices have changed. Refresh to see today's prices; your checkout details stay filled in.": "Le Black Friday est terminé et les prix ont changé. Actualisez pour voir les prix du jour ; vos informations de commande sont conservées.",
+  "Estimate monthly payments": "Estimer les mensualités",
 };

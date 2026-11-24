@@ -1603,4 +1603,6 @@ export default {
   "Up to 36 × 24 in": "最大 36 × 24 in",
   "Up to 51 × 35 in": "最大 51 × 35 in",
   "Up to 63 × 39 in": "最大 63 × 39 in",
+  "Black Friday has ended, so prices have changed. Refresh to see today's prices; your checkout details stay filled in.": "黑五已结束，价格有变化。刷新即可看到今天的价格，结账信息会保留。",
+  "Estimate monthly payments": "估算月付金额",
 };

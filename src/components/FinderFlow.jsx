@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { t, tf } from "../i18n.js";
-import { byHandle, frontImg, img, isTopDialog, lockScroll, money, useFocusTrap } from "../lib.js";
+import { byHandle, frontImg, go, img, money } from "../lib.js";
 import { contact } from "../data/site.js";
 import { Icon, Link } from "./ui.jsx";
 import { useCart } from "../cart.jsx";
@@ -8,12 +8,11 @@ import { M, QUIZ, matchQuiz } from "./finderRules.js";
 import { MachineMorph } from "./Finder.jsx";
 import Glance, { shortArea } from "./Glance.jsx";
 
-/* "Find my machine", reachable from the header on every page (Figma "Find my machine" Q1–Q4 + Results).
-   Opens over the current page (window event "onelaser:finder"), so nobody loses their place.
+/* "Find my machine", Figma version (Q1–Q4 + Results), on its own page (/find-my-machine) so the team can compare it with
+   the original finder card on the home page, which the header button and "Help me choose" still open.
    One question per screen with a 4-part progress bar. On wide screens a side panel keeps the machine animation running
    until two questions are answered, then shows the best match so far; the full result follows the last question. */
 
-const MONTHS = 24; // same illustration as 1laser.com's "24-month payment": price ÷ 24
 const available = (h) => !!byHandle[h]?.available;
 /* The version a match is about: cutting wood or acrylic on a Hydra means the Hybrid (glass tube); otherwise the lowest-priced
    version. Its price is what the budget check, the price shown, the monthly figure and "Add to cart" all use. */
@@ -26,7 +25,6 @@ export function versionFor(p, a) {
 const priceFor = (a) => (h) => (byHandle[h] ? versionFor(byHandle[h], a).price : 0);
 const memo = { a: {}, step: 0 };
 
-export const openFinder = () => window.dispatchEvent(new Event("onelaser:finder"));
 
 function Pick({ r, kind, a }) {
   const p = byHandle[M[r.key].handle];
@@ -68,7 +66,7 @@ function Result({ a, onRetake, onClose }) {
             <p className="ff-price"><b>{money(v.price)}</b>{v.compareAt > v.price && <s>{money(v.compareAt)}</s>}</p>
           </header>
           {p.variants.length > 1 && v.title && <p className="ff-version">{v.title}</p>}
-          <p className="ff-monthly">{tf("or about {amount}/mo over 24 months", { amount: money(Math.round(v.price / MONTHS)) })}</p>
+          <p className="ff-monthly"><Link to={`/pages/financing?p=${p.handle}`}>{t("Estimate monthly payments")} →</Link></p>
           {(m.best.reasons.length > 0 || m.overBudget || m.bareMetal) && (
             <>
               <p className="ff-why-title">{t("Why it fits you")}</p>
@@ -105,35 +103,17 @@ function Result({ a, onRetake, onClose }) {
 }
 
 export default function FinderFlow() {
-  const [open, setOpen] = useState(false);
   const [a, setA] = useState(memo.a);
   const [step, setStep] = useState(memo.step);
   const box = useRef(null);
   useEffect(() => { memo.a = a; memo.step = step; }, [a, step]);
-  useEffect(() => {
-    const on = () => setOpen(true);
-    window.addEventListener("onelaser:finder", on);
-    return () => window.removeEventListener("onelaser:finder", on);
-  }, []);
-  // a link inside the finder (a product, the booking page) closes it
-  useEffect(() => { if (!open) return undefined; const off = () => setOpen(false); window.addEventListener("hashchange", off); return () => window.removeEventListener("hashchange", off); }, [open]);
-  useEffect(() => {
-    if (!open) return undefined;
-    const unlock = lockScroll();
-    const key = (e) => e.key === "Escape" && isTopDialog(box.current) && setOpen(false);
-    window.addEventListener("keydown", key);
-    return () => { unlock(); window.removeEventListener("keydown", key); };
-  }, [open]);
-  useFocusTrap(box, open);
-  useEffect(() => { box.current?.scrollTo({ top: 0, behavior: "smooth" }); }, [step]);
+  useEffect(() => { window.scrollTo({ top: 0, behavior: "smooth" }); }, [step]);
   const done = step >= QUIZ.length;
   const q = QUIZ[Math.min(step, QUIZ.length - 1)];
   const has = (x) => (x.multi ? (a[x.id] || []).length > 0 : !!a[x.id]);
   const answered = QUIZ.filter(has).length;
   const live = useMemo(() => (answered >= 2 ? matchQuiz(a, available, priceFor(a)) : null), [a, answered]);
   const liveP = live?.best && byHandle[M[live.best.key].handle];
-  if (!open) return null;
-
   const pick = (id) => {
     if (q.multi) {
       const cur = a[q.id] || [];
@@ -145,10 +125,10 @@ export default function FinderFlow() {
     }
   };
   const retake = () => { setA({}); setStep(0); };
-  const close = () => setOpen(false);
+  const close = () => go("/");
 
   return (
-    <div className="ff" ref={box} role="dialog" aria-modal="true" aria-label={t("Find my machine")}>
+    <div className="ff page" ref={box}>
       <div className="ff-wrap">
         <div className="ff-top">
           <p className="ff-brand"><Icon name="sparkle" size={16} />{t("Find my machine")}</p>
@@ -158,7 +138,7 @@ export default function FinderFlow() {
         {!done && <ol className="ff-bar" aria-hidden="true">{QUIZ.map((x, n) => <li key={x.id} className={n <= step ? "on" : ""} />)}</ol>}
         <div className={`ff-body${done ? " done" : ""}`}>
           {done ? (
-            <Result a={a} onRetake={retake} onClose={close} />
+            <Result a={a} onRetake={retake} />
           ) : (
             <>
               <section className="ff-q" key={q.id}>

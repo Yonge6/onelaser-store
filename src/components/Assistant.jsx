@@ -6,6 +6,7 @@ import { AddButton, Icon, Link } from "./ui.jsx";
 import { M, STEPS, rank } from "./finderRules.js";
 import { contact, faq as storeFaq, homeFaq, homeReviews, promo, saleOn } from "../data/site.js";
 import { quickAnswers } from "./answers.js";
+import { goToFinder } from "./Finder.jsx";
 
 /* Floating shopping assistant, after the "Shop with AI" agent on poolinstore.com (checked 2026-11-19):
    a black pill at the bottom centre whose label rotates; it opens a dark chat panel at the bottom right
@@ -441,7 +442,7 @@ export default function Assistant({ product }) {
   };
   const openWith = (q) => { closeNudge(); setOpen(true); if (q) setTimeout(() => ask(q), 250); };
   const cat = ([k, name, h, model]) => (model ? (window.location.hash = `#/products/${h}`) : ask(k === "deals" ? "Show me Black Friday deals" : k === "rotary" ? "Rotary attachments" : tx("Show me the {name}", { name: { tpl: name } })));
-  const toFinder = () => { setOpen(false); window.dispatchEvent(new Event("onelaser:finder")); }; // opens "Find my machine" over this page
+  const toFinder = () => { setOpen(false); goToFinder(); }; // the machine finder card on the home page
 
   return (
     <>

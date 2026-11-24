@@ -4,7 +4,7 @@ import { asset, byHandle, go, img, products, frontImg } from "../lib.js";
 import { useCart } from "../cart.jsx";
 import { nav, promo, saleOn, benefits, contact, footer } from "../data/site.js";
 import { Countdown, Icon, Link, usd } from "./ui.jsx";
-import { openFinder as openFinderFlow } from "./FinderFlow.jsx";
+import { goToFinder } from "./Finder.jsx";
 
 const hasMenu = (n) => !!(n.series || n.cards);
 /** Internal store route or external official-site URL. */
@@ -46,8 +46,9 @@ export function Header({ path }) {
     document.documentElement.classList.toggle("has-promo", promoOn);
     return () => document.documentElement.classList.remove("has-promo");
   }, [promoOn]);
-  // "Find my machine" opens over the current page (components/FinderFlow.jsx), from any page.
-  const openFinder = () => { setOpen(null); setMobile(false); openFinderFlow(); };
+  // "Find my machine" / "Help me choose": go to the home page and bring the machine finder card into view.
+  // (The Figma 4-question version lives on its own page, /find-my-machine, for side-by-side comparison.)
+  const openFinder = () => { setOpen(null); setMobile(false); goToFinder(); };
   const closePromo = () => { setPromoOn(false); try { sessionStorage.setItem("onelaser-promo-closed", "1"); } catch { /* keep it closed for this view only */ } };
   const current = LANGS.find((l) => l.code === getLang()) || LANGS[0];
   const [top, setTop] = useState(true);
@@ -89,9 +90,9 @@ export function Header({ path }) {
             ))}
           </nav>
           <div className="site-actions">
-            {/* the finder is the main action; booking a call lives under Support, and the phone stays one tap away */}
             <button type="button" className="finder-pill" onClick={openFinder} aria-label={t("Find my machine")}><Icon name="sparkle" size={16} /><span>{t("Find my machine")}</span></button>
             <Link href={`tel:${contact.tel}`} className="header-phone" aria-label={tf("Call {phone}", { phone: contact.phone })}><Icon name="phone" size={18} /><span>{contact.phone}</span></Link>
+            <Link to="/pages/sales-consultation" className="store-btn" onClick={toBooking}><Icon name="calendar" size={16} /><span>{t("Book a free call")}</span></Link>
             <button type="button" className="icon-btn" aria-label={t("Search")} onClick={() => setSearch((s) => !s)}><Icon name="search" size={22} /></button>
             <Link href="https://www.1laser.com/account/login" className="icon-btn hide-mobile" aria-label={t("Account")}><Icon name="user" size={22} /></Link>
             <Link to="/cart" className="icon-btn cart-btn" aria-label={`Cart, ${count} items`}><Icon name="cart" size={22} />{count > 0 && <em>{count}</em>}</Link>

@@ -5,7 +5,7 @@ import { useCart } from "../cart.jsx";
 import { collections, newHandles, saleOn } from "../data/site.js";
 import { Icon, Link } from "../components/ui.jsx";
 import { glanceRows } from "../components/Glance.jsx";
-import { openFinder } from "../components/FinderFlow.jsx";
+import { goToFinder } from "../components/Finder.jsx";
 
 /* Machine filters in buyers' terms (what you'll make, how big, how much), worked out from the catalog specs. */
 const area = (p) => { const n = (p.specs?.["Work area"] || "").match(/[\d.]+/g); return p.series === "vertigo" || !n ? null : [parseFloat(n[0]), parseFloat(n[1])]; };
@@ -165,7 +165,7 @@ export default function Collection({ handle, search }) {
         </aside>
         <div className="il-main">
           {machinesHere && (
-            <button type="button" className="ih-finder il-finder" onClick={openFinder}>
+            <button type="button" className="ih-finder il-finder" onClick={goToFinder}>
               <span className="ih-finder-ico"><Icon name="sparkle" size={22} /></span>
               <span className="ih-finder-text"><b>{t("Not sure which laser fits?")}</b><em>{t("Answer 4 quick questions about what you make, your space and your budget. We'll match you to a machine.")}</em></span>
               <span className="ih-btn dark sm">{t("Find my machine")}</span>

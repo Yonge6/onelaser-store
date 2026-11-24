@@ -23,7 +23,7 @@ function SaleEnded() {
   if (!on) return null;
   return (
     <div className="sale-ended" role="status">
-      <span>{t("Black Friday has ended, so prices have changed. Refresh to see today's prices; anything you've typed will need re-entering.")}</span>
+      <span>{t("Black Friday has ended, so prices have changed. Refresh to see today's prices; your checkout details stay filled in.")}</span>
       <button type="button" onClick={() => window.location.reload()}>{t("Refresh prices")}</button>
     </div>
   );
@@ -37,6 +37,7 @@ function Page({ path, query }) {
   if (section === "compare") return <Compare />;
   if (section === "pages" && handle === "sales-consultation") return <Consult />;
   if (section === "pages" && handle === "financing") return <Finance key={query.get("p") || ""} query={query} />;
+  if (section === "find-my-machine") return <FinderFlow page />; // Figma 4-question version, to compare with the home finder
   if (section === "cart") return <Cart />;
   return <Home />;
 }
@@ -54,7 +55,6 @@ export default function App() {
           <Header path={path} lang={lang} />
           <main key={`main-${lang}`}><Page path={path} query={query} /></main>
           <Footer key={`footer-${lang}`} />
-          <FinderFlow key={`finder-${lang}`} />
           {/* Shopping assistant while people are choosing (home, product, collection, search, compare).
               Left out of the single-goal pages: booking, financing, cart and checkout. */}
           {/^\/($|products\/|collections\/|search|compare)/.test(path) && <Assistant key={path.split("/")[2] || "site"} product={path.startsWith("/products/") ? byHandle[path.split("/")[2]] : null} />}

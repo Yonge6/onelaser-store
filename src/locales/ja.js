@@ -1603,4 +1603,6 @@ export default {
   "Up to 36 × 24 in": "最大 36 × 24 in",
   "Up to 51 × 35 in": "最大 51 × 35 in",
   "Up to 63 × 39 in": "最大 63 × 39 in",
+  "Black Friday has ended, so prices have changed. Refresh to see today's prices; your checkout details stay filled in.": "ブラックフライデーが終了し、価格が変わりました。更新すると本日の価格が表示されます。入力したお届け先などはそのまま残ります。",
+  "Estimate monthly payments": "月々のお支払いを試算",
 };

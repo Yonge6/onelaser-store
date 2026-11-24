@@ -7,6 +7,7 @@ import { OfferGate } from "./Cart.jsx";
 
 // Tax-exempt buyers: the state's official resale certificate (OneLaser ships from California; 1laser.com has no form of its own).
 // Exemption requests go to the sales team (sales@1laser.com, as listed in the site footer). TODO(team): finance to confirm.
+const DRAFT = "onelaser-checkout-draft";
 const TAX_FORM = "https://www.cdtfa.ca.gov/formspubs/cdtfa230.pdf";
 
 /* Checkout after the Insta360 Store checkout (store.insta360.com/order/confirm, checked again 2026-11-19):
@@ -36,8 +37,11 @@ const picture = (i) => (i.product.kind === "machine" ? frontImg(i.product) : i.v
 export default function Checkout() {
   const { picked: items, subtotal, savings, clearPicked } = useCart();
   const [done, setDone] = useState(null);
-  const [step, setStep] = useState(0); // 0 contact + address, 1 shipping method, 2 billing + payment
-  const [f, setF] = useState({ state: "" });
+  // the draft (address, notes, step) survives a refresh, e.g. "Refresh prices" when Black Friday ends mid-checkout
+  const draft = useState(() => { try { return JSON.parse(sessionStorage.getItem(DRAFT)) || {}; } catch { return {}; } })[0];
+  const [step, setStep] = useState(draft.step || 0); // 0 contact + address, 1 shipping method, 2 billing + payment
+  const [f, setF] = useState(draft.f || { state: "" });
+  useEffect(() => { try { sessionStorage.setItem(DRAFT, JSON.stringify({ step, f })); } catch { /* private mode: this page only */ } }, [step, f]);
   const [err, setErr] = useState({});
   const [method, setMethod] = useState("card");
   const [sameBill, setSameBill] = useState(true);
@@ -73,7 +77,7 @@ export default function Checkout() {
     if (Object.keys(bad).length) { document.querySelector(".ik-field.bad, .ik-select.bad")?.scrollIntoView({ behavior: "smooth", block: "center" }); return; }
     setStep(1);
   };
-  const place = () => { setDone(subtotal); clearPicked(); window.scrollTo(0, 0); };
+  const place = () => { try { sessionStorage.removeItem(DRAFT); } catch { /* ignore */ } setDone(subtotal); clearPicked(); window.scrollTo(0, 0); };
   const applyCode = () => setCodeMsg(code.trim() ? t("Codes are checked on the live store. This draft does not apply discounts.") : t("Enter a code first."));
 
   const summary = (
