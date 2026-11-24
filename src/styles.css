@@ -5104,8 +5104,7 @@ body:has(.ip-bar) .ai-pill, .pdp ~ .ai-pill { bottom: 104px; }
 @media (max-width: 760px) {
   /* cart: the shipping note as one short line ("Ships from the U.S."); the rate line is in the order details */
   body .ic-note { padding: 12px 16px; align-items: center; }
-  body .ic-note p { font-size: 0; line-height: 0; }
-  body .ic-note p b { font-size: 14px; line-height: 20px; }
+  body .ic-note .ic-note-more { display: none; }
   /* cart: "Shipped by OneLaser" as a 2 × 2 grid of short lines */
   body .ic-details h3 { margin: 18px 0 10px; padding-top: 16px; }
   body .ic-details > ul { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px 10px; }
@@ -5133,3 +5132,8 @@ body:has(.ip-bar) .ai-pill, .pdp ~ .ai-pill { bottom: 104px; }
 @media (max-width: 760px) { .irv-row .irv-dup { display: flex; } }
 /* "Prices changed" notice sits above the page's bottom bar (cart, checkout, booking) instead of covering its button */
 @media (max-width: 860px) { body:has(.ik-bar, .ic-bar, .cs-bar:not(.off)) .sale-ended { bottom: calc(84px + env(safe-area-inset-bottom)); } }
+
+/* Checkout: the in-page "Place order" in the payment section is the phone's submit (the summary button does it on wide screens) */
+.ik-confirm { display: none; }
+@media (max-width: 860px) { .ik-confirm { display: flex; margin-top: 16px; } .ik-confirm:focus-visible { outline: 3px solid var(--accent-ink); outline-offset: 3px; } }
+.iowners-stars i.off { color: #d9dbe0; }

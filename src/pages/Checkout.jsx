@@ -43,11 +43,14 @@ export default function Checkout() {
   const [f, setF] = useState(draft.f || { state: "" });
   useEffect(() => { try { sessionStorage.setItem(DRAFT, JSON.stringify({ step, f })); } catch { /* private mode: this page only */ } }, [step, f]);
   const [err, setErr] = useState({});
-  /* Phones: the bottom bar's button changes with the step, so a quick double tap must not land on the next step's button
-     (above all on "Place order"). Taps in the first 700 ms after a step change are ignored. */
-  const stepAt = useRef(0);
-  useEffect(() => { stepAt.current = Date.now(); }, [step]);
-  const settled = (fn) => () => { if (Date.now() - stepAt.current > 700) fn(); };
+  /* Phones: the bottom bar's button changes with the step; it is disabled for 700 ms after a step change so a double tap
+     cannot run the next step too. */
+  const [cool, setCool] = useState(false);
+  useEffect(() => { setCool(true); const id = setTimeout(() => setCool(false), 700); return () => clearTimeout(id); }, [step]);
+  /* The bar never places the order itself: on the payment step it brings the in-page "Place order" button into view,
+     so no tap on the bar (quick or slow) can submit. */
+  const confirmRef = useRef(null);
+  const toConfirm = () => { confirmRef.current?.scrollIntoView({ behavior: "smooth", block: "center" }); confirmRef.current?.focus({ preventScroll: true }); };
   const [method, setMethod] = useState("card");
   const [sameBill, setSameBill] = useState(true);
   const [code, setCode] = useState("");
@@ -220,6 +223,8 @@ export default function Checkout() {
                   )}
                   <p className="ik-biz"><Icon name="card" size={18} /><span>{t("Buying for a business? $0-down loans and lease-to-own are arranged before you order.")} <Link to="/pages/financing">{t("See business financing")}</Link></span></p>
                   <p className="ik-hint">{t("Payment fields are disabled in this design draft.")}</p>
+                  {/* phones: the order is placed here, in the payment section, never from the bottom bar */}
+                  <button type="button" ref={confirmRef} className="ik-pill wide ik-confirm" disabled={ended} onClick={place}>{`${t("Place order")} · ${money(subtotal)}`}</button>
                 </>
               )}
             </section>
@@ -241,10 +246,10 @@ export default function Checkout() {
       <OfferGate />
       <div className="ik-bar">
         <p><small>{t("Total")}</small><b>{money(subtotal)}</b></p>
-        {/* phones: the bar always does the next thing (save the address, continue to payment, place the order) */}
-        {step === 0 && <button type="button" className="ik-pill" onClick={settled(saveAddress)}>{t("Save and continue")}</button>}
-        {step === 1 && <button type="button" className="ik-pill" onClick={settled(() => setStep(2))}>{t("Continue to payment")}</button>}
-        {step === 2 && <button type="button" className="ik-pill" disabled={ended} onClick={settled(place)}>{t("Place order")}</button>}
+        {/* phones: the bar does the next step (save the address, continue to payment, go to the "Place order" button) */}
+        {step === 0 && <button type="button" className="ik-pill" disabled={cool} onClick={saveAddress}>{t("Save and continue")}</button>}
+        {step === 1 && <button type="button" className="ik-pill" disabled={cool} onClick={() => setStep(2)}>{t("Continue to payment")}</button>}
+        {step === 2 && <button type="button" className="ik-pill ghost" disabled={cool} onClick={toConfirm}>{t("Review and pay")}</button>}
       </div>
     </div>
   );

@@ -1021,6 +1021,7 @@ export default {
   "Financing, answered.": "分割払いのよくある質問",
   "Find answers about choosing a machine, purchasing, financing and product support.": "機種選び、ご購入、分割払い、製品サポートについての回答をご覧いただけます。",
   "Find my machine": "自分に合う機種を探す",
+  "Review and pay": "確認して支払う",
   "Find my machine in 30 seconds": "30秒で自分に合う機種を探す",
   "My match appears here": "ここに自分に合う機種が表示されます",
   "My match is ready": "自分に合う機種が決まりました",

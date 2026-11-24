@@ -1022,6 +1022,7 @@ export default {
   "Financing, answered.": "Finanzierung, kurz erklärt.",
   "Find answers about choosing a machine, purchasing, financing and product support.": "Antworten zu Maschinenwahl, Kauf, Finanzierung und Produktsupport.",
   "Find my machine": "Meine Maschine finden",
+  "Review and pay": "Prüfen und bezahlen",
   "Find my machine in 30 seconds": "Meine Maschine in 30 Sekunden finden",
   "My match appears here": "Hier erscheint meine Maschine",
   "My match is ready": "Meine Empfehlung ist fertig",

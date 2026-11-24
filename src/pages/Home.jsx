@@ -623,11 +623,13 @@ function QuoteReel() {
     return () => clearTimeout(id);
   }, [i, hold]);
   const r = QUOTES[i];
+  // stars from the same review the quote is taken from (Trustpilot ones can be 4 stars)
+  const stars = [...homeReviews.items, ...trustpilot.items].find((x) => x.name === r.name)?.rating || 5;
   return (
     <blockquote className="iowners-quote" onTouchStart={(e) => { touch.current = { x: e.touches[0].clientX, y: e.touches[0].clientY }; setHold(true); }} onTouchEnd={(e) => { const s = touch.current; touch.current = null; setHold(false); if (!s) return; const dx = e.changedTouches[0].clientX - s.x, dy = e.changedTouches[0].clientY - s.y; if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy) * 1.2) setI((n) => (n + (dx < 0 ? 1 : QUOTES.length - 1)) % QUOTES.length); }} onMouseEnter={() => setHold(true)} onMouseLeave={() => setHold(false)} onFocus={() => setHold(true)} onBlur={() => setHold(false)} aria-live="polite">
       <span className="iowners-mark" aria-hidden="true">“</span>
       <div className="iowners-q" key={i}>
-        <span className="iowners-stars" aria-label={t("5 out of 5 stars")}>{[0, 1, 2, 3, 4].map((n) => <i key={n} style={{ "--s": n }} aria-hidden="true">★</i>)}</span>
+        <span className="iowners-stars" aria-label={`${stars} / 5`}>{[0, 1, 2, 3, 4].map((n) => <i key={n} className={n < stars ? undefined : "off"} style={{ "--s": n }} aria-hidden="true">★</i>)}</span>
         <p aria-label={t(r.q)}>{words(t(r.q)).map((w, n) => <span key={n} aria-hidden="true" style={{ "--w": n }}>{w}</span>)}</p>
         <footer>
           <span className="iowners-avatar" aria-hidden="true">{r.name.replace(/[^A-Za-z ]/g, "").split(" ").filter(Boolean).slice(0, 2).map((w) => w[0]).join("")}</span>

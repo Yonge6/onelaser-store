@@ -149,7 +149,7 @@ export default function Cart() {
           <div className="ic-left">
             <div className="ic-card ic-note">
               <Icon name="truck" size={22} />
-              <p><b>{t("Ships from the U.S.")}</b> {t("Delivery estimate and shipping rate are shown at checkout once you enter your address.")}</p>
+              <p><b>{t("Ships from the U.S.")}</b> <span className="ic-note-more">{t("Delivery estimate and shipping rate are shown at checkout once you enter your address.")}</span></p>
             </div>
             <div className="ic-card ic-lines">
               <label className="ic-all">

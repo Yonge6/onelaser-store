@@ -1114,6 +1114,7 @@ export default {
   "Financing partners": "分期合作方",
   "Financing, answered.": "分期常见问题",
   "Find my machine": "帮我选机器",
+  "Review and pay": "核对并付款",
   "Find my machine in 30 seconds": "30 秒帮我选机器",
   "My match appears here": "我的推荐会显示在这里",
   "My match is ready": "我的推荐已生成",
