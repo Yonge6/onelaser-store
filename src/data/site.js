@@ -10,8 +10,8 @@ export const promo = {
 
 /* Black Friday runs until promo.endsAt (checked when the page loads). Afterwards the store shows regular prices only
    (lib.js swaps every sale price back to its compare-at price) and every Black Friday banner, link and line disappears.
-   Preview check: add ?now=2026-12-02 before the # in the address to see the store as it looks on that date. */
-const nowParam = typeof location !== "undefined" ? new URLSearchParams(location.search).get("now") : null;
+   Local check (dev server only, ignored on the published site): add ?now=2026-12-02 before the # to see the store on that date. */
+const nowParam = import.meta.env?.DEV && typeof location !== "undefined" ? new URLSearchParams(location.search).get("now") : null;
 export const now = () => (nowParam && !Number.isNaN(Date.parse(nowParam)) ? Date.parse(nowParam) : Date.now());
 export const saleOn = now() < Date.parse(promo.endsAt);
 
@@ -32,7 +32,7 @@ export const collections = {
   materials: { title: "Materials", intro: "Laser-ready acrylic and leatherette sheets from MakerDepot.", filter: (p) => p.kind === "material" },
   acrylic: { title: "Acrylic Sheets", intro: "Frosted, translucent, glitter and mirror acrylic.", filter: (p) => p.category === "acrylic" },
   leatherette: { title: "Leatherette", intro: "Heat-activated adhesive leatherette sheets.", filter: (p) => p.category === "leatherette" },
-  deals: saleOn ? { title: "Black Friday Deals", intro: "Every product currently on sale.", filter: (p) => p.compareAt } : { title: "Black Friday has ended", intro: "Thanks for shopping with us. Here are all our laser machines at today's prices.", filter: (p) => p.kind === "machine" },
+  deals: saleOn ? { title: "Black Friday Deals", intro: "Every product currently on sale.", filter: (p) => p.compareAt } : { title: "Black Friday has ended", intro: "Black Friday has ended. Here are all our laser machines at today's prices.", filter: (p) => p.kind === "machine" },
 };
 
 // Top navigation: labels, order and grouping follow www.1laser.com (read 2026-11-18). Shop links point to this store's pages;

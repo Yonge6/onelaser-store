@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { t, tf } from "../i18n.js";
 import { img, money, products } from "../lib.js";
 import { useCart } from "../cart.jsx";
-import { collections, newHandles } from "../data/site.js";
+import { collections, newHandles, saleOn } from "../data/site.js";
 import { Icon, Link } from "../components/ui.jsx";
 
 /* Layout, sizes and type follow the Insta360 Store listing page (store.insta360.com/accessory, measured 2026-11-17 at 1440):
@@ -86,6 +86,7 @@ export default function Collection({ handle, search }) {
   return (
     <section className="il">
       <h1 className="il-sr">{t(col.title)}</h1>
+      {handle === "deals" && !saleOn && <p className="il-ended" role="status">{t(col.intro)}</p>}
       <nav className="il-strip" aria-label={t("Categories")}>
         <div>
           {strip.map(([label, h]) => (

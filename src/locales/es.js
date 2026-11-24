@@ -1447,4 +1447,5 @@ export default {
   "See all machines": "Ver todas las máquinas",
   "Yes. The {name} is on sale today, from {price}. Each version's price is below.": "Sí. La {name} está en oferta hoy, desde {price}. El precio de cada versión está abajo.",
   "Black Friday has ended": "El Black Friday terminó",
+  "Black Friday has ended. Here are all our laser machines at today's prices.": "El Black Friday terminó. Aquí están todas nuestras máquinas láser a precios de hoy.",
 };

@@ -1447,4 +1447,5 @@ export default {
   "See all machines": "すべてのマシンを見る",
   "Yes. The {name} is on sale today, from {price}. Each version's price is below.": "はい。{name} は本日セール中で、{price} から。各バージョンの価格は下にあります。",
   "Black Friday has ended": "ブラックフライデーは終了しました",
+  "Black Friday has ended. Here are all our laser machines at today's prices.": "ブラックフライデーは終了しました。本日の価格で全レーザー機をご覧いただけます。",
 };

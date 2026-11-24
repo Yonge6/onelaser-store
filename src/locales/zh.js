@@ -1447,4 +1447,5 @@ export default {
   "See all machines": "查看全部机器",
   "Yes. The {name} is on sale today, from {price}. Each version's price is below.": "有。{name} 今天在打折，{price} 起。每个版本的价格见下方。",
   "Black Friday has ended": "黑五已结束",
+  "Black Friday has ended. Here are all our laser machines at today's prices.": "黑五已经结束。这里是我们全部激光机和今天的价格。",
 };

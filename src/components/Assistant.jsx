@@ -215,7 +215,7 @@ function reply(raw, product) {
   const MODEL = { xrf: "onelaser-xrf-desktop-laser-machine", vertigo: "vertigo-vertical-laser-engraver", "cobra 8": "cobra-8-90w-co2-laser-engraver-cutter", "cobra 10": "cobra-10-100w-co2-laser-engraver-cutter", "cobra 14": "cobra-14-130w-co2-laser-engraver-cutter", "hydra 7": "hydra-7-gen-2-70w-rf-co2-dual-laser-machine", "hydra 9": "hydra-9-gen-2-70w-rf-co2-dual-laser-machine", "hydra 13": "hydra-13-gen-2-70w-rf-co2-dual-laser-machine", "hydra 16": "hydra-16-gen-2-70w-rf-co2-dual-laser-machine", cobra: "cobra-10-100w-co2-laser-engraver-cutter", hydra: "hydra-9-gen-2-70w-rf-co2-dual-laser-machine" };
   const named = [];
   for (const series of ["xrf", "cobra", "hydra", "vertigo"]) {
-    const sizes = Object.keys(MODEL).filter((k) => k.startsWith(`${series} `) && new RegExp(`\\b${k.replace(" ", "\\s*")}\\b`).test(s));
+    const sizes = Object.keys(MODEL).filter((k) => k.startsWith(`${series} `) && new RegExp(`\\b${k.replace(" ", "[\\s-]*")}\\b`).test(s));
     if (sizes.length) named.push(...sizes.map((k) => MODEL[k])); else if (s.includes(series)) named.push(MODEL[series]);
   }
   if (has(s, [" vs", "versus", "compare", "difference", " or "]) && has(s, ["cobra", "hydra", "xrf", "vertigo"]))
@@ -283,7 +283,8 @@ function Table({ data }) {
 }
 
 const STORE = "onelaser-ai-v1";
-const load = () => { try { return JSON.parse(sessionStorage.getItem(STORE)) || {}; } catch { return {}; } };
+// A chat saved during Black Friday is dropped once the sale is over, so no old reply shows an expired price.
+const load = () => { try { const v = JSON.parse(sessionStorage.getItem(STORE)) || {}; return v.sale === saleOn ? v : {}; } catch { return {}; } };
 const keep = (v) => { try { sessionStorage.setItem(STORE, JSON.stringify(v)); } catch { /* private mode: this page only */ } };
 const wide = () => typeof window !== "undefined" && !window.matchMedia("(max-width: 860px)").matches;
 
@@ -304,7 +305,7 @@ export default function Assistant({ product }) {
   const [live, setLive] = useState(-1); // index of the reply that is still typing
   const [fb, setFb] = useState({});
   const [nudge, setNudge] = useState(false);
-  useEffect(() => { keep({ msgs, ans, open, ctx }); }, [msgs, ans, open, ctx]);
+  useEffect(() => { keep({ msgs, ans, open, ctx, sale: saleOn }); }, [msgs, ans, open, ctx]);
   useEffect(() => {
     if (!product || product.kind !== "machine") return undefined;
     let seen = false;
