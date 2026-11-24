@@ -50,7 +50,9 @@ export default function Checkout() {
   /* The bar never places the order itself: on the payment step it brings the in-page "Place order" button into view,
      so no tap on the bar (quick or slow) can submit. */
   const confirmRef = useRef(null);
-  const toConfirm = () => { confirmRef.current?.scrollIntoView({ behavior: "smooth", block: "center" }); confirmRef.current?.focus({ preventScroll: true }); };
+  const payHead = useRef(null);
+  // focus goes to the payment heading, not the button, so a held Enter key can never reach "Place order"
+  const toConfirm = () => { confirmRef.current?.scrollIntoView({ behavior: "smooth", block: "center" }); payHead.current?.focus({ preventScroll: true }); };
   const [method, setMethod] = useState("card");
   const [sameBill, setSameBill] = useState(true);
   const [code, setCode] = useState("");
@@ -203,7 +205,7 @@ export default function Checkout() {
             </section>
 
             <section className={`ik-card${step < 2 ? " off" : ""}`}>
-              <h2>{t("Payment method")}</h2>
+              <h2 ref={payHead} tabIndex={-1}>{t("Payment method")}</h2>
               {step === 2 && (
                 <>
                   {[
@@ -249,7 +251,7 @@ export default function Checkout() {
         {/* phones: the bar does the next step (save the address, continue to payment, go to the "Place order" button) */}
         {step === 0 && <button type="button" className="ik-pill" disabled={cool} onClick={saveAddress}>{t("Save and continue")}</button>}
         {step === 1 && <button type="button" className="ik-pill" disabled={cool} onClick={() => setStep(2)}>{t("Continue to payment")}</button>}
-        {step === 2 && <button type="button" className="ik-pill ghost" disabled={cool} onClick={toConfirm}>{t("Review and pay")}</button>}
+        {step === 2 && <button type="button" className="ik-pill ghost" disabled={cool || ended} onClick={toConfirm}>{t("Review and pay")}</button>}
       </div>
     </div>
   );

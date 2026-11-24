@@ -5137,3 +5137,4 @@ body:has(.ip-bar) .ai-pill, .pdp ~ .ai-pill { bottom: 104px; }
 .ik-confirm { display: none; }
 @media (max-width: 860px) { .ik-confirm { display: flex; margin-top: 16px; } .ik-confirm:focus-visible { outline: 3px solid var(--accent-ink); outline-offset: 3px; } }
 .iowners-stars i.off { color: #d9dbe0; }
+.ik-card h2[tabindex]:focus { outline: none; }
