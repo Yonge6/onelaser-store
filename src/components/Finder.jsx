@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { t } from "../i18n.js";
-import { asset, byHandle, frontImg, go, img, lockScroll, money, products, useFocusTrap, isTopDialog } from "../lib.js";
+import { asset, byHandle, frontImg, img, lockScroll, money, products, useFocusTrap, isTopDialog } from "../lib.js";
 import { AddButton, Icon, Link } from "./ui.jsx";
 import { contact, saleOn } from "../data/site.js";
 import { M, STEPS, rank as rankAll, roundFocus, hasRound, ready } from "./finderRules.js";
@@ -88,17 +88,10 @@ const warmFronts = () => {
   (window.requestIdleCallback || ((f) => setTimeout(f, 300)))(go);
 };
 
-/** "Find my machine" from anywhere (header, listing, assistant): go to the home page and bring the finder card into view. */
+/** "Find my machine" from anywhere (header, listing, assistant): opens the finder in a popup over the current page
+    (FinderPopup in App.jsx), so the visitor never loses their place. */
 export function goToFinder() {
-  go("/");
-  window.dispatchEvent(new Event("onelaser:finder")); // the home product block switches back to a machine tab
-  let tries = 0;
-  const seek = () => {
-    const el = document.querySelector(".ih-products .fx");
-    if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
-    else if (tries++ < 20) setTimeout(seek, 100);
-  };
-  setTimeout(seek, 60);
+  window.dispatchEvent(new Event("onelaser:finder-open"));
 }
 
 export default function FinderCard({ modal = false }) {

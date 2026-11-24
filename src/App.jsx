@@ -2,7 +2,7 @@ import { CartProvider } from "./cart.jsx";
 import { useRoute } from "./lib.js";
 import { useLang } from "./i18n.js";
 import { Footer, Header } from "./components/Chrome.jsx";
-import Home from "./pages/Home.jsx";
+import Home, { TrustDialog } from "./pages/Home.jsx";
 import Collection from "./pages/Collection.jsx";
 import Product from "./pages/Product.jsx";
 import Cart from "./pages/Cart.jsx";
@@ -42,6 +42,16 @@ function Page({ path, query }) {
   return <Home />;
 }
 
+/* The machine finder as a popup on any page ("Find my machine" in the header, the listing banner, the assistant).
+   Same finder card and answers as the one on the home page; it closes by itself when the visitor follows a link out of it. */
+function FinderPopup({ path }) {
+  const [open, setOpen] = useState(false);
+  useEffect(() => { const f = () => setOpen(true); window.addEventListener("onelaser:finder-open", f); return () => window.removeEventListener("onelaser:finder-open", f); }, []);
+  useEffect(() => setOpen(false), [path]);
+  // a link inside it (machine, details, booking) closes it, even when it points at the page already open underneath
+  return open ? <div onClickCapture={(e) => e.target.closest?.("a[href]") && setTimeout(() => setOpen(false))}><TrustDialog kind="finder" onClose={() => setOpen(false)} /></div> : null;
+}
+
 export default function App() {
   const { path, query } = useRoute();
   const lang = useLang(); // every t() call re-reads the language on re-render
@@ -55,6 +65,7 @@ export default function App() {
           <Header path={path} lang={lang} />
           <main key={`main-${lang}`}><Page path={path} query={query} /></main>
           <Footer key={`footer-${lang}`} />
+          <FinderPopup path={path} />
           {/* Shopping assistant while people are choosing (home, product, collection, search, compare).
               Left out of the single-goal pages: booking, financing, cart and checkout. */}
           {/^\/($|products\/|collections\/|search|compare)/.test(path) && <Assistant key={path.split("/")[2] || "site"} product={path.startsWith("/products/") ? byHandle[path.split("/")[2]] : null} />}

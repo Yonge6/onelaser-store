@@ -437,7 +437,7 @@ export default function Assistant({ product }) {
   };
   const openWith = (q) => { closeNudge(); setOpen(true); if (q) setTimeout(() => ask(q), 250); };
   const cat = ([k, name, h, model]) => (model ? (window.location.hash = `#/products/${h}`) : ask(k === "deals" ? "Show me Black Friday deals" : k === "rotary" ? "Rotary attachments" : tx("Show me the {name}", { name: { tpl: name } })));
-  const toFinder = () => { setOpen(false); goToFinder(); }; // the machine finder card on the home page
+  const toFinder = () => { setOpen(false); goToFinder(); }; // the machine finder popup
 
   return (
     <>
