@@ -35,7 +35,7 @@ const Field = ({ label, name, value, onChange, bad, required = true, className =
 const picture = (i) => (i.product.kind === "machine" ? frontImg(i.product) : i.variant.image || i.product.images[0]);
 
 export default function Checkout() {
-  const { picked: items, subtotal, savings, clearPicked } = useCart();
+  const { picked: items, subtotal, savings } = useCart();
   const [done, setDone] = useState(null);
   // the draft (address, notes) survives a refresh, e.g. "Refresh prices" when Black Friday ends mid-checkout
   const draft = useState(() => { try { return JSON.parse(sessionStorage.getItem(DRAFT)) || {}; } catch { return {}; } })[0];
@@ -70,7 +70,7 @@ export default function Checkout() {
   if (done)
     return (
       <div className="ik">{head}
-        <div className="ik-done"><span><Icon name="check" size={34} /></span><h1>{t("Thank you — this is a demo order")}</h1><p>{t("Confirmation page layout. No order was placed and no payment was taken. Demo total:")} {money(done)}.</p><Link to="/" className="ik-pill">{t("Back to store")}</Link></div>
+        <div className="ik-done"><span><Icon name="check" size={34} /></span><h1>{t("Thank you — this is a demo order")}</h1><p>{t("Confirmation page layout. No order was placed and no payment was taken. Demo total:")} {money(done.total)}.</p>{done.method !== "card" && <p>{t(done.method === "paypal" ? "On the live store you would now finish on PayPal." : "On the live store you would now finish with Shop Pay.")}</p>}<p>{t("Your cart and details are still here.")}</p><div className="ik-done-btns"><button type="button" className="ik-pill ghost" onClick={() => setDone(null)}>{t("Back to checkout")}</button><Link to="/" className="ik-pill">{t("Back to store")}</Link></div></div>
       </div>
     );
   if (!items.length)
@@ -105,8 +105,9 @@ export default function Checkout() {
       return;
     }
     if (!terms) { setTermsBad(true); document.getElementById("kx-terms")?.focus(); return; }
-    try { sessionStorage.removeItem(DRAFT); } catch { /* ignore */ }
-    setDone(total); clearPicked(); window.scrollTo(0, 0);
+    // design draft: nothing is charged and nothing is sent, so the cart and the typed details stay as they are
+    // (the live checkout clears them only after a confirmed order)
+    setDone({ total, method }); window.scrollTo(0, 0);
   };
   const applyCode = () => setCodeMsg(code.trim() ? t("Codes are checked on the live store. This draft does not apply discounts.") : t("Enter a code first."));
   const errors = Object.keys(err).filter((k) => err[k]).length;
@@ -201,7 +202,7 @@ export default function Checkout() {
           <section className="kx-sec">
             <h2>{t("Shipping method")}</h2>
             {quote ? (
-              <label className="kx-choice on"><input type="radio" name="ship" defaultChecked /><span><b>{t(machines ? "Freight delivery" : "Standard shipping")}</b><small>{quoteText(quote)[1]}</small></span><strong>{quoteCell(quote)}</strong></label>
+              <label className="kx-choice on"><input type="radio" name="ship" defaultChecked aria-label={t(machines ? "Freight delivery" : "Standard shipping")} /><span><b>{t(machines ? "Freight delivery" : "Standard shipping")}</b><small>{quoteText(quote)[1]}</small></span><strong>{quoteCell(quote)}</strong></label>
             ) : region ? (
               <p className={`ik-ship-live${shipBlocked ? " stop" : ""}`} role="status"><Icon name="truck" size={18} /><span><b>{t(SHIP_TEXT[region][0])}</b>{t(SHIP_TEXT[region][1])}</span></p>
             ) : (
@@ -222,7 +223,7 @@ export default function Checkout() {
                 ["paypal", "PayPal", ["paypal"]],
               ].map(([id, label, logos]) => (
                 <div key={id} className={`kx-pay-opt${method === id ? " on" : ""}`}>
-                  <label><input type="radio" name="pay" checked={method === id} onChange={() => setMethod(id)} /><b>{t(label)}</b><span className="kx-pay-logos">{logos.map((l) => <img key={l} src={asset(`pay/${l}.svg`)} alt="" />)}</span></label>
+                  <label><input type="radio" name="pay" checked={method === id} onChange={() => setMethod(id)} aria-label={t(label)} /><b>{t(label)}</b><span className="kx-pay-logos">{logos.map((l) => <img key={l} src={asset(`pay/${l}.svg`)} alt="" />)}</span></label>
                   {method === id && id === "card" && (
                     <div className="kx-pay-body">
                       <div className="ik-grid ik-cardfields">
@@ -253,7 +254,7 @@ export default function Checkout() {
             <TermsBox id="kx-terms" ok={terms} bad={termsBad && !terms} onChange={(v) => { setTerms(v); setTermsBad(false); }} />
             {errors > 0 && <p className="ik-err" role="alert">{t("Please check the fields marked in red.")}</p>}
             {ended && <p className="ik-err" role="alert">{t("Prices have changed since this page opened. Refresh to get a quote at today's prices.")}</p>}
-            <button type="button" className="kx-paynow" disabled={ended} onClick={payNow}>{t("Pay now")} · {money(total)}</button>
+            <button type="button" className="kx-paynow" disabled={ended} onClick={payNow}>{quote && !quote.partial ? `${t("Pay now")} · ${money(total)}` : t("Pay now")}</button>
             <p className="ik-legal">{t("Demo only: no charge and no order. On the live store, paying means you accept the OneLaser sales and privacy policies.")}</p>
           </div>
         </main>
