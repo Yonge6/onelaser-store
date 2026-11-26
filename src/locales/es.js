@@ -1032,7 +1032,7 @@ export default {
   "Business financing: OneLaser loan, First Citizens Bank & ClickLease": "Financiación para empresas: préstamo OneLaser, First Citizens Bank y ClickLease",
   "A business loan or lease-to-own, from $0 down and up to 60 months. Pick one and apply online.": "Préstamo empresarial o arrendamiento con compra, desde $0 de entrada y hasta 60 meses. Elige uno y solicítalo en línea.",
   "Apply now": "Solicitar ahora",
-  "Download cart items": "Descargar los artículos del carrito",
+  "Download cart items (CSV)": "Descargar los artículos del carrito (CSV)",
   "Quote for companies, schools, government and nonprofits": "Presupuesto para empresas, escuelas, gobierno y ONG",
   "Get an instant quote": "Obtener un presupuesto al instante",
   "Purchase order: email it to our sales team": "Orden de compra: envíala a nuestro equipo de ventas",

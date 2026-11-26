@@ -84,7 +84,7 @@ export default function PayOptions({ part = "main", className = "", lines, subto
             <p>{t("A business loan or lease-to-own, from $0 down and up to 60 months. Pick one and apply online.")}</p>
             <p className="po-acts">
               <button type="button" className="po-link" aria-expanded={lend} onClick={() => setLend((v) => !v)}>{t("Apply now")}<Icon name={lend ? "minus" : "plus"} size={14} /></button>
-              <button type="button" className="po-link" onClick={() => downloadItems(lines, shipFee, shipPartial)} disabled={!lines.length}>{t("Download cart items")}<Icon name="download" size={14} /></button>
+              <button type="button" className="po-link" onClick={() => downloadItems(lines, shipFee, shipPartial)} disabled={!lines.length}>{t("Download cart items (CSV)")}<Icon name="download" size={14} /></button>
             </p>
             {lend && (
               <ul className="po-lenders">

@@ -1124,7 +1124,7 @@ export default {
   "Business financing: OneLaser loan, First Citizens Bank & ClickLease": "企业融资：OneLaser 贷款、First Citizens Bank 和 ClickLease",
   "A business loan or lease-to-own, from $0 down and up to 60 months. Pick one and apply online.": "企业贷款或租赁后归你，最低 $0 首付，最长 60 个月。选一个在线申请。",
   "Apply now": "立即申请",
-  "Download cart items": "下载购物车清单",
+  "Download cart items (CSV)": "下载购物车清单（CSV）",
   "Quote for companies, schools, government and nonprofits": "为企业、学校、政府和非营利机构出报价单",
   "Get an instant quote": "立即生成报价单",
   "Purchase order: email it to our sales team": "采购单（PO）：发邮件给销售团队",

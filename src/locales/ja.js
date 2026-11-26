@@ -1031,7 +1031,7 @@ export default {
   "Business financing: OneLaser loan, First Citizens Bank & ClickLease": "法人向けファイナンス：OneLaser ローン、First Citizens Bank、ClickLease",
   "A business loan or lease-to-own, from $0 down and up to 60 months. Pick one and apply online.": "法人ローンまたはリース（最終的に所有）。頭金$0から、最長60か月。選んでオンラインで申し込めます。",
   "Apply now": "今すぐ申し込む",
-  "Download cart items": "カートの明細をダウンロード",
+  "Download cart items (CSV)": "カートの明細をダウンロード（CSV）",
   "Quote for companies, schools, government and nonprofits": "企業・学校・官公庁・非営利団体向けの見積もり",
   "Get an instant quote": "すぐに見積もりを作成",
   "Purchase order: email it to our sales team": "発注書（PO）：営業チームへメールで送付",
