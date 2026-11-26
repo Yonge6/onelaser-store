@@ -1022,6 +1022,7 @@ export default {
   "Financing, answered.": "Le financement, en clair.",
   "Find answers about choosing a machine, purchasing, financing and product support.": "Trouvez des réponses sur le choix d'une machine, l'achat, le financement et l'assistance produit.",
   "Find my machine": "Trouver ma machine",
+  "Total before tax": "Total hors taxes",
   "Estimated from your address at checkout": "Estimée selon votre adresse au paiement",
   "Estimated from your address": "Estimée selon votre adresse",
   "The final tax and total are confirmed by email after you place your order.": "Les taxes et le total définitifs sont confirmés par e-mail après votre commande.",

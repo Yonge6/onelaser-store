@@ -136,7 +136,7 @@ export default function Checkout() {
         {/* live: changes as soon as a ZIP is typed (rule from the shipping policy; the dollar rate once RATES is filled in) */}
         <div><dt>{t("Shipping")}</dt><dd>{quote ? quoteCell(quote) : region ? t(region === "lower48" ? "Fixed rate" : SHIP_TEXT[region][0]) : t("Enter your address")}</dd></div>
         <div><dt>{t("Tax")}</dt><dd>{t("Estimated from your address")}</dd></div>
-        <div className="total"><dt>{t("Total")}</dt><dd><small>USD</small> {money(total)}</dd></div>
+        <div className="total"><dt>{t("Total before tax")}</dt><dd><small>USD</small> {money(total)}</dd></div>
       </dl>
       <p className="ik-tax-note">{t("The final tax and total are confirmed by email after you place your order.")}</p>
       <div className="ik-tax">
@@ -273,7 +273,7 @@ export default function Checkout() {
       </div>
       <OfferGate />
       <div className="ik-bar">
-        <p><small>{t("Total")}</small><b>{money(total)}</b></p>
+        <p><small>{t("Total before tax")}</small><b>{money(total)}</b></p>
         {/* phones: the bar does the next step (save the address, continue to payment, go to the "Place order" button) */}
         {step === 0 && <button type="button" className="ik-pill" disabled={cool} onClick={saveAddress}>{t("Save and continue")}</button>}
         {step === 1 && <button type="button" className="ik-pill" disabled={cool} onClick={() => setStep(2)}>{t("Continue to payment")}</button>}

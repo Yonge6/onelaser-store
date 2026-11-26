@@ -1021,6 +1021,7 @@ export default {
   "Financing, answered.": "分割払いのよくある質問",
   "Find answers about choosing a machine, purchasing, financing and product support.": "機種選び、ご購入、分割払い、製品サポートについての回答をご覧いただけます。",
   "Find my machine": "自分に合う機種を探す",
+  "Total before tax": "税抜合計",
   "Estimated from your address at checkout": "購入手続きで住所から試算",
   "Estimated from your address": "住所から試算",
   "The final tax and total are confirmed by email after you place your order.": "最終的な税額と合計は、ご注文後にメールでお知らせします。",

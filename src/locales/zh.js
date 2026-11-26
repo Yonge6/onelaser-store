@@ -1114,6 +1114,7 @@ export default {
   "Financing partners": "分期合作方",
   "Financing, answered.": "分期常见问题",
   "Find my machine": "帮我选机器",
+  "Total before tax": "税前合计",
   "Estimated from your address at checkout": "结算时按收货地址估算",
   "Estimated from your address": "按收货地址估算",
   "The final tax and total are confirmed by email after you place your order.": "最终税费和总额会在下单后通过邮件确认。",
