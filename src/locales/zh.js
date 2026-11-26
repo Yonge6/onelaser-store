@@ -1771,4 +1771,6 @@ export default {
   "Type what's happening, like “autofocus stops early”, to find a guide, or pick your machine below.": "输入遇到的情况，比如“autofocus stops early”（教程为英文，用英文搜索更准），或在下面选择你的机器。",
   "Now in the Knowledge Base": "现在在知识库",
   "OneLaser Support Assistant": "OneLaser 售后助手",
+  "Open the OneLaser support assistant": "打开 OneLaser 售后助手",
+  "OneLaser support assistant": "OneLaser 售后助手",
 };

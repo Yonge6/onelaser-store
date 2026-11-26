@@ -1771,4 +1771,6 @@ export default {
   "Type what's happening, like “autofocus stops early”, to find a guide, or pick your machine below.": "Beschreiben Sie das Problem, etwa „autofocus stops early“ (die Anleitungen sind auf Englisch), oder wählen Sie unten Ihre Maschine.",
   "Now in the Knowledge Base": "Jetzt in der Wissensdatenbank",
   "OneLaser Support Assistant": "OneLaser Support-Assistent",
+  "Open the OneLaser support assistant": "OneLaser Support-Assistenten öffnen",
+  "OneLaser support assistant": "OneLaser Support-Assistent",
 };

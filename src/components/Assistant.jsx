@@ -283,9 +283,10 @@ function reply(raw, product) {
 /** Knowledge Base replies: support on request, store questions as usual, otherwise the best matching guides. */
 function guideReply(raw, guides) {
   const s = raw.toLowerCase();
-  if (has(s, ["talk to", "person", "human", "call", "phone", "ticket", "contact", "technician"]))
+  // whole words only: "automatically" is not a request to call, "return the head to origin" is not about returns
+  if (/\b(talk to|person|human|call|phone|ticket|contact|technician|agent)\b/.test(s))
     return { text: tx("Our U.S. support team can help. Open a support ticket, or call {phone}.", { phone }), links: [["Open a support ticket", SUPPORT_TICKET], [tx("Call {phone}", { phone }), `tel:${contact.tel}`]], src: ["OneLaser contact details"], next: GUIDE_CHIPS.slice(0, 3) };
-  if (has(s, ["price", "buy", "deal", "sale", "financ", "monthly", "ship", "deliver", "return", "refund", "warranty", "which laser", "recommend"])) return reply(raw, null);
+  if (/\b(price|prices|buy|deals?|sale|financing|finance|monthly payments?|shipping|ship to|delivery|return policy|refund|warranty|which laser|recommend)\b/.test(s)) return reply(raw, null);
   const found = guides(raw);
   if (found.length)
     return { text: found.length === 1 ? "This guide should help:" : "These guides should help:", links: found.map((g) => [g.title, `/wiki/${g.slug}`]), src: ["OneLaser Knowledge Base"], next: ["Contact support", ...GUIDE_CHIPS.filter((c) => c !== "Contact support").slice(0, 2)] };
@@ -444,7 +445,8 @@ export default function Assistant({ product, guides }) {
     setText("");
     setTyping(true);
     if (/which laser fits|help me choose|find my laser/i.test(v)) { setAns({}); setTimeout(() => answer(guide({}, "Let's find your match in 3 quick taps.")), 500); return; }
-    setTimeout(() => answer(guides ? guideReply(v, guides) : reply(v, product)), 600);
+    if (guides) { Promise.all([guides.prepare?.(), new Promise((r) => setTimeout(r, 600))]).then(() => answer(guideReply(v, guides))); return; }
+    setTimeout(() => answer(reply(v, product)), 600);
   };
   const pick = (id, val, label) => {
     if (typing) return;
@@ -455,7 +457,10 @@ export default function Assistant({ product, guides }) {
     setTimeout(() => answer(guide(next)), 450);
   };
   const openWith = (q) => { closeNudge(); setOpen(true); if (q) setTimeout(() => ask(q), 250); };
-  const cat = ([k, name, h, model, to]) => (to ? ((window.location.hash = `#${to}`), !wide() && close()) : model ? (window.location.hash = `#/products/${h}`) : ask(k === "deals" ? "Show me Black Friday deals" : k === "rotary" ? "Rotary attachments" : tx("Show me the {name}", { name: { tpl: name } })));
+  // A machine card in Knowledge Base mode: on phones the drawer's own history entry is replaced by the target page
+  // (going back first would undo the jump); on desktop the panel stays open beside the page.
+  const goTo = (to) => { if (pushed.current) { pushed.current = false; setOpen(false); window.location.replace(`#${to}`); } else { if (!wide()) setOpen(false); window.location.hash = `#${to}`; } };
+  const cat = ([k, name, h, model, to]) => (to ? goTo(to) : model ? (window.location.hash = `#/products/${h}`) : ask(k === "deals" ? "Show me Black Friday deals" : k === "rotary" ? "Rotary attachments" : tx("Show me the {name}", { name: { tpl: name } })));
   const toFinder = () => { setOpen(false); goToFinder(); }; // the machine finder popup
 
   return (
@@ -469,13 +474,13 @@ export default function Assistant({ product, guides }) {
           </button>
         </div>
       )}
-      <button type="button" className={`ai-pill${open ? " hide" : ""}${mini ? " mini" : ""}`} onClick={() => openWith()} aria-label={t("Open the OneLaser shopping assistant")} aria-expanded={open}>
+      <button type="button" className={`ai-pill${open ? " hide" : ""}${mini ? " mini" : ""}`} onClick={() => openWith()} aria-label={guides ? t("Open the OneLaser support assistant") : t("Open the OneLaser shopping assistant")} aria-expanded={open}>
         <span className="ai-avatar"><Icon name="sparkle" size={20} /></span>
         <span className="ai-pill-text" key={label}>{say(labels[label % labels.length])}</span>
       </button>
       {open && <div className="ai-backdrop" data-dialog-backdrop="" onClick={close} aria-hidden="true" />}
       {open && (
-        <div ref={panel} className={`ai-panel${msgs.length ? " chatting" : ""}${dy ? " dragging" : ""}`} role="dialog" aria-modal={sheet ? "true" : "false"} aria-label={t("OneLaser shopping assistant")} style={dy ? { transform: `translateY(${dy}px)` } : undefined}>
+        <div ref={panel} className={`ai-panel${msgs.length ? " chatting" : ""}${dy ? " dragging" : ""}`} role="dialog" aria-modal={sheet ? "true" : "false"} aria-label={guides ? t("OneLaser support assistant") : t("OneLaser shopping assistant")} style={dy ? { transform: `translateY(${dy}px)` } : undefined}>
           <div className="ai-grab" onTouchStart={onTouchStart} onTouchMove={onTouchMove} onTouchEnd={onTouchEnd} aria-hidden="true"><i /></div>
           <header className="ai-head" onTouchStart={onTouchStart} onTouchMove={onTouchMove} onTouchEnd={onTouchEnd}>
             <span className="ai-avatar sm"><Icon name="sparkle" size={16} /></span>

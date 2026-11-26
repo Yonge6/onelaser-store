@@ -90,6 +90,7 @@ const ASK_STOP = new Set(["an", "the", "to", "of", "for", "and", "or", "in", "on
 const ASK_SAME = { updat: "upgrad" }; // "update the firmware" finds the "Firmware Upgrade" guides
 const stemOf = (w) => { const s = w.slice(0, 5); return ASK_SAME[s] || s; };
 const FAMILY_WORDS = { "x-series": /\b(xrf|xt|x[\s-]?series)\b/, "hydra-series": /\bhydra\b/, cobra: /\bcobra\b/, vertigo: /\bvertigo\b/ };
+const MACHINE_FAMILIES = new Set(["x-series", "hydra-series", "cobra", "vertigo"]);
 const FAMILY_NAMES = new Set(["xrf", "xt", "hydra", "cobra", "vertigo"]);
 export function assistGuides(q) {
   loadBodies(); // full text for the next question; titles and summaries meanwhile
@@ -106,6 +107,7 @@ export function assistGuides(q) {
         if (title.includes(w)) { score += 6; hits++; } else if (about.includes(w)) { score += 3; hits++; } else if (text.includes(w)) { score += 1; hits++; }
       }
       if (fam && a.family === fam) score += 4;
+      if (fam && a.family !== fam && MACHINE_FAMILIES.has(a.family)) return null; // "Cobra firmware" never offers X Series or Hydra guides
       if (a.topic === "troubleshooting") score += 1;
       return hits >= need && score >= 6 ? { a, score } : null;
     })
@@ -114,6 +116,8 @@ export function assistGuides(q) {
     .slice(0, 3)
     .map((x) => x.a);
 }
+
+assistGuides.prepare = loadBodies; // the assistant waits for the full text (or its failure) before answering
 
 function useTitle(title) {
   useEffect(() => { document.title = `${title} | OneLaser`; return () => { document.title = "OneLaser Store — Redesign Draft"; }; }, [title]);
