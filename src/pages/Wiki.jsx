@@ -284,7 +284,7 @@ function Family({ f, topic }) {
         {shown.map((k) => (
           <div key={k} className="wk-group">
             <h2 className="wk-h2">{topicName(k)}</h2>
-            <div className="wk-cards">{all.filter((a) => a.topic === k && a !== start).sort((x, y) => x.title.localeCompare(y.title)).map((a) => <GuideCard key={a.id} a={a} showFamily={false} />)}</div>
+            <div className="wk-cards">{all.filter((a) => a.topic === k && (topic || a !== start)).sort((x, y) => x.title.localeCompare(y.title)).map((a) => <GuideCard key={a.id} a={a} showFamily={false} />)}</div>
           </div>
         ))}
       </section>
@@ -294,7 +294,7 @@ function Family({ f, topic }) {
 
 const scrollToId = (id) => { const el = id && document.getElementById(id); if (el) el.scrollIntoView({ behavior: "smooth", block: "start" }); return !!el; };
 
-function Toc({ toc, open, onToggle }) {
+function Toc({ slug, toc, open, onToggle }) {
   if (toc.length < 2) return null;
   return (
     <nav className={`wk-toc${open ? " open" : ""}`} aria-label={t("On this page")}>
@@ -302,7 +302,7 @@ function Toc({ toc, open, onToggle }) {
       <ol>
         {toc.map((h) => (
           <li key={h.id} className={h.level === 3 ? "sub" : ""}>
-            <a href={`#/wiki`} data-anchor={h.id} onClick={(e) => { e.preventDefault(); scrollToId(h.id); }}>{h.text}</a>
+            <a href={`#/wiki/${slug}?h=${encodeURIComponent(h.id)}`} data-anchor={h.id} onClick={(e) => { e.preventDefault(); scrollToId(h.id); }}>{h.text}</a>
           </li>
         ))}
       </ol>
@@ -331,7 +331,7 @@ function Guide({ a, anchor }) {
         <Crumbs items={[[t("Product Knowledge Base"), "/wiki"], [familyName(a.family), `/wiki/${a.family}`], [a.title]]} />
       </div>
       <div className="container wk-guide">
-        <aside className="wk-aside">{page && <Toc toc={page.toc} open={tocOpen} onToggle={() => setTocOpen(!tocOpen)} />}</aside>
+        <aside className="wk-aside">{page && <Toc slug={a.slug} toc={page.toc} open={tocOpen} onToggle={() => setTocOpen(!tocOpen)} />}</aside>
         <article className="wk-article">
           <p className="wk-meta"><Link to={`/wiki${qs({ topic: a.topic, family: a.family })}`}>{topicName(a.topic)}</Link><span>{tf("{n} min read", { n: a.min })}</span>{a.updated && <span>{tf("Updated {date}", { date: date(a.updated) })}</span>}</p>
           <h1 className="wk-title">{a.title}</h1>

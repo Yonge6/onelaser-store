@@ -100,6 +100,7 @@ function clean(html, selfSlug) {
   });
   return out.replace(/<p>\s*<\/p>/g, "").trim();
 }
+const STOP = new Set("a an the to of for and in on with how your you is my".split(" "));
 const text = (html) => decode(html.replace(/<[^>]+>/g, " ").replace(/&nbsp;/g, " ")).replace(/\s+/g, " ").trim();
 
 // ---- titles: drop SEO tails ("X Series Wiki | Setup, …"), tell repeated titles apart ----
@@ -126,7 +127,14 @@ for (const a of library.articles) {
   const slug = idToSlug.get(a.id);
   let html = clean(art.body_html, slug);
   // The body opens with the page title as a heading; the store page shows the title itself.
-  html = html.replace(/^(<div>)?\s*<h2[^>]*>[\s\S]*?<\/h2>/, "$1");
+  // Only when that heading repeats the title (most of its words are in the title); a first section such as "Step 1" stays.
+  const words = (x) => new Set(x.toLowerCase().split(/[^a-z0-9]+/).filter((w) => w && !STOP.has(w)));
+  const first = /^(<div>)?\s*<h2[^>]*>([\s\S]*?)<\/h2>/.exec(html);
+  if (first) {
+    const h = words(text(first[2])), ti = words(`${a.title} ${titles.get(a.id)}`);
+    const shared = [...h].filter((w) => ti.has(w)).length;
+    if (h.size && shared / Math.min(h.size, words(titles.get(a.id)).size || 1) >= 0.6) html = html.replace(first[0], first[1] || "");
+  }
   const toc = [...html.matchAll(/<h([23]) id="([^"]+)">([\s\S]*?)<\/h\1>/g)].map((m) => ({ id: decode(m[2]), level: +m[1], text: text(m[3]) })).filter((h) => h.text);
   fs.writeFileSync(path.join(tmpDir, `${a.id}.json`), JSON.stringify({ html, toc }));
   const body = text(html);
@@ -161,17 +169,18 @@ const oldList = `${listFile}.old`;
 fs.writeFileSync(listTmp, JSON.stringify({ snapshot: manifest.source_snapshot_date, families: FAMILIES, articles: list }, null, 0) + "\n");
 fs.rmSync(oldDir, { recursive: true, force: true });
 fs.rmSync(oldList, { force: true });
-const hadDir = fs.existsSync(outDir);
-const hadList = fs.existsSync(listFile);
+// Each step is recorded once it succeeded, and a rollback undoes only those steps (never deletes the old guides still in place).
+const done = { oldDir: false, oldList: false, newDir: false, newList: false };
 try {
-  if (hadDir) fs.renameSync(outDir, oldDir);
-  if (hadList) fs.renameSync(listFile, oldList);
-  fs.renameSync(tmpDir, outDir);
-  fs.renameSync(listTmp, listFile);
+  if (fs.existsSync(outDir)) { fs.renameSync(outDir, oldDir); done.oldDir = true; }
+  if (fs.existsSync(listFile)) { fs.renameSync(listFile, oldList); done.oldList = true; }
+  fs.renameSync(tmpDir, outDir); done.newDir = true;
+  fs.renameSync(listTmp, listFile); done.newList = true;
 } catch (err) {
-  fs.rmSync(outDir, { recursive: true, force: true });
-  if (hadDir && fs.existsSync(oldDir)) fs.renameSync(oldDir, outDir);
-  if (hadList && fs.existsSync(oldList)) fs.renameSync(oldList, listFile);
+  if (done.newList) fs.rmSync(listFile, { force: true });
+  if (done.newDir) fs.rmSync(outDir, { recursive: true, force: true });
+  if (done.oldDir) fs.renameSync(oldDir, outDir);
+  if (done.oldList) fs.renameSync(oldList, listFile);
   fs.rmSync(tmpDir, { recursive: true, force: true });
   fs.rmSync(listTmp, { force: true });
   console.error("[wiki] could not replace the data, previous version kept:", err.message);
