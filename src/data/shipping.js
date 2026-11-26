@@ -46,4 +46,4 @@ export const SHIP_TEXT = {
   military: ["We can't ship to APO/FPO addresses or P.O. Boxes", "Please enter a street address in the 50 states."],
 };
 /** A P.O. Box in the street line (the policy does not ship there). */
-export const isPoBox = (s) => /\bp\.?\s*o\.?\s*box\b|\bpost\s+office\s+box\b/i.test(String(s || ""));
+export const isPoBox = (s) => /\bp\.?\s*o\.?\s*box|\bpost\s+office\s+box/i.test(String(s || ""));

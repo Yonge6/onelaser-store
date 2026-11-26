@@ -1114,6 +1114,8 @@ export default {
   "Financing partners": "分期合作方",
   "Financing, answered.": "分期常见问题",
   "Find my machine": "帮我选机器",
+  "Want address suggestions as you type? The street you type here is sent to Komoot's Photon service (OpenStreetMap data).": "需要边输入边提示地址吗？开启后，你在这里输入的街道会发送给 Komoot 的 Photon 服务（OpenStreetMap 数据）。",
+  "Suggestions by Komoot Photon · OpenStreetMap": "地址建议：Komoot Photon · OpenStreetMap",
   "Want address suggestions as you type? What you type here is sent to OpenStreetMap.": "需要边输入边提示地址吗？开启后，你在这里输入的内容会发送给 OpenStreetMap。",
   "Turn on": "开启",
   "Custom shipping quote for Alaska and Hawaii": "阿拉斯加和夏威夷单独报运费",

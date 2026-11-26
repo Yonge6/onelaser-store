@@ -1021,6 +1021,8 @@ export default {
   "Financing, answered.": "分割払いのよくある質問",
   "Find answers about choosing a machine, purchasing, financing and product support.": "機種選び、ご購入、分割払い、製品サポートについての回答をご覧いただけます。",
   "Find my machine": "自分に合う機種を探す",
+  "Want address suggestions as you type? The street you type here is sent to Komoot's Photon service (OpenStreetMap data).": "入力中に住所の候補を表示しますか？ここに入力した番地は Komoot の Photon サービス（OpenStreetMap のデータ）に送信されます。",
+  "Suggestions by Komoot Photon · OpenStreetMap": "候補：Komoot Photon・OpenStreetMap",
   "Want address suggestions as you type? What you type here is sent to OpenStreetMap.": "入力中に住所の候補を表示しますか？ここに入力した内容は OpenStreetMap に送信されます。",
   "Turn on": "オンにする",
   "Custom shipping quote for Alaska and Hawaii": "アラスカ・ハワイは送料を個別にお見積り",

@@ -2,14 +2,16 @@ import { useEffect, useRef, useState } from "react";
 import { t } from "../i18n.js";
 import { Icon } from "./ui.jsx";
 
-/* Street address with suggestions while typing (free OpenStreetMap search by Photon / komoot, no key, no cost).
+/* Street address with suggestions while typing (Komoot's free public Photon service, OpenStreetMap data; no key, no cost).
    Picking a suggestion fills street, city, state and ZIP; the buyer can always keep typing their own address.
-   Nothing is sent until the buyer turns suggestions on (the notice under the field names OpenStreetMap); then only what is
-   typed in this field is sent, after 4+ characters and a short pause. The choice is kept for the visit. */
+   Nothing is sent until the buyer turns suggestions on (the notice names Komoot and says what is sent), and after that only
+   when the buyer edits this field: an address restored from a draft is never sent. Only this field's text is sent, after
+   4+ characters and a short pause. The choice is kept for the visit. */
 const CONSENT = "onelaser-addr-suggest";
 const STATE_NAMES = new Set(["Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado", "Connecticut", "Delaware", "District of Columbia", "Florida", "Georgia", "Hawaii", "Idaho", "Illinois", "Indiana", "Iowa", "Kansas", "Kentucky", "Louisiana", "Maine", "Maryland", "Massachusetts", "Michigan", "Minnesota", "Mississippi", "Missouri", "Montana", "Nebraska", "Nevada", "New Hampshire", "New Jersey", "New Mexico", "New York", "North Carolina", "North Dakota", "Ohio", "Oklahoma", "Oregon", "Pennsylvania", "Rhode Island", "South Carolina", "South Dakota", "Tennessee", "Texas", "Utah", "Vermont", "Virginia", "Washington", "West Virginia", "Wisconsin", "Wyoming"]);
 const pick = (p) => ({
   street: [p.housenumber, p.street || p.name].filter(Boolean).join(" "),
+  hasNumber: !!p.housenumber, // a full address; street-only results never replace the buyer's own line
   city: p.city || p.town || p.village || p.district || p.county || "",
   state: STATE_NAMES.has(p.state) ? p.state : "",
   zip: /^\d{5}$/.test(p.postcode || "") ? p.postcode : "",
@@ -21,7 +23,8 @@ export default function AddressSuggest({ value, onChange, onPick, bad }) {
   const [hi, setHi] = useState(-1);
   const typed = useRef(false); // only search after the buyer types, not when a saved draft fills the field
   const [on, setOn] = useState(() => { try { return sessionStorage.getItem(CONSENT) === "1"; } catch { return false; } });
-  const turnOn = () => { setOn(true); typed.current = true; try { sessionStorage.setItem(CONSENT, "1"); } catch { /* private mode */ } };
+  const turnOn = () => { setOn(true); try { sessionStorage.setItem(CONSENT, "1"); } catch { /* private mode */ } };
+  const focused = useRef(false);
   useEffect(() => {
     const q = String(value || "").trim();
     setList([]); // results always belong to what is typed now
@@ -29,7 +32,7 @@ export default function AddressSuggest({ value, onChange, onPick, bad }) {
     const num = (q.match(/^\d+/) || [""])[0];
     const ctl = new AbortController();
     const id = setTimeout(() => {
-      fetch(`https://photon.komoot.io/api/?q=${encodeURIComponent(q)}&limit=6&lang=en&layer=house&layer=street`, { signal: ctl.signal })
+      fetch(`https://photon.komoot.io/api/?q=${encodeURIComponent(q)}&limit=6&lang=en&layer=house&layer=street&countrycode=US`, { signal: ctl.signal })
         .then((r) => r.json())
         .then((j) => {
           const seen = new Set();
@@ -37,6 +40,7 @@ export default function AddressSuggest({ value, onChange, onPick, bad }) {
             .filter((a) => a.street && a.city && !seen.has(a.street + a.city) && seen.add(a.street + a.city))
             // the house number the buyer typed comes first
             .sort((a, b) => (num && b.street.startsWith(num + " ") ? 1 : 0) - (num && a.street.startsWith(num + " ") ? 1 : 0)).slice(0, 5);
+          if (!focused.current) return; // the buyer has moved on: a late answer never reopens the list
           setList(out); setHi(-1); setOpen(true);
         })
         .catch(() => {}); // offline or blocked: the field still works as a plain input
@@ -44,8 +48,7 @@ export default function AddressSuggest({ value, onChange, onPick, bad }) {
     return () => { clearTimeout(id); ctl.abort(); };
   }, [value, on]);
   const choose = (a) => {
-    const full = /^\d/.test(a.street);
-    onPick(full ? a : { ...a, street: String(value || "") }); // street-only suggestion: keep what was typed (with its number)
+    onPick(a.hasNumber ? a : { ...a, street: String(value || "") }); // street-only suggestion: keep what was typed (with its number)
     setOpen(false); setList([]); typed.current = false;
   };
   const key = (e) => {
@@ -61,11 +64,11 @@ export default function AddressSuggest({ value, onChange, onPick, bad }) {
       <label className={`ik-field ${bad ? "bad" : ""}`}>
         <input placeholder=" " name="street" autoComplete="address-line1" value={value || ""} role="combobox" aria-expanded={show} aria-controls="ik-addr-list" aria-autocomplete="list"
           aria-activedescendant={show && hi >= 0 ? `ik-addr-${hi}` : undefined}
-          onChange={(e) => { typed.current = true; onChange("street", e.target.value); }} onKeyDown={key} onBlur={() => setTimeout(() => { setOpen(false); typed.current = false; }, 150)} onFocus={() => list.length && setOpen(true)} />
+          onChange={(e) => { typed.current = true; onChange("street", e.target.value); }} onKeyDown={key} onBlur={() => { focused.current = false; setTimeout(() => { setOpen(false); typed.current = false; }, 150); }} onFocus={() => { focused.current = true; if (list.length) setOpen(true); }} />
         <span>{t("Street address")}<i> *</i></span>
       </label>
       {!on && (
-        <p className="ik-addr-ask">{t("Want address suggestions as you type? What you type here is sent to OpenStreetMap.")} <button type="button" onClick={turnOn}>{t("Turn on")}</button></p>
+        <p className="ik-addr-ask">{t("Want address suggestions as you type? The street you type here is sent to Komoot's Photon service (OpenStreetMap data).")} <button type="button" onClick={turnOn}>{t("Turn on")}</button></p>
       )}
       {show && (
         <ul className="ik-addr-list" id="ik-addr-list" role="listbox" aria-label={t("Suggested addresses")}>
@@ -74,7 +77,7 @@ export default function AddressSuggest({ value, onChange, onPick, bad }) {
               <Icon name="pin" size={16} /><span><b>{a.street}</b><small>{[a.city, a.state, a.zip].filter(Boolean).join(", ")}</small></span>
             </li>
           ))}
-          <li className="ik-addr-src" aria-hidden="true">{t("Powered by OpenStreetMap")}</li>
+          <li className="ik-addr-src" aria-hidden="true">{t("Suggestions by Komoot Photon · OpenStreetMap")}</li>
         </ul>
       )}
     </div>

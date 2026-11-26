@@ -169,7 +169,7 @@ export default function Checkout() {
                     <Field label={t("First name")} name="first" autoComplete="given-name" value={f.first} onChange={set} bad={err.first} />
                     <Field label={t("Last name")} name="last" autoComplete="family-name" value={f.last} onChange={set} bad={err.last} />
                     <Field label={t("Mobile number")} name="phone" type="tel" autoComplete="tel" value={f.phone} onChange={set} bad={err.phone} className="c2" />
-                    <AddressSuggest value={f.street} onChange={set} bad={err.street} onPick={(a) => { setF((x) => ({ ...x, street: a.street, city: a.city, state: a.state, zip: a.zip })); setErr((e) => ({ ...e, street: false, city: false, state: false, zip: false })); }} />
+                    <AddressSuggest value={f.street} onChange={set} bad={err.street} onPick={(a) => { setF((x) => ({ ...x, street: a.street, city: a.city || x.city, state: a.state || x.state, zip: a.zip || x.zip })); setErr((e) => ({ ...e, street: false, city: false, state: false, zip: false })); }} />
                     <Field label={t("Apt, Suite, Building (Optional)")} name="apt" autoComplete="address-line2" value={f.apt} onChange={set} required={false} bad={err.apt} className="c2" />
                     <p className="ik-note c2">{t("* The address should be in the country or region you have selected.")}<br />{t("* To facilitate delivery, please do not enter a P.O. Box, FPO, APO address, or remote area.")}</p>
                     <Field label={t("City")} name="city" autoComplete="address-level2" value={f.city} onChange={set} bad={err.city} />

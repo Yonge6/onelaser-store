@@ -1022,6 +1022,8 @@ export default {
   "Financing, answered.": "Financiación: tus dudas, resueltas.",
   "Find answers about choosing a machine, purchasing, financing and product support.": "Encuentra respuestas sobre cómo elegir una máquina, comprar, financiar y el soporte de productos.",
   "Find my machine": "Encontrar mi máquina",
+  "Want address suggestions as you type? The street you type here is sent to Komoot's Photon service (OpenStreetMap data).": "¿Quieres sugerencias de dirección mientras escribes? La calle que escribas aquí se envía al servicio Photon de Komoot (datos de OpenStreetMap).",
+  "Suggestions by Komoot Photon · OpenStreetMap": "Sugerencias: Komoot Photon · OpenStreetMap",
   "Want address suggestions as you type? What you type here is sent to OpenStreetMap.": "¿Quieres sugerencias de dirección mientras escribes? Lo que escribas aquí se envía a OpenStreetMap.",
   "Turn on": "Activar",
   "Custom shipping quote for Alaska and Hawaii": "Cotización de envío aparte para Alaska y Hawái",
