@@ -1754,4 +1754,8 @@ export default {
   "Refresh to load the latest version of the store.": "刷新即可加载最新版本的商城。",
   "Refresh": "刷新",
   "Back to the store": "返回商城",
+  "This page didn't load.": "页面没有加载出来。",
+  "Refresh to load the latest version of the store.": "刷新即可加载最新版本的商城。",
+  "Refresh": "刷新",
+  "Back to the store": "返回商城",
 };

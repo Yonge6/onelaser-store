@@ -51,7 +51,8 @@ const qs = (o) => { const p = new URLSearchParams(Object.entries(o).filter(([, v
 // Guide text for search, fetched once on the first search (about 190 KB compressed).
 let bodies = null;
 let bodiesLoad = null;
-const loadBodies = () => (bodiesLoad ??= fetch(dataUrl("search.json")).then((r) => (r.ok ? r.json() : {})).then((j) => (bodies = j)).catch(() => (bodiesLoad = null, {})));
+// A failed fetch is not remembered, so the next search tries again (titles and summaries are still searched meanwhile).
+const loadBodies = () => (bodiesLoad ??= fetch(dataUrl("search.json")).then((r) => { if (!r.ok) throw new Error(String(r.status)); return r.json(); }).then((j) => (bodies = j)).catch(() => { bodiesLoad = null; return null; }));
 const pages = new Map();
 const loadPage = (id) => (pages.has(id) ? Promise.resolve(pages.get(id)) : fetch(dataUrl(`${id}.json`)).then((r) => { if (!r.ok) throw new Error(String(r.status)); return r.json(); }).then((j) => (pages.set(id, j), j)));
 
@@ -222,7 +223,7 @@ function Chips({ label, value, options, make }) {
 
 function Results({ q, family, topic }) {
   const [body, setBody] = useState(bodies);
-  useEffect(() => { if (q && !body) loadBodies().then(setBody); }, [q, body]);
+  useEffect(() => { if (q && !bodies) loadBodies().then((b) => setBody(b || {})); }, [q]);
   const list = useMemo(() => find(q, body, family, topic), [q, body, family, topic]);
   useTitle(q ? tf("Search results for “{q}”", { q }) : t("All guides"));
   const heading = q ? tf("Results for “{q}”", { q }) : topic ? topicName(topic) : family ? familyName(family) : t("All guides");
@@ -371,7 +372,9 @@ function NotFound() {
 }
 
 export default function Wiki({ rest, query }) {
-  const slug = decodeURIComponent(rest || "").replace(/^\/+|\/+$/g, "").toLowerCase();
+  let slug;
+  try { slug = decodeURIComponent(rest || ""); } catch { slug = "\u0000"; } // malformed address (e.g. "%E0"): "guide not found", not a blank page
+  slug = slug.replace(/^\/+|\/+$/g, "").toLowerCase();
   const q = (query.get("q") || "").trim().slice(0, 100);
   const family = FAMILY_ORDER.includes(query.get("family")) ? query.get("family") : "";
   const topic = TOPIC_ORDER.includes(query.get("topic")) ? query.get("topic") : "";

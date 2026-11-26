@@ -14,11 +14,31 @@ import Finance from "./pages/Finance.jsx";
 import Assistant from "./components/Assistant.jsx";
 import FinderFlow from "./components/FinderFlow.jsx";
 import { byHandle } from "./lib.js";
-import { lazy, Suspense, useEffect, useState } from "react";
+import { Component, lazy, Suspense, useEffect, useState } from "react";
 import { t } from "./i18n.js";
 
 // The Knowledge Base (236 guides) loads only when someone opens it, so shop pages stay as light as before.
 const Wiki = lazy(() => import("./pages/Wiki.jsx"));
+
+/** If a page loaded on demand fails (an old tab after a new version went live, or a dropped connection), show a way out
+    instead of letting the error take down the whole store. */
+class PageBoundary extends Component {
+  state = { failed: false };
+  static getDerivedStateFromError() { return { failed: true }; }
+  render() {
+    if (!this.state.failed) return this.props.children;
+    return (
+      <section className="container page-failed" style={{ padding: "96px 24px", display: "grid", gap: 12, justifyItems: "start" }}>
+        <h1 style={{ fontSize: 28, lineHeight: "36px", fontWeight: 700 }}>{t("This page didn't load.")}</h1>
+        <p className="muted">{t("Refresh to load the latest version of the store.")}</p>
+        <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
+          <button type="button" className="btn-primary" onClick={() => window.location.reload()}>{t("Refresh")}</button>
+          <a href="#/" className="btn-soft">{t("Back to the store")}</a>
+        </div>
+      </section>
+    );
+  }
+}
 
 /** Shown when Black Friday ends while the page is open: prices on screen are the old ones until the visitor refreshes. */
 function SaleEnded() {
@@ -42,7 +62,7 @@ function Page({ path, query }) {
   if (section === "pages" && handle === "sales-consultation") return <Consult />;
   if (section === "pages" && handle === "financing") return <Finance key={query.toString()} query={query} />;
   if (section === "find-my-machine") return <FinderFlow page />; // Figma 4-question version, to compare with the home finder
-  if (section === "wiki") return <Suspense fallback={<div className="page-loading" style={{ minHeight: "70vh" }} />}><Wiki rest={path.slice("/wiki".length)} query={query} /></Suspense>; // Product Knowledge Base, later 1laser.com/wiki
+  if (section === "wiki") return <PageBoundary key={path}><Suspense fallback={<div className="page-loading" style={{ minHeight: "70vh" }} />}><Wiki rest={path.slice("/wiki".length)} query={query} /></Suspense></PageBoundary>; // Product Knowledge Base, later 1laser.com/wiki
   if (section === "cart") return <Cart />;
   return <Home />;
 }

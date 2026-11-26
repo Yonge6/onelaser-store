@@ -50,9 +50,11 @@ const attrsOf = (s) => Object.fromEntries([...s.matchAll(/([a-z-]+)\s*=\s*("([^"
 const decode = (v) => v.replace(/&amp;/g, "&").replace(/&#x([0-9a-f]+);/gi, (_, h) => String.fromCodePoint(parseInt(h, 16))).replace(/&#(\d+);/g, (_, d) => String.fromCodePoint(+d));
 
 let unresolved = 0;
+let placeholders = 0;
 function link(href, selfSlug) {
   href = decode(href.trim());
   if (/^(javascript|data|vbscript):/i.test(href.replace(/\s/g, ""))) return null;
+  if (/YOUR_[A-Z0-9_]+/.test(href)) { placeholders++; return null; } // unfinished links in the source (e.g. ".../YOUR_CHILLER_URL"): show the text without a link
   const art = /^\/?#\/article\/(en-\d+)/.exec(href);
   if (art) { const s = idToSlug.get(art[1]); if (s) return { to: s }; unresolved++; return null; }
   if (/^#[^/]/.test(href)) return { anchor: href.slice(1), to: selfSlug };
@@ -111,9 +113,12 @@ for (const a of library.articles) {
 }
 
 // ---- write ----
+// Everything is written to a temporary folder and swapped in only after the whole build succeeded and passed the checks below,
+// so a failed run never leaves the store with half the guides.
 const outDir = path.join(root, "public/wiki-data");
-fs.rmSync(outDir, { recursive: true, force: true });
-fs.mkdirSync(outDir, { recursive: true });
+const tmpDir = path.join(root, "public/.wiki-data-tmp");
+fs.rmSync(tmpDir, { recursive: true, force: true });
+fs.mkdirSync(tmpDir, { recursive: true });
 const list = [];
 const search = {};
 for (const a of library.articles) {
@@ -123,15 +128,32 @@ for (const a of library.articles) {
   // The body opens with the page title as a heading; the store page shows the title itself.
   html = html.replace(/^(<div>)?\s*<h2[^>]*>[\s\S]*?<\/h2>/, "$1");
   const toc = [...html.matchAll(/<h([23]) id="([^"]+)">([\s\S]*?)<\/h\1>/g)].map((m) => ({ id: decode(m[2]), level: +m[1], text: text(m[3]) })).filter((h) => h.text);
-  fs.writeFileSync(path.join(outDir, `${a.id}.json`), JSON.stringify({ html, toc }));
+  fs.writeFileSync(path.join(tmpDir, `${a.id}.json`), JSON.stringify({ html, toc }));
   const body = text(html);
-  search[a.id] = body.toLowerCase().slice(0, 6000);
+  search[a.id] = body.toLowerCase(); // whole guide, so words near the end are found too
   const full = tidy(a.excerpt && tidy(a.excerpt) !== titles.get(a.id) ? a.excerpt : body);
   // Whole words only (the export's own summaries stop at 180 characters, often mid-word).
   const cut = full.length > 180 || (full.length >= 170 && !/[.!?…)"”]$/.test(full));
   const excerpt = cut ? `${full.slice(0, 180).replace(/[\s,;:.(–—-]+\S*$/, "")}…` : full;
   list.push({ id: a.id, slug, title: titles.get(a.id), family: a.family, topic: a.topic, excerpt, min: a.read_minutes || 1, updated: (a.source_updated_at || "").slice(0, 10) });
 }
-fs.writeFileSync(path.join(outDir, "search.json"), JSON.stringify(search));
+fs.writeFileSync(path.join(tmpDir, "search.json"), JSON.stringify(search));
+// Checks before anything is replaced: every guide has a page with text, slugs are unique, no unsafe markup survived.
+const problems = [];
+if (list.length !== library.articles.length || list.length === 0) problems.push(`expected ${library.articles.length} guides, built ${list.length}`);
+if (new Set(list.map((a) => a.slug)).size !== list.length) problems.push("duplicate slugs");
+for (const a of list) {
+  const page = JSON.parse(fs.readFileSync(path.join(tmpDir, `${a.id}.json`), "utf8"));
+  if (!page.html || !text(page.html)) problems.push(`${a.id}: empty guide`);
+  if (/<(script|iframe|object|embed|style)\b|\son[a-z]+\s*=|javascript:/i.test(page.html)) problems.push(`${a.id}: unsafe markup`);
+  if (/href="[^"]*YOUR_[A-Z0-9_]+/.test(page.html)) problems.push(`${a.id}: placeholder link`);
+}
+if (problems.length) {
+  fs.rmSync(tmpDir, { recursive: true, force: true });
+  console.error("[wiki] build stopped, nothing replaced:\n  " + problems.join("\n  "));
+  process.exit(1);
+}
+fs.rmSync(outDir, { recursive: true, force: true });
+fs.renameSync(tmpDir, outDir);
 fs.writeFileSync(path.join(root, "src/data/wiki.json"), JSON.stringify({ snapshot: manifest.source_snapshot_date, families: FAMILIES, articles: list }, null, 0) + "\n");
-console.log(`wiki: ${list.length} guides, ${FAMILIES.length} families, ${unresolved} dead internal links dropped`);
+console.log(`wiki: ${list.length} guides, ${FAMILIES.length} families, ${unresolved} dead internal links and ${placeholders} placeholder links dropped`);

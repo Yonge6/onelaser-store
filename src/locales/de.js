@@ -1754,4 +1754,8 @@ export default {
   "Refresh to load the latest version of the store.": "Laden Sie die Seite neu, um die aktuelle Version des Shops zu öffnen.",
   "Refresh": "Neu laden",
   "Back to the store": "Zurück zum Shop",
+  "This page didn't load.": "Diese Seite wurde nicht geladen.",
+  "Refresh to load the latest version of the store.": "Laden Sie die Seite neu, um die aktuelle Version des Shops zu öffnen.",
+  "Refresh": "Neu laden",
+  "Back to the store": "Zurück zum Shop",
 };
