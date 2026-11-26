@@ -1021,6 +1021,8 @@ export default {
   "Financing, answered.": "分割払いのよくある質問",
   "Find answers about choosing a machine, purchasing, financing and product support.": "機種選び、ご購入、分割払い、製品サポートについての回答をご覧いただけます。",
   "Find my machine": "自分に合う機種を探す",
+  "Estimated total before tax": "税抜合計（概算）",
+  "Prices have changed since this page opened. Refresh to get a quote at today's prices.": "ページを開いた後に価格が変わりました。再読み込みして本日の価格で見積もりを作成してください。",
   "How would you like to pay?": "お支払い方法を選んでください",
   "Pay in full or monthly": "一括払い・分割払い",
   "View all financing options": "分割払いの方法をすべて見る",
@@ -1748,4 +1750,8 @@ export default {
   "Autofocus": "オートフォーカス",
   "LightBurn": "LightBurn",
   "Camera": "カメラ",
+  "This page didn't load.": "ページを読み込めませんでした。",
+  "Refresh to load the latest version of the store.": "更新するとストアの最新版を読み込みます。",
+  "Refresh": "更新",
+  "Back to the store": "ストアに戻る",
 };

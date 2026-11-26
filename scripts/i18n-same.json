@@ -139,6 +139,9 @@
   "Quantity",
   "Unit price (USD)",
   "Item",
-  "Subtotal"
+  "Subtotal",
+  "Sales tax: by delivery address; none with a tax-exempt certificate",
+  "Confirmed with the order",
+  " + rest confirmed with the order"
  ]
 }

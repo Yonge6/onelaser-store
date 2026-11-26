@@ -1022,6 +1022,8 @@ export default {
   "Financing, answered.": "Finanzierung, kurz erklärt.",
   "Find answers about choosing a machine, purchasing, financing and product support.": "Antworten zu Maschinenwahl, Kauf, Finanzierung und Produktsupport.",
   "Find my machine": "Meine Maschine finden",
+  "Estimated total before tax": "Geschätzte Summe vor Steuern",
+  "Prices have changed since this page opened. Refresh to get a quote at today's prices.": "Die Preise haben sich seit dem Öffnen der Seite geändert. Bitte neu laden für ein Angebot zu heutigen Preisen.",
   "How would you like to pay?": "Wie möchten Sie bezahlen?",
   "Pay in full or monthly": "Komplett oder monatlich bezahlen",
   "View all financing options": "Alle Finanzierungsoptionen ansehen",
@@ -1748,4 +1750,8 @@ export default {
   "Autofocus": "Autofokus",
   "LightBurn": "LightBurn",
   "Camera": "Kamera",
+  "This page didn't load.": "Diese Seite wurde nicht geladen.",
+  "Refresh to load the latest version of the store.": "Laden Sie die Seite neu, um die aktuelle Version des Shops zu öffnen.",
+  "Refresh": "Neu laden",
+  "Back to the store": "Zurück zum Shop",
 };

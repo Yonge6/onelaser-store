@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { t, tf } from "../i18n.js";
 import { asset, lockScroll, money, monthlyText, popupLink, useFocusTrap, isTopDialog } from "../lib.js";
 import { footer, promo, saleOn } from "../data/site.js";
+import { shipQuote, shipRegion } from "../data/shipping.js";
 import { Icon, Link } from "./ui.jsx";
 import { TermsBox } from "./Terms.jsx";
 
@@ -47,9 +48,8 @@ const mailto = (subject, lines, extra = "") => `mailto:${SALES}?subject=${encode
 
 /* part "main": pay in full or monthly (the cart's side column, with Check out); part "biz": the business options (under the
    cart items, so the two columns stay balanced). */
-export default function PayOptions({ part = "main", className = "", lines, subtotal, total, quote, machine, terms, setTerms, toCheckout }) {
+export default function PayOptions({ part = "main", className = "", lines, subtotal, total, quote, machine, terms, setTerms, toCheckout, onQuote }) {
   const [lend, setLend] = useState(false);
-  const [quoteOpen, setQuoteOpen] = useState(false);
   // shipping known so far (the cart's quote); "partial" = other items' shipping is confirmed with the order
   const shipFee = quote ? quote.fee : null;
   const shipPartial = !!quote?.partial;
@@ -98,7 +98,7 @@ export default function PayOptions({ part = "main", className = "", lines, subto
           <Icon name="quote" size={18} />
           <div>
             <b>{t("Quote for companies, schools, government and nonprofits")}</b>
-            <button type="button" className="po-quote" onClick={() => setQuoteOpen(true)} disabled={!lines.length}>{t("Get an instant quote")}</button>
+            <button type="button" className="po-quote" onClick={onQuote} disabled={!lines.length}>{t("Get an instant quote")}</button>
             <a className="po-link" href={mailto("Purchase order", lines, "Please find our purchase order attached.")}>{t("Purchase order: email it to our sales team")}<Icon name="chevron" size={14} /></a>
           </div>
         </div>
@@ -112,7 +112,6 @@ export default function PayOptions({ part = "main", className = "", lines, subto
         </div>
         </div>
       </div>
-      {quoteOpen && <QuoteDialog lines={lines} subtotal={subtotal} shipFee={shipFee} shipPartial={shipPartial} onClose={() => setQuoteOpen(false)} />}
     </section>
   );
 }
@@ -120,9 +119,11 @@ export default function PayOptions({ part = "main", className = "", lines, subto
 /* "Get an instant quote": organization type → details → the quote (print or save as PDF, or email it to sales).
    Built in the browser from the cart; nothing is sent anywhere unless the buyer emails it. */
 const ORGS = [["edu", "Schools, government or nonprofits", "I'm buying for a school, a government agency or a nonprofit."], ["biz", "Companies and businesses", "I'm buying for a company or a firm."]];
-function QuoteDialog({ lines, subtotal, shipFee, shipPartial, onClose }) {
-  const shipText = shipFee == null ? t("Confirmed with your order") : `${shipFee === 0 ? t("Free") : money(shipFee)}${shipPartial ? ` + ${t("rest confirmed with your order")}` : ""}`;
+export function QuoteDialog({ lines, subtotal, cartQuote, onClose }) {
   const box = useRef(null);
+  // prices can end (Black Friday) while the cart is open: then no quote at the old prices
+  const [ended, setEnded] = useState(() => !!window.__saleEnded);
+  useEffect(() => { const f = () => setEnded(true); window.addEventListener("onelaser:sale-ended", f); return () => window.removeEventListener("onelaser:sale-ended", f); }, []);
   useFocusTrap(box);
   useEffect(() => {
     const unlock = lockScroll();
@@ -144,9 +145,29 @@ function QuoteDialog({ lines, subtotal, shipFee, shipPartial, onClose }) {
     setBad(b);
     if (!Object.keys(b).length) setStep(2);
   };
+  // shipping to the ZIP given for the quote (else the cart's); "partial" = some of it is confirmed with the order
+  const sq = shipRegion(f.zip) ? shipQuote(lines, f.zip) : cartQuote;
+  const shipFee = sq ? sq.fee : null;
+  const shipText = shipFee == null ? t("Confirmed with your order") : `${shipFee === 0 ? t("Free") : money(shipFee)}${sq.partial ? ` + ${t("rest confirmed with your order")}` : ""}`;
   const total = subtotal + (shipFee || 0);
+  const totalLabel = shipFee == null || sq.partial ? t("Estimated total before tax") : t("Total before tax");
   const valid = saleOn ? t(promo.label) : "";
+  // the same quote, as the email body for sales (in English: it goes to the U.S. sales team)
+  const shipEn = shipFee == null ? "Confirmed with the order" : `${shipFee === 0 ? "Free" : money(shipFee)}${sq.partial ? " + rest confirmed with the order" : ""}`;
+  const emailBody = [
+    `OneLaser quote ${no} · ${today()}`,
+    `For: ${f.org} (${f.name}, ${f.email}${f.phone ? ", " + f.phone : ""}${f.zip ? ", ZIP " + f.zip : ""})`,
+    "",
+    ...lines.map((i) => `- ${lineName(i)} × ${i.qty}: ${money(i.total)}`),
+    "",
+    `Subtotal: ${money(subtotal)}`,
+    `Shipping: ${shipEn}`,
+    "Sales tax: by delivery address; none with a tax-exempt certificate",
+    `${shipFee == null || sq.partial ? "Estimated total before tax" : "Total before tax"}: ${money(total)}`,
+    saleOn ? `Prices are today's sale prices (${promo.label}).` : "",
+  ].filter((x) => x !== false).join("\n");
   const print = () => {
+    if (ended || window.__saleEnded) { setEnded(true); return; }
     const w = window.open("", "_blank");
     if (!w) return;
     const rows = lines.map((i) => `<tr><td>${esc(lineName(i))}</td><td class="n">${i.qty}</td><td class="n">${esc(money(i.variant.price))}</td><td class="n">${esc(money(i.total))}</td></tr>`).join("");
@@ -162,7 +183,7 @@ function QuoteDialog({ lines, subtotal, shipFee, shipPartial, onClose }) {
       <tfoot><tr><td colspan="3" class="n">${esc(t("Subtotal"))}</td><td class="n">${esc(money(subtotal))}</td></tr>
       <tr><td colspan="3" class="n">${esc(t("Shipping"))}</td><td class="n">${esc(shipText)}</td></tr>
       <tr><td colspan="3" class="n">${esc(t("Sales tax"))}</td><td class="n">${esc(t("By delivery address; none with a tax-exempt certificate"))}</td></tr>
-      <tr class="tot"><td colspan="3" class="n">${esc(t("Total before tax"))}</td><td class="n">${esc(money(total))}</td></tr></tfoot></table>
+      <tr class="tot"><td colspan="3" class="n">${esc(totalLabel)}</td><td class="n">${esc(money(total))}</td></tr></tfoot></table>
       ${valid ? `<p><small>${esc(t("Prices shown are today's sale prices"))} (${esc(valid)}).</small></p>` : ""}
       <p><small>${esc(t("To order, reply to sales@1laser.com with this quote number, or send a purchase order."))}</small></p>
       <script>window.onload=()=>window.print()</` + `script></body></html>`);
@@ -205,10 +226,11 @@ function QuoteDialog({ lines, subtotal, shipFee, shipPartial, onClose }) {
             <p className="qd-meta">{t("Quote number")} <b>{no}</b> · {today()}</p>
             <ul className="qd-lines">{lines.map((i) => <li key={i.variantId}><span>{lineName(i)} × {i.qty}</span><b>{money(i.total)}</b></li>)}</ul>
             <p className="qd-sum"><span>{t("Shipping")}</span><b>{shipText}</b></p>
-            <p className="qd-sum total"><span>{t("Total before tax")}</span><b>{money(total)}</b></p>
+            <p className="qd-sum total"><span>{totalLabel}</span><b>{money(total)}</b></p>
+            {ended && <p className="qd-ended" role="alert">{t("Prices have changed since this page opened. Refresh to get a quote at today's prices.")} <button type="button" onClick={() => window.location.reload()}>{t("Refresh prices")}</button></p>}
             <div className="qd-btns">
               <button type="button" className="ic-checkout" onClick={print}><Icon name="download" size={16} />{t("Save as PDF or print")}</button>
-              <a className="ic-ghost" href={mailto(`Quote ${no}`, lines, `Quote ${no} for ${f.org} (${f.name}, ${f.email}${f.phone ? ", " + f.phone : ""}${f.zip ? ", ZIP " + f.zip : ""}).`)}>{t("Email it to sales")}</a>
+              <a className="ic-ghost" aria-disabled={ended || undefined} onClick={(e) => { if (ended || window.__saleEnded) { e.preventDefault(); setEnded(true); } }} href={`mailto:${SALES}?subject=${encodeURIComponent(`Quote ${no}`)}&body=${encodeURIComponent(emailBody)}`}>{t("Email it to sales")}</a>
             </div>
             <p className="qd-note">{t("Your quote is made in your browser. Nothing is sent until you email it.")}</p>
           </>

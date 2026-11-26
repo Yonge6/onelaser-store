@@ -1114,6 +1114,8 @@ export default {
   "Financing partners": "分期合作方",
   "Financing, answered.": "分期常见问题",
   "Find my machine": "帮我选机器",
+  "Estimated total before tax": "预估税前合计",
+  "Prices have changed since this page opened. Refresh to get a quote at today's prices.": "打开页面后价格已变化，请刷新后按今天的价格生成报价。",
   "How would you like to pay?": "你想怎么付款？",
   "Pay in full or monthly": "一次付清或分期付款",
   "View all financing options": "查看所有分期方案",
@@ -1748,4 +1750,8 @@ export default {
   "Autofocus": "自动对焦",
   "LightBurn": "LightBurn",
   "Camera": "摄像头",
+  "This page didn't load.": "页面没有加载出来。",
+  "Refresh to load the latest version of the store.": "刷新即可加载最新版本的商城。",
+  "Refresh": "刷新",
+  "Back to the store": "返回商城",
 };

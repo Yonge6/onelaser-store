@@ -5269,3 +5269,6 @@ body:has(.ip-bar) .ai-pill, .pdp ~ .ai-pill { bottom: 104px; }
 .po-biz-wrap { margin-top: 16px; }
 .po-biz-wrap .po-biz { background: #fff; box-shadow: none; }
 @media (min-width: 761px) { .po-biz .po-opts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0 20px; } .po-biz .po-opts .po-opt { border-top: 0; padding-top: 4px; } }
+.qd-ended { margin: 0 0 12px; padding: 10px 12px; border-radius: 8px; background: #fdecea; font-size: 13px; line-height: 19px; color: var(--title); }
+.qd-ended button { margin-left: 4px; font-weight: 600; text-decoration: underline; color: var(--brand); }
+.qd .ic-ghost[aria-disabled] { opacity: .4; pointer-events: none; }

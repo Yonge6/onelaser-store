@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from "react";
 import { asset, byHandle, frontImg, go, img, lockScroll, money, monthlyText, popupLink, useFocusTrap, isTopDialog } from "../lib.js";
 import { TermsAsk, TermsBox, useTerms } from "../components/Terms.jsx";
 import { SHIP_TEXT, shipQuote, shipRegion } from "../data/shipping.js";
-import PayOptions from "../components/PayOptions.jsx";
+import PayOptions, { QuoteDialog } from "../components/PayOptions.jsx";
 import { t, tf } from "../i18n.js";
 import { useCart } from "../cart.jsx";
 import { Icon, Link } from "../components/ui.jsx";
@@ -162,6 +162,7 @@ export default function Cart() {
   const [terms, setTermsOk] = useTerms();
   const [ask, setAsk] = useState(false);
   const [zip, setZip] = useShipZip();
+  const [quoteOpen, setQuoteOpen] = useState(false); // one quote popup for the page (both layouts open the same one)
   const inCart = items.map((i) => i.product.handle);
   const hasMachine = items.find((i) => i.product.kind === "machine");
   if (!items.length)
@@ -240,7 +241,7 @@ export default function Cart() {
                 );
               })}
             </div>
-            <PayOptions part="biz" className="po-wide" lines={picked} subtotal={subtotal} total={total} quote={quote} machine={machine} />
+            <PayOptions part="biz" className="po-wide" lines={picked} subtotal={subtotal} total={total} quote={quote} machine={machine} onQuote={() => setQuoteOpen(true)} />
           </div>
           <aside className="ic-side">
           <div className="ic-card ic-details">
@@ -257,7 +258,7 @@ export default function Cart() {
               is on the purchase), so shipping is left out of them */}
           <PayOptions part="main" lines={picked} subtotal={subtotal} total={total} quote={quote} machine={machine} terms={terms} setTerms={setTermsOk} toCheckout={toCheckout} />
           {/* one column (≤1100px): the business options come after the checkout block */}
-          <PayOptions part="biz" className="po-narrow" lines={picked} subtotal={subtotal} total={total} quote={quote} machine={machine} />
+          <PayOptions part="biz" className="po-narrow" lines={picked} subtotal={subtotal} total={total} quote={quote} machine={machine} onQuote={() => setQuoteOpen(true)} />
           <div className="ic-card ic-details ic-service">
             <Link to="/collections/machines" className="ic-continue">{t("Continue shopping")}</Link>
             <h3>{t("Shipped by OneLaser")}</h3>
@@ -276,6 +277,7 @@ export default function Cart() {
         <p><small>{t("Estimated total")}</small><b>{money(total)}</b></p>
         {picked.length ? <Link to="/checkout" className="ic-checkout" onClick={toCheckout}>{t("Check out")} ({pickedQty})</Link> : <span className="ic-checkout off">{t("Check out")}</span>}
       </div>
+      {quoteOpen && <QuoteDialog lines={picked} subtotal={subtotal} cartQuote={quote} onClose={() => setQuoteOpen(false)} />}
       {ask && <TermsAsk onClose={() => setAsk(false)} onAccept={() => { okTerms(); setAsk(false); go("/checkout"); }} />}
       {/* the add-on offer opens when the buyer moves on to checkout (OfferGate in Checkout.jsx), not on top of the cart */}
     </section>
