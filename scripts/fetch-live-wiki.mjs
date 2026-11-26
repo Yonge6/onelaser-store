@@ -5,6 +5,7 @@ import path from "node:path";
 import { setTimeout as delay } from "node:timers/promises";
 
 const ORIGIN = "https://wiki.1laser.com";
+const MARKER = ".onelaser-wiki-sync"; // written into every output and cache folder this tool creates
 const PAGE_QUERY = "{ pages { list(limit: 2000) { id path locale title updatedAt isPublished } } }";
 const USER_AGENT = "OneLaser-store-wiki-sync";
 const CONCURRENCY = 4;
@@ -380,6 +381,14 @@ async function main(args) {
   const cacheDestination = `${outDir}.cache`;
   const destinations = (offlineCache ? [outDir, staging] : [outDir, staging, cacheDestination])
     .map((dir) => fs.existsSync(dir) ? fs.realpathSync.native(dir) : dir);
+  // Only a new folder, or one this tool made earlier (it carries MARKER), may be replaced: a mistyped output such as "."
+  // must never move a repository or home folder aside.
+  for (const dir of offlineCache ? [outDir] : [outDir, cacheDestination]) {
+    if (fs.existsSync(dir) && !fs.existsSync(path.join(dir, MARKER))) {
+      throw new Error(`Refusing to replace ${dir}: it was not made by this tool (no ${MARKER}). Choose a new output folder.`);
+    }
+  }
+  if (fs.existsSync(staging)) throw new Error(`${staging} exists (another run, or a failed one): remove it first.`);
   for (const input of [exportDir, offlineCache].filter(Boolean)) {
     if (destinations.some((dir) => containsPath(input, dir) || containsPath(dir, input))) {
       throw new Error(`Input directory overlaps the output or staging directory: ${input}`);
@@ -417,7 +426,18 @@ async function main(args) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ query: PAGE_QUERY }),
       });
-    const { jobs, skipped } = planPages(JSON.parse(pagesJson), articles);
+    const response = JSON.parse(pagesJson);
+    const all = response?.data?.pages?.list;
+    if (!Array.isArray(all)) throw new Error("GraphQL did not return pages.list");
+    // English pages only (article ids and /en/ addresses assume English); other locales are reported, not merged.
+    const otherLocales = all.filter((page) => page?.locale && page.locale !== "en");
+    response.data.pages.list = all.filter((page) => !page?.locale || page.locale === "en");
+    // Guides taken down on the live wiki (unpublished or deleted) leave the merged export too.
+    const live = new Set(response.data.pages.list.filter((page) => page?.isPublished === true).map((page) => `en-${page.id}`));
+    const withdrawn = [...articles.keys()].filter((id) => !live.has(id));
+    for (const id of withdrawn) { articles.delete(id); fs.rmSync(path.join(articleDir, `${id}.json`), { force: true }); }
+    const { jobs, skipped } = planPages(response, articles);
+    for (const page of otherLocales) skipped.push({ id: `${page.locale}-${page.id}`, path: page.path, reason: `locale ${page.locale}` });
     const newCache = offlineCache ? undefined : path.join(staging, "cache");
     if (newCache) {
       fs.mkdirSync(path.join(newCache, "html"), { recursive: true });
@@ -440,12 +460,19 @@ async function main(args) {
 
     const added = jobs.filter((job) => job.added);
     const updated = jobs.filter((job) => !job.added);
-    validateExport(articleDir, articles, originalCount + added.length);
+    validateExport(articleDir, articles, originalCount - withdrawn.length + added.length);
+    // The copied search index and manifest describe the old snapshot: drop the index (build-wiki makes its own) and date the manifest.
+    fs.rmSync(path.join(stagedExport, "data/search-index.json"), { force: true });
+    const manifest = readJson(path.join(stagedExport, "export-manifest.json"));
+    writeJson(path.join(stagedExport, "export-manifest.json"), { ...manifest, unique_source_pages: articles.size, live_sync_date: new Date().toISOString().slice(0, 10) });
+    fs.writeFileSync(path.join(stagedExport, MARKER), "Made by scripts/fetch-live-wiki.mjs; safe to replace with a new run.\n");
+    if (newCache) fs.writeFileSync(path.join(newCache, MARKER), "Made by scripts/fetch-live-wiki.mjs; safe to replace with a new run.\n");
     const moves = newCache ? [[newCache, cacheDestination]] : [];
     moves.push([stagedExport, outDir]);
     publish(moves, staging);
 
-    console.log(`[wiki] ${added.length} added, ${updated.length} updated, ${skipped.length} skipped (${articles.size} articles)`);
+    console.log(`[wiki] ${added.length} added, ${updated.length} updated, ${withdrawn.length} withdrawn, ${skipped.length} skipped (${articles.size} articles)`);
+    for (const id of withdrawn) console.log(`  withdrawn ${id} (no longer published on the live wiki)`);
     for (const { id, page, family, topic } of added) console.log(`  added ${id} ${page.path} (${family}, ${topic})`);
     for (const { id, page } of updated) console.log(`  updated ${id} ${page.path}`);
     for (const item of skipped) console.log(`  skipped ${item.id} ${item.path} (${item.reason})`);

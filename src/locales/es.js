@@ -1811,4 +1811,10 @@ export default {
   "Touchscreen alarms, driver errors": "Alarmas de pantalla, errores del driver",
   "What's going on with your laser?": "¿Qué le pasa a tu láser?",
   "Bad focus distance, autofocus stops early": "Distancia de enfoque incorrecta, el autoenfoque se detiene antes",
+  "Before opening any panel, turn the machine off and unplug it. If you're not comfortable working inside the machine, our support team can help.": "Antes de abrir cualquier panel, apaga la máquina y desenchúfala. Si no te sientes seguro trabajando dentro de la máquina, nuestro equipo de soporte puede ayudarte.",
+  "If a fire grows or spreads, get everyone out and call 911.": "Si el fuego crece o se extiende, saca a todos y llama al 911.",
+  "Only fight a small fire you can put out safely.": "Solo intenta apagar un fuego pequeño que puedas extinguir con seguridad.",
+  "Please contact our support team before trying it, so a technician can confirm it's the right fix for your machine.": "Contacta con nuestro equipo de soporte antes de intentarlo, para que un técnico confirme que es la solución adecuada para tu máquina.",
+  "Recommended fixes": "Soluciones recomendadas",
+  "This fix switches off a safety protection.": "Esta solución desactiva una protección de seguridad.",
 };

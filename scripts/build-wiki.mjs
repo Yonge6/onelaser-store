@@ -100,6 +100,8 @@ function clean(html, selfSlug) {
     if (name === "img" && !("alt" in a)) keep.push('alt=""');
     return `<${name}${keep.length ? " " + keep.join(" ") : ""}>`;
   });
+  // editors' notes left in the source, e.g. "(Insert image: alignment using target paper)"
+  out = out.replace(/\(\s*insert (an? )?(image|photo|picture|screenshot)\b[^()]*\)/gi, "");
   return out.replace(/<p>\s*<\/p>/g, "").trim();
 }
 const STOP = new Set("a an the to of for and in on with how your you is my".split(" "));
@@ -114,6 +116,17 @@ for (const a of library.articles) {
   const v = titles.get(a.id);
   if (count[v] > 1) { const last = idToSlug.get(a.id).split("/").pop(); titles.set(a.id, `${v} (${/^\d+w$/.test(last) ? last.toUpperCase() : last.replace(/-/g, " ")})`); }
 }
+
+// ---- safety flags (the store adds its own notice; the guide text stays as published on wiki.1laser.com) ----
+// bypass: the fix switches off a safety protection. Never suggested by the assistant or listed under a symptom.
+const BYPASS = new Set(["hydra-series/z-axis-only-moves-down-autofocus-damaged", "x-series/intermittent-laser-output-low-power"]);
+const ELECTRICAL = /\b(electrical (panel|cabinet|box|board)|power supply|wiring|multimeter|voltage|short-circuit|disassembl\w*|control (card|board) replacement|tl-timer board|motherboard)\b/i;
+const FIRE = /\b(fire (response|prevention|safety|risk)|flames?|flaming|catch(es)? fire)\b/i; // not "fails to fire"
+const safetyOf = (slug, title, body, topic) => [
+  ...(BYPASS.has(slug) ? ["bypass"] : []),
+  ...(FIRE.test(title) ? ["fire"] : []),
+  ...(topic !== "downloads" && ELECTRICAL.test(body) ? ["electrical"] : []), // manuals have their own safety chapters
+];
 
 // ---- write ----
 // Everything is written to a temporary folder and swapped in only after the whole build succeeded and passed the checks below,
@@ -145,13 +158,15 @@ for (const a of library.articles) {
   // Whole words only (the export's own summaries stop at 180 characters, often mid-word).
   const cut = full.length > 180 || (full.length >= 170 && !/[.!?…)"”]$/.test(full));
   const excerpt = cut ? `${full.slice(0, 180).replace(/[\s,;:.(–—-]+\S*$/, "")}…` : full;
-  list.push({ id: a.id, slug, title: titles.get(a.id), family: a.family, topic: a.topic, excerpt, min: a.read_minutes || 1, updated: (a.source_updated_at || "").slice(0, 10) });
+  const safety = safetyOf(slug, titles.get(a.id), body, a.topic);
+  list.push({ id: a.id, slug, title: titles.get(a.id), family: a.family, topic: a.topic, excerpt, min: a.read_minutes || 1, updated: (a.source_updated_at || "").slice(0, 10), ...(safety.length ? { safety } : {}) });
 }
 fs.writeFileSync(path.join(tmpDir, "search.json"), JSON.stringify(search));
 // Checks before anything is replaced: every guide has a page with text, slugs are unique, no unsafe markup survived.
 const problems = [];
 if (list.length !== library.articles.length || list.length === 0) problems.push(`expected ${library.articles.length} guides, built ${list.length}`);
 if (new Set(list.map((a) => a.slug)).size !== list.length) problems.push("duplicate slugs");
+for (const sl of BYPASS) if (!list.some((a) => a.slug === sl)) problems.push(`safety list names a guide that no longer exists: ${sl}`);
 for (const a of list) {
   const page = JSON.parse(fs.readFileSync(path.join(tmpDir, `${a.id}.json`), "utf8"));
   if (!page.html || !text(page.html)) problems.push(`${a.id}: empty guide`);

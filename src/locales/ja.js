@@ -1811,4 +1811,10 @@ export default {
   "Touchscreen alarms, driver errors": "タッチパネルのアラーム、ドライバーエラー",
   "What's going on with your laser?": "レーザーにどんな問題がありますか？",
   "Bad focus distance, autofocus stops early": "焦点距離がずれる、オートフォーカスが途中で止まる",
+  "Before opening any panel, turn the machine off and unplug it. If you're not comfortable working inside the machine, our support team can help.": "パネルを開ける前に、電源を切ってプラグを抜いてください。内部の作業に不安があれば、サポートチームがお手伝いします。",
+  "If a fire grows or spreads, get everyone out and call 911.": "火が大きくなったり広がったりしたら、全員で避難し 911 に通報してください。",
+  "Only fight a small fire you can put out safely.": "自分で消火するのは、安全に消せる小さな火だけにしてください。",
+  "Please contact our support team before trying it, so a technician can confirm it's the right fix for your machine.": "試す前にサポートチームにご連絡ください。技術者がお使いのマシンに合った対処か確認します。",
+  "Recommended fixes": "おすすめの解決策",
+  "This fix switches off a safety protection.": "この対処は安全保護を無効にします。",
 };

@@ -50,7 +50,7 @@ const SYMPTOMS = [
 const SYMPTOM_IDS = SYMPTOMS.map(([id]) => id);
 const symptomName = (k) => ({ firing: t("Laser won't fire"), focus: t("Focus & autofocus"), alignment: t("Beam alignment & red dot"), quality: t("Engraving & cutting quality"), connection: t("Connection & software"), air: t("Air assist & cooling"), motion: t("Movement, origin & rotary"), errors: t("Alarms & error codes") })[k] || k;
 const symptomText = (k) => ({ firing: t("No output, stops mid-job, weak power"), focus: t("Bad focus distance, autofocus stops early"), alignment: t("Misaligned beam, offset, double beam"), quality: t("Blurry, charring, jitter, not cutting through"), connection: t("LightBurn, USB, Wi-Fi, camera"), air: t("Air pump, fan, chiller, smoke"), motion: t("Origin, axes, belts, rotary"), errors: t("Touchscreen alarms, driver errors") })[k] || "";
-const symptomOf = (a) => (a.topic === "downloads" || ["materials", "general", "basics"].includes(a.family) ? null : SYMPTOMS.find(([, , re]) => re.test(a.title))?.[0] || null);
+const symptomOf = (a) => (a.topic === "downloads" || a.safety?.includes("bypass") || ["materials", "general", "basics"].includes(a.family) ? null : SYMPTOMS.find(([, , re]) => re.test(a.title))?.[0] || null);
 const BY_SYMPTOM = Object.fromEntries(SYMPTOM_IDS.map((k) => [k, wiki.articles.filter((a) => symptomOf(a) === k)]));
 // "Learn your laser": background reading, each with a photo from the store. Missing guides are skipped.
 const LEARN = [
@@ -58,7 +58,7 @@ const LEARN = [
   ["knowledge-base/popularization/laser-processing-acrylic", "material-acrylic.webp"],
   ["knowledge-base/maintenance/laser-lens-cleaning-guide", "home-product-xrf-scene.webp"],
   ["knowledge-base/popularization/laser-processing-leather", "material-leather.webp"],
-  ["knowledge-base/maintenance/fire-response-and-prevention-guide", "home-product-cobra-scene.webp"],
+  ["knowledge-base/maintenance/clean-the-optical-parts", "home-product-cobra-scene.webp"],
 ];
 const topicName = (k) => ({ "getting-started": t("Getting started"), troubleshooting: t("Troubleshooting"), guides: t("How-to guides"), downloads: t("Manuals & downloads") })[k] || k;
 const guidesCount = (n) => (n === 1 ? t("1 guide") : tf("{n} guides", { n }));
@@ -118,7 +118,8 @@ const stemOf = (w) => { const s = w.slice(0, 5); return ASK_SAME[s] || s; };
 const FAMILY_WORDS = { "x-series": /\b(xrf|xt|x[\s-]?series)\b/, "hydra-series": /\bhydra\b/, cobra: /\bcobra\b/, vertigo: /\bvertigo\b/ };
 // Guides whose fix switches off a safety protection (shorting the Z-axis anti-collision lock, bypassing the water-flow
 // sensor). They stay in the Knowledge Base, but the assistant never suggests them on its own: it points to support instead.
-const ASSIST_NEVER = new Set(["hydra-series/z-axis-only-moves-down-autofocus-damaged", "x-series/intermittent-laser-output-low-power"]);
+// (marked "bypass" by scripts/build-wiki.mjs, which keeps the list)
+const ASSIST_NEVER = new Set(wiki.articles.filter((a) => a.safety?.includes("bypass")).map((a) => a.slug));
 const MACHINE_FAMILIES = new Set(["x-series", "hydra-series", "cobra", "vertigo"]);
 const FAMILY_NAMES = new Set(["xrf", "xt", "hydra", "cobra", "vertigo"]);
 export function assistGuides(q) {
@@ -281,7 +282,7 @@ function Overview() {
         </div>
       </section>
       <section className="container wk-section">
-        <h2 className="wk-h2">{t("Most-read fixes")}</h2>
+        <h2 className="wk-h2">{t("Recommended fixes")}</h2>
         <ol className="wk-top">
           {popular.map((a, i) => (
             <li key={a.id}>
@@ -415,6 +416,23 @@ function Toc({ slug, toc, open, onToggle }) {
   );
 }
 
+/** The store's own safety notice above a guide (the guide text itself stays as published). */
+function SafetyNote({ safety = [] }) {
+  if (!safety.length) return null;
+  const strong = safety.includes("bypass");
+  return (
+    <div className={`wk-safety${strong ? " strong" : ""}`} role="note">
+      <Icon name="shield" size={20} />
+      <div>
+        {strong && <p><b>{t("This fix switches off a safety protection.")}</b> {t("Please contact our support team before trying it, so a technician can confirm it's the right fix for your machine.")}</p>}
+        {safety.includes("fire") && <p><b>{t("If a fire grows or spreads, get everyone out and call 911.")}</b> {t("Only fight a small fire you can put out safely.")}</p>}
+        {safety.includes("electrical") && !strong && <p>{t("Before opening any panel, turn the machine off and unplug it. If you're not comfortable working inside the machine, our support team can help.")}</p>}
+        {(strong || safety.includes("electrical")) && <Link href={SUPPORT_TICKET}>{t("Open a support ticket")} →</Link>}
+      </div>
+    </div>
+  );
+}
+
 function Guide({ a, anchor }) {
   useTitle(a.title);
   const [page, setPage] = useState(() => pages.get(a.id) || null);
@@ -441,6 +459,7 @@ function Guide({ a, anchor }) {
           <p className="wk-meta"><Link to={`/wiki${qs({ topic: a.topic, family: a.family })}`}>{topicName(a.topic)}</Link><span>{tf("{n} min read", { n: a.min })}</span>{a.updated && <span>{tf("Updated {date}", { date: date(a.updated) })}</span>}</p>
           <h1 className="wk-title">{a.title}</h1>
           <EnglishNote />
+          <SafetyNote safety={a.safety} />
           {failed ? (
             <div className="wk-empty"><b>{t("This guide didn't load.")}</b><p>{t("Check your connection and try again.")}</p><button type="button" className="btn-soft" onClick={() => { setFailed(false); loadPage(a.id).then(setPage).catch(() => setFailed(true)); }}>{t("Try again")}</button></div>
           ) : page ? (

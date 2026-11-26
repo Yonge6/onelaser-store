@@ -281,3 +281,13 @@
   .wk-learn { grid-template-columns: minmax(0, 1fr); }
   .wk-learn-card:first-child .wk-learn-pic { min-height: 0; aspect-ratio: 16 / 9; }
 }
+/* store safety notice above a guide */
+.wk-safety { display: flex; gap: 12px; margin-top: 20px; padding: 14px 16px; border-radius: 12px; background: #fff8e6; border: 1px solid #f3d98b; color: #5c4400; font-size: 14px; line-height: 21px; }
+.wk-safety > svg { flex: none; margin-top: 1px; color: #b07d00; }
+.wk-safety p + p { margin-top: 6px; }
+.wk-safety b { color: #3d2d00; }
+.wk-safety a { display: inline-block; margin-top: 6px; font-weight: 600; color: var(--accent-ink); }
+.wk-safety.strong { background: var(--brand-soft); border-color: #f6b9a8; color: #6b1a08; }
+.wk-safety.strong > svg, .wk-safety.strong b { color: var(--brand-dark); }
+/* keyboard focus on the dark home search (it has no border to darken) */
+.wk-hero.dark .wk-search:focus-within { box-shadow: 0 0 0 3px #fff, 0 0 0 5px var(--brand), 0 20px 50px rgba(0, 0, 0, .35); }

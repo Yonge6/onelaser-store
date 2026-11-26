@@ -1811,4 +1811,10 @@ export default {
   "Touchscreen alarms, driver errors": "触摸屏报警、驱动器错误",
   "What's going on with your laser?": "你的激光机怎么了？",
   "Bad focus distance, autofocus stops early": "焦距不对、自动对焦提前停",
+  "Before opening any panel, turn the machine off and unplug it. If you're not comfortable working inside the machine, our support team can help.": "打开任何面板前，请先关机并拔掉电源。如果不放心自己动手，可以找我们的售后团队帮忙。",
+  "If a fire grows or spreads, get everyone out and call 911.": "如果火势变大或蔓延，请立即让所有人撤离并拨打 911。",
+  "Only fight a small fire you can put out safely.": "只有在能安全扑灭的小火时才自行灭火。",
+  "Please contact our support team before trying it, so a technician can confirm it's the right fix for your machine.": "动手之前请先联系售后，由技术人员确认这是否适合你的机器。",
+  "Recommended fixes": "推荐的解决办法",
+  "This fix switches off a safety protection.": "这个修法会关掉一项安全保护。",
 };
