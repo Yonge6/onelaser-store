@@ -26,6 +26,13 @@ const CATS = [
 /** Suggestions that lead to Black Friday are dropped once the sale is over. */
 const liveChips = (list) => (saleOn ? list : list.filter((c) => c !== "Show me Black Friday deals"));
 const CHIPS = liveChips(["Which laser fits me?", "Show me Black Friday deals", "Cobra or Hydra?", "What do owners say?", "Can I pay monthly?", "Talk to a person"]);
+/* On the Knowledge Base (#/wiki) the same assistant helps owners instead of shoppers: it is given `guides(question)`,
+   which ranks the 236 guides, and answers with links to the best ones, or the support team. */
+const GUIDE_LABELS = ["Stuck on something?", "Find the right guide", "Contact support"];
+const GUIDE_CHIPS = ["How do I update the firmware?", "Autofocus isn't working", "Air assist won't turn off", "How do I calibrate the camera?", "Contact support"];
+const GUIDE_TO = { xrf: "/wiki/x-series", cobra: "/wiki/cobra", hydra: "/wiki/hydra-series", vertigo: "/wiki/vertigo" };
+const GUIDE_CATS = CATS.filter((c) => GUIDE_TO[c[0]]).map(([k, name, h]) => [k, name, h, false, GUIDE_TO[k]]);
+const SUPPORT_TICKET = "https://zohodesk.1laser.com/portal/en/newticket";
 const SERIES = {
   xrf: ["onelaser-xrf-desktop-laser-machine"],
   cobra: ["cobra-8-90w-co2-laser-engraver-cutter", "cobra-10-100w-co2-laser-engraver-cutter", "cobra-14-130w-co2-laser-engraver-cutter"],
@@ -273,6 +280,18 @@ function reply(raw, product) {
   return { text: tx("Sorry, I didn't catch that. Tap a topic below, or call a real person at {phone}.", { phone }), src: [], links: [[tx("Call {phone}", { phone }), `tel:${contact.tel}`]], next: ["Which laser fits me?", "Show me Black Friday deals", "Can I pay monthly?", "Talk to a person"] };
 }
 
+/** Knowledge Base replies: support on request, store questions as usual, otherwise the best matching guides. */
+function guideReply(raw, guides) {
+  const s = raw.toLowerCase();
+  if (has(s, ["talk to", "person", "human", "call", "phone", "ticket", "contact", "technician"]))
+    return { text: tx("Our U.S. support team can help. Open a support ticket, or call {phone}.", { phone }), links: [["Open a support ticket", SUPPORT_TICKET], [tx("Call {phone}", { phone }), `tel:${contact.tel}`]], src: ["OneLaser contact details"], next: GUIDE_CHIPS.slice(0, 3) };
+  if (has(s, ["price", "buy", "deal", "sale", "financ", "monthly", "ship", "deliver", "return", "refund", "warranty", "which laser", "recommend"])) return reply(raw, null);
+  const found = guides(raw);
+  if (found.length)
+    return { text: found.length === 1 ? "This guide should help:" : "These guides should help:", links: found.map((g) => [g.title, `/wiki/${g.slug}`]), src: ["OneLaser Knowledge Base"], next: ["Contact support", ...GUIDE_CHIPS.filter((c) => c !== "Contact support").slice(0, 2)] };
+  return { text: "No matching guide found. Try your model and the problem, like “Hydra autofocus stops early”, or contact support.", links: [["Open a support ticket", SUPPORT_TICKET]], src: [], next: GUIDE_CHIPS };
+}
+
 function Cards({ list, why = {} }) {
   return (
     <div className="ai-cards">
@@ -328,17 +347,17 @@ const load = () => {
 const keep = (v) => { try { sessionStorage.setItem(STORE, JSON.stringify(v)); } catch { /* private mode: this page only */ } };
 const wide = () => typeof window !== "undefined" && !window.matchMedia("(max-width: 860px)").matches;
 
-export default function Assistant({ product }) {
-  const labels = product ? [tx("Questions about the {name}?", { name: short(product) }), "Need help choosing?", product.compareAt > product.price ? "See today's deal" : "Find my machine"] : LABELS;
-  const chips = product ? productChips(product) : CHIPS;
-  const cats = product?.kind === "machine" && siblings(product).length > 1 ? siblings(product).map((p) => [p.handle, short(p), p.handle, true]) : CATS;
-  const ctx = product?.handle || "site";
+export default function Assistant({ product, guides }) {
+  const labels = guides ? GUIDE_LABELS : product ? [tx("Questions about the {name}?", { name: short(product) }), "Need help choosing?", product.compareAt > product.price ? "See today's deal" : "Find my machine"] : LABELS;
+  const chips = guides ? GUIDE_CHIPS : product ? productChips(product) : CHIPS;
+  const cats = guides ? GUIDE_CATS : product?.kind === "machine" && siblings(product).length > 1 ? siblings(product).map((p) => [p.handle, short(p), p.handle, true]) : CATS;
+  const ctx = guides ? "wiki" : product?.handle || "site";
   const saved = useRef(load()).current;
   const [open, setOpen] = useState(() => !!saved.open && wide()); // a desktop chat stays open from page to page
   const [label, setLabel] = useState(0);
   const [msgs, setMsgs] = useState(() => {
     const m = saved.msgs || [];
-    if (m.length && saved.ctx !== ctx) return [...m, { divider: product ? tx("Now viewing {name}", { name: product.name }) : "Back to browsing" }];
+    if (m.length && saved.ctx !== ctx) return [...m, { divider: guides ? "Now in the Knowledge Base" : product ? tx("Now viewing {name}", { name: product.name }) : "Back to browsing" }];
     return m;
   });
   const [ans, setAns] = useState(saved.ans || {});
@@ -411,7 +430,7 @@ export default function Assistant({ product }) {
 
   const answer = (r) => {
     const out = { ...r, cards: r.cards?.map((p) => (typeof p === "string" ? p : p.handle)) };
-    out.next = liveChips(out.next || (product ? productChips(product) : CHIPS).slice(0, 3));
+    out.next = liveChips(out.next || chips.slice(0, 3));
     if (!out.src && !out.quick) out.src = ["OneLaser product info"];
     setMsgs((m) => { setLive(m.length); return [...m, out]; });
     setTyping(false);
@@ -425,7 +444,7 @@ export default function Assistant({ product }) {
     setText("");
     setTyping(true);
     if (/which laser fits|help me choose|find my laser/i.test(v)) { setAns({}); setTimeout(() => answer(guide({}, "Let's find your match in 3 quick taps.")), 500); return; }
-    setTimeout(() => answer(reply(v, product)), 600);
+    setTimeout(() => answer(guides ? guideReply(v, guides) : reply(v, product)), 600);
   };
   const pick = (id, val, label) => {
     if (typing) return;
@@ -436,7 +455,7 @@ export default function Assistant({ product }) {
     setTimeout(() => answer(guide(next)), 450);
   };
   const openWith = (q) => { closeNudge(); setOpen(true); if (q) setTimeout(() => ask(q), 250); };
-  const cat = ([k, name, h, model]) => (model ? (window.location.hash = `#/products/${h}`) : ask(k === "deals" ? "Show me Black Friday deals" : k === "rotary" ? "Rotary attachments" : tx("Show me the {name}", { name: { tpl: name } })));
+  const cat = ([k, name, h, model, to]) => (to ? ((window.location.hash = `#${to}`), !wide() && close()) : model ? (window.location.hash = `#/products/${h}`) : ask(k === "deals" ? "Show me Black Friday deals" : k === "rotary" ? "Rotary attachments" : tx("Show me the {name}", { name: { tpl: name } })));
   const toFinder = () => { setOpen(false); goToFinder(); }; // the machine finder popup
 
   return (
@@ -460,7 +479,7 @@ export default function Assistant({ product }) {
           <div className="ai-grab" onTouchStart={onTouchStart} onTouchMove={onTouchMove} onTouchEnd={onTouchEnd} aria-hidden="true"><i /></div>
           <header className="ai-head" onTouchStart={onTouchStart} onTouchMove={onTouchMove} onTouchEnd={onTouchEnd}>
             <span className="ai-avatar sm"><Icon name="sparkle" size={16} /></span>
-            <span className="ai-title"><b><span className="ai-long">{t("OneLaser Shopping Assistant")}</span><span className="ai-short">{t("OneLaser Assistant")}</span></b><small><i />{t("Online · replies instantly")}</small></span>
+            <span className="ai-title"><b><span className="ai-long">{guides ? t("OneLaser Support Assistant") : t("OneLaser Shopping Assistant")}</span><span className="ai-short">{t("OneLaser Assistant")}</span></b><small><i />{t("Online · replies instantly")}</small></span>
             <a className="ai-call" href={`tel:${contact.tel}`}><Icon name="phone" size={16} /><span><small>{t("Talk to a person")}</small><b className="ai-call-num">{phone}</b><b className="ai-call-short">{t("Call")}</b></span></a>
             <Link to="/cart" className="ai-icon" aria-label={t("Cart")}><Icon name="cart" size={20} />{count > 0 && <em>{count}</em>}</Link>
             {msgs.length > 0 && <button type="button" className="ai-icon" aria-label={t("New chat")} title={t("New chat")} onClick={() => { setMsgs([]); setAns({}); setFb({}); }}><Icon name="refresh" size={18} /></button>}
@@ -468,7 +487,12 @@ export default function Assistant({ product }) {
           </header>
           <div className="ai-body" ref={body}>
             <div className="ai-welcome">
-              {product ? (
+              {guides ? (
+                <>
+                  <h2>{t("Need a hand with your machine?")}</h2>
+                  <p>{t("Type what's happening, like “autofocus stops early”, to find a guide, or pick your machine below.")}</p>
+                </>
+              ) : product ? (
                 <>
                   <h2>{t("Questions about this one?")}</h2>
                   <div className="ai-product">

@@ -3,6 +3,7 @@ import wiki from "../data/wiki.json";
 import { t, tf, getLang, localeTag } from "../i18n.js";
 import { byHandle, frontImg, go, img } from "../lib.js";
 import { Icon, Link } from "../components/ui.jsx";
+import Assistant from "../components/Assistant.jsx";
 import "../wiki.css";
 
 /* Product Knowledge Base: #/wiki, guide pages at #/wiki/<slug> (ready for 1laser.com/wiki/<slug>).
@@ -78,6 +79,39 @@ function find(q, body, family, topic) {
     })
     .filter(Boolean)
     .sort((x, y) => y.score - x.score || x.a.title.localeCompare(y.a.title))
+    .map((x) => x.a);
+}
+
+/* Guides for the assistant: a question in everyday words ("how do I update the firmware?") rather than search keywords.
+   Filler words are dropped, words match by their first letters ("calibrate" finds "calibration"), and most of the
+   remaining words must appear; title hits count most. Up to 3 guides. */
+// Filler words, one per entry (apostrophes split words: "doesn't" -> "doesn" + "t").
+const ASK_STOP = new Set(["an", "the", "to", "of", "for", "and", "or", "in", "on", "at", "with", "how", "do", "does", "did", "my", "me", "is", "it", "its", "are", "was", "can", "could", "should", "what", "why", "when", "where", "which", "this", "that", "there", "not", "doesn", "isn", "won", "don", "doesnt", "isnt", "wont", "dont", "cant", "through", "anymore", "still", "cannot", "help", "please", "laser", "machine", "onelaser", "get", "keep", "keeps", "after", "before", "during", "working", "work", "series"]);
+const ASK_SAME = { updat: "upgrad" }; // "update the firmware" finds the "Firmware Upgrade" guides
+const stemOf = (w) => { const s = w.slice(0, 5); return ASK_SAME[s] || s; };
+const FAMILY_WORDS = { "x-series": /\b(xrf|xt|x[\s-]?series)\b/, "hydra-series": /\bhydra\b/, cobra: /\bcobra\b/, vertigo: /\bvertigo\b/ };
+const FAMILY_NAMES = new Set(["xrf", "xt", "hydra", "cobra", "vertigo"]);
+export function assistGuides(q) {
+  loadBodies(); // full text for the next question; titles and summaries meanwhile
+  const low = q.toLowerCase();
+  const fam = Object.keys(FAMILY_WORDS).find((f) => FAMILY_WORDS[f].test(low));
+  const ws = [...new Set(low.split(/[^\p{L}\p{N}₂]+/u).filter((w) => w.length > 1 && !ASK_STOP.has(w) && !FAMILY_NAMES.has(w)).map(stemOf))];
+  if (!ws.length) return [];
+  const need = Math.max(1, Math.ceil(ws.length * 0.6));
+  return wiki.articles
+    .map((a) => {
+      const title = a.title.toLowerCase(), about = a.excerpt.toLowerCase(), text = bodies?.[a.id] || "";
+      let score = 0, hits = 0;
+      for (const w of ws) {
+        if (title.includes(w)) { score += 6; hits++; } else if (about.includes(w)) { score += 3; hits++; } else if (text.includes(w)) { score += 1; hits++; }
+      }
+      if (fam && a.family === fam) score += 4;
+      if (a.topic === "troubleshooting") score += 1;
+      return hits >= need && score >= 6 ? { a, score } : null;
+    })
+    .filter(Boolean)
+    .sort((x, y) => y.score - x.score)
+    .slice(0, 3)
     .map((x) => x.a);
 }
 
@@ -387,6 +421,7 @@ export default function Wiki({ rest, query }) {
     <div className="wk">
       {body}
       <Help />
+      <Assistant guides={assistGuides} />
     </div>
   );
 }
