@@ -467,7 +467,7 @@ export function TrustDialog({ kind, onClose, onTrustpilot, onBook, start, childr
           <li><b>{t("Shop Pay Installments")}</b><span>{t("3, 6 or 12 monthly payments, chosen at checkout.")}</span></li>
           <li><b>ClickLease</b><span>{t("Lease to own, $0 down, approval in minutes.")}</span></li>
         </ul>
-        <div className="tdlg-links"><More to={fin.h === "cart" ? `/pages/financing?amount=${Math.round(start.amount)}${start.h ? `&p=${start.h}` : ""}` : `/pages/financing?p=${fin.h}`}>{t("Compare all financing options")}</More></div>
+        <div className="tdlg-links"><More to={fin.h === "cart" ? `/pages/financing?amount=${start.amount}&n=${fin.n}${start.h ? `&p=${start.h}` : ""}` : `/pages/financing?p=${fin.h}&n=${fin.n}`}>{t("Compare all financing options")}</More></div>
       </>
     );
   } else {

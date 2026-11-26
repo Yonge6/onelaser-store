@@ -5166,12 +5166,12 @@ body:has(.ip-bar) .ai-pill, .pdp ~ .ai-pill { bottom: 104px; }
 .ic-terms.bad input { outline: 2px solid var(--brand); outline-offset: 2px; }
 
 /* Policy popup: the policy text, readable, scrolling inside the window */
-.tdlg-policy { max-height: min(70vh, 640px); overflow: auto; padding-right: 6px; font-size: 14px; line-height: 22px; color: #3f3f46; }
-.tdlg-policy h3 { margin: 0 0 12px; padding-right: 40px; font-size: 22px; line-height: 28px; color: var(--title); }
-.tdlg-policy h4 { margin: 18px 0 6px; font-size: 15px; line-height: 21px; color: var(--title); }
-.tdlg-policy p { margin: 0 0 10px; }
-.tdlg-policy p.li { position: relative; padding-left: 16px; }
-.tdlg-policy p.li::before { content: "•"; position: absolute; left: 2px; }
+.tdlg-policy-body { max-height: min(70vh, 640px); overflow: auto; padding-right: 6px; font-size: 14px; line-height: 22px; color: #3f3f46; }
+.tdlg-policy-body h3 { margin: 0 0 12px; padding-right: 40px; font-size: 22px; line-height: 28px; color: var(--title); }
+.tdlg-policy-body h4 { margin: 18px 0 6px; font-size: 15px; line-height: 21px; color: var(--title); }
+.tdlg-policy-body p { margin: 0 0 10px; }
+.tdlg-policy-body p.li { position: relative; padding-left: 16px; }
+.tdlg-policy-body p.li::before { content: "•"; position: absolute; left: 2px; }
 .tdlg-policy-src { margin-top: 18px !important; }
 .tdlg-policy-src a { color: var(--accent-ink); font-weight: 600; }
-@media (max-width: 860px) { .tdlg-policy { max-height: 72vh; } }
+@media (max-width: 860px) { .tdlg-policy-body { max-height: 72vh; } }

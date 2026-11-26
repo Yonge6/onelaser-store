@@ -212,7 +212,7 @@ export default function Cart() {
             {/* the site's one estimate (lib.js perMonth), same as the product cards and the payment popup */}
             {subtotal >= 1000 && <p className="ic-monthly">{t("or")} <b>{monthlyText(subtotal)}</b>{t("/mo for 24 months (est. 15% APR)")}</p>}
             {subtotal >= 1000 && (
-              <a {...popupLink("financing", { amount: subtotal, h: machine?.product.handle }, `#/pages/financing${machine ? `?p=${machine.product.handle}` : ""}`)} className="ic-finance">
+              <a {...popupLink("financing", { amount: subtotal, h: machine?.product.handle }, `#/pages/financing?amount=${subtotal}&n=24${machine ? `&p=${machine.product.handle}` : ""}`)} className="ic-finance">
                 <Icon name="card" size={16} />{t("Pay over time with financing.")} <u>{t("Estimate my payment")}</u>
               </a>
             )}

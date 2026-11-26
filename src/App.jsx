@@ -37,7 +37,7 @@ function Page({ path, query }) {
   if (section === "search") return <Collection key={`s-${query.get("q")}`} search={query.get("q") || ""} />;
   if (section === "compare") return <Compare />;
   if (section === "pages" && handle === "sales-consultation") return <Consult />;
-  if (section === "pages" && handle === "financing") return <Finance key={query.get("p") || ""} query={query} />;
+  if (section === "pages" && handle === "financing") return <Finance key={query.toString()} query={query} />;
   if (section === "find-my-machine") return <FinderFlow page />; // Figma 4-question version, to compare with the home finder
   if (section === "cart") return <Cart />;
   return <Home />;

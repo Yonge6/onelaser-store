@@ -1024,7 +1024,7 @@ export default {
   "Find my machine": "Encontrar mi máquina",
   "I have read and accept the {terms}, {warranty}, {shipping} and {refund}.": "He leído y acepto los {terms}, la {warranty}, la {shipping} y la {refund}.",
   "Open on 1laser.com": "Abrir en 1laser.com",
-  "/mo for 24 months (est. 15% APR)": "/mes durante 24 meses (est. 15 % TAE)",
+  "/mo for 24 months (est. 15% APR)": "/mes durante 24 meses (est. con interés anual del 15 %)",
   "I have read and accept the": "He leído y acepto los",
   "and": "y",
   "Please review and accept our policies": "Revisa y acepta nuestras políticas",

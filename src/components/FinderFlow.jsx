@@ -66,7 +66,7 @@ function Result({ a, onRetake, onClose }) {
             <p className="ff-price"><b>{money(v.price)}</b>{v.compareAt > v.price && <s>{money(v.compareAt)}</s>}</p>
           </header>
           {p.variants.length > 1 && v.title && <p className="ff-version">{v.title}</p>}
-          <p className="ff-monthly"><a {...popupLink("financing", { h: p.handle, amount: v.price, label: [p.name, p.variants.length > 1 ? v.title : ""].filter(Boolean).join(" · ") }, `#/pages/financing?p=${p.handle}&amount=${v.price}`)}>{t("Estimate monthly payments")} →</a></p>
+          <p className="ff-monthly"><a {...popupLink("financing", { h: p.handle, amount: v.price, label: [p.name, p.variants.length > 1 ? v.title : ""].filter(Boolean).join(" · ") }, `#/pages/financing?p=${p.handle}&amount=${v.price}&n=24`)}>{t("Estimate monthly payments")} →</a></p>
           {(m.best.reasons.length > 0 || m.overBudget || m.bareMetal) && (
             <>
               <p className="ff-why-title">{t("Why it fits you")}</p>

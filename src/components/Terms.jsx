@@ -36,7 +36,7 @@ export function PolicyBody({ page }) {
   const blocks = policies.pages[page] || [];
   const label = Object.values(POLICY).find(([, p]) => p === page)?.[0];
   return (
-    <div className="tdlg-policy">
+    <div className="tdlg-policy-body">
       {blocks.map(([tag, text], n) => (tag === "h1" ? <h3 key={n}>{text}</h3> : tag === "h" ? <h4 key={n}>{text}</h4> : tag === "li" ? <p key={n} className="li">{text}</p> : <p key={n}>{text}</p>))}
       {label && <p className="tdlg-policy-src"><a href={policyUrl(label)} target="_blank" rel="noreferrer">{t("Open on 1laser.com")} ↗</a></p>}
     </div>

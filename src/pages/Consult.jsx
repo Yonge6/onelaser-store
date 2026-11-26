@@ -94,12 +94,16 @@ const zoneLabel = (tz) => {
 
 /* The booking in progress (time, step, form fields) survives closing the popup or leaving the page during the visit. */
 const draft = { fields: {} };
+// a remembered time must still be bookable (at least an hour away); otherwise the visitor picks again, keeping the form
+const stillOpen = (at) => at && at > new Date(Date.now() + 60 * 60000);
+if (typeof window !== "undefined") window.addEventListener("focus", () => { if (draft.slot && !stillOpen(draft.slot) && draft.step !== "done") { draft.slot = null; draft.step = "time"; } });
 export function Booking() {
   const days = useMemo(businessDays, []);
   const [zone, setZone] = useState(() => draft.zone || guessZone());
   const [day, setDay] = useState(draft.day || 0);
-  const [slot, setSlot] = useState(draft.slot || null);
-  const [step, setStep] = useState(draft.step || "time"); // time → details → done
+  const fresh = draft.step === "done" || stillOpen(draft.slot);
+  const [slot, setSlot] = useState(fresh ? draft.slot || null : null);
+  const [step, setStep] = useState(fresh ? draft.step || "time" : "time"); // time → details → done
   const [err, setErr] = useState({});
   const [machines, setMachines] = useState(draft.machines || []);
   useEffect(() => { Object.assign(draft, { zone, day, slot, step, machines }); }, [zone, day, slot, step, machines]);
@@ -291,7 +295,7 @@ export function Booking() {
             <li><b>{t("Bring your ideas")}</b><span>{t("Materials, sizes, space and budget help us point you to the right machine.")}</span></li>
           </ol>
           <a className="cs-next" href={slot ? calendarFile() : undefined} download="onelaser-consultation.ics"><Icon name="calendar" size={18} />{t("Add to my calendar")}</a>
-          <button type="button" className="cs-link" onClick={() => { setStep("time"); setSlot(null); }}>{t("Pick another time")}</button>
+          <button type="button" className="cs-link" onClick={() => { draft.fields = {}; setStep("time"); setSlot(null); }}>{t("Pick another time")}</button>
         </div>
       )}
     </div>

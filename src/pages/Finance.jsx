@@ -117,8 +117,8 @@ const FAQ = [
   ]],
 ];
 
-function Estimator({ amount, setAmount, handle, setHandle }) {
-  const [term, setTerm] = useState(36);
+function Estimator({ amount, setAmount, handle, setHandle, startTerm = 36 }) {
+  const [term, setTerm] = useState(startTerm);
   const [apr, setApr] = useState(15);
   const pay = monthly(amount, apr, term);
   const total = pay * term;
@@ -176,7 +176,9 @@ export default function Finance({ query }) {
   useEffect(() => { document.title = "Financing | OneLaser"; return () => { document.title = "OneLaser Store — Redesign Draft"; }; }, []);
   const start = byHandle[query?.get("p")] ? query.get("p") : "hydra-9-gen-2-70w-rf-co2-dual-laser-machine";
   // ?amount= (from the cart or a finder pick) starts the estimate on that exact amount
-  const given = Number(query?.get("amount")) > 0 ? Number(query.get("amount")) : 0;
+  const asked = Number(query?.get("amount"));
+  const given = Number.isFinite(asked) && asked > 0 && asked < 1e7 ? asked : 0;
+  const askedTerm = [12, 24, 36, 48, 60].includes(Number(query?.get("n"))) ? Number(query.get("n")) : 36;
   const [handle, setHandle] = useState(given ? "custom" : start);
   const [amount, setAmount] = useState(given || byHandle[start]?.price || 9999);
   const [ans, setAns] = useState({ buyer: "business", credit: "good", years: "est" });
@@ -210,7 +212,7 @@ export default function Finance({ query }) {
               <span>{OPTIONS.map((o) => <img key={o.id} src={img(o.logo, 300)} alt={o.name} />)}</span>
             </div>
           </div>
-          <Estimator amount={amount} setAmount={setAmount} handle={handle} setHandle={setHandle} />
+          <Estimator amount={amount} setAmount={setAmount} handle={handle} setHandle={setHandle} startTerm={askedTerm} />
         </div>
       </section>
 

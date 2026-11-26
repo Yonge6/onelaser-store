@@ -96,7 +96,7 @@ export default function Checkout() {
     setStep(1);
   };
   const place = () => {
-    if (!terms) { setTermsBad(true); document.querySelector(".ik-terms-at input")?.focus(); return; } try { sessionStorage.removeItem(DRAFT); } catch { /* ignore */ } setDone(subtotal); clearPicked(); window.scrollTo(0, 0); };
+    if (!terms) { setTermsBad(true); [...document.querySelectorAll(".ik-terms-at input")].find((el) => el.offsetParent)?.focus(); return; } try { sessionStorage.removeItem(DRAFT); } catch { /* ignore */ } setDone(subtotal); clearPicked(); window.scrollTo(0, 0); };
   const applyCode = () => setCodeMsg(code.trim() ? t("Codes are checked on the live store. This draft does not apply discounts.") : t("Enter a code first."));
 
   const summary = (
