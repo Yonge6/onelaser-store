@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { t, tf } from "../i18n.js";
 import { asset, lockScroll, money, monthlyText, popupLink, useFocusTrap, isTopDialog } from "../lib.js";
-import { footer, promo, saleOn } from "../data/site.js";
+import { footer, now, promo, saleOn } from "../data/site.js";
 import { shipQuote, shipRegion } from "../data/shipping.js";
 import { Icon, Link } from "./ui.jsx";
 import { TermsBox } from "./Terms.jsx";
@@ -119,10 +119,12 @@ export default function PayOptions({ part = "main", className = "", lines, subto
 /* "Get an instant quote": organization type → details → the quote (print or save as PDF, or email it to sales).
    Built in the browser from the cart; nothing is sent anywhere unless the buyer emails it. */
 const ORGS = [["edu", "Schools, government or nonprofits", "I'm buying for a school, a government agency or a nonprofit."], ["biz", "Companies and businesses", "I'm buying for a company or a firm."]];
+/** true once the sale prices this page loaded with are over (checked against the clock at each use). */
+const pricesExpired = () => !!window.__saleEnded || (saleOn && now() >= Date.parse(promo.endsAt));
 export function QuoteDialog({ lines, subtotal, cartQuote, onClose }) {
   const box = useRef(null);
   // prices can end (Black Friday) while the cart is open: then no quote at the old prices
-  const [ended, setEnded] = useState(() => !!window.__saleEnded);
+  const [ended, setEnded] = useState(pricesExpired);
   useEffect(() => { const f = () => setEnded(true); window.addEventListener("onelaser:sale-ended", f); return () => window.removeEventListener("onelaser:sale-ended", f); }, []);
   useFocusTrap(box);
   useEffect(() => {
@@ -132,8 +134,10 @@ export function QuoteDialog({ lines, subtotal, cartQuote, onClose }) {
     return () => { unlock(); window.removeEventListener("keydown", esc); };
   }, []);
   const [step, setStep] = useState(0);
-  const [org, setOrg] = useState("");
-  const [f, setF] = useState({ org: "", name: "", email: "", phone: "", zip: "" });
+  // a form saved by "Refresh prices" comes back (once)
+  const saved = useState(() => { try { const v = JSON.parse(sessionStorage.getItem("onelaser-quote-form")); sessionStorage.removeItem("onelaser-quote-form"); return v; } catch { return null; } })[0];
+  const [org, setOrg] = useState(saved?.org || "");
+  const [f, setF] = useState(saved?.f || { org: "", name: "", email: "", phone: "", zip: "" });
   const [bad, setBad] = useState({});
   const [no] = useState(() => `OL-Q-${new Date().toISOString().slice(2, 10).replace(/-/g, "")}-${Math.floor(1000 + Math.random() * 9000)}`);
   const set = (k) => (e) => { setF((x) => ({ ...x, [k]: e.target.value })); setBad((b) => ({ ...b, [k]: false })); };
@@ -142,11 +146,14 @@ export function QuoteDialog({ lines, subtotal, cartQuote, onClose }) {
     if (!f.org.trim()) b.org = true;
     if (!f.name.trim()) b.name = true;
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(f.email)) b.email = true;
+    // a ZIP that was typed must be a real U.S. ZIP we ship to; only an empty field falls back to the cart's ZIP
+    if (f.zip.trim() && !["lower48", "akhi"].includes(shipRegion(f.zip))) b.zip = true;
     setBad(b);
+    if (pricesExpired()) { setEnded(true); }
     if (!Object.keys(b).length) setStep(2);
   };
   // shipping to the ZIP given for the quote (else the cart's); "partial" = some of it is confirmed with the order
-  const sq = shipRegion(f.zip) ? shipQuote(lines, f.zip) : cartQuote;
+  const sq = f.zip.trim() ? shipQuote(lines, f.zip) : cartQuote;
   const shipFee = sq ? sq.fee : null;
   const shipText = shipFee == null ? t("Confirmed with your order") : `${shipFee === 0 ? t("Free") : money(shipFee)}${sq.partial ? ` + ${t("rest confirmed with your order")}` : ""}`;
   const total = subtotal + (shipFee || 0);
@@ -167,7 +174,7 @@ export function QuoteDialog({ lines, subtotal, cartQuote, onClose }) {
     saleOn ? `Prices are today's sale prices (${promo.label}).` : "",
   ].filter((x) => x !== false).join("\n");
   const print = () => {
-    if (ended || window.__saleEnded) { setEnded(true); return; }
+    if (ended || pricesExpired()) { setEnded(true); return; }
     const w = window.open("", "_blank");
     if (!w) return;
     const rows = lines.map((i) => `<tr><td>${esc(lineName(i))}</td><td class="n">${i.qty}</td><td class="n">${esc(money(i.variant.price))}</td><td class="n">${esc(money(i.total))}</td></tr>`).join("");
@@ -215,7 +222,7 @@ export function QuoteDialog({ lines, subtotal, cartQuote, onClose }) {
               <label className={bad.name ? "bad" : ""}><span>{t("Your name")} *</span><input value={f.name} onChange={set("name")} autoComplete="name" /></label>
               <label className={bad.email ? "bad" : ""}><span>{t("Email")} *</span><input value={f.email} onChange={set("email")} type="email" autoComplete="email" /></label>
               <label><span>{t("Phone (optional)")}</span><input value={f.phone} onChange={set("phone")} type="tel" autoComplete="tel" /></label>
-              <label><span>{t("Delivery ZIP (optional)")}</span><input value={f.zip} onChange={set("zip")} inputMode="numeric" autoComplete="postal-code" /></label>
+              <label className={bad.zip ? "bad" : ""}><span>{t(bad.zip ? "Enter a 5-digit U.S. ZIP we ship to, or leave it empty" : "Delivery ZIP (optional)")}</span><input value={f.zip} onChange={set("zip")} inputMode="numeric" autoComplete="postal-code" /></label>
             </div>
             <div className="qd-btns"><button type="button" className="ic-ghost" onClick={() => setStep(0)}>{t("Back")}</button><button type="button" className="ic-checkout" onClick={next}>{t("Create my quote")}</button></div>
           </>
@@ -227,10 +234,10 @@ export function QuoteDialog({ lines, subtotal, cartQuote, onClose }) {
             <ul className="qd-lines">{lines.map((i) => <li key={i.variantId}><span>{lineName(i)} × {i.qty}</span><b>{money(i.total)}</b></li>)}</ul>
             <p className="qd-sum"><span>{t("Shipping")}</span><b>{shipText}</b></p>
             <p className="qd-sum total"><span>{totalLabel}</span><b>{money(total)}</b></p>
-            {ended && <p className="qd-ended" role="alert">{t("Prices have changed since this page opened. Refresh to get a quote at today's prices.")} <button type="button" onClick={() => window.location.reload()}>{t("Refresh prices")}</button></p>}
+            {ended && <p className="qd-ended" role="alert">{t("Prices have changed since this page opened. Refresh to get a quote at today's prices.")} <button type="button" onClick={() => { try { sessionStorage.setItem("onelaser-quote-form", JSON.stringify({ org, f })); } catch { /* private mode */ } window.location.reload(); }}>{t("Refresh prices")}</button></p>}
             <div className="qd-btns">
               <button type="button" className="ic-checkout" onClick={print}><Icon name="download" size={16} />{t("Save as PDF or print")}</button>
-              <a className="ic-ghost" aria-disabled={ended || undefined} onClick={(e) => { if (ended || window.__saleEnded) { e.preventDefault(); setEnded(true); } }} href={`mailto:${SALES}?subject=${encodeURIComponent(`Quote ${no}`)}&body=${encodeURIComponent(emailBody)}`}>{t("Email it to sales")}</a>
+              <a className="ic-ghost" aria-disabled={ended || undefined} onClick={(e) => { if (ended || pricesExpired()) { e.preventDefault(); setEnded(true); } }} href={`mailto:${SALES}?subject=${encodeURIComponent(`Quote ${no}`)}&body=${encodeURIComponent(emailBody)}`}>{t("Email it to sales")}</a>
             </div>
             <p className="qd-note">{t("Your quote is made in your browser. Nothing is sent until you email it.")}</p>
           </>

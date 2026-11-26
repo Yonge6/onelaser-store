@@ -1114,6 +1114,7 @@ export default {
   "Financing partners": "分期合作方",
   "Financing, answered.": "分期常见问题",
   "Find my machine": "帮我选机器",
+  "Enter a 5-digit U.S. ZIP we ship to, or leave it empty": "请填写我们可配送的 5 位美国邮编，或留空",
   "Estimated total before tax": "预估税前合计",
   "Prices have changed since this page opened. Refresh to get a quote at today's prices.": "打开页面后价格已变化，请刷新后按今天的价格生成报价。",
   "How would you like to pay?": "你想怎么付款？",

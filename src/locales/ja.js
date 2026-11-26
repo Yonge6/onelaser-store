@@ -1021,6 +1021,7 @@ export default {
   "Financing, answered.": "分割払いのよくある質問",
   "Find answers about choosing a machine, purchasing, financing and product support.": "機種選び、ご購入、分割払い、製品サポートについての回答をご覧いただけます。",
   "Find my machine": "自分に合う機種を探す",
+  "Enter a 5-digit U.S. ZIP we ship to, or leave it empty": "配送可能な米国の5桁の郵便番号を入力するか、空欄のままにしてください",
   "Estimated total before tax": "税抜合計（概算）",
   "Prices have changed since this page opened. Refresh to get a quote at today's prices.": "ページを開いた後に価格が変わりました。再読み込みして本日の価格で見積もりを作成してください。",
   "How would you like to pay?": "お支払い方法を選んでください",

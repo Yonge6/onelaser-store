@@ -1022,6 +1022,7 @@ export default {
   "Financing, answered.": "Finanzierung, kurz erklärt.",
   "Find answers about choosing a machine, purchasing, financing and product support.": "Antworten zu Maschinenwahl, Kauf, Finanzierung und Produktsupport.",
   "Find my machine": "Meine Maschine finden",
+  "Enter a 5-digit U.S. ZIP we ship to, or leave it empty": "Geben Sie eine 5-stellige US-Postleitzahl ein, an die wir liefern, oder lassen Sie das Feld leer",
   "Estimated total before tax": "Geschätzte Summe vor Steuern",
   "Prices have changed since this page opened. Refresh to get a quote at today's prices.": "Die Preise haben sich seit dem Öffnen der Seite geändert. Bitte neu laden für ein Angebot zu heutigen Preisen.",
   "How would you like to pay?": "Wie möchten Sie bezahlen?",
