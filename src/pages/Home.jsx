@@ -384,7 +384,7 @@ export function TrustDialog({ kind, onClose, onTrustpilot, onBook, start, childr
         )}
         <div className="tdlg-links">
           <More href="https://zohodesk.1laser.com/portal/en/newticket">{t("Open a support ticket")}</More>
-          <More href="https://wiki.1laser.com" ghost>{t("Product knowledge base")}</More>
+          <More to="/wiki" ghost>{t("Product knowledge base")}</More>
         </div>
       </>
     );

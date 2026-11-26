@@ -9,6 +9,7 @@
     "preview": "vite preview",
     "catalog": "node scripts/build-catalog.mjs",
     "stories": "node scripts/build-stories.mjs",
+    "wiki": "node scripts/build-wiki.mjs",
     "check:i18n": "node scripts/check-i18n.mjs",
     "check:components": "node scripts/check-inner-components.mjs",
     "check:monthly": "node scripts/check-monthly.mjs",

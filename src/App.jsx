@@ -14,8 +14,11 @@ import Finance from "./pages/Finance.jsx";
 import Assistant from "./components/Assistant.jsx";
 import FinderFlow from "./components/FinderFlow.jsx";
 import { byHandle } from "./lib.js";
-import { useEffect, useState } from "react";
+import { lazy, Suspense, useEffect, useState } from "react";
 import { t } from "./i18n.js";
+
+// The Knowledge Base (236 guides) loads only when someone opens it, so shop pages stay as light as before.
+const Wiki = lazy(() => import("./pages/Wiki.jsx"));
 
 /** Shown when Black Friday ends while the page is open: prices on screen are the old ones until the visitor refreshes. */
 function SaleEnded() {
@@ -39,6 +42,7 @@ function Page({ path, query }) {
   if (section === "pages" && handle === "sales-consultation") return <Consult />;
   if (section === "pages" && handle === "financing") return <Finance key={query.toString()} query={query} />;
   if (section === "find-my-machine") return <FinderFlow page />; // Figma 4-question version, to compare with the home finder
+  if (section === "wiki") return <Suspense fallback={<div className="page-loading" style={{ minHeight: "70vh" }} />}><Wiki rest={path.slice("/wiki".length)} query={query} /></Suspense>; // Product Knowledge Base, later 1laser.com/wiki
   if (section === "cart") return <Cart />;
   return <Home />;
 }
