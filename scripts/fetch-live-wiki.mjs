@@ -6,7 +6,8 @@ import { setTimeout as delay } from "node:timers/promises";
 
 const ORIGIN = "https://wiki.1laser.com";
 const MARKER = ".onelaser-wiki-sync"; // written into every output and cache folder this tool creates
-const PAGE_QUERY = "{ pages { list(limit: 2000) { id path locale title updatedAt isPublished } } }";
+const PAGE_LIMIT = 2000; // a list this long may be cut off, so the sync stops
+const PAGE_QUERY = `{ pages { list(limit: ${PAGE_LIMIT}) { id path locale title updatedAt isPublished } } }`;
 const USER_AGENT = "OneLaser-store-wiki-sync";
 const CONCURRENCY = 4;
 const ARTICLE_FILE = /^(en-\d+)\.json$/;
@@ -429,12 +430,23 @@ async function main(args) {
     const response = JSON.parse(pagesJson);
     const all = response?.data?.pages?.list;
     if (!Array.isArray(all)) throw new Error("GraphQL did not return pages.list");
+    if (all.length >= PAGE_LIMIT) throw new Error(`The page list hit its ${PAGE_LIMIT}-page limit and may be incomplete; raise PAGE_LIMIT before syncing.`);
     // English pages only (article ids and /en/ addresses assume English); other locales are reported, not merged.
     const otherLocales = all.filter((page) => page?.locale && page.locale !== "en");
     response.data.pages.list = all.filter((page) => !page?.locale || page.locale === "en");
-    // Guides taken down on the live wiki (unpublished or deleted) leave the merged export too.
-    const live = new Set(response.data.pages.list.filter((page) => page?.isPublished === true).map((page) => `en-${page.id}`));
-    const withdrawn = [...articles.keys()].filter((id) => !live.has(id));
+    // Guides taken down on the live wiki leave the merged export too: those the list marks unpublished, and those
+    // missing from the list only once their own page answers 404 (a short or partial list must never delete guides).
+    const listed = new Map(response.data.pages.list.map((page) => [`en-${page.id}`, page]));
+    const unpublished = [...articles.keys()].filter((id) => listed.has(id) && listed.get(id).isPublished !== true);
+    const unlisted = [...articles.keys()].filter((id) => !listed.has(id));
+    if (unlisted.length && offlineCache) throw new Error(`${unlisted.length} guides are missing from the cached page list (${unlisted.slice(0, 5).join(", ")}…); run online so each can be checked.`);
+    const gone = [];
+    for (const id of unlisted) {
+      const route = new URL(articles.get(id).source_url).pathname;
+      try { await fetchWiki(route); } catch (error) { if (/HTTP 404\b/.test(error.message)) { gone.push(id); continue; } throw error; }
+      throw new Error(`${id} is missing from the page list but its page still loads (${route}); the list looks incomplete, nothing was changed.`);
+    }
+    const withdrawn = [...unpublished, ...gone];
     for (const id of withdrawn) { articles.delete(id); fs.rmSync(path.join(articleDir, `${id}.json`), { force: true }); }
     const { jobs, skipped } = planPages(response, articles);
     for (const page of otherLocales) skipped.push({ id: `${page.locale}-${page.id}`, path: page.path, reason: `locale ${page.locale}` });

@@ -425,7 +425,7 @@ function SafetyNote({ safety = [] }) {
       <Icon name="shield" size={20} />
       <div>
         {strong && <p><b>{t("This fix switches off a safety protection.")}</b> {t("Please contact our support team before trying it, so a technician can confirm it's the right fix for your machine.")}</p>}
-        {safety.includes("fire") && <p><b>{t("If a fire grows or spreads, get everyone out and call 911.")}</b> {t("Only fight a small fire you can put out safely.")}</p>}
+        {safety.includes("fire") && <p><b>{t("If a fire grows or spreads, get everyone out and call the fire department (911 in the U.S.).")}</b> {t("Only fight a small fire you can put out safely.")}</p>}
         {safety.includes("electrical") && !strong && <p>{t("Before opening any panel, turn the machine off and unplug it. If you're not comfortable working inside the machine, our support team can help.")}</p>}
         {(strong || safety.includes("electrical")) && <Link href={SUPPORT_TICKET}>{t("Open a support ticket")} →</Link>}
       </div>

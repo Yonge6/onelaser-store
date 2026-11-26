@@ -1841,7 +1841,7 @@ export default {
   "What's going on with your laser?": "Was ist mit Ihrem Laser los?",
   "Bad focus distance, autofocus stops early": "Falscher Fokusabstand, Autofokus stoppt zu früh",
   "Before opening any panel, turn the machine off and unplug it. If you're not comfortable working inside the machine, our support team can help.": "Schalten Sie die Maschine aus und ziehen Sie den Netzstecker, bevor Sie eine Abdeckung öffnen. Wenn Sie sich bei Arbeiten im Inneren unsicher sind, hilft Ihnen unser Support-Team.",
-  "If a fire grows or spreads, get everyone out and call 911.": "Wenn ein Feuer größer wird oder sich ausbreitet, bringen Sie alle hinaus und rufen Sie 911 an.",
+  "If a fire grows or spreads, get everyone out and call the fire department (911 in the U.S.).": "Wenn ein Feuer größer wird oder sich ausbreitet, bringen Sie alle hinaus und rufen Sie die Feuerwehr (in den USA 911).",
   "Only fight a small fire you can put out safely.": "Löschen Sie nur ein kleines Feuer, das Sie sicher löschen können.",
   "Please contact our support team before trying it, so a technician can confirm it's the right fix for your machine.": "Bitte wenden Sie sich vorher an unser Support-Team, damit ein Techniker bestätigt, dass dies die richtige Lösung für Ihre Maschine ist.",
   "Recommended fixes": "Empfohlene Lösungen",

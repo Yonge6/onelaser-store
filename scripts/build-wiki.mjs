@@ -22,6 +22,15 @@ const read = (f) => JSON.parse(fs.readFileSync(path.join(src, f), "utf8"));
 const manifest = read("export-manifest.json");
 if (manifest.private_operations_included !== false) throw new Error("Export must be public-only.");
 const library = read("data/library.json");
+// Guides kept out of the store until OneLaser support revises the original text on wiki.1laser.com
+// (2026-11-26 review): the fire guide tells people to stay and fight a spreading fire; the Hydra rear-outlet guide
+// has people open the side panel and check powered internal lights. Links to them in other guides become plain text.
+const HIDDEN = new Map([
+  ["en-180", "fire response guide: says to stay and fight a spreading fire"],
+  ["en-266", "Hydra rear outlet: opening the side panel with power on"],
+]);
+const hiddenUrls = library.articles.filter((a) => HIDDEN.has(a.id)).map((a) => a.source_url);
+library.articles = library.articles.filter((a) => !HIDDEN.has(a.id));
 const FAMILIES = library.families.map((f) => f.id);
 const ORIGIN = "https://wiki.1laser.com";
 
@@ -41,6 +50,7 @@ for (const a of library.articles) {
   bySlug.set(slug, a.id);
   idToSlug.set(a.id, slug);
 }
+const hiddenPaths = new Set(hiddenUrls.map((u) => pathOf(u).toLowerCase()));
 const pathToSlug = new Map(library.articles.map((a) => [pathOf(a.source_url).toLowerCase(), idToSlug.get(a.id)]));
 
 // ---- HTML clean-up (the export is already hardened; this is a second, strict allowlist because the page inserts the HTML) ----
@@ -62,6 +72,7 @@ function link(href, selfSlug) {
   if (/^#[^/]/.test(href)) return { anchor: href.slice(1), to: selfSlug };
   let abs = href;
   if (href.startsWith("/") && !href.startsWith("//")) abs = ORIGIN + href;
+  if (/^https?:\/\/wiki\.1laser\.com/i.test(abs) && hiddenPaths.has(pathOf(abs).toLowerCase())) return null; // kept-out guide: plain text
   if (/^https?:\/\/wiki\.1laser\.com/i.test(abs)) {
     const hash = /#([^/].*)$/.exec(abs)?.[1];
     const s = pathToSlug.get(pathOf(abs).toLowerCase()) ?? (pathOf(abs) === "" ? "welcome" : null);
@@ -166,7 +177,8 @@ fs.writeFileSync(path.join(tmpDir, "search.json"), JSON.stringify(search));
 const problems = [];
 if (list.length !== library.articles.length || list.length === 0) problems.push(`expected ${library.articles.length} guides, built ${list.length}`);
 if (new Set(list.map((a) => a.slug)).size !== list.length) problems.push("duplicate slugs");
-for (const sl of BYPASS) if (!list.some((a) => a.slug === sl)) problems.push(`safety list names a guide that no longer exists: ${sl}`);
+// A safety-listed guide may be withdrawn on the live wiki; the rest still get their flags.
+for (const sl of BYPASS) if (!list.some((a) => a.slug === sl)) console.warn(`[wiki] note: safety-listed guide not in this build (withdrawn?): ${sl}`);
 for (const a of list) {
   const page = JSON.parse(fs.readFileSync(path.join(tmpDir, `${a.id}.json`), "utf8"));
   if (!page.html || !text(page.html)) problems.push(`${a.id}: empty guide`);
@@ -205,4 +217,4 @@ try {
 }
 fs.rmSync(oldDir, { recursive: true, force: true });
 fs.rmSync(oldList, { force: true });
-console.log(`wiki: ${list.length} guides, ${FAMILIES.length} families, ${unresolved} dead internal links and ${placeholders} placeholder links dropped`);
+console.log(`wiki: ${list.length} guides (${HIDDEN.size} kept out for safety review), ${FAMILIES.length} families, ${unresolved} dead internal links and ${placeholders} placeholder links dropped`);
