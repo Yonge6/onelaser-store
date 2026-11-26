@@ -2,6 +2,7 @@ import { useEffect, useState, useRef } from "react";
 import { asset, byHandle, frontImg, go, img, lockScroll, money, monthlyText, popupLink, useFocusTrap, isTopDialog } from "../lib.js";
 import { TermsAsk, TermsBox, useTerms } from "../components/Terms.jsx";
 import { SHIP_TEXT, shipQuote, shipRegion } from "../data/shipping.js";
+import PayOptions from "../components/PayOptions.jsx";
 import { t, tf } from "../i18n.js";
 import { useCart } from "../cart.jsx";
 import { Icon, Link } from "../components/ui.jsx";
@@ -17,10 +18,6 @@ const SERVICES = ["engineer-1-on-1-training-support", "lightburn-software-pro-li
 const CHILLER = "onelaser-industrial-chiller-for-hydra-laser-engraver"; // "for Hydra & Cobra glass tube laser system"
 const GLASS = ["cobra", "hydra"]; // series that can run a glass tube; Hydra 7 Gen2 is RF only
 const SUGGEST = ["piburn-v-for-onelaser", "air-assist-for-laser-engraver-cutter", "filtrabox-micro", "lightburn-software-pro-license-key", "multi-function-rotary-axis-57-motor", "engineer-1-on-1-training-support", "1-8-frosted-matte-acrylic-sheets-12-12-4-pack-for-laser-engraving-cutting"];
-/* The methods 1laser.com takes: its Payment Methods page plus the express buttons on its live checkout (PayPal, Amazon Pay;
-   checked 2026-11-26), with Shopify's own payment logos (public/assets/pay). Shop Pay covers Shop Pay Installments
-   (provided by Affirm), so Affirm has no logo of its own. */
-const PAY = [["visa", "Visa"], ["mastercard", "Mastercard"], ["amex", "American Express"], ["discover", "Discover"], ["paypal", "PayPal"], ["apple-pay", "Apple Pay"], ["google-pay", "Google Pay"], ["amazon-pay", "Amazon Pay"], ["shop-pay", "Shop Pay"]];
 
 const addOnsFor = (p) => {
   if (p.kind !== "machine") return [];
@@ -243,8 +240,10 @@ export default function Cart() {
                 );
               })}
             </div>
+            <PayOptions part="biz" className="po-wide" lines={picked} subtotal={subtotal} total={total} quote={quote} machine={machine} />
           </div>
-          <aside className="ic-card ic-details">
+          <aside className="ic-side">
+          <div className="ic-card ic-details">
             <h2>{t("Order details")}</h2>
             <p><span>{t("Price")} ({pickedQty} {t(pickedQty === 1 ? "item" : "items")})</span><span>{money(subtotal + savings)}</span></p>
             {savings > 0 && <p className="save"><span>{t("Savings")}</span><span>−{money(savings)}</span></p>}
@@ -253,24 +252,21 @@ export default function Cart() {
                 checked 2026-11-26: CA 7.75%, TX 8.25%, NY 8.875%, FL 7%, WA 10.55%, OR none. The draft does not copy rates. */}
             <p><span>{t("Tax")}</span><span className="muted">{t("Estimated from your address at checkout")}</span></p>
             <p className="total"><span>{t("Estimated total")}</span><b>{money(total)}</b></p>
-            {/* the site's one estimate (lib.js perMonth), same as the product cards and the payment popup */}
-            {/* financing covers the items (the business-loan subsidy threshold is on the purchase), so shipping is left out */}
-            {subtotal >= 1000 && <p className="ic-monthly">{t("or")} <b>{monthlyText(subtotal)}</b>{t("/mo for 24 months (est. 15% APR)")}</p>}
-            {subtotal >= 1000 && (
-              <a {...popupLink("financing", { amount: subtotal, h: machine?.product.handle }, `#/pages/financing?amount=${subtotal}&n=24${machine ? `&p=${machine.product.handle}` : ""}`)} className="ic-finance">
-                <Icon name="card" size={16} />{t("Pay over time with financing.")} <u>{t("Estimate my payment")}</u>
-              </a>
-            )}
-            {picked.length > 0 && <TermsBox id="ic-terms" ok={terms} onChange={setTermsOk} />}
-            {picked.length ? <Link to="/checkout" className="ic-checkout" onClick={toCheckout}>{t("Check out")}</Link> : <span className="ic-checkout off" aria-disabled="true">{t("Select an item to check out")}</span>}
+          </div>
+          {/* four ways to pay, after xTool's cart; financing figures use the items' price (the business-loan subsidy threshold
+              is on the purchase), so shipping is left out of them */}
+          <PayOptions part="main" lines={picked} subtotal={subtotal} total={total} quote={quote} machine={machine} terms={terms} setTerms={setTermsOk} toCheckout={toCheckout} />
+          {/* one column (≤1100px): the business options come after the checkout block */}
+          <PayOptions part="biz" className="po-narrow" lines={picked} subtotal={subtotal} total={total} quote={quote} machine={machine} />
+          <div className="ic-card ic-details ic-service">
             <Link to="/collections/machines" className="ic-continue">{t("Continue shopping")}</Link>
             <h3>{t("Shipped by OneLaser")}</h3>
             <ul>
               <li><Icon name="truck" size={20} /><span><b>{t("Delivery by address")}</b>{t("All items ship according to the item with the latest shipping date.")}</span></li>
               <li><Icon name="refresh" size={20} /><span><b>{t("30-day return period")}</b>{t("Terms and conditions apply.")}</span></li>
               <li><Icon name="headset" size={20} /><span><b>{t("U.S.-based support")}</b>{t("Talk to real laser engineers.")} <a {...popupLink("book", {}, "#/pages/sales-consultation")}>{t("Book a free call")}</a></span></li>
-              <li><Icon name="lock" size={20} /><span><b>{t("Pay your way")}</b><span className="ic-pay">{PAY.map(([f, name]) => <img key={f} src={asset(`pay/${f}.svg`)} alt={name} title={name} width="38" height="24" loading="lazy" />)}</span></span></li>
             </ul>
+          </div>
           </aside>
         </div>
         <Suggestions exclude={[...inCart, ...items.flatMap((i) => addOnsFor(i.product).map((a) => a.handle))]} />

@@ -5207,3 +5207,65 @@ body:has(.ip-bar) .ai-pill, .pdp ~ .ai-pill { bottom: 104px; }
 .ik-addr-ask button { margin-left: 4px; font-size: 12px; font-weight: 600; color: var(--accent-ink); text-decoration: underline; text-underline-offset: 2px; }
 .ik-mismatch { color: #b45309; }
 .ik-tax-note { margin: 4px 0 0; font-size: 12px; line-height: 17px; color: var(--muted); }
+
+/* Cart: order details, then "How would you like to pay?" (four blocks, after xTool's cart), then delivery & service */
+.ic-side { display: grid; gap: 16px; align-content: start; }
+.ic-side .ic-details { position: static; }
+.ic-service { padding-top: 22px; padding-bottom: 22px; }
+.ic-service .ic-continue { margin-top: 0; }
+.po { display: grid; gap: 12px; }
+.po > h2 { margin: 8px 0 0; font-size: 20px; line-height: 28px; font-weight: 700; color: var(--title); }
+.po-card { padding: 24px; border-radius: 16px; background: #fff; }
+.po-card h3 { margin: 0; font-size: 18px; line-height: 24px; font-weight: 700; color: var(--title); }
+.po-price { margin: 6px 0 0; font-size: 15px; line-height: 22px; color: var(--title); }
+.po-price b { font-weight: 700; }
+.po-link { display: inline-flex; align-items: center; gap: 4px; margin-top: 6px; font-size: 13px; font-weight: 600; color: var(--accent-ink); background: none; padding: 0; cursor: pointer; }
+.po-link:disabled { opacity: .4; cursor: default; }
+.po-link.center { justify-self: center; }
+.po-main .ic-checkout { margin-top: 14px; }
+.po-pay { margin-top: 14px; }
+.po-biz { background: var(--page); box-shadow: inset 0 0 0 1px var(--line); }
+.po-sub { margin: 4px 0 6px; font-size: 14px; line-height: 20px; color: var(--muted); }
+.po-opt { display: grid; grid-template-columns: 20px minmax(0, 1fr); gap: 10px; padding: 16px 0; border-top: 1px solid var(--line); }
+.po-opt > svg { margin-top: 2px; color: var(--title); }
+.po-opt > div { display: grid; gap: 4px; min-width: 0; }
+.po-opt b { font-size: 14px; line-height: 20px; color: var(--title); }
+.po-opt p { margin: 0; font-size: 13px; line-height: 19px; color: var(--muted); }
+.po-acts { display: flex; flex-wrap: wrap; gap: 4px 18px; }
+.po-lenders { list-style: none; margin: 6px 0 0; padding: 0; display: grid; gap: 6px; }
+.po-lenders a { display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: 8px; padding: 10px 12px; border-radius: 10px; background: #fff; box-shadow: inset 0 0 0 1px var(--line); color: var(--title); }
+.po-lenders a small { grid-column: 1; font-size: 12px; line-height: 17px; color: var(--muted); }
+.po-lenders a svg { grid-row: 1 / span 2; grid-column: 2; align-self: center; color: var(--accent-ink); }
+.po-quote { margin-top: 8px; height: 48px; border-radius: 999px; background: var(--title); color: #fff; font-size: 15px; font-weight: 600; }
+.po-quote:hover { background: #000; } .po-quote:disabled { opacity: .4; }
+/* quote popup */
+.qd { width: min(520px, 100%); }
+.qd h2 { margin: 10px 0 14px; }
+.qd-steps { list-style: none; margin: 0; padding: 0 40px 0 0; display: flex; align-items: center; gap: 8px; }
+.qd-steps li { flex: 1; display: flex; align-items: center; gap: 8px; }
+.qd-steps li::after { content: ""; flex: 1; height: 2px; background: var(--line); }
+.qd-steps li:last-child { flex: none; } .qd-steps li:last-child::after { display: none; }
+.qd-steps i { width: 22px; height: 22px; display: grid; place-items: center; border-radius: 50%; font-style: normal; font-size: 12px; font-weight: 700; background: var(--page); color: var(--muted); }
+.qd-steps li.now i, .qd-steps li.done i { background: var(--title); color: #fff; }
+.qd-orgs { display: grid; gap: 10px; margin-bottom: 16px; }
+.qd-orgs button { display: grid; grid-template-columns: 22px minmax(0, 1fr); gap: 12px; align-items: start; padding: 14px 16px; border-radius: 12px; text-align: left; background: #fff; box-shadow: inset 0 0 0 1px var(--line); }
+.qd-orgs button.on { box-shadow: inset 0 0 0 2px var(--title); }
+.qd-orgs b { display: block; font-size: 15px; color: var(--title); } .qd-orgs small { font-size: 13px; color: var(--muted); }
+.qd-form { display: grid; gap: 10px; margin-bottom: 16px; }
+.qd-form label { display: grid; gap: 4px; font-size: 13px; color: var(--muted); }
+.qd-form input { height: 44px; padding: 0 12px; border-radius: 8px; border: 1px solid var(--line); font: inherit; font-size: 15px; color: var(--title); }
+.qd-form label.bad input { border-color: var(--brand); } .qd-form label.bad span { color: var(--brand); }
+.qd-btns { display: flex; gap: 10px; flex-wrap: wrap; } .qd-btns > * { flex: 1; justify-content: center; min-width: 140px; }
+.qd-btns .ic-checkout { display: inline-flex; align-items: center; gap: 8px; margin: 0; }
+.qd-meta { margin: -6px 0 12px; font-size: 13px; color: var(--muted); }
+.qd-lines { list-style: none; margin: 0 0 8px; padding: 0; display: grid; gap: 6px; font-size: 14px; }
+.qd-lines li, .qd-sum { display: flex; justify-content: space-between; gap: 12px; }
+.qd-sum { margin: 4px 0; font-size: 14px; color: var(--muted); } .qd-sum.total { margin-bottom: 16px; font-size: 16px; color: var(--title); font-weight: 700; }
+.qd-note { margin: 12px 0 0; font-size: 12px; line-height: 17px; color: var(--muted); }
+
+/* side column: order details + pay in full or monthly stay in view while scrolling (wide screens) */
+@media (min-width: 1101px) { .ic-side { position: sticky; top: 88px; } .po-narrow { display: none; } }
+@media (max-width: 1100px) { .po-wide { display: none; } .po-biz-wrap { margin-top: 0; } }
+.po-biz-wrap { margin-top: 16px; }
+.po-biz-wrap .po-biz { background: #fff; box-shadow: none; }
+@media (min-width: 761px) { .po-biz .po-opts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0 20px; } .po-biz .po-opts .po-opt { border-top: 0; padding-top: 4px; } }
