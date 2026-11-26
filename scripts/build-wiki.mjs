@@ -25,12 +25,15 @@ const library = read("data/library.json");
 // Guides kept out of the store until OneLaser support revises the original text on wiki.1laser.com
 // (2026-11-26 review): the fire guide tells people to stay and fight a spreading fire; the Hydra rear-outlet guide
 // has people open the side panel and check powered internal lights. Links to them in other guides become plain text.
-const HIDDEN = new Map([
-  ["en-180", "fire response guide: says to stay and fight a spreading fire"],
-  ["en-266", "Hydra rear outlet: opening the side panel with power on"],
-]);
-const hiddenUrls = library.articles.filter((a) => HIDDEN.has(a.id)).map((a) => a.source_url);
-library.articles = library.articles.filter((a) => !HIDDEN.has(a.id));
+// Matched by article id AND by wiki path, so the guide stays out if it is renamed or republished under a new id.
+const HIDDEN = [
+  { id: "en-180", path: "knowledge-base/maintenance/fire-response-and-prevention-guide", why: "fire response guide: says to stay and fight a spreading fire" },
+  { id: "en-266", path: "hydra-series/rear-outlet-no-power", why: "Hydra rear outlet: opening the side panel with power on" },
+];
+const plainPath = (url) => decodeURIComponent(url.replace(/^https?:\/\/wiki\.1laser\.com\/?/i, "").replace(/[?#].*$/, "")).replace(/^\/+|\/+$/g, "").replace(/^en\//i, "").toLowerCase();
+const isHidden = (a) => HIDDEN.some((h) => h.id === a.id || h.path === plainPath(a.source_url));
+const hiddenUrls = [...HIDDEN.map((h) => `https://wiki.1laser.com/${h.path}`), ...library.articles.filter(isHidden).map((a) => a.source_url)];
+library.articles = library.articles.filter((a) => !isHidden(a));
 const FAMILIES = library.families.map((f) => f.id);
 const ORIGIN = "https://wiki.1laser.com";
 
@@ -130,11 +133,16 @@ for (const a of library.articles) {
 
 // ---- safety flags (the store adds its own notice; the guide text stays as published on wiki.1laser.com) ----
 // bypass: the fix switches off a safety protection. Never suggested by the assistant or listed under a symptom.
-const BYPASS = new Set(["hydra-series/z-axis-only-moves-down-autofocus-damaged", "x-series/intermittent-laser-output-low-power"]);
+// By article id (stable across renames); the path is a second key, so a republished copy is caught too.
+const BYPASS = [
+  { id: "en-264", path: "hydra-series/z-axis-only-moves-down-autofocus-damaged" }, // shorts the Z-axis anti-collision lock
+  { id: "en-232", path: "x-series/intermittent-laser-output-low-power" }, // bypasses the water-flow sensor
+];
+const isBypass = (id, slug) => BYPASS.some((b) => b.id === id || b.path === slug);
 const ELECTRICAL = /\b(electrical (panel|cabinet|box|board)|power supply|wiring|multimeter|voltage|short-circuit|disassembl\w*|control (card|board) replacement|tl-timer board|motherboard)\b/i;
 const FIRE = /\b(fire (response|prevention|safety|risk)|flames?|flaming|catch(es)? fire)\b/i; // not "fails to fire"
-const safetyOf = (slug, title, body, topic) => [
-  ...(BYPASS.has(slug) ? ["bypass"] : []),
+const safetyOf = (id, slug, title, body, topic) => [
+  ...(isBypass(id, slug) ? ["bypass"] : []),
   ...(FIRE.test(title) ? ["fire"] : []),
   ...(topic !== "downloads" && ELECTRICAL.test(body) ? ["electrical"] : []), // manuals have their own safety chapters
 ];
@@ -169,7 +177,7 @@ for (const a of library.articles) {
   // Whole words only (the export's own summaries stop at 180 characters, often mid-word).
   const cut = full.length > 180 || (full.length >= 170 && !/[.!?…)"”]$/.test(full));
   const excerpt = cut ? `${full.slice(0, 180).replace(/[\s,;:.(–—-]+\S*$/, "")}…` : full;
-  const safety = safetyOf(slug, titles.get(a.id), body, a.topic);
+  const safety = safetyOf(a.id, slug, titles.get(a.id), body, a.topic);
   list.push({ id: a.id, slug, title: titles.get(a.id), family: a.family, topic: a.topic, excerpt, min: a.read_minutes || 1, updated: (a.source_updated_at || "").slice(0, 10), ...(safety.length ? { safety } : {}) });
 }
 fs.writeFileSync(path.join(tmpDir, "search.json"), JSON.stringify(search));
@@ -178,7 +186,11 @@ const problems = [];
 if (list.length !== library.articles.length || list.length === 0) problems.push(`expected ${library.articles.length} guides, built ${list.length}`);
 if (new Set(list.map((a) => a.slug)).size !== list.length) problems.push("duplicate slugs");
 // A safety-listed guide may be withdrawn on the live wiki; the rest still get their flags.
-for (const sl of BYPASS) if (!list.some((a) => a.slug === sl)) console.warn(`[wiki] note: safety-listed guide not in this build (withdrawn?): ${sl}`);
+for (const b of BYPASS) {
+  const hit = list.find((a) => a.id === b.id || a.slug === b.path);
+  if (!hit) console.warn(`[wiki] note: safety-listed guide not in this build (withdrawn?): ${b.id} ${b.path}`);
+  else if (!hit.safety?.includes("bypass")) problems.push(`${hit.id}: safety-listed guide lost its bypass flag`);
+}
 for (const a of list) {
   const page = JSON.parse(fs.readFileSync(path.join(tmpDir, `${a.id}.json`), "utf8"));
   if (!page.html || !text(page.html)) problems.push(`${a.id}: empty guide`);
@@ -217,4 +229,4 @@ try {
 }
 fs.rmSync(oldDir, { recursive: true, force: true });
 fs.rmSync(oldList, { force: true });
-console.log(`wiki: ${list.length} guides (${HIDDEN.size} kept out for safety review), ${FAMILIES.length} families, ${unresolved} dead internal links and ${placeholders} placeholder links dropped`);
+console.log(`wiki: ${list.length} guides (${HIDDEN.length} kept out for safety review), ${FAMILIES.length} families, ${unresolved} dead internal links and ${placeholders} placeholder links dropped`);
