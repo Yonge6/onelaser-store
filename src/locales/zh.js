@@ -1773,4 +1773,5 @@ export default {
   "OneLaser Support Assistant": "OneLaser 售后助手",
   "Open the OneLaser support assistant": "打开 OneLaser 售后助手",
   "OneLaser support assistant": "OneLaser 售后助手",
+  "Some fixes for this switch off a safety protection. Please check with our support team before opening the machine.": "这个问题的部分修法需要关掉安全保护。动手拆机前，请先联系售后确认。",
 };

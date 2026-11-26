@@ -1773,4 +1773,5 @@ export default {
   "OneLaser Support Assistant": "Assistant d'assistance OneLaser",
   "Open the OneLaser support assistant": "Ouvrir l'assistant d'assistance OneLaser",
   "OneLaser support assistant": "Assistant d'assistance OneLaser",
+  "Some fixes for this switch off a safety protection. Please check with our support team before opening the machine.": "Certaines solutions désactivent une protection de sécurité. Vérifiez avec l'assistance avant d'ouvrir la machine.",
 };

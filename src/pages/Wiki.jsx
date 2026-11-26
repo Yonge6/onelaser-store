@@ -90,6 +90,9 @@ const ASK_STOP = new Set(["an", "the", "to", "of", "for", "and", "or", "in", "on
 const ASK_SAME = { updat: "upgrad" }; // "update the firmware" finds the "Firmware Upgrade" guides
 const stemOf = (w) => { const s = w.slice(0, 5); return ASK_SAME[s] || s; };
 const FAMILY_WORDS = { "x-series": /\b(xrf|xt|x[\s-]?series)\b/, "hydra-series": /\bhydra\b/, cobra: /\bcobra\b/, vertigo: /\bvertigo\b/ };
+// Guides whose fix switches off a safety protection (shorting the Z-axis anti-collision lock, bypassing the water-flow
+// sensor). They stay in the Knowledge Base, but the assistant never suggests them on its own: it points to support instead.
+const ASSIST_NEVER = new Set(["hydra-series/z-axis-only-moves-down-autofocus-damaged", "x-series/intermittent-laser-output-low-power"]);
 const MACHINE_FAMILIES = new Set(["x-series", "hydra-series", "cobra", "vertigo"]);
 const FAMILY_NAMES = new Set(["xrf", "xt", "hydra", "cobra", "vertigo"]);
 export function assistGuides(q) {
@@ -99,7 +102,7 @@ export function assistGuides(q) {
   const ws = [...new Set(low.split(/[^\p{L}\p{N}₂]+/u).filter((w) => w.length > 1 && !ASK_STOP.has(w) && !FAMILY_NAMES.has(w)).map(stemOf))];
   if (!ws.length) return [];
   const need = Math.max(1, Math.ceil(ws.length * 0.6));
-  return wiki.articles
+  const ranked = wiki.articles
     .map((a) => {
       const title = a.title.toLowerCase(), about = a.excerpt.toLowerCase(), text = bodies?.[a.id] || "";
       let score = 0, hits = 0;
@@ -113,8 +116,10 @@ export function assistGuides(q) {
     })
     .filter(Boolean)
     .sort((x, y) => y.score - x.score)
-    .slice(0, 3)
-    .map((x) => x.a);
+    .slice(0, 4);
+  const picks = ranked.filter((x) => !ASSIST_NEVER.has(x.a.slug)).slice(0, 3).map((x) => x.a);
+  picks.checkFirst = ranked.some((x) => ASSIST_NEVER.has(x.a.slug)); // a protection-bypass fix matched: ask support first
+  return picks;
 }
 
 assistGuides.prepare = loadBodies; // the assistant waits for the full text (or its failure) before answering

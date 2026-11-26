@@ -288,8 +288,11 @@ function guideReply(raw, guides) {
     return { text: tx("Our U.S. support team can help. Open a support ticket, or call {phone}.", { phone }), links: [["Open a support ticket", SUPPORT_TICKET], [tx("Call {phone}", { phone }), `tel:${contact.tel}`]], src: ["OneLaser contact details"], next: GUIDE_CHIPS.slice(0, 3) };
   if (/\b(price|prices|buy|deals?|sale|financing|finance|monthly payments?|shipping|ship to|delivery|return policy|refund|warranty|which laser|recommend)\b/.test(s)) return reply(raw, null);
   const found = guides(raw);
+  const checkFirst = found.checkFirst ? ["Some fixes for this switch off a safety protection. Please check with our support team before opening the machine."] : [];
+  if (found.checkFirst && !found.length)
+    return { text: checkFirst, links: [["Open a support ticket", SUPPORT_TICKET], [tx("Call {phone}", { phone }), `tel:${contact.tel}`]], src: ["OneLaser Knowledge Base"], next: GUIDE_CHIPS.slice(0, 3) };
   if (found.length)
-    return { text: found.length === 1 ? "This guide should help:" : "These guides should help:", links: found.map((g) => [g.title, `/wiki/${g.slug}`]), src: ["OneLaser Knowledge Base"], next: ["Contact support", ...GUIDE_CHIPS.filter((c) => c !== "Contact support").slice(0, 2)] };
+    return { text: [...checkFirst, found.length === 1 ? "This guide should help:" : "These guides should help:"], links: [...found.map((g) => [g.title, `/wiki/${g.slug}`]), ...(found.checkFirst ? [["Open a support ticket", SUPPORT_TICKET]] : [])], src: ["OneLaser Knowledge Base"], next: ["Contact support", ...GUIDE_CHIPS.filter((c) => c !== "Contact support").slice(0, 2)] };
   return { text: "No matching guide found. Try your model and the problem, like “Hydra autofocus stops early”, or contact support.", links: [["Open a support ticket", SUPPORT_TICKET]], src: [], next: GUIDE_CHIPS };
 }
 
