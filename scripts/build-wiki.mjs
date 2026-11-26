@@ -153,7 +153,30 @@ if (problems.length) {
   console.error("[wiki] build stopped, nothing replaced:\n  " + problems.join("\n  "));
   process.exit(1);
 }
-fs.rmSync(outDir, { recursive: true, force: true });
-fs.renameSync(tmpDir, outDir);
-fs.writeFileSync(path.join(root, "src/data/wiki.json"), JSON.stringify({ snapshot: manifest.source_snapshot_date, families: FAMILIES, articles: list }, null, 0) + "\n");
+// Swap the guide files and the guide list (src/data/wiki.json) as one version: if any step fails, the previous set is put back.
+const listFile = path.join(root, "src/data/wiki.json");
+const listTmp = `${listFile}.tmp`;
+const oldDir = path.join(root, "public/.wiki-data-old");
+const oldList = `${listFile}.old`;
+fs.writeFileSync(listTmp, JSON.stringify({ snapshot: manifest.source_snapshot_date, families: FAMILIES, articles: list }, null, 0) + "\n");
+fs.rmSync(oldDir, { recursive: true, force: true });
+fs.rmSync(oldList, { force: true });
+const hadDir = fs.existsSync(outDir);
+const hadList = fs.existsSync(listFile);
+try {
+  if (hadDir) fs.renameSync(outDir, oldDir);
+  if (hadList) fs.renameSync(listFile, oldList);
+  fs.renameSync(tmpDir, outDir);
+  fs.renameSync(listTmp, listFile);
+} catch (err) {
+  fs.rmSync(outDir, { recursive: true, force: true });
+  if (hadDir && fs.existsSync(oldDir)) fs.renameSync(oldDir, outDir);
+  if (hadList && fs.existsSync(oldList)) fs.renameSync(oldList, listFile);
+  fs.rmSync(tmpDir, { recursive: true, force: true });
+  fs.rmSync(listTmp, { force: true });
+  console.error("[wiki] could not replace the data, previous version kept:", err.message);
+  process.exit(1);
+}
+fs.rmSync(oldDir, { recursive: true, force: true });
+fs.rmSync(oldList, { force: true });
 console.log(`wiki: ${list.length} guides, ${FAMILIES.length} families, ${unresolved} dead internal links and ${placeholders} placeholder links dropped`);
