@@ -47,8 +47,12 @@ function useShipZip() {
 /** "Free shipping" / "Shipping $900" + the store's delivery estimate, or null when a rate is not known. */
 export function quoteText(q) {
   if (!q) return null;
-  return [q.fee === 0 ? t("Free shipping") : `${t("Shipping")} ${money(q.fee)}`, tf("Arrives in about {a}–{b} business days.", { a: q.days[0], b: q.days[1] })];
+  const head = q.fee === 0 ? t("Free shipping") : `${t("Shipping")} ${money(q.fee)}`;
+  if (q.partial) return [tf("{amount} so far", { amount: head }), t("Shipping for the other items is confirmed at checkout.")];
+  return [head, tf("Arrives in about {a}–{b} business days.", { a: q.days[0], b: q.days[1] })];
 }
+/** The order-summary shipping cell: "Free" / "$900", with "+ more at checkout" when part is still to be confirmed. */
+export const quoteCell = (q) => `${q.fee === 0 ? t("Free") : money(q.fee)}${q.partial ? ` + ${t("rest at checkout")}` : ""}`;
 function ShipCheck({ zip, setZip, quote }) {
   const region = shipRegion(zip);
   const qt = quoteText(quote);
@@ -243,7 +247,7 @@ export default function Cart() {
             <h2>{t("Order details")}</h2>
             <p><span>{t("Price")} ({pickedQty} {t(pickedQty === 1 ? "item" : "items")})</span><span>{money(subtotal + savings)}</span></p>
             {savings > 0 && <p className="save"><span>{t("Savings")}</span><span>−{money(savings)}</span></p>}
-            <p><span>{t("Shipping")}</span>{quote ? <span>{quote.fee === 0 ? t("Free") : money(quote.fee)}</span> : <span className="muted">{t(shipRegion(zip) ? "Calculated at checkout" : "Enter your ZIP above")}</span>}</p>
+            <p><span>{t("Shipping")}</span>{quote ? <span>{quoteCell(quote)}</span> : <span className="muted">{t(shipRegion(zip) ? "Calculated at checkout" : "Enter your ZIP above")}</span>}</p>
             {/* which states OneLaser collects sales tax in is for finance to confirm; the live checkout adds it */}
             <p><span>{t("Tax")}</span><span className="muted">{t("Added by state at checkout")}</span></p>
             <p className="total"><span>{t("Estimated total")}</span><b>{money(total)}</b></p>

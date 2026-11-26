@@ -5,13 +5,14 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "node scripts/check-i18n.mjs && node scripts/check-inner-components.mjs && node scripts/check-monthly.mjs && vite build",
+    "build": "node scripts/check-i18n.mjs && node scripts/check-inner-components.mjs && node scripts/check-monthly.mjs && node scripts/check-shipping.mjs && vite build",
     "preview": "vite preview",
     "catalog": "node scripts/build-catalog.mjs",
     "stories": "node scripts/build-stories.mjs",
     "check:i18n": "node scripts/check-i18n.mjs",
     "check:components": "node scripts/check-inner-components.mjs",
-    "check:monthly": "node scripts/check-monthly.mjs"
+    "check:monthly": "node scripts/check-monthly.mjs",
+    "check:shipping": "node scripts/check-shipping.mjs"
   },
   "dependencies": {
     "@fontsource/poppins": "^5.3.0",

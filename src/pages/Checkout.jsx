@@ -3,10 +3,10 @@ import { t } from "../i18n.js";
 import { asset, frontImg, img, money } from "../lib.js";
 import { useCart } from "../cart.jsx";
 import { Icon, Link } from "../components/ui.jsx";
-import { OfferGate, quoteText } from "./Cart.jsx";
+import { OfferGate, quoteCell, quoteText } from "./Cart.jsx";
 import { TermsBox, useTerms } from "../components/Terms.jsx";
 import AddressSuggest from "../components/AddressSuggest.jsx";
-import { SHIP_TEXT, isPoBox, shipQuote, shipRegion } from "../data/shipping.js";
+import { SHIP_TEXT, isPoBox, shipQuote, shipRegion, zipMatchesState } from "../data/shipping.js";
 
 // Tax-exempt buyers: the state's official resale certificate (OneLaser ships from California; 1laser.com has no form of its own).
 // Exemption requests go to the sales team (sales@1laser.com, as listed in the site footer). TODO(team): finance to confirm.
@@ -93,6 +93,7 @@ export default function Checkout() {
     // the shipping policy: no APO/FPO, no direct shipping to U.S. territories
     if (["military", "territory"].includes(shipRegion(f.zip))) bad.zip = true;
     if (f.zip && !shipRegion(f.zip)) bad.zip = true; // not a U.S. ZIP we know
+    if (f.zip && f.state && !zipMatchesState(f.zip, f.state)) { bad.zip = true; bad.state = true; bad.mismatch = true; }
     if (isPoBox(f.street)) bad.street = true;
     if (isPoBox(f.apt)) bad.apt = true;
     setErr(bad);
@@ -134,7 +135,7 @@ export default function Checkout() {
         <div><dt>{t("Price")}</dt><dd>{money(subtotal + savings)}</dd></div>
         {savings > 0 && <div className="save"><dt>{t("Savings")}</dt><dd>−{money(savings)}</dd></div>}
         {/* live: changes as soon as a ZIP is typed (rule from the shipping policy; the dollar rate once RATES is filled in) */}
-        <div><dt>{t("Shipping")}</dt><dd>{shipFee != null ? (shipFee === 0 ? t("Free") : money(shipFee)) : region ? t(region === "lower48" ? "Fixed rate" : SHIP_TEXT[region][0]) : t("Enter your address")}</dd></div>
+        <div><dt>{t("Shipping")}</dt><dd>{quote ? quoteCell(quote) : region ? t(region === "lower48" ? "Fixed rate" : SHIP_TEXT[region][0]) : t("Enter your address")}</dd></div>
         <div><dt>{t("Tax")}</dt><dd>{t("Added by state when you pay")}</dd></div>
         <div className="total"><dt>{t("Total")}</dt><dd><small>USD</small> {money(total)}</dd></div>
       </dl>
@@ -183,7 +184,7 @@ export default function Checkout() {
                     <Field label={t("ZIP")} name="zip" inputMode="numeric" autoComplete="postal-code" value={f.zip} onChange={set} bad={err.zip} className="c2" />
                     {region && <p className={`ik-ship-live c2${region === "military" || region === "territory" ? " stop" : ""}`} role="status"><Icon name="truck" size={18} /><span>{quote ? <><b>{quoteText(quote)[0]}</b>{quoteText(quote)[1]}</> : <><b>{t(SHIP_TEXT[region][0])}</b>{t(SHIP_TEXT[region][1])}</>}</span></p>}
                     {machines && <p className="ik-freight c2"><Icon name="truck" size={18} /><span>{t("Machines ship by freight. Tell us in the next step if the address needs a lift gate or has limited access.")}</span></p>}
-                    {Object.keys(err).some((k) => err[k]) && <p className="ik-err c2" role="alert">{t("Please check the fields marked in red.")}</p>}
+                    {Object.keys(err).some((k) => err[k]) && <p className="ik-err c2" role="alert">{t(err.mismatch ? "The ZIP code doesn't match the state. Please check both." : "Please check the fields marked in red.")}</p>}
                     <div className="ik-actions c2"><button type="button" className="ik-pill" onClick={saveAddress}>{t("Save and continue")}</button></div>
                   </div>
                 </>
@@ -199,7 +200,7 @@ export default function Checkout() {
               <h2>{t("Shipping method")}</h2>
               {step === 1 && (
                 <>
-                  <label className="ik-choice on"><input type="radio" name="ship" defaultChecked /><span><b>{t(machines ? "Freight delivery" : "Standard shipping")}</b><em>{t(machines ? "Rate and delivery date confirmed after address review" : "Rate and delivery estimate shown after address review")}</em></span></label>
+                  <label className="ik-choice on"><input type="radio" name="ship" defaultChecked /><span><b>{t(machines ? "Freight delivery" : "Standard shipping")}</b><em>{quote ? quoteText(quote).join(" · ") : t(machines ? "Rate and delivery date confirmed after address review" : "Rate and delivery estimate shown after address review")}</em></span></label>
                   {machines && (
                     <label className="ik-field ik-area"><textarea rows={2} placeholder=" " value={f.notes || ""} onChange={(e) => set("notes", e.target.value)} /><span>{t("Delivery notes (optional): lift gate, stairs, loading dock…")}</span></label>
                   )}

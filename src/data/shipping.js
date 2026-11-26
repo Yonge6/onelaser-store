@@ -17,7 +17,8 @@ export const RATES = {
 };
 export const DAYS = { lower48: [5, 8], akhi: [10, 15] };
 /* How the store adds up several items (checked on 1laser.com): each different item adds its rate once, whatever the quantity
-   (XRF + VertiGo to Alaska = $1,800; two XRF + one VertiGo = still $1,800). */
+   (XRF + VertiGo to Alaska = $1,800; two XRF + one VertiGo = still $1,800). Two versions of the same machine in one cart
+   could not be checked, so the second version's shipping is left to checkout rather than guessed. */
 
 /* First three ZIP digits → state (USPS ranges). Military APO/FPO/DPO prefixes are "military". */
 const RANGES = [
@@ -41,16 +42,29 @@ export function shipState(zip) {
   const p = Number(m[1].slice(0, 3));
   return RANGES.find(([a, b]) => p >= a && p <= b)?.[2] || null;
 }
-/** Shipping for these cart lines ({ product, qty }) to this ZIP: { fee, days } when every item has a known rate, else null. */
+/** Shipping for these cart lines ({ product, qty }) to this ZIP:
+    { fee, days, partial } — fee counts every item with a known rate (once per product); partial = some shipping is still to
+    be confirmed at checkout (an item without a known rate, or a second version of the same product). null = nothing known. */
 export function shipQuote(lines, zip) {
   const region = shipRegion(zip);
   if (!lines.length || !(region === "lower48" || region === "akhi")) return null;
   const key = region === "lower48" ? "lower48" : shipState(zip); // "AK" | "HI"
-  const each = lines.map((l) => RATES[l.product.handle]?.[key]);
-  if (each.some((r) => r == null)) return null;
-  const fee = each.reduce((s, r) => s + r, 0);
-  return { fee, days: DAYS[region] };
+  const seen = new Set();
+  let fee = 0, known = 0, partial = false;
+  for (const l of lines) {
+    const h = l.product.handle;
+    const r = RATES[h]?.[key];
+    if (r == null || seen.has(h)) { partial = true; continue; }
+    seen.add(h); fee += r; known++;
+  }
+  if (!known) return null;
+  return { fee, days: partial ? null : DAYS[region], partial };
 }
+
+/* State names (checkout list) → USPS code, to check a ZIP against the chosen state. */
+export const STATE_CODE = { Alabama: "AL", Alaska: "AK", Arizona: "AZ", Arkansas: "AR", California: "CA", Colorado: "CO", Connecticut: "CT", Delaware: "DE", "District of Columbia": "DC", Florida: "FL", Georgia: "GA", Hawaii: "HI", Idaho: "ID", Illinois: "IL", Indiana: "IN", Iowa: "IA", Kansas: "KS", Kentucky: "KY", Louisiana: "LA", Maine: "ME", Maryland: "MD", Massachusetts: "MA", Michigan: "MI", Minnesota: "MN", Mississippi: "MS", Missouri: "MO", Montana: "MT", Nebraska: "NE", Nevada: "NV", "New Hampshire": "NH", "New Jersey": "NJ", "New Mexico": "NM", "New York": "NY", "North Carolina": "NC", "North Dakota": "ND", Ohio: "OH", Oklahoma: "OK", Oregon: "OR", Pennsylvania: "PA", "Rhode Island": "RI", "South Carolina": "SC", "South Dakota": "SD", Tennessee: "TN", Texas: "TX", Utah: "UT", Vermont: "VT", Virginia: "VA", Washington: "WA", "West Virginia": "WV", Wisconsin: "WI", Wyoming: "WY" };
+/** false when the ZIP clearly belongs to another state than the one chosen. */
+export const zipMatchesState = (zip, state) => { const z = shipState(zip), s = STATE_CODE[state]; return !z || !s || z === s; };
 
 /** Shipping region for a 5-digit ZIP: "lower48" | "akhi" | "territory" | "military" | null (not a known U.S. ZIP). */
 export function shipRegion(zip) {
