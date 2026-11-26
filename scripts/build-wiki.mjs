@@ -1,6 +1,8 @@
 // Builds the store's Knowledge Base (#/wiki, later 1laser.com/wiki) from the public wiki export that OneLaser Work OS uses
 // (GitHub Hydrax91129/onelaser-support-center: a snapshot of wiki.1laser.com, 236 public guides, no internal records).
 //   node scripts/build-wiki.mjs <path to a checkout of onelaser-support-center>
+// To include pages added or edited on wiki.1laser.com after that snapshot, first merge the live wiki into a copy:
+//   node scripts/fetch-live-wiki.mjs <support-center checkout> <merged dir>   then   node scripts/build-wiki.mjs <merged dir>
 // Writes:
 //   src/data/wiki.json            the guide list (title, family, topic, slug, summary) bundled with the page
 //   public/wiki-data/<id>.json    one file per guide (cleaned HTML + table of contents), loaded when the guide is opened

@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import wiki from "../data/wiki.json";
 import { t, tf, getLang, localeTag } from "../i18n.js";
-import { byHandle, frontImg, go, img } from "../lib.js";
+import { asset, byHandle, frontImg, go, img } from "../lib.js";
 import { Icon, Link } from "../components/ui.jsx";
 import Assistant from "../components/Assistant.jsx";
 import "../wiki.css";
@@ -10,20 +10,19 @@ import "../wiki.css";
    Content: the 236 public guides of wiki.1laser.com, built into src/data/wiki.json + public/wiki-data by scripts/build-wiki.mjs.
    Guide text is English; the interface around it follows the store language. */
 
-const FAMILY_ORDER = ["x-series", "hydra-series", "cobra", "vertigo", "software", "accessories", "materials", "general"];
+const FAMILY_ORDER = ["x-series", "hydra-series", "cobra", "vertigo", "software", "accessories", "materials", "basics", "general"];
 const MACHINES = ["x-series", "hydra-series", "cobra", "vertigo"];
 const TOPIC_ORDER = ["getting-started", "troubleshooting", "guides", "downloads"];
 // Product photo per machine family: the same front views the store's menus and cards use.
 const FAMILY_MODEL = { "x-series": "onelaser-xrf-desktop-laser-machine", "hydra-series": "hydra-9-gen-2-70w-rf-co2-dual-laser-machine", cobra: "cobra-10-100w-co2-laser-engraver-cutter", vertigo: "vertigo-vertical-laser-engraver" };
 const familyImage = (f) => { const src = byHandle[FAMILY_MODEL[f]] && frontImg(byHandle[FAMILY_MODEL[f]]); return src && /^https:/.test(src) ? img(src, 600) : src; };
-const TOPIC_ICON = { "getting-started": "school", troubleshooting: "help", guides: "layers", downloads: "download" };
 const POPULAR_SEARCHES = ["Firmware", "Air assist", "Autofocus", "LightBurn", "Camera"];
 const POPULAR_GUIDES = ["x-series/firmware-upgrade", "onelaser-cobra/air-assist-fails-to-turn-off", "x-series/incorrect-autofocus-focal-distance", "vertigo/first-time-setup-guide", "x-series/unboxing", "software-app/lightburn-2-1-device-camera-errors"];
 // Each family's old landing page on wiki.1laser.com, shown first as "Start here".
 const START = { "x-series": "x-series/overview", "hydra-series": "hydra-series/overview", cobra: "onelaser-cobra", vertigo: "vertigo/vertigo-series-wiki", software: "software-app", accessories: "accessories/overview", materials: "material-library", general: "faq" };
 const SUPPORT_TICKET = "https://zohodesk.1laser.com/portal/en/newticket";
 
-const familyName = (f) => ({ "x-series": t("X Series"), "hydra-series": t("Hydra Series"), cobra: t("Cobra Series"), vertigo: t("VertiGo"), software: t("Software & firmware"), accessories: t("Accessories"), materials: t("Materials"), general: t("General help") })[f] || f;
+const familyName = (f) => ({ "x-series": t("X Series"), "hydra-series": t("Hydra Series"), cobra: t("Cobra Series"), vertigo: t("VertiGo"), software: t("Software & firmware"), accessories: t("Accessories"), materials: t("Materials"), basics: t("Laser basics & care"), general: t("General help") })[f] || f;
 const familyText = (f) => ({
   "x-series": t("Desktop lasers: setup, care and fixes."),
   "hydra-series": t("Hydra and Hydra Gen2: setup, manuals and fixes."),
@@ -32,15 +31,36 @@ const familyText = (f) => ({
   software: t("LightBurn, MakerBoost, cameras and firmware updates."),
   accessories: t("Air assist, rotary, auto feeder and riser base."),
   materials: t("Settings and tips for wood, acrylic, leather and more."),
+  basics: t("How lasers work, cleaning and safety."),
   general: t("Common questions, terms and new guides."),
 })[f] || "";
+
+/* "Fix by symptom": what owners see, matched on guide titles (titles are written as problems, summaries mention too much).
+   Manuals, material settings and general pages are left out; "Manuals & firmware" is its own tile (the downloads topic). */
+const SYMPTOMS = [
+  ["firing", "bolt", /\b(fir(e|es|ing)|no laser output|laser output|low power|rf tube|laser tube|tube led|power supply|power on|no power|laser stops|abnormal laser light)\b/i],
+  ["focus", "target", /\b(auto-?focus|focus(ing)?|focal|defocus|z-axis|cylinder)\b/i],
+  ["alignment", "beam", /\b(optical path|light path|beam path|red (dot|light)|mirror mount|double beam|misalign\w*|offset|start point|backlash)\b/i],
+  ["quality", "image", /\b(quality|blurr?y|charring|jitter|stray|lines|kerf|flam\w*|sparks?|poor processing|cut through|missing areas|hollow|size compression|squares|dimensions?)\b/i],
+  ["connection", "tv", /\b(lightburn|usb|wi-?fi|ethernet|connect\w*|driver|camera|makerboost|rdworks|export files|saved (design )?files)\b/i],
+  ["air", "drop", /\b(air assist|air pump|air (pipe|tube|hose)|airflow|fan|chiller|water|cooling|exhaust|smoke|antifreeze)\b/i],
+  ["motion", "gauge", /\b(x-?axis|y-?axis|axis|origin|homing|belt|motor|rotary|slider|wheels?|drifts?|wobbles?|shakes?|movement|step distance|hits material|conveyor|feeder)\b/i],
+  ["errors", "help", /\b(alarm|error|er\d+|not buffer|no response|touchscreen|reset failed)\b/i],
+];
+const SYMPTOM_IDS = SYMPTOMS.map(([id]) => id);
+const symptomName = (k) => ({ firing: t("Laser won't fire"), focus: t("Focus & autofocus"), alignment: t("Beam alignment & red dot"), quality: t("Engraving & cutting quality"), connection: t("Connection & software"), air: t("Air assist & cooling"), motion: t("Movement, origin & rotary"), errors: t("Alarms & error codes") })[k] || k;
+const symptomText = (k) => ({ firing: t("No output, stops mid-job, weak power"), focus: t("Bad focus distance, autofocus stops early"), alignment: t("Misaligned beam, offset, double beam"), quality: t("Blurry, charring, jitter, not cutting through"), connection: t("LightBurn, USB, Wi-Fi, camera"), air: t("Air pump, fan, chiller, smoke"), motion: t("Origin, axes, belts, rotary"), errors: t("Touchscreen alarms, driver errors") })[k] || "";
+const symptomOf = (a) => (a.topic === "downloads" || ["materials", "general", "basics"].includes(a.family) ? null : SYMPTOMS.find(([, , re]) => re.test(a.title))?.[0] || null);
+const BY_SYMPTOM = Object.fromEntries(SYMPTOM_IDS.map((k) => [k, wiki.articles.filter((a) => symptomOf(a) === k)]));
+// "Learn your laser": background reading, each with a photo from the store. Missing guides are skipped.
+const LEARN = [
+  ["knowledge-base/popularization/laser-focus", "home-product-hydra-gen2-scene.webp"],
+  ["knowledge-base/popularization/laser-processing-acrylic", "material-acrylic.webp"],
+  ["knowledge-base/maintenance/laser-lens-cleaning-guide", "home-product-xrf-scene.webp"],
+  ["knowledge-base/popularization/laser-processing-leather", "material-leather.webp"],
+  ["knowledge-base/maintenance/fire-response-and-prevention-guide", "home-product-cobra-scene.webp"],
+];
 const topicName = (k) => ({ "getting-started": t("Getting started"), troubleshooting: t("Troubleshooting"), guides: t("How-to guides"), downloads: t("Manuals & downloads") })[k] || k;
-const topicText = (k) => ({
-  "getting-started": t("Unbox, install and run your first job."),
-  troubleshooting: t("Fixes for errors and common problems."),
-  guides: t("Maintenance, settings and everyday tips."),
-  downloads: t("User manuals, firmware and software."),
-})[k] || "";
 const guidesCount = (n) => (n === 1 ? t("1 guide") : tf("{n} guides", { n }));
 
 const bySlug = new Map(wiki.articles.map((a) => [a.slug, a]));
@@ -58,28 +78,34 @@ const pages = new Map();
 const loadPage = (id) => (pages.has(id) ? Promise.resolve(pages.get(id)) : fetch(dataUrl(`${id}.json`)).then((r) => { if (!r.ok) throw new Error(String(r.status)); return r.json(); }).then((j) => (pages.set(id, j), j)));
 
 /** Every word must appear in the title, summary, family/topic or guide text; title hits rank first. */
-function find(q, body, family, topic) {
+function find(q, body, family, topic, fix) {
   const phrase = q.toLowerCase().trim();
   const words = phrase.split(/[^\p{L}\p{N}.₂-]+/u).filter((w) => w.length > 1 || /\d/.test(w));
-  const pool = wiki.articles.filter((a) => (!family || a.family === family) && (!topic || a.topic === topic));
+  const pool = (fix ? BY_SYMPTOM[fix] : wiki.articles).filter((a) => (!family || a.family === family) && (!topic || a.topic === topic));
   if (!words.length) return pool;
-  return pool
+  // Every word must appear (title hits rank first). A described problem ("autofocus stops early") rarely matches every
+  // word, so when nothing does, guides matching most of the words are shown instead.
+  const rank = (need, ws = words) => pool
     .map((a) => {
       const title = a.title.toLowerCase();
       const about = `${a.excerpt} ${a.family} ${a.topic} ${familyName(a.family)} ${topicName(a.topic)}`.toLowerCase();
       const text = body?.[a.id] || "";
-      let score = title.includes(phrase) ? 30 : 0;
-      for (const w of words) {
-        if (title.includes(w)) score += 10;
-        else if (about.includes(w)) score += 4;
-        else if (text.includes(w)) score += 1;
-        else return null;
+      let score = title.includes(phrase) ? 30 : 0, hits = 0;
+      for (const w of ws) {
+        if (title.includes(w)) { score += 10; hits++; } else if (about.includes(w)) { score += 4; hits++; } else if (text.includes(w)) { score += 1; hits++; }
       }
-      return { a, score };
+      return hits >= need ? { a, score } : null;
     })
-    .filter(Boolean)
-    .sort((x, y) => y.score - x.score || x.a.title.localeCompare(y.a.title))
-    .map((x) => x.a);
+    .filter(Boolean);
+  const order = (list) => list.sort((x, y) => y.score - x.score || x.a.title.localeCompare(y.a.title)).map((x) => x.a);
+  const strict = rank(words.length);
+  if (strict.length >= 3 || words.length < 2) return order(strict);
+  // word stems ("stops" also finds "stopping"), filler words dropped
+  const stems = words.filter((w) => !ASK_STOP.has(w)).map((w) => w.slice(0, Math.max(4, w.length - 2)));
+  if (!stems.length) return order(strict);
+  const best = new Map();
+  for (const x of [...strict, ...rank(Math.ceil(stems.length * 0.6), stems)]) if (!best.has(x.a) || best.get(x.a).score < x.score) best.set(x.a, x);
+  return order([...best.values()]).slice(0, 40);
 }
 
 /* Guides for the assistant: a question in everyday words ("how do I update the firmware?") rather than search keywords.
@@ -128,14 +154,14 @@ function useTitle(title) {
   useEffect(() => { document.title = `${title} | OneLaser`; return () => { document.title = "OneLaser Store — Redesign Draft"; }; }, [title]);
 }
 
-function SearchBox({ q = "", family = "", topic = "", big = false }) {
+function SearchBox({ q = "", family = "", topic = "", big = false, ask = false }) {
   const [v, setV] = useState(q);
   useEffect(() => setV(q), [q]);
   return (
     <form className={`wk-search${big ? " big" : ""}`} role="search" onSubmit={(e) => { e.preventDefault(); go(`/wiki${qs({ q: v.trim(), family, topic })}`); }}>
       <Icon name="search" size={20} />
-      <input type="search" value={v} onChange={(e) => setV(e.target.value)} placeholder={family ? tf("Search {name} guides", { name: familyName(family) }) : t("Search by model, issue or keyword")} aria-label={t("Search the knowledge base")} enterKeyHint="search" />
-      <button type="submit" className="btn-primary">{t("Search")}</button>
+      <input type="search" value={v} onChange={(e) => setV(e.target.value)} placeholder={ask ? t("Describe the issue, like “autofocus stops early”") : family ? tf("Search {name} guides", { name: familyName(family) }) : t("Search by model, issue or keyword")} aria-label={t("Search the knowledge base")} enterKeyHint="search" />
+      <button type="submit" className="btn-primary">{ask ? t("Find a fix") : t("Search")}</button>
     </form>
   );
 }
@@ -194,64 +220,96 @@ function EnglishNote() {
 
 function Overview() {
   useTitle(t("Product Knowledge Base"));
-  const topics = TOPIC_ORDER.map((k) => [k, wiki.articles.filter((a) => a.topic === k).length]);
-  const popular = POPULAR_GUIDES.map((s) => bySlug.get(s)).filter(Boolean);
+  const popular = POPULAR_GUIDES.map((sl) => bySlug.get(sl)).filter(Boolean);
+  const learn = LEARN.map(([sl, pic]) => [bySlug.get(sl), pic]).filter(([a]) => a);
+  const manuals = wiki.articles.filter((a) => a.topic === "downloads").length;
   return (
     <>
-      <section className="wk-hero">
+      <section className="wk-hero dark">
+        <img className="wk-hero-art" src={familyImage("hydra-series")} alt="" />
         <div className="container">
-          <p className="wk-kicker">{t("Support")}</p>
-          <h1>{t("Product Knowledge Base")}</h1>
-          <p className="wk-sub">{tf("{n} guides for setup, troubleshooting, software and materials.", { n: wiki.articles.length })}</p>
-          <SearchBox big />
+          <p className="wk-kicker">{t("OneLaser Support")}</p>
+          <h1>{t("What's going on with your laser?")}</h1>
+          <SearchBox big ask />
           <div className="wk-popular">
-            <span>{t("Popular searches")}</span>
-            {POPULAR_SEARCHES.map((s) => <Link key={s} to={`/wiki${qs({ q: s })}`}>{t(s)}</Link>)}
+            {POPULAR_SEARCHES.map((x) => <Link key={x} to={`/wiki${qs({ q: x })}`}>{t(x)}</Link>)}
           </div>
           <EnglishNote />
         </div>
       </section>
       <section className="container wk-section">
-        <h2 className="wk-h2">{t("What do you need?")}</h2>
-        <div className="wk-topics">
-          {topics.map(([k, n]) => (
-            <Link key={k} to={`/wiki${qs({ topic: k })}`} className="wk-topic">
-              <Icon name={TOPIC_ICON[k]} size={28} tone />
-              <b>{topicName(k)}</b>
-              <span>{topicText(k)}</span>
-              <small>{guidesCount(n)}</small>
+        <h2 className="wk-h2">{t("Fix by symptom")}</h2>
+        <div className="wk-symptoms">
+          {SYMPTOMS.map(([k, icon]) => (
+            <Link key={k} to={`/wiki${qs({ fix: k })}`} className="wk-symptom">
+              <span className="wk-symptom-icon"><Icon name={icon} size={22} /></span>
+              <b>{symptomName(k)}</b>
+              <span>{symptomText(k)}</span>
+              <small>{guidesCount(BY_SYMPTOM[k].length)}</small>
             </Link>
           ))}
-        </div>
-      </section>
-      <section className="container wk-section">
-        <h2 className="wk-h2">{t("Browse by product")}</h2>
-        <div className="wk-families">
-          {MACHINES.map((f) => (
-            <Link key={f} to={`/wiki/${f}`} className="wk-family">
-              <span className="wk-family-img"><img src={familyImage(f)} alt="" loading="lazy" /></span>
-              <b>{familyName(f)}</b>
-              <span>{familyText(f)}</span>
-              <small>{guidesCount(inFamily(f).length)}<Icon name="arrow" size={16} /></small>
-            </Link>
-          ))}
-        </div>
-        <div className="wk-more">
-          {FAMILY_ORDER.filter((f) => !MACHINES.includes(f)).map((f) => (
-            <Link key={f} to={`/wiki/${f}`} className="wk-more-item">
-              <span><b>{familyName(f)}</b><span>{familyText(f)}</span></span>
-              <small>{guidesCount(inFamily(f).length)}</small>
-            </Link>
-          ))}
+          <Link to={`/wiki${qs({ topic: "downloads" })}`} className="wk-symptom alt">
+            <span className="wk-symptom-icon"><Icon name="download" size={22} /></span>
+            <b>{t("Manuals & firmware")}</b>
+            <span>{t("User manuals, firmware and software.")}</span>
+            <small>{guidesCount(manuals)}</small>
+          </Link>
+          <Link to={`/wiki${qs({ topic: "getting-started" })}`} className="wk-symptom alt">
+            <span className="wk-symptom-icon"><Icon name="school" size={22} /></span>
+            <b>{t("Getting started")}</b>
+            <span>{t("Unbox, install and run your first job.")}</span>
+            <small>{guidesCount(wiki.articles.filter((a) => a.topic === "getting-started").length)}</small>
+          </Link>
         </div>
       </section>
       <section className="container wk-section">
         <div className="wk-h2-row">
-          <h2 className="wk-h2">{t("Popular guides")}</h2>
+          <h2 className="wk-h2">{t("Or start from your machine")}</h2>
           <Link to={`/wiki${qs({ all: "1" })}`} className="wk-link">{tf("Browse all {n} guides", { n: wiki.articles.length })}<Icon name="chevron" size={16} /></Link>
         </div>
-        <div className="wk-cards">{popular.map((a) => <GuideCard key={a.id} a={a} />)}</div>
+        <div className="wk-machines">
+          {MACHINES.map((f) => (
+            <Link key={f} to={`/wiki/${f}`} className="wk-machine">
+              <img src={familyImage(f)} alt="" loading="lazy" />
+              <span><b>{familyName(f)}</b><small>{guidesCount(inFamily(f).length)}</small></span>
+              <Icon name="chevron" size={18} />
+            </Link>
+          ))}
+        </div>
+        <div className="wk-chips wk-others">
+          {FAMILY_ORDER.filter((f) => !MACHINES.includes(f) && inFamily(f).length).map((f) => <Link key={f} to={`/wiki/${f}`}>{familyName(f)} <small>{inFamily(f).length}</small></Link>)}
+        </div>
       </section>
+      <section className="container wk-section">
+        <h2 className="wk-h2">{t("Most-read fixes")}</h2>
+        <ol className="wk-top">
+          {popular.map((a, i) => (
+            <li key={a.id}>
+              <Link to={`/wiki/${a.slug}`}>
+                <em>{i + 1}</em>
+                <span><b>{a.title}</b><small>{familyName(a.family)} · {topicName(a.topic)}</small></span>
+                <i>{tf("{n} min read", { n: a.min })}</i>
+              </Link>
+            </li>
+          ))}
+        </ol>
+      </section>
+      {learn.length > 0 && (
+        <section className="container wk-section">
+          <div className="wk-h2-row">
+            <h2 className="wk-h2">{t("Learn your laser")}</h2>
+            {inFamily("basics").length > 0 && <Link to="/wiki/basics" className="wk-link">{tf("All {name} guides", { name: familyName("basics") })}<Icon name="chevron" size={16} /></Link>}
+          </div>
+          <div className="wk-learn">
+            {learn.map(([a, pic]) => (
+              <Link key={a.id} to={`/wiki/${a.slug}`} className="wk-learn-card">
+                <span className="wk-learn-pic"><img src={asset(pic)} alt="" loading="lazy" /></span>
+                <span className="wk-learn-text"><small>{familyName(a.family)}</small><b>{a.title}</b></span>
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
     </>
   );
 }
@@ -264,25 +322,29 @@ function Chips({ label, value, options, make }) {
   );
 }
 
-function Results({ q, family, topic }) {
+function Results({ q, family, topic, fix }) {
   const [body, setBody] = useState(bodies);
   useEffect(() => { if (q && !bodies) loadBodies().then((b) => setBody(b || {})); }, [q]);
-  const list = useMemo(() => find(q, body, family, topic), [q, body, family, topic]);
-  useTitle(q ? tf("Search results for “{q}”", { q }) : t("All guides"));
-  const heading = q ? tf("Results for “{q}”", { q }) : topic ? topicName(topic) : family ? familyName(family) : t("All guides");
+  const list = useMemo(() => find(q, body, family, topic, fix), [q, body, family, topic, fix]);
+  useTitle(q ? tf("Search results for “{q}”", { q }) : fix ? symptomName(fix) : t("All guides"));
+  const heading = q ? tf("Results for “{q}”", { q }) : fix ? symptomName(fix) : topic ? topicName(topic) : family ? familyName(family) : t("All guides");
   return (
     <>
       <section className="wk-hero small">
         <div className="container">
-          <Crumbs items={[[t("Product Knowledge Base"), "/wiki"], [q ? t("Search") : t("All guides")]]} />
+          <Crumbs items={[[t("Product Knowledge Base"), "/wiki"], [q ? t("Search") : fix ? t("Fix by symptom") : t("All guides")]]} />
           <SearchBox q={q} family={family} topic={topic} />
         </div>
       </section>
       <section className="container wk-section wk-results">
         <h1 className="wk-h1">{heading}</h1>
-        <p className="wk-count" aria-live="polite">{q && !body ? t("Searching…") : guidesCount(list.length)}</p>
-        <Chips label={t("Topic")} value={topic} options={[["", t("All topics")], ...TOPIC_ORDER.map((k) => [k, topicName(k)])]} make={(v) => `/wiki${qs({ q, family, topic: v, all: !q && !family && !v ? "1" : "" })}`} />
-        <Chips label={t("Product")} value={family} options={[["", t("All products")], ...FAMILY_ORDER.map((f) => [f, familyName(f)])]} make={(v) => `/wiki${qs({ q, family: v, topic, all: !q && !topic && !v ? "1" : "" })}`} />
+        <p className="wk-count" aria-live="polite">{fix && `${symptomText(fix)} · `}{q && !body ? t("Searching…") : guidesCount(list.length)}</p>
+        {fix ? (
+          <Chips label={t("Fix by symptom")} value={fix} options={SYMPTOM_IDS.map((k) => [k, symptomName(k)])} make={(v) => `/wiki${qs({ fix: v, family })}`} />
+        ) : (
+          <Chips label={t("Topic")} value={topic} options={[["", t("All topics")], ...TOPIC_ORDER.map((k) => [k, topicName(k)])]} make={(v) => `/wiki${qs({ q, family, topic: v, all: !q && !family && !v ? "1" : "" })}`} />
+        )}
+        <Chips label={t("Product")} value={family} options={[["", t("All products")], ...FAMILY_ORDER.filter((f) => !fix || BY_SYMPTOM[fix].some((a) => a.family === f)).map((f) => [f, familyName(f)])]} make={(v) => `/wiki${qs({ q, fix, family: v, topic, all: !q && !fix && !topic && !v ? "1" : "" })}`} />
         {list.length ? (
           <ul className="wk-list">{list.map((a) => <GuideRow key={a.id} a={a} />)}</ul>
         ) : (
@@ -421,8 +483,9 @@ export default function Wiki({ rest, query }) {
   const q = (query.get("q") || "").trim().slice(0, 100);
   const family = FAMILY_ORDER.includes(query.get("family")) ? query.get("family") : "";
   const topic = TOPIC_ORDER.includes(query.get("topic")) ? query.get("topic") : "";
+  const fix = SYMPTOM_IDS.includes(query.get("fix")) ? query.get("fix") : "";
   let body;
-  if (!slug) body = q || family || topic || query.has("all") ? <Results q={q} family={family} topic={topic} /> : <Overview />;
+  if (!slug) body = q || family || topic || fix || query.has("all") ? <Results q={q} family={family} topic={topic} fix={fix} /> : <Overview />;
   else if (FAMILY_ORDER.includes(slug)) body = <Family f={slug} topic={topic} />;
   else if (bySlug.has(slug)) body = <Guide key={slug} a={bySlug.get(slug)} anchor={query.get("h") || ""} />;
   else body = <NotFound />;
