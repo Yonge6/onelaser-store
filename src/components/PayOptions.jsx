@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { t, tf } from "../i18n.js";
+import { localeTag, t, tf } from "../i18n.js";
 import { asset, lockScroll, money, monthlyText, popupLink, useFocusTrap, isTopDialog } from "../lib.js";
 import { footer, now, promo, saleOn } from "../data/site.js";
 import { shipQuote, shipRegion } from "../data/shipping.js";
@@ -71,47 +71,44 @@ export default function PayOptions({ part = "main", className = "", lines, subto
     </section>
   );
   return (
-    <section className={`po po-biz-wrap ${className}`} aria-label={t("For businesses, schools and government")}>
-      <div className="po-card po-biz">
-        <h3>{t("For businesses, schools and government")}</h3>
-        <p className="po-sub">{t("Finance the purchase, get a formal quote, or buy tax-free.")}</p>
-        <div className="po-opts">
-
-        <div className="po-opt">
-          <Icon name="card" size={18} />
-          <div>
-            <b>{t("Business financing: OneLaser loan, First Citizens Bank & ClickLease")}</b>
+    <section className={`pb ${className}`} aria-labelledby={`pb-h-${className}`}>
+      <header className="pb-head">
+        <h3 id={`pb-h-${className}`}>{t("For businesses, schools and government")}</h3>
+        <p>{t("Finance the purchase, get a formal quote, or buy tax-free.")}</p>
+      </header>
+      <ul className="pb-rows">
+        <li className="pb-row">
+          <span className="pb-ico"><Icon name="card" size={22} /></span>
+          <div className="pb-text">
+            <b>{t("Business financing")}</b>
             <p>{t("A business loan or lease-to-own, from $0 down and up to 60 months. Pick one and apply online.")}</p>
-            <p className="po-acts">
-              <button type="button" className="po-link" aria-expanded={lend} onClick={() => setLend((v) => !v)}>{t("Apply now")}<Icon name={lend ? "minus" : "plus"} size={14} /></button>
-              <button type="button" className="po-link" onClick={() => downloadItems(lines, shipFee, shipPartial)} disabled={!lines.length}>{t("Download cart items (CSV)")}<Icon name="download" size={14} /></button>
-            </p>
-            {lend && (
-              <ul className="po-lenders">
-                {LENDERS.map(([name, sub, url]) => <li key={name}><a href={url} target="_blank" rel="noreferrer"><b>{t(name)}</b><small>{t(sub)}</small><Icon name="arrow" size={14} /></a></li>)}
-              </ul>
-            )}
+            <button type="button" className="pb-link" onClick={() => downloadItems(lines, shipFee, shipPartial)} disabled={!lines.length}><Icon name="download" size={14} />{t("Download cart items (CSV)")}</button>
           </div>
-        </div>
-
-        <div className="po-opt">
-          <Icon name="quote" size={18} />
-          <div>
+          <button type="button" className={`pb-btn line${lend ? " on" : ""}`} aria-expanded={lend} onClick={() => setLend((v) => !v)}>{t("Apply now")}<Icon name="chevron" size={14} /></button>
+          {lend && (
+            <ul className="pb-lenders">
+              {LENDERS.map(([name, sub, url]) => <li key={name}><a href={url} target="_blank" rel="noreferrer"><b>{t(name)}</b><small>{t(sub)}</small><span className="pb-go">{t("Start an application")} <Icon name="arrow" size={14} /></span></a></li>)}
+            </ul>
+          )}
+        </li>
+        <li className="pb-row">
+          <span className="pb-ico"><Icon name="quote" size={22} /></span>
+          <div className="pb-text">
             <b>{t("Quote for companies, schools, government and nonprofits")}</b>
-            <button type="button" className="po-quote" onClick={onQuote} disabled={!lines.length}>{t("Get an instant quote")}</button>
-            <a className="po-link" href={mailto("Purchase order", lines, "Please find our purchase order attached.")}>{t("Purchase order: email it to our sales team")}<Icon name="chevron" size={14} /></a>
+            <p>{t("Get a numbered quote to save as a PDF, or send us your purchase order.")}</p>
+            <a className="pb-link" href={mailto("Purchase order", lines, "Please find our purchase order attached.")}><Icon name="mail" size={14} />{t("Send a purchase order")}</a>
           </div>
-        </div>
-
-        <div className="po-opt">
-          <Icon name="shield" size={18} />
-          <div>
-            <b>{t("Tax exemption: skip sales tax on this and future orders.")}</b>
-            <a className="po-link" href={mailto("Tax-exempt account application", lines, "We'd like to buy tax-exempt. Our exemption or resale certificate is attached.")}>{t("Apply to qualify")}<Icon name="chevron" size={14} /></a>
+          <button type="button" className="pb-btn dark" onClick={onQuote} disabled={!lines.length}>{t("Get an instant quote")}</button>
+        </li>
+        <li className="pb-row">
+          <span className="pb-ico"><Icon name="shield" size={22} /></span>
+          <div className="pb-text">
+            <b>{t("Tax-exempt purchase")}</b>
+            <p>{t("Skip sales tax on this and future orders. Email us your exemption or resale certificate.")}</p>
           </div>
-        </div>
-        </div>
-      </div>
+          <a className="pb-btn line" href={mailto("Tax-exempt account application", lines, "We'd like to buy tax-exempt. Our exemption or resale certificate is attached.")}>{t("Apply to qualify")}</a>
+        </li>
+      </ul>
     </section>
   );
 }
@@ -196,53 +193,67 @@ export function QuoteDialog({ lines, subtotal, cartQuote, onClose }) {
       <script>window.onload=()=>window.print()</` + `script></body></html>`);
     w.document.close();
   };
+  const STEPS = ["Organization", "Your details", "Your quote"];
   return (
     <div className="ic-offer-scrim" onClick={onClose}>
-      <div ref={box} className="ic-ask qd" role="dialog" aria-modal="true" aria-labelledby="qd-h" onClick={(e) => e.stopPropagation()}>
-        <button type="button" className="ic-terms-x" aria-label={t("Close")} onClick={onClose}><Icon name="close" size={20} /></button>
-        <ol className="qd-steps" aria-hidden="true">{[0, 1, 2].map((n) => <li key={n} className={n < step ? "done" : n === step ? "now" : ""}><i>{n < step ? <Icon name="check" size={12} /> : n + 1}</i></li>)}</ol>
-        {step === 0 && (
-          <>
-            <h2 id="qd-h">{t("Who are you buying for?")}</h2>
-            <div className="qd-orgs" role="radiogroup">
+      <div ref={box} className="qx" role="dialog" aria-modal="true" aria-labelledby="qx-h" onClick={(e) => e.stopPropagation()}>
+        <header className="qx-top">
+          <div>
+            <p className="qx-kicker">{t("Get a quote")}</p>
+            <h2 id="qx-h">{t(step === 0 ? "Who are you buying for?" : step === 1 ? "Who should the quote be for?" : "Your quote is ready")}</h2>
+          </div>
+          <button type="button" className="qx-x" aria-label={t("Close")} onClick={onClose}><Icon name="close" size={20} /></button>
+        </header>
+        <ol className="qx-steps">{STEPS.map((x, n) => <li key={x} className={n < step ? "done" : n === step ? "now" : ""} aria-current={n === step ? "step" : undefined}><i>{n < step ? <Icon name="check" size={12} /> : n + 1}</i><span>{t(x)}</span></li>)}</ol>
+        <div className="qx-body">
+          {step === 0 && (
+            <div className="qx-orgs" role="radiogroup" aria-labelledby="qx-h">
               {ORGS.map(([id, title, sub]) => (
                 <button key={id} type="button" role="radio" aria-checked={org === id} className={org === id ? "on" : ""} onClick={() => setOrg(id)}>
-                  <Icon name={id === "edu" ? "school" : "card"} size={20} /><span><b>{t(title)}</b><small>{t(sub)}</small></span>
+                  <span className="qx-org-ico"><Icon name={id === "edu" ? "school" : "card"} size={22} /></span>
+                  <span className="qx-org-text"><b>{t(title)}</b><small>{t(sub)}</small></span>
+                  <i className="qx-radio" aria-hidden="true" />
                 </button>
               ))}
             </div>
-            <button type="button" className="ic-checkout" disabled={!org} onClick={() => setStep(1)}>{t("Next")}</button>
-          </>
-        )}
-        {step === 1 && (
-          <>
-            <h2 id="qd-h">{t("Who should the quote be for?")}</h2>
-            <div className="qd-form">
-              <label className={bad.org ? "bad" : ""}><span>{t(org === "edu" ? "School or organization name" : "Company name")} *</span><input value={f.org} onChange={set("org")} autoComplete="organization" /></label>
-              <label className={bad.name ? "bad" : ""}><span>{t("Your name")} *</span><input value={f.name} onChange={set("name")} autoComplete="name" /></label>
-              <label className={bad.email ? "bad" : ""}><span>{t("Email")} *</span><input value={f.email} onChange={set("email")} type="email" autoComplete="email" /></label>
+          )}
+          {step === 1 && (
+            <div className="qx-form">
+              <label className={`qx-full${bad.org ? " bad" : ""}`}><span>{t(org === "edu" ? "School or organization name" : "Company name")} <i>*</i></span><input value={f.org} onChange={set("org")} autoComplete="organization" /></label>
+              <label className={bad.name ? "bad" : ""}><span>{t("Your name")} <i>*</i></span><input value={f.name} onChange={set("name")} autoComplete="name" /></label>
+              <label className={bad.email ? "bad" : ""}><span>{t("Email")} <i>*</i></span><input value={f.email} onChange={set("email")} type="email" autoComplete="email" /></label>
               <label><span>{t("Phone (optional)")}</span><input value={f.phone} onChange={set("phone")} type="tel" autoComplete="tel" /></label>
-              <label className={bad.zip ? "bad" : ""}><span>{t(bad.zip ? "Enter a 5-digit U.S. ZIP we ship to, or leave it empty" : "Delivery ZIP (optional)")}</span><input value={f.zip} onChange={set("zip")} inputMode="numeric" autoComplete="postal-code" /></label>
+              <label className={bad.zip ? "bad" : ""}><span>{t("Delivery ZIP (optional)")}</span><input value={f.zip} onChange={set("zip")} inputMode="numeric" autoComplete="postal-code" />{bad.zip && <small>{t("Enter a 5-digit U.S. ZIP we ship to, or leave it empty")}</small>}</label>
             </div>
-            <div className="qd-btns"><button type="button" className="ic-ghost" onClick={() => setStep(0)}>{t("Back")}</button><button type="button" className="ic-checkout" onClick={next}>{t("Create my quote")}</button></div>
-          </>
-        )}
-        {step === 2 && (
-          <>
-            <h2 id="qd-h">{t("Your quote is ready")}</h2>
-            <p className="qd-meta">{t("Quote number")} <b>{no}</b> · {today()}</p>
-            <ul className="qd-lines">{lines.map((i) => <li key={i.variantId}><span>{lineName(i)} × {i.qty}</span><b>{money(i.total)}</b></li>)}</ul>
-            <p className="qd-sum"><span>{t("Shipping")}</span><b>{shipText}</b></p>
-            <p className="qd-sum total"><span>{totalLabel}</span><b>{money(total)}</b></p>
-            {ended && <p className="qd-ended" role="alert">{t("Prices have changed since this page opened. Refresh to get a quote at today's prices.")} <button type="button" onClick={() => { try { sessionStorage.setItem("onelaser-quote-form", JSON.stringify({ org, f })); } catch { /* private mode */ } window.location.reload(); }}>{t("Refresh prices")}</button></p>}
-            <div className="qd-btns">
-              <button type="button" className="ic-checkout" onClick={print}><Icon name="download" size={16} />{t("Save as PDF or print")}</button>
-              <a className="ic-ghost" aria-disabled={ended || undefined} onClick={(e) => { if (ended || pricesExpired()) { e.preventDefault(); setEnded(true); } }} href={`mailto:${SALES}?subject=${encodeURIComponent(`Quote ${no}`)}&body=${encodeURIComponent(emailBody)}`}>{t("Email it to sales")}</a>
+          )}
+          {step === 2 && (
+            <div className="qx-quote">
+              <div className="qx-quote-head"><span>{t("Quote number")}<b>{no}</b></span><span>{t("Date")}<b>{new Date().toLocaleDateString(localeTag(), { year: "numeric", month: "long", day: "numeric" })}</b></span></div>
+              <p className="qx-for">{t("Prepared for")} <b>{f.org}</b> · {f.name}</p>
+              <ul className="qx-lines">{lines.map((i) => <li key={i.variantId}><span>{lineName(i)}<small>× {i.qty}</small></span><b>{money(i.total)}</b></li>)}</ul>
+              <dl className="qx-sums">
+                <div><dt>{t("Subtotal")}</dt><dd>{money(subtotal)}</dd></div>
+                <div><dt>{t("Shipping")}</dt><dd>{shipText}</dd></div>
+                <div><dt>{t("Sales tax")}</dt><dd>{t("By delivery address; none with a tax-exempt certificate")}</dd></div>
+                <div className="tot"><dt>{totalLabel}</dt><dd>{money(total)}</dd></div>
+              </dl>
+              {ended && <p className="qx-ended" role="alert">{t("Prices have changed since this page opened. Refresh to get a quote at today's prices.")} <button type="button" onClick={() => { try { sessionStorage.setItem("onelaser-quote-form", JSON.stringify({ org, f })); } catch { /* private mode */ } window.location.reload(); }}>{t("Refresh prices")}</button></p>}
             </div>
-            <p className="qd-note">{t("Your quote is made in your browser. Nothing is sent until you email it.")}</p>
-          </>
-        )}
+          )}
+        </div>
+        <footer className="qx-foot">
+          {step === 0 && <button type="button" className="qx-btn primary" disabled={!org} onClick={() => setStep(1)}>{t("Continue")}</button>}
+          {step === 1 && <><button type="button" className="qx-btn" onClick={() => setStep(0)}>{t("Back")}</button><button type="button" className="qx-btn primary" onClick={next}>{t("Create my quote")}</button></>}
+          {step === 2 && (
+            <>
+              <a className="qx-btn" aria-disabled={ended || undefined} onClick={(e) => { if (ended || pricesExpired()) { e.preventDefault(); setEnded(true); } }} href={`mailto:${SALES}?subject=${encodeURIComponent(`Quote ${no}`)}&body=${encodeURIComponent(emailBody)}`}><Icon name="mail" size={16} />{t("Email it to sales")}</a>
+              <button type="button" className="qx-btn primary" disabled={ended} onClick={print}><Icon name="download" size={16} />{t("Save as PDF or print")}</button>
+            </>
+          )}
+        </footer>
+        {step === 2 && <p className="qx-note">{t("Your quote is made in your browser. Nothing is sent until you email it.")}</p>}
       </div>
     </div>
   );
+
 }
