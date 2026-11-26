@@ -1022,6 +1022,8 @@ export default {
   "Financing, answered.": "Financiación: tus dudas, resueltas.",
   "Find answers about choosing a machine, purchasing, financing and product support.": "Encuentra respuestas sobre cómo elegir una máquina, comprar, financiar y el soporte de productos.",
   "Find my machine": "Encontrar mi máquina",
+  "Want address suggestions as you type? What you type here is sent to OpenStreetMap.": "¿Quieres sugerencias de dirección mientras escribes? Lo que escribas aquí se envía a OpenStreetMap.",
+  "Turn on": "Activar",
   "Custom shipping quote for Alaska and Hawaii": "Cotización de envío aparte para Alaska y Hawái",
   "District of Columbia": "Distrito de Columbia",
   "Email cs@1laser.com and we'll help set up third-party shipping.": "Escribe a cs@1laser.com y te ayudamos a organizar un envío con otra empresa.",

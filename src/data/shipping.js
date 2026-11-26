@@ -30,6 +30,7 @@ export function shipRegion(zip) {
   if (!m) return null;
   const p = Number(m[1].slice(0, 3));
   const st = RANGES.find(([a, b]) => p >= a && p <= b)?.[2];
+  if (m[1] === "96799") return "territory"; // American Samoa uses a Hawaii prefix
   if (!st) return null;
   if (st === "military") return "military";
   if (TERRITORY.includes(st)) return "territory";

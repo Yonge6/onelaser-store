@@ -20,7 +20,7 @@ const TAX_FORM = "https://www.cdtfa.ca.gov/formspubs/cdtfa230.pdf";
    On phones the summary folds into a bar at the top. Checks out the lines ticked in the cart.
    Design draft: nothing typed here is stored or sent, and payment fields are disabled. */
 
-const STATES = ["Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado", "Connecticut", "Delaware", "District of Columbia", "Florida", "Georgia", "Hawaii", "Idaho", "Illinois", "Indiana", "Iowa", "Kansas", "Kentucky", "Louisiana", "Maine", "Maryland", "Massachusetts", "Michigan", "Minnesota", "Mississippi", "Missouri", "Montana", "Nebraska", "Nevada", "New Hampshire", "New Jersey", "New Mexico", "New York", "North Carolina", "North Dakota", "Ohio", "Oklahoma", "Oregon", "Pennsylvania", "Rhode Island", "South Carolina", "South Dakota", "Tennessee", "Texas", "Utah", "Vermont", "Virginia", "Washington", "Washington DC", "West Virginia", "Wisconsin", "Wyoming"];
+const STATES = ["Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado", "Connecticut", "Delaware", "District of Columbia", "Florida", "Georgia", "Hawaii", "Idaho", "Illinois", "Indiana", "Iowa", "Kansas", "Kentucky", "Louisiana", "Maine", "Maryland", "Massachusetts", "Michigan", "Minnesota", "Mississippi", "Missouri", "Montana", "Nebraska", "Nevada", "New Hampshire", "New Jersey", "New Mexico", "New York", "North Carolina", "North Dakota", "Ohio", "Oklahoma", "Oregon", "Pennsylvania", "Rhode Island", "South Carolina", "South Dakota", "Tennessee", "Texas", "Utah", "Vermont", "Virginia", "Washington", "West Virginia", "Wisconsin", "Wyoming"];
 const REQUIRED = ["email", "first", "last", "phone", "street", "city", "state", "zip"];
 
 const Field = ({ label, name, value, onChange, bad, required = true, className = "", ...rest }) => (
@@ -44,7 +44,7 @@ export default function Checkout() {
   const draft = useState(() => { try { return JSON.parse(sessionStorage.getItem(DRAFT)) || {}; } catch { return {}; } })[0];
   const [step, setStep] = useState(draft.step || 0); // 0 contact + address, 1 shipping method, 2 billing + payment
   // a ZIP entered in the cart's delivery box starts the address here
-  const [f, setF] = useState(() => draft.f || { state: "", zip: (() => { try { return sessionStorage.getItem("onelaser-ship-zip") || ""; } catch { return ""; } })() });
+  const [f, setF] = useState(() => (draft.f && { ...draft.f, state: draft.f.state === "Washington DC" ? "District of Columbia" : draft.f.state }) || { state: "", zip: (() => { try { return sessionStorage.getItem("onelaser-ship-zip") || ""; } catch { return ""; } })() });
   useEffect(() => { try { sessionStorage.setItem(DRAFT, JSON.stringify({ step, f })); } catch { /* private mode: this page only */ } }, [step, f]);
   const [err, setErr] = useState({});
   // the policies must be accepted before the order is placed, however the buyer got here (cart, Buy now, a new tab)
@@ -92,7 +92,9 @@ export default function Checkout() {
     if (f.zip && !/^\d{5}(-\d{4})?$/.test(f.zip.trim())) bad.zip = true;
     // the shipping policy: no APO/FPO, no direct shipping to U.S. territories
     if (["military", "territory"].includes(shipRegion(f.zip))) bad.zip = true;
+    if (f.zip && !shipRegion(f.zip)) bad.zip = true; // not a U.S. ZIP we know
     if (isPoBox(f.street)) bad.street = true;
+    if (isPoBox(f.apt)) bad.apt = true;
     setErr(bad);
     if (Object.keys(bad).length) {
       // after React has marked the fields: bring the first one into view and put the cursor in it
@@ -167,12 +169,12 @@ export default function Checkout() {
                     <Field label={t("First name")} name="first" autoComplete="given-name" value={f.first} onChange={set} bad={err.first} />
                     <Field label={t("Last name")} name="last" autoComplete="family-name" value={f.last} onChange={set} bad={err.last} />
                     <Field label={t("Mobile number")} name="phone" type="tel" autoComplete="tel" value={f.phone} onChange={set} bad={err.phone} className="c2" />
-                    <AddressSuggest value={f.street} onChange={set} bad={err.street} onPick={(a) => { setF((x) => ({ ...x, street: a.street, city: a.city || x.city, state: a.state || x.state, zip: a.zip || x.zip })); setErr((e) => ({ ...e, street: false, city: false, state: false, zip: false })); }} />
-                    <Field label={t("Apt, Suite, Building (Optional)")} name="apt" autoComplete="address-line2" value={f.apt} onChange={set} required={false} className="c2" />
+                    <AddressSuggest value={f.street} onChange={set} bad={err.street} onPick={(a) => { setF((x) => ({ ...x, street: a.street, city: a.city, state: a.state, zip: a.zip })); setErr((e) => ({ ...e, street: false, city: false, state: false, zip: false })); }} />
+                    <Field label={t("Apt, Suite, Building (Optional)")} name="apt" autoComplete="address-line2" value={f.apt} onChange={set} required={false} bad={err.apt} className="c2" />
                     <p className="ik-note c2">{t("* The address should be in the country or region you have selected.")}<br />{t("* To facilitate delivery, please do not enter a P.O. Box, FPO, APO address, or remote area.")}</p>
                     <Field label={t("City")} name="city" autoComplete="address-level2" value={f.city} onChange={set} bad={err.city} />
                     <label className={`ik-field ik-select${err.state ? " bad" : ""}${f.state ? " has" : ""}`}>
-                      <select value={f.state} onChange={(e) => set("state", e.target.value)} autoComplete="address-level1"><option value="" disabled>{t("State")}</option>{STATES.map((s) => <option key={s}>{s}</option>)}</select>
+                      <select value={f.state} onChange={(e) => set("state", e.target.value)} autoComplete="address-level1"><option value="" disabled>{t("State")}</option>{STATES.map((s) => <option key={s} value={s}>{s}</option>)}</select>
                       <span>{t("State")}<i> *</i></span><Icon name="chevron" size={14} />
                     </label>
                     <Field label={t("ZIP")} name="zip" inputMode="numeric" autoComplete="postal-code" value={f.zip} onChange={set} bad={err.zip} className="c2" />

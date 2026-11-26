@@ -1114,6 +1114,8 @@ export default {
   "Financing partners": "分期合作方",
   "Financing, answered.": "分期常见问题",
   "Find my machine": "帮我选机器",
+  "Want address suggestions as you type? What you type here is sent to OpenStreetMap.": "需要边输入边提示地址吗？开启后，你在这里输入的内容会发送给 OpenStreetMap。",
+  "Turn on": "开启",
   "Custom shipping quote for Alaska and Hawaii": "阿拉斯加和夏威夷单独报运费",
   "District of Columbia": "哥伦比亚特区",
   "Email cs@1laser.com and we'll help set up third-party shipping.": "发邮件到 cs@1laser.com，我们帮你安排第三方物流。",
