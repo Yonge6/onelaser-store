@@ -5205,3 +5205,4 @@ body:has(.ip-bar) .ai-pill, .pdp ~ .ai-pill { bottom: 104px; }
 
 .ik-addr-ask { margin-top: 6px; font-size: 12px; line-height: 17px; color: var(--muted); }
 .ik-addr-ask button { margin-left: 4px; font-size: 12px; font-weight: 600; color: var(--accent-ink); text-decoration: underline; text-underline-offset: 2px; }
+.ik-mismatch { color: #b45309; }

@@ -1021,6 +1021,7 @@ export default {
   "Financing, answered.": "分割払いのよくある質問",
   "Find answers about choosing a machine, purchasing, financing and product support.": "機種選び、ご購入、分割払い、製品サポートについての回答をご覧いただけます。",
   "Find my machine": "自分に合う機種を探す",
+  "This ZIP code usually belongs to another state. Please double-check the ZIP and state.": "この郵便番号は通常、別の州のものです。郵便番号と州をもう一度ご確認ください。",
   "{amount} so far": "現時点：{amount}",
   "Shipping for the other items is confirmed at checkout.": "その他の商品の送料は購入手続きで確定します。",
   "rest at checkout": "残りは購入手続きで確定",

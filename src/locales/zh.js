@@ -1114,6 +1114,7 @@ export default {
   "Financing partners": "分期合作方",
   "Financing, answered.": "分期常见问题",
   "Find my machine": "帮我选机器",
+  "This ZIP code usually belongs to another state. Please double-check the ZIP and state.": "这个邮编通常属于其他州，请再核对一下邮编和州。",
   "{amount} so far": "目前已知：{amount}",
   "Shipping for the other items is confirmed at checkout.": "其他商品的运费在结算时确认。",
   "rest at checkout": "其余结算时确认",

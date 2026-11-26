@@ -93,7 +93,6 @@ export default function Checkout() {
     // the shipping policy: no APO/FPO, no direct shipping to U.S. territories
     if (["military", "territory"].includes(shipRegion(f.zip))) bad.zip = true;
     if (f.zip && !shipRegion(f.zip)) bad.zip = true; // not a U.S. ZIP we know
-    if (f.zip && f.state && !zipMatchesState(f.zip, f.state)) { bad.zip = true; bad.state = true; bad.mismatch = true; }
     if (isPoBox(f.street)) bad.street = true;
     if (isPoBox(f.apt)) bad.apt = true;
     setErr(bad);
@@ -182,9 +181,11 @@ export default function Checkout() {
                       <span>{t("State")}<i> *</i></span><Icon name="chevron" size={14} />
                     </label>
                     <Field label={t("ZIP")} name="zip" inputMode="numeric" autoComplete="postal-code" value={f.zip} onChange={set} bad={err.zip} className="c2" />
+                    {/* ZIP ranges are by prefix, and a few border towns use a neighbour's range, so this only reminds */}
+                    {f.zip && f.state && !zipMatchesState(f.zip, f.state) && <p className="ik-hint ik-mismatch c2" role="status">{t("This ZIP code usually belongs to another state. Please double-check the ZIP and state.")}</p>}
                     {region && <p className={`ik-ship-live c2${region === "military" || region === "territory" ? " stop" : ""}`} role="status"><Icon name="truck" size={18} /><span>{quote ? <><b>{quoteText(quote)[0]}</b>{quoteText(quote)[1]}</> : <><b>{t(SHIP_TEXT[region][0])}</b>{t(SHIP_TEXT[region][1])}</>}</span></p>}
                     {machines && <p className="ik-freight c2"><Icon name="truck" size={18} /><span>{t("Machines ship by freight. Tell us in the next step if the address needs a lift gate or has limited access.")}</span></p>}
-                    {Object.keys(err).some((k) => err[k]) && <p className="ik-err c2" role="alert">{t(err.mismatch ? "The ZIP code doesn't match the state. Please check both." : "Please check the fields marked in red.")}</p>}
+                    {Object.keys(err).some((k) => err[k]) && <p className="ik-err c2" role="alert">{t("Please check the fields marked in red.")}</p>}
                     <div className="ik-actions c2"><button type="button" className="ik-pill" onClick={saveAddress}>{t("Save and continue")}</button></div>
                   </div>
                 </>

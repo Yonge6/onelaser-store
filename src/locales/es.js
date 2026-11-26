@@ -1022,6 +1022,7 @@ export default {
   "Financing, answered.": "Financiación: tus dudas, resueltas.",
   "Find answers about choosing a machine, purchasing, financing and product support.": "Encuentra respuestas sobre cómo elegir una máquina, comprar, financiar y el soporte de productos.",
   "Find my machine": "Encontrar mi máquina",
+  "This ZIP code usually belongs to another state. Please double-check the ZIP and state.": "Este código ZIP suele ser de otro estado. Revisa el código ZIP y el estado.",
   "{amount} so far": "Por ahora: {amount}",
   "Shipping for the other items is confirmed at checkout.": "El envío de los demás artículos se confirma al pagar.",
   "rest at checkout": "resto al pagar",

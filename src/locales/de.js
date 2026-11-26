@@ -1022,6 +1022,7 @@ export default {
   "Financing, answered.": "Finanzierung, kurz erklärt.",
   "Find answers about choosing a machine, purchasing, financing and product support.": "Antworten zu Maschinenwahl, Kauf, Finanzierung und Produktsupport.",
   "Find my machine": "Meine Maschine finden",
+  "This ZIP code usually belongs to another state. Please double-check the ZIP and state.": "Diese Postleitzahl gehört meist zu einem anderen Bundesstaat. Bitte Postleitzahl und Bundesstaat prüfen.",
   "{amount} so far": "Bisher: {amount}",
   "Shipping for the other items is confirmed at checkout.": "Der Versand der übrigen Artikel wird an der Kasse bestätigt.",
   "rest at checkout": "Rest an der Kasse",

@@ -15,6 +15,8 @@ const cases = [
   ["American Samoa is a territory", shipRegion("96799"), "territory"],
   ["CA ZIP with Alaska chosen", zipMatchesState("94103", "Alaska"), false],
   ["CA ZIP with California", zipMatchesState("94103", "California"), true],
+  // Fishers Island NY (06390) looks like Connecticut by prefix: checkout only reminds, never blocks (Checkout.jsx)
+  ["prefix-only check flags 06390 / New York (reminder only)", zipMatchesState("06390", "New York"), false],
   ["PO BOX123", isPoBox("PO BOX123"), true],
   ["Boxwood Rd is not a P.O. Box", isPoBox("12 Boxwood Rd"), false],
 ];

@@ -252,9 +252,10 @@ export default function Cart() {
             <p><span>{t("Tax")}</span><span className="muted">{t("Added by state at checkout")}</span></p>
             <p className="total"><span>{t("Estimated total")}</span><b>{money(total)}</b></p>
             {/* the site's one estimate (lib.js perMonth), same as the product cards and the payment popup */}
-            {total >= 1000 && <p className="ic-monthly">{t("or")} <b>{monthlyText(total)}</b>{t("/mo for 24 months (est. 15% APR)")}</p>}
+            {/* financing covers the items (the business-loan subsidy threshold is on the purchase), so shipping is left out */}
+            {subtotal >= 1000 && <p className="ic-monthly">{t("or")} <b>{monthlyText(subtotal)}</b>{t("/mo for 24 months (est. 15% APR)")}</p>}
             {subtotal >= 1000 && (
-              <a {...popupLink("financing", { amount: total, h: machine?.product.handle }, `#/pages/financing?amount=${total}&n=24${machine ? `&p=${machine.product.handle}` : ""}`)} className="ic-finance">
+              <a {...popupLink("financing", { amount: subtotal, h: machine?.product.handle }, `#/pages/financing?amount=${subtotal}&n=24${machine ? `&p=${machine.product.handle}` : ""}`)} className="ic-finance">
                 <Icon name="card" size={16} />{t("Pay over time with financing.")} <u>{t("Estimate my payment")}</u>
               </a>
             )}
