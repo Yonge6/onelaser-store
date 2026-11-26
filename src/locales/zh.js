@@ -1120,7 +1120,7 @@ export default {
   "Get a quote": "获取报价",
   "Organization": "采购类型",
   "Send a purchase order": "发送采购单",
-  "Skip sales tax on this and future orders. Email us your exemption or resale certificate.": "本单和以后的订单都不收销售税。把免税或转售证明发邮件给我们即可。",
+  "Skip sales tax on this and future orders. Email us your exemption or resale certificate.": "本单和以后的订单都不收销售税。付款前请把免税或转售证明发给销售团队，由销售团队为你免税。",
   "Tax-exempt purchase": "免税采购",
   "Your quote": "报价单",
   "Enter a 5-digit U.S. ZIP we ship to, or leave it empty": "请填写我们可配送的 5 位美国邮编，或留空",

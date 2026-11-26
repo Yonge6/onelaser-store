@@ -5323,3 +5323,4 @@ body:has(.ip-bar) .ai-pill, .pdp ~ .ai-pill { bottom: 104px; }
   .qx-foot { padding-bottom: calc(16px + env(safe-area-inset-bottom)); }
 }
 @media (max-width: 560px) { .qx-form { grid-template-columns: 1fr; } .qx-foot { flex-direction: column-reverse; } .qx-btn { flex: none; width: 100%; height: 48px; } .qx-steps span { font-size: 11px; } }
+.qx-ended.top { margin: 0 0 12px; }

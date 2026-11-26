@@ -219,15 +219,16 @@ export function QuoteDialog({ lines, subtotal, cartQuote, onClose }) {
           )}
           {step === 1 && (
             <div className="qx-form">
-              <label className={`qx-full${bad.org ? " bad" : ""}`}><span>{t(org === "edu" ? "School or organization name" : "Company name")} <i>*</i></span><input value={f.org} onChange={set("org")} autoComplete="organization" /></label>
-              <label className={bad.name ? "bad" : ""}><span>{t("Your name")} <i>*</i></span><input value={f.name} onChange={set("name")} autoComplete="name" /></label>
-              <label className={bad.email ? "bad" : ""}><span>{t("Email")} <i>*</i></span><input value={f.email} onChange={set("email")} type="email" autoComplete="email" /></label>
+              <label className={`qx-full${bad.org ? " bad" : ""}`}><span>{t(org === "edu" ? "School or organization name" : "Company name")} <i>*</i></span><input value={f.org} onChange={set("org")} aria-invalid={bad.org || undefined} autoComplete="organization" /></label>
+              <label className={bad.name ? "bad" : ""}><span>{t("Your name")} <i>*</i></span><input value={f.name} onChange={set("name")} aria-invalid={bad.name || undefined} autoComplete="name" /></label>
+              <label className={bad.email ? "bad" : ""}><span>{t("Email")} <i>*</i></span><input value={f.email} onChange={set("email")} aria-invalid={bad.email || undefined} type="email" autoComplete="email" /></label>
               <label><span>{t("Phone (optional)")}</span><input value={f.phone} onChange={set("phone")} type="tel" autoComplete="tel" /></label>
-              <label className={bad.zip ? "bad" : ""}><span>{t("Delivery ZIP (optional)")}</span><input value={f.zip} onChange={set("zip")} inputMode="numeric" autoComplete="postal-code" />{bad.zip && <small>{t("Enter a 5-digit U.S. ZIP we ship to, or leave it empty")}</small>}</label>
+              <label className={bad.zip ? "bad" : ""}><span>{t("Delivery ZIP (optional)")}</span><input value={f.zip} onChange={set("zip")} aria-invalid={bad.zip || undefined} inputMode="numeric" autoComplete="postal-code" />{bad.zip && <small>{t("Enter a 5-digit U.S. ZIP we ship to, or leave it empty")}</small>}</label>
             </div>
           )}
           {step === 2 && (
             <div className="qx-quote">
+              {ended && <p className="qx-ended top" role="alert">{t("Prices have changed since this page opened. Refresh to get a quote at today's prices.")} <button type="button" onClick={() => { try { sessionStorage.setItem("onelaser-quote-form", JSON.stringify({ org, f })); } catch { /* private mode */ } window.location.reload(); }}>{t("Refresh prices")}</button></p>}
               <div className="qx-quote-head"><span>{t("Quote number")}<b>{no}</b></span><span>{t("Date")}<b>{new Date().toLocaleDateString(localeTag(), { year: "numeric", month: "long", day: "numeric" })}</b></span></div>
               <p className="qx-for">{t("Prepared for")} <b>{f.org}</b> · {f.name}</p>
               <ul className="qx-lines">{lines.map((i) => <li key={i.variantId}><span>{lineName(i)}<small>× {i.qty}</small></span><b>{money(i.total)}</b></li>)}</ul>
@@ -237,7 +238,6 @@ export function QuoteDialog({ lines, subtotal, cartQuote, onClose }) {
                 <div><dt>{t("Sales tax")}</dt><dd>{t("By delivery address; none with a tax-exempt certificate")}</dd></div>
                 <div className="tot"><dt>{totalLabel}</dt><dd>{money(total)}</dd></div>
               </dl>
-              {ended && <p className="qx-ended" role="alert">{t("Prices have changed since this page opened. Refresh to get a quote at today's prices.")} <button type="button" onClick={() => { try { sessionStorage.setItem("onelaser-quote-form", JSON.stringify({ org, f })); } catch { /* private mode */ } window.location.reload(); }}>{t("Refresh prices")}</button></p>}
             </div>
           )}
         </div>
