@@ -1754,8 +1754,4 @@ export default {
   "Refresh to load the latest version of the store.": "更新するとストアの最新版を読み込みます。",
   "Refresh": "更新",
   "Back to the store": "ストアに戻る",
-  "This page didn't load.": "ページを読み込めませんでした。",
-  "Refresh to load the latest version of the store.": "更新するとストアの最新版を読み込みます。",
-  "Refresh": "更新",
-  "Back to the store": "ストアに戻る",
 };
