@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import { asset, byHandle, frontImg, go, img, lockScroll, money, monthlyText, popupLink, useFocusTrap, isTopDialog } from "../lib.js";
 import { TermsAsk, TermsBox, useTerms } from "../components/Terms.jsx";
+import { SHIP_TEXT, shipRegion } from "../data/shipping.js";
 import { t } from "../i18n.js";
 import { useCart } from "../cart.jsx";
 import { Icon, Link } from "../components/ui.jsx";
@@ -34,6 +35,31 @@ const OFFER = {
   [CHILLER]: ["1400W cooling capacity", "\u00b10.3\u00b0C temperature control", "Water-flow and temperature alarms"],
 };
 const OFFER_KEY = "onelaser-cart-offer-seen";
+
+/* "Where are we shipping?": a ZIP box on the cart that tells the buyer, right away, what shipping means for that address
+   (rules from the shipping policy, data/shipping.js). The ZIP is kept for the visit and starts the checkout address. */
+const ZIP_KEY = "onelaser-ship-zip";
+function ShipCheck() {
+  const [zip, setZip] = useState(() => { try { return sessionStorage.getItem(ZIP_KEY) || ""; } catch { return ""; } });
+  const region = shipRegion(zip);
+  const typedFive = /^\d{5}$/.test(zip.trim());
+  const save = (v) => { const z = v.replace(/[^\d-]/g, "").slice(0, 10); setZip(z); try { shipRegion(z) ? sessionStorage.setItem(ZIP_KEY, z) : sessionStorage.removeItem(ZIP_KEY); } catch { /* private mode */ } };
+  return (
+    <div className="ic-card ic-note ic-ship">
+      <Icon name="truck" size={22} />
+      <div>
+        <p><b>{t("Ships from the U.S.")}</b> <span className="ic-note-more">{t("Enter your ZIP to check shipping for your area.")}</span></p>
+        <label className="ic-zip">
+          <span className="sr-only">{t("ZIP code")}</span>
+          <input inputMode="numeric" autoComplete="postal-code" placeholder={t("ZIP code")} value={zip} onChange={(e) => save(e.target.value)} maxLength={10} />
+        </label>
+        {region ? (
+          <p className={`ic-ship-out${region === "military" || region === "territory" ? " stop" : ""}`} role="status"><b>{t(SHIP_TEXT[region][0])}</b> {t(SHIP_TEXT[region][1])}</p>
+        ) : typedFive ? <p className="ic-ship-out stop" role="status">{t("We couldn't find that ZIP code. Check for typos and try again.")}</p> : null}
+      </div>
+    </div>
+  );
+}
 
 function Offer({ list, onClose }) {
   const { add } = useCart();
@@ -154,10 +180,7 @@ export default function Cart() {
         <h1>{t("Shopping cart")}</h1>
         <div className="ic-layout">
           <div className="ic-left">
-            <div className="ic-card ic-note">
-              <Icon name="truck" size={22} />
-              <p><b>{t("Ships from the U.S.")}</b> <span className="ic-note-more">{t("Delivery estimate and shipping rate are shown at checkout once you enter your address.")}</span></p>
-            </div>
+            <ShipCheck />
             <div className="ic-card ic-lines">
               <label className="ic-all">
                 <input type="checkbox" checked={all} onChange={(e) => toggleAll(e.target.checked)} />

@@ -16,6 +16,9 @@ for (const f of walk(path.join(root, "src"))) {
   for (const m of code.matchAll(/\bt[fx]?\("((?:[^"\\]|\\.)+)"/g)) keys.add(JSON.parse(`"${m[1]}"`));
   for (const m of code.matchAll(/\bt[fx]?\('((?:[^'\\]|\\.)+)'/g)) keys.add(m[1].replace(/\\'/g, "'"));
 }
+// shipping rules shown through t(variable) in the cart and checkout
+const ship = await import(pathToFileURL(path.join(root, "src/data/shipping.js")).href);
+Object.values(ship.SHIP_TEXT).flat().forEach((k) => keys.add(k));
 const sameFile = JSON.parse(fs.readFileSync(path.join(root, "scripts/i18n-same.json"), "utf8"));
 const same = new Set([...sameFile.text, ...(sameFile.ids || [])]);
 // Read the code structure too: strings in t(a ? "x" : "y"), text kept in data and shown through t(variable),

@@ -5,6 +5,8 @@ import { useCart } from "../cart.jsx";
 import { Icon, Link } from "../components/ui.jsx";
 import { OfferGate } from "./Cart.jsx";
 import { TermsBox, useTerms } from "../components/Terms.jsx";
+import AddressSuggest from "../components/AddressSuggest.jsx";
+import { RATES, SHIP_TEXT, isPoBox, shipRegion } from "../data/shipping.js";
 
 // Tax-exempt buyers: the state's official resale certificate (OneLaser ships from California; 1laser.com has no form of its own).
 // Exemption requests go to the sales team (sales@1laser.com, as listed in the site footer). TODO(team): finance to confirm.
@@ -18,7 +20,7 @@ const TAX_FORM = "https://www.cdtfa.ca.gov/formspubs/cdtfa230.pdf";
    On phones the summary folds into a bar at the top. Checks out the lines ticked in the cart.
    Design draft: nothing typed here is stored or sent, and payment fields are disabled. */
 
-const STATES = ["Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado", "Connecticut", "Delaware", "Florida", "Georgia", "Hawaii", "Idaho", "Illinois", "Indiana", "Iowa", "Kansas", "Kentucky", "Louisiana", "Maine", "Maryland", "Massachusetts", "Michigan", "Minnesota", "Mississippi", "Missouri", "Montana", "Nebraska", "Nevada", "New Hampshire", "New Jersey", "New Mexico", "New York", "North Carolina", "North Dakota", "Ohio", "Oklahoma", "Oregon", "Pennsylvania", "Rhode Island", "South Carolina", "South Dakota", "Tennessee", "Texas", "Utah", "Vermont", "Virginia", "Washington", "Washington DC", "West Virginia", "Wisconsin", "Wyoming"];
+const STATES = ["Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado", "Connecticut", "Delaware", "District of Columbia", "Florida", "Georgia", "Hawaii", "Idaho", "Illinois", "Indiana", "Iowa", "Kansas", "Kentucky", "Louisiana", "Maine", "Maryland", "Massachusetts", "Michigan", "Minnesota", "Mississippi", "Missouri", "Montana", "Nebraska", "Nevada", "New Hampshire", "New Jersey", "New Mexico", "New York", "North Carolina", "North Dakota", "Ohio", "Oklahoma", "Oregon", "Pennsylvania", "Rhode Island", "South Carolina", "South Dakota", "Tennessee", "Texas", "Utah", "Vermont", "Virginia", "Washington", "Washington DC", "West Virginia", "Wisconsin", "Wyoming"];
 const REQUIRED = ["email", "first", "last", "phone", "street", "city", "state", "zip"];
 
 const Field = ({ label, name, value, onChange, bad, required = true, className = "", ...rest }) => (
@@ -41,7 +43,8 @@ export default function Checkout() {
   // the draft (address, notes, step) survives a refresh, e.g. "Refresh prices" when Black Friday ends mid-checkout
   const draft = useState(() => { try { return JSON.parse(sessionStorage.getItem(DRAFT)) || {}; } catch { return {}; } })[0];
   const [step, setStep] = useState(draft.step || 0); // 0 contact + address, 1 shipping method, 2 billing + payment
-  const [f, setF] = useState(draft.f || { state: "" });
+  // a ZIP entered in the cart's delivery box starts the address here
+  const [f, setF] = useState(() => draft.f || { state: "", zip: (() => { try { return sessionStorage.getItem("onelaser-ship-zip") || ""; } catch { return ""; } })() });
   useEffect(() => { try { sessionStorage.setItem(DRAFT, JSON.stringify({ step, f })); } catch { /* private mode: this page only */ } }, [step, f]);
   const [err, setErr] = useState({});
   // the policies must be accepted before the order is placed, however the buyer got here (cart, Buy now, a new tab)
@@ -87,6 +90,9 @@ export default function Checkout() {
     REQUIRED.forEach((k) => { if (!String(f[k] || "").trim()) bad[k] = true; });
     if (f.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(f.email)) bad.email = true;
     if (f.zip && !/^\d{5}(-\d{4})?$/.test(f.zip.trim())) bad.zip = true;
+    // the shipping policy: no APO/FPO, no direct shipping to U.S. territories
+    if (["military", "territory"].includes(shipRegion(f.zip))) bad.zip = true;
+    if (isPoBox(f.street)) bad.street = true;
     setErr(bad);
     if (Object.keys(bad).length) {
       // after React has marked the fields: bring the first one into view and put the cursor in it
@@ -99,6 +105,9 @@ export default function Checkout() {
     if (!terms) { setTermsBad(true); [...document.querySelectorAll(".ik-terms-at input")].find((el) => el.offsetParent)?.focus(); return; } try { sessionStorage.removeItem(DRAFT); } catch { /* ignore */ } setDone(subtotal); clearPicked(); window.scrollTo(0, 0); };
   const applyCode = () => setCodeMsg(code.trim() ? t("Codes are checked on the live store. This draft does not apply discounts.") : t("Enter a code first."));
 
+  const region = shipRegion(f.zip);
+  // the item rates when the team has filled them in (lower 48 only; elsewhere the policy has no fixed rate)
+  const shipFee = region === "lower48" && items.length && items.every((i) => RATES[i.product.handle] != null) ? items.reduce((s, i) => s + RATES[i.product.handle] * i.qty, 0) : null;
   const summary = (
     <>
       <ul className="ik-lines">
@@ -119,7 +128,8 @@ export default function Checkout() {
       <dl>
         <div><dt>{t("Price")}</dt><dd>{money(subtotal + savings)}</dd></div>
         {savings > 0 && <div className="save"><dt>{t("Savings")}</dt><dd>−{money(savings)}</dd></div>}
-        <div><dt>{t("Shipping")}</dt><dd>{step > 0 ? t(machines ? "Quoted after address review" : "Calculated after address") : t("Enter your address")}</dd></div>
+        {/* live: changes as soon as a ZIP is typed (rule from the shipping policy; the dollar rate once RATES is filled in) */}
+        <div><dt>{t("Shipping")}</dt><dd>{shipFee != null ? money(shipFee) : region ? t(region === "lower48" ? "Fixed rate" : SHIP_TEXT[region][0]) : t("Enter your address")}</dd></div>
         <div><dt>{t("Tax")}</dt><dd>{step > 0 ? t("Calculated after address") : t("Enter your address")}</dd></div>
         <div className="total"><dt>{t("Total")}</dt><dd><small>USD</small> {money(subtotal)}</dd></div>
       </dl>
@@ -157,7 +167,7 @@ export default function Checkout() {
                     <Field label={t("First name")} name="first" autoComplete="given-name" value={f.first} onChange={set} bad={err.first} />
                     <Field label={t("Last name")} name="last" autoComplete="family-name" value={f.last} onChange={set} bad={err.last} />
                     <Field label={t("Mobile number")} name="phone" type="tel" autoComplete="tel" value={f.phone} onChange={set} bad={err.phone} className="c2" />
-                    <Field label={t("Street address")} name="street" autoComplete="address-line1" value={f.street} onChange={set} bad={err.street} className="c2" />
+                    <AddressSuggest value={f.street} onChange={set} bad={err.street} onPick={(a) => { setF((x) => ({ ...x, street: a.street, city: a.city || x.city, state: a.state || x.state, zip: a.zip || x.zip })); setErr((e) => ({ ...e, street: false, city: false, state: false, zip: false })); }} />
                     <Field label={t("Apt, Suite, Building (Optional)")} name="apt" autoComplete="address-line2" value={f.apt} onChange={set} required={false} className="c2" />
                     <p className="ik-note c2">{t("* The address should be in the country or region you have selected.")}<br />{t("* To facilitate delivery, please do not enter a P.O. Box, FPO, APO address, or remote area.")}</p>
                     <Field label={t("City")} name="city" autoComplete="address-level2" value={f.city} onChange={set} bad={err.city} />
@@ -166,6 +176,7 @@ export default function Checkout() {
                       <span>{t("State")}<i> *</i></span><Icon name="chevron" size={14} />
                     </label>
                     <Field label={t("ZIP")} name="zip" inputMode="numeric" autoComplete="postal-code" value={f.zip} onChange={set} bad={err.zip} className="c2" />
+                    {region && <p className={`ik-ship-live c2${region === "military" || region === "territory" ? " stop" : ""}`} role="status"><Icon name="truck" size={18} /><span><b>{t(SHIP_TEXT[region][0])}{shipFee != null ? ` · ${money(shipFee)}` : ""}</b>{t(SHIP_TEXT[region][1])}</span></p>}
                     {machines && <p className="ik-freight c2"><Icon name="truck" size={18} /><span>{t("Machines ship by freight. Tell us in the next step if the address needs a lift gate or has limited access.")}</span></p>}
                     {Object.keys(err).some((k) => err[k]) && <p className="ik-err c2" role="alert">{t("Please check the fields marked in red.")}</p>}
                     <div className="ik-actions c2"><button type="button" className="ik-pill" onClick={saveAddress}>{t("Save and continue")}</button></div>
