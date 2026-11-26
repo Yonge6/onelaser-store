@@ -1021,6 +1021,8 @@ export default {
   "Financing, answered.": "分割払いのよくある質問",
   "Find answers about choosing a machine, purchasing, financing and product support.": "機種選び、ご購入、分割払い、製品サポートについての回答をご覧いただけます。",
   "Find my machine": "自分に合う機種を探す",
+  "shipping to be confirmed": "送料は確認中",
+  "Your cart is still here.": "カートの商品はそのまま残っています。",
   "On the live store you would now finish on PayPal.": "本番ストアでは、ここで PayPal に移動して支払いを完了します。",
   "On the live store you would now finish with Shop Pay.": "本番ストアでは、ここで Shop Pay で支払いを完了します。",
   "Your cart and details are still here.": "カートと入力内容はそのまま残っています。",

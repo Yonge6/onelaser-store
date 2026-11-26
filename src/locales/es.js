@@ -1022,6 +1022,8 @@ export default {
   "Financing, answered.": "Financiación: tus dudas, resueltas.",
   "Find answers about choosing a machine, purchasing, financing and product support.": "Encuentra respuestas sobre cómo elegir una máquina, comprar, financiar y el soporte de productos.",
   "Find my machine": "Encontrar mi máquina",
+  "shipping to be confirmed": "envío por confirmar",
+  "Your cart is still here.": "Tu carrito sigue aquí.",
   "On the live store you would now finish on PayPal.": "En la tienda real, ahora terminarías en PayPal.",
   "On the live store you would now finish with Shop Pay.": "En la tienda real, ahora terminarías con Shop Pay.",
   "Your cart and details are still here.": "Tu carrito y tus datos siguen aquí.",

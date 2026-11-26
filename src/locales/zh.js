@@ -1114,6 +1114,8 @@ export default {
   "Financing partners": "分期合作方",
   "Financing, answered.": "分期常见问题",
   "Find my machine": "帮我选机器",
+  "shipping to be confirmed": "运费待确认",
+  "Your cart is still here.": "购物车里的商品都还在。",
   "On the live store you would now finish on PayPal.": "在正式店铺中，此时会跳转到 PayPal 完成付款。",
   "On the live store you would now finish with Shop Pay.": "在正式店铺中，此时会用 Shop Pay 完成付款。",
   "Your cart and details are still here.": "购物车和已填写的信息都还在。",

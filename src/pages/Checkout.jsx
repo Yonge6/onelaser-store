@@ -41,7 +41,7 @@ export default function Checkout() {
   const draft = useState(() => { try { return JSON.parse(sessionStorage.getItem(DRAFT)) || {}; } catch { return {}; } })[0];
   // a ZIP entered in the cart's delivery box starts the address here
   const [f, setF] = useState(() => (draft.f && { ...draft.f, state: draft.f.state === "Washington DC" ? "District of Columbia" : draft.f.state }) || { state: "", zip: (() => { try { return sessionStorage.getItem("onelaser-ship-zip") || ""; } catch { return ""; } })() });
-  useEffect(() => { try { sessionStorage.setItem(DRAFT, JSON.stringify({ f })); } catch { /* private mode: this page only */ } }, [f]);
+  useEffect(() => { if (done) return; try { sessionStorage.setItem(DRAFT, JSON.stringify({ f })); } catch { /* private mode: this page only */ } }, [f, done]);
   const [err, setErr] = useState({});
   // the policies must be accepted before the order is placed, however the buyer got here (cart, Buy now, a new tab)
   const [terms, setTerms] = useTerms();
@@ -70,7 +70,7 @@ export default function Checkout() {
   if (done)
     return (
       <div className="ik">{head}
-        <div className="ik-done"><span><Icon name="check" size={34} /></span><h1>{t("Thank you — this is a demo order")}</h1><p>{t("Confirmation page layout. No order was placed and no payment was taken. Demo total:")} {money(done.total)}.</p>{done.method !== "card" && <p>{t(done.method === "paypal" ? "On the live store you would now finish on PayPal." : "On the live store you would now finish with Shop Pay.")}</p>}<p>{t("Your cart and details are still here.")}</p><div className="ik-done-btns"><button type="button" className="ik-pill ghost" onClick={() => setDone(null)}>{t("Back to checkout")}</button><Link to="/" className="ik-pill">{t("Back to store")}</Link></div></div>
+        <div className="ik-done"><span><Icon name="check" size={34} /></span><h1>{t("Thank you — this is a demo order")}</h1><p>{t("Confirmation page layout. No order was placed and no payment was taken. Demo total:")} {money(done.total)}{done.partial ? ` (${t("shipping to be confirmed")})` : ""}.</p>{done.method !== "card" && <p>{t(done.method === "paypal" ? "On the live store you would now finish on PayPal." : "On the live store you would now finish with Shop Pay.")}</p>}<p>{t("Your cart is still here.")}</p><div className="ik-done-btns"><button type="button" className="ik-pill ghost" onClick={() => setDone(null)}>{t("Back to checkout")}</button><Link to="/" className="ik-pill" onClick={() => setF({ state: "" })}>{t("Back to store")}</Link></div></div>
       </div>
     );
   if (!items.length)
@@ -105,9 +105,10 @@ export default function Checkout() {
       return;
     }
     if (!terms) { setTermsBad(true); document.getElementById("kx-terms")?.focus(); return; }
-    // design draft: nothing is charged and nothing is sent, so the cart and the typed details stay as they are
-    // (the live checkout clears them only after a confirmed order)
-    setDone({ total, method }); window.scrollTo(0, 0);
+    // design draft: nothing is charged, so the cart stays. The saved personal details are cleared (a shared computer must
+    // not show them to the next person); "Back to checkout" still has them in this page only.
+    try { sessionStorage.removeItem(DRAFT); } catch { /* ignore */ }
+    setDone({ total, method, partial: !quote || quote.partial }); window.scrollTo(0, 0);
   };
   const applyCode = () => setCodeMsg(code.trim() ? t("Codes are checked on the live store. This draft does not apply discounts.") : t("Enter a code first."));
   const errors = Object.keys(err).filter((k) => err[k]).length;
