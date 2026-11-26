@@ -5,9 +5,19 @@
    - U.S. territories (Puerto Rico, Guam, U.S. Virgin Islands, American Samoa…): no direct shipping; the team can arrange
      third-party shipping.
    - No P.O. Boxes or APO/FPO addresses.
-   The fixed dollar rates per item are set in the Shopify store and are not published, so the draft shows the rule, not a
-   price. When the team sends the rates, put them in RATES (item handle → USD) and the cart and checkout show them. */
-export const RATES = {};
+   Dollar rates: read 2026-11-25 from the live store's own cart rates (1laser.com /cart/shipping_rates.json, ZIPs in CA, NY,
+   TX, FL, IL, WA, AK, HI). Per item: lower48 is the same everywhere in the lower 48; AK and HI as quoted. Only the XRF, XT
+   and VertiGo could be put in a cart then (Cobra, Hydra Gen2 and the materials showed as sold out there; accessories hit the
+   store's request limit), so every other item shows the rule, not a price, until its rate is added here.
+   DAYS are the store's delivery estimate in business days. */
+export const RATES = {
+  "onelaser-xrf-desktop-laser-machine": { lower48: 0, AK: 900, HI: 800 },
+  "onelaser-xt-desktop-laser-machine": { lower48: 0, AK: 900, HI: 800 },
+  "vertigo-vertical-laser-engraver": { lower48: 0, AK: 900, HI: 800 },
+};
+export const DAYS = { lower48: [5, 8], akhi: [10, 15] };
+/* How the store adds up several items (checked on 1laser.com): each different item adds its rate once, whatever the quantity
+   (XRF + VertiGo to Alaska = $1,800; two XRF + one VertiGo = still $1,800). */
 
 /* First three ZIP digits → state (USPS ranges). Military APO/FPO/DPO prefixes are "military". */
 const RANGES = [
@@ -23,6 +33,24 @@ const RANGES = [
   [970, 979, "OR"], [980, 994, "WA"], [995, 999, "AK"],
 ];
 const TERRITORY = ["PR", "VI", "GU"];
+
+/** State code for a ZIP ("CA", "AK"…), or null. */
+export function shipState(zip) {
+  const m = /^(\d{5})(-\d{4})?$/.exec(String(zip || "").trim());
+  if (!m) return null;
+  const p = Number(m[1].slice(0, 3));
+  return RANGES.find(([a, b]) => p >= a && p <= b)?.[2] || null;
+}
+/** Shipping for these cart lines ({ product, qty }) to this ZIP: { fee, days } when every item has a known rate, else null. */
+export function shipQuote(lines, zip) {
+  const region = shipRegion(zip);
+  if (!lines.length || !(region === "lower48" || region === "akhi")) return null;
+  const key = region === "lower48" ? "lower48" : shipState(zip); // "AK" | "HI"
+  const each = lines.map((l) => RATES[l.product.handle]?.[key]);
+  if (each.some((r) => r == null)) return null;
+  const fee = each.reduce((s, r) => s + r, 0);
+  return { fee, days: DAYS[region] };
+}
 
 /** Shipping region for a 5-digit ZIP: "lower48" | "akhi" | "territory" | "military" | null (not a known U.S. ZIP). */
 export function shipRegion(zip) {

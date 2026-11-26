@@ -3,10 +3,10 @@ import { t } from "../i18n.js";
 import { asset, frontImg, img, money } from "../lib.js";
 import { useCart } from "../cart.jsx";
 import { Icon, Link } from "../components/ui.jsx";
-import { OfferGate } from "./Cart.jsx";
+import { OfferGate, quoteText } from "./Cart.jsx";
 import { TermsBox, useTerms } from "../components/Terms.jsx";
 import AddressSuggest from "../components/AddressSuggest.jsx";
-import { RATES, SHIP_TEXT, isPoBox, shipRegion } from "../data/shipping.js";
+import { SHIP_TEXT, isPoBox, shipQuote, shipRegion } from "../data/shipping.js";
 
 // Tax-exempt buyers: the state's official resale certificate (OneLaser ships from California; 1laser.com has no form of its own).
 // Exemption requests go to the sales team (sales@1laser.com, as listed in the site footer). TODO(team): finance to confirm.
@@ -103,13 +103,16 @@ export default function Checkout() {
     }
     setStep(1);
   };
+  // shipping to the ZIP typed (the store's own rates, data/shipping.js), live; the total, the "Place order" buttons and the
+  // confirmation all include it
+  const region = shipRegion(f.zip);
+  const quote = shipQuote(items, f.zip);
+  const shipFee = quote ? quote.fee : null;
+  const total = subtotal + (shipFee || 0);
   const place = () => {
-    if (!terms) { setTermsBad(true); [...document.querySelectorAll(".ik-terms-at input")].find((el) => el.offsetParent)?.focus(); return; } try { sessionStorage.removeItem(DRAFT); } catch { /* ignore */ } setDone(subtotal); clearPicked(); window.scrollTo(0, 0); };
+    if (!terms) { setTermsBad(true); [...document.querySelectorAll(".ik-terms-at input")].find((el) => el.offsetParent)?.focus(); return; } try { sessionStorage.removeItem(DRAFT); } catch { /* ignore */ } setDone(total); clearPicked(); window.scrollTo(0, 0); };
   const applyCode = () => setCodeMsg(code.trim() ? t("Codes are checked on the live store. This draft does not apply discounts.") : t("Enter a code first."));
 
-  const region = shipRegion(f.zip);
-  // the item rates when the team has filled them in (lower 48 only; elsewhere the policy has no fixed rate)
-  const shipFee = region === "lower48" && items.length && items.every((i) => RATES[i.product.handle] != null) ? items.reduce((s, i) => s + RATES[i.product.handle] * i.qty, 0) : null;
   const summary = (
     <>
       <ul className="ik-lines">
@@ -131,9 +134,9 @@ export default function Checkout() {
         <div><dt>{t("Price")}</dt><dd>{money(subtotal + savings)}</dd></div>
         {savings > 0 && <div className="save"><dt>{t("Savings")}</dt><dd>−{money(savings)}</dd></div>}
         {/* live: changes as soon as a ZIP is typed (rule from the shipping policy; the dollar rate once RATES is filled in) */}
-        <div><dt>{t("Shipping")}</dt><dd>{shipFee != null ? money(shipFee) : region ? t(region === "lower48" ? "Fixed rate" : SHIP_TEXT[region][0]) : t("Enter your address")}</dd></div>
-        <div><dt>{t("Tax")}</dt><dd>{step > 0 ? t("Calculated after address") : t("Enter your address")}</dd></div>
-        <div className="total"><dt>{t("Total")}</dt><dd><small>USD</small> {money(subtotal)}</dd></div>
+        <div><dt>{t("Shipping")}</dt><dd>{shipFee != null ? (shipFee === 0 ? t("Free") : money(shipFee)) : region ? t(region === "lower48" ? "Fixed rate" : SHIP_TEXT[region][0]) : t("Enter your address")}</dd></div>
+        <div><dt>{t("Tax")}</dt><dd>{t("Added by state when you pay")}</dd></div>
+        <div className="total"><dt>{t("Total")}</dt><dd><small>USD</small> {money(total)}</dd></div>
       </dl>
       <div className="ik-tax">
         <p><b>{t("Buying tax-exempt or for resale?")}</b>{t("Download the California resale certificate (CDTFA-230), or use your own state's exemption form. Email it to our sales team at sales@1laser.com before you pay so they can apply your exemption.")}</p>
@@ -147,7 +150,7 @@ export default function Checkout() {
       {head}
       <button type="button" className={`ik-fold${open ? " open" : ""}`} aria-expanded={open} onClick={() => setOpen((o) => !o)}>
         <span><Icon name="cart" size={18} />{t(open ? "Hide order summary" : "Show order summary")} ({count})<Icon name="chevron" size={14} /></span>
-        <b>{money(subtotal)}</b>
+        <b>{money(total)}</b>
       </button>
       {open && <div className="ik-fold-body">{summary}</div>}
       <div className="ik-wrap">
@@ -178,7 +181,7 @@ export default function Checkout() {
                       <span>{t("State")}<i> *</i></span><Icon name="chevron" size={14} />
                     </label>
                     <Field label={t("ZIP")} name="zip" inputMode="numeric" autoComplete="postal-code" value={f.zip} onChange={set} bad={err.zip} className="c2" />
-                    {region && <p className={`ik-ship-live c2${region === "military" || region === "territory" ? " stop" : ""}`} role="status"><Icon name="truck" size={18} /><span><b>{t(SHIP_TEXT[region][0])}{shipFee != null ? ` · ${money(shipFee)}` : ""}</b>{t(SHIP_TEXT[region][1])}</span></p>}
+                    {region && <p className={`ik-ship-live c2${region === "military" || region === "territory" ? " stop" : ""}`} role="status"><Icon name="truck" size={18} /><span>{quote ? <><b>{quoteText(quote)[0]}</b>{quoteText(quote)[1]}</> : <><b>{t(SHIP_TEXT[region][0])}</b>{t(SHIP_TEXT[region][1])}</>}</span></p>}
                     {machines && <p className="ik-freight c2"><Icon name="truck" size={18} /><span>{t("Machines ship by freight. Tell us in the next step if the address needs a lift gate or has limited access.")}</span></p>}
                     {Object.keys(err).some((k) => err[k]) && <p className="ik-err c2" role="alert">{t("Please check the fields marked in red.")}</p>}
                     <div className="ik-actions c2"><button type="button" className="ik-pill" onClick={saveAddress}>{t("Save and continue")}</button></div>
@@ -245,7 +248,7 @@ export default function Checkout() {
                   <p className="ik-hint">{t("Payment fields are disabled in this design draft.")}</p>
                   {/* phones: the order is placed here, in the payment section, never from the bottom bar */}
                   <div className="ik-terms-at ik-terms-phone"><TermsBox id="ik-terms-m" ok={terms} bad={termsBad && !terms} onChange={(v) => { setTerms(v); setTermsBad(false); }} /></div>
-                  <button type="button" ref={confirmRef} className="ik-pill wide ik-confirm" disabled={ended} onClick={place}>{`${t("Place order")} · ${money(subtotal)}`}</button>
+                  <button type="button" ref={confirmRef} className="ik-pill wide ik-confirm" disabled={ended} onClick={place}>{`${t("Place order")} · ${money(total)}`}</button>
                 </>
               )}
             </section>
@@ -255,7 +258,7 @@ export default function Checkout() {
             <div className="ik-summary-head"><h2>{t("Order summary")}</h2><Link to="/cart">{t("Edit cart")}</Link></div>
             <div className="ik-summary-body">{summary}</div>
             {step === 2 && <div className="ik-terms-at ik-terms-wide"><TermsBox id="ik-terms" ok={terms} bad={termsBad && !terms} onChange={(v) => { setTerms(v); setTermsBad(false); }} /></div>}
-            <button type="button" className="ik-pill wide" disabled={step < 2 || ended} onClick={place}>{step < 2 ? t("Complete the steps to place your order") : `${t("Place order")} · ${money(subtotal)}`}</button>
+            <button type="button" className="ik-pill wide" disabled={step < 2 || ended} onClick={place}>{step < 2 ? t("Complete the steps to place your order") : `${t("Place order")} · ${money(total)}`}</button>
             <ul className="ik-trust">
               <li><Icon name="lock" size={16} />{t("Secure, encrypted checkout")}</li>
               <li><Icon name="refresh" size={16} />{t("30-day return period")}</li>
@@ -267,7 +270,7 @@ export default function Checkout() {
       </div>
       <OfferGate />
       <div className="ik-bar">
-        <p><small>{t("Total")}</small><b>{money(subtotal)}</b></p>
+        <p><small>{t("Total")}</small><b>{money(total)}</b></p>
         {/* phones: the bar does the next step (save the address, continue to payment, go to the "Place order" button) */}
         {step === 0 && <button type="button" className="ik-pill" disabled={cool} onClick={saveAddress}>{t("Save and continue")}</button>}
         {step === 1 && <button type="button" className="ik-pill" disabled={cool} onClick={() => setStep(2)}>{t("Continue to payment")}</button>}

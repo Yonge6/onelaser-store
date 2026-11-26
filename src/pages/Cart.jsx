@@ -1,8 +1,8 @@
 import { useEffect, useState, useRef } from "react";
 import { asset, byHandle, frontImg, go, img, lockScroll, money, monthlyText, popupLink, useFocusTrap, isTopDialog } from "../lib.js";
 import { TermsAsk, TermsBox, useTerms } from "../components/Terms.jsx";
-import { SHIP_TEXT, shipRegion } from "../data/shipping.js";
-import { t } from "../i18n.js";
+import { SHIP_TEXT, shipQuote, shipRegion } from "../data/shipping.js";
+import { t, tf } from "../i18n.js";
 import { useCart } from "../cart.jsx";
 import { Icon, Link } from "../components/ui.jsx";
 
@@ -39,9 +39,19 @@ const OFFER_KEY = "onelaser-cart-offer-seen";
 /* "Where are we shipping?": a ZIP box on the cart that tells the buyer, right away, what shipping means for that address
    (rules from the shipping policy, data/shipping.js). The ZIP is kept for the visit and starts the checkout address. */
 const ZIP_KEY = "onelaser-ship-zip";
-function ShipCheck() {
+/** [zip, set]: the cart's delivery ZIP, kept for the visit (checkout starts its address with it). */
+function useShipZip() {
   const [zip, setZip] = useState(() => { try { return sessionStorage.getItem(ZIP_KEY) || ""; } catch { return ""; } });
+  return [zip, setZip];
+}
+/** "Free shipping" / "Shipping $900" + the store's delivery estimate, or null when a rate is not known. */
+export function quoteText(q) {
+  if (!q) return null;
+  return [q.fee === 0 ? t("Free shipping") : `${t("Shipping")} ${money(q.fee)}`, tf("Arrives in about {a}–{b} business days.", { a: q.days[0], b: q.days[1] })];
+}
+function ShipCheck({ zip, setZip, quote }) {
   const region = shipRegion(zip);
+  const qt = quoteText(quote);
   const typedFive = /^\d{5}$/.test(zip.trim());
   const save = (v) => { const z = v.replace(/[^\d-]/g, "").slice(0, 10); setZip(z); try { shipRegion(z) ? sessionStorage.setItem(ZIP_KEY, z) : sessionStorage.removeItem(ZIP_KEY); } catch { /* private mode */ } };
   return (
@@ -54,7 +64,7 @@ function ShipCheck() {
           <input inputMode="numeric" autoComplete="postal-code" placeholder={t("ZIP code")} value={zip} onChange={(e) => save(e.target.value)} maxLength={10} />
         </label>
         {region ? (
-          <p className={`ic-ship-out${region === "military" || region === "territory" ? " stop" : ""}`} role="status"><b>{t(SHIP_TEXT[region][0])}</b> {t(SHIP_TEXT[region][1])}</p>
+          <p className={`ic-ship-out${region === "military" || region === "territory" ? " stop" : ""}`} role="status">{qt ? <><b>{qt[0]}</b> {qt[1]}</> : <><b>{t(SHIP_TEXT[region][0])}</b> {t(SHIP_TEXT[region][1])}</>}</p>
         ) : typedFive ? <p className="ic-ship-out stop" role="status">{t("We couldn't find that ZIP code. Check for typos and try again.")}</p> : null}
       </div>
     </div>
@@ -149,6 +159,7 @@ export default function Cart() {
   const { items, picked, setQty, add, subtotal, savings, toggle, toggleAll } = useCart();
   const [terms, setTermsOk] = useTerms();
   const [ask, setAsk] = useState(false);
+  const [zip, setZip] = useShipZip();
   const inCart = items.map((i) => i.product.handle);
   const hasMachine = items.find((i) => i.product.kind === "machine");
   if (!items.length)
@@ -170,6 +181,9 @@ export default function Cart() {
       </section>
     );
   const all = picked.length === items.length;
+  // shipping for the ticked items to the ZIP above (store rates, data/shipping.js); the total includes it when known
+  const quote = shipQuote(picked, zip);
+  const total = subtotal + (quote?.fee || 0);
   const okTerms = () => setTermsOk(true);
   const toCheckout = (e) => { if (!terms) { e.preventDefault(); setAsk(true); } };
   const pickedQty = picked.reduce((s, i) => s + i.qty, 0);
@@ -180,7 +194,7 @@ export default function Cart() {
         <h1>{t("Shopping cart")}</h1>
         <div className="ic-layout">
           <div className="ic-left">
-            <ShipCheck />
+            <ShipCheck zip={zip} setZip={setZip} quote={quote} />
             <div className="ic-card ic-lines">
               <label className="ic-all">
                 <input type="checkbox" checked={all} onChange={(e) => toggleAll(e.target.checked)} />
@@ -229,13 +243,14 @@ export default function Cart() {
             <h2>{t("Order details")}</h2>
             <p><span>{t("Price")} ({pickedQty} {t(pickedQty === 1 ? "item" : "items")})</span><span>{money(subtotal + savings)}</span></p>
             {savings > 0 && <p className="save"><span>{t("Savings")}</span><span>−{money(savings)}</span></p>}
-            <p><span>{t("Shipping")}</span><span className="muted">{t("Calculated at checkout")}</span></p>
-            <p><span>{t("Tax")}</span><span className="muted">{t("Calculated at checkout")}</span></p>
-            <p className="total"><span>{t("Estimated total")}</span><b>{money(subtotal)}</b></p>
+            <p><span>{t("Shipping")}</span>{quote ? <span>{quote.fee === 0 ? t("Free") : money(quote.fee)}</span> : <span className="muted">{t(shipRegion(zip) ? "Calculated at checkout" : "Enter your ZIP above")}</span>}</p>
+            {/* which states OneLaser collects sales tax in is for finance to confirm; the live checkout adds it */}
+            <p><span>{t("Tax")}</span><span className="muted">{t("Added by state at checkout")}</span></p>
+            <p className="total"><span>{t("Estimated total")}</span><b>{money(total)}</b></p>
             {/* the site's one estimate (lib.js perMonth), same as the product cards and the payment popup */}
-            {subtotal >= 1000 && <p className="ic-monthly">{t("or")} <b>{monthlyText(subtotal)}</b>{t("/mo for 24 months (est. 15% APR)")}</p>}
+            {total >= 1000 && <p className="ic-monthly">{t("or")} <b>{monthlyText(total)}</b>{t("/mo for 24 months (est. 15% APR)")}</p>}
             {subtotal >= 1000 && (
-              <a {...popupLink("financing", { amount: subtotal, h: machine?.product.handle }, `#/pages/financing?amount=${subtotal}&n=24${machine ? `&p=${machine.product.handle}` : ""}`)} className="ic-finance">
+              <a {...popupLink("financing", { amount: total, h: machine?.product.handle }, `#/pages/financing?amount=${total}&n=24${machine ? `&p=${machine.product.handle}` : ""}`)} className="ic-finance">
                 <Icon name="card" size={16} />{t("Pay over time with financing.")} <u>{t("Estimate my payment")}</u>
               </a>
             )}
@@ -255,7 +270,7 @@ export default function Cart() {
       </div>
       <div className="ic-bar">
         <label><input type="checkbox" checked={all} onChange={(e) => toggleAll(e.target.checked)} /><span>{t("All")}</span></label>
-        <p><small>{t("Estimated total")}</small><b>{money(subtotal)}</b></p>
+        <p><small>{t("Estimated total")}</small><b>{money(total)}</b></p>
         {picked.length ? <Link to="/checkout" className="ic-checkout" onClick={toCheckout}>{t("Check out")} ({pickedQty})</Link> : <span className="ic-checkout off">{t("Check out")}</span>}
       </div>
       {ask && <TermsAsk onClose={() => setAsk(false)} onAccept={() => { okTerms(); setAsk(false); go("/checkout"); }} />}
