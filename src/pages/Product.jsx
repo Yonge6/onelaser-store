@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { t, tf, tx } from "../i18n.js";
-import { byHandle, frontImg, go, img, machines, products } from "../lib.js";
+import { byHandle, frontImg, go, img, machines, popupLink, products } from "../lib.js";
 import { useCart } from "../cart.jsx";
 import { addOns, faq, promo } from "../data/site.js";
 import { Icon, Link, usd } from "../components/ui.jsx";
@@ -207,7 +207,7 @@ export default function Product({ handle }) {
             <p className="ip-summary-total"><span>{t("Total")}</span><b>{usd(total)}</b></p>
             {saved > 0 && <p className="ip-summary-save">{t("You save")} {usd(saved)}</p>}
             <div className="buy-group">{buttons}</div>
-            {isMachine && <p className="ip-talk"><Icon name="headset" size={18} /><span>{t("Not sure it's the right one?")} <a href={`tel:${contact.tel}`}>{t("Call a U.S.-based engineer")}</a> {t("or")} <Link to="/pages/sales-consultation">{t("book a free call")}</Link></span></p>}
+            {isMachine && <p className="ip-talk"><Icon name="headset" size={18} /><span>{t("Not sure it's the right one?")} <a href={`tel:${contact.tel}`}>{t("Call a U.S.-based engineer")}</a> {t("or")} <a {...popupLink("book", {}, "#/pages/sales-consultation")}>{t("book a free call")}</a></span></p>}
           </div>
 
           <div className="ip-ship">

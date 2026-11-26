@@ -5138,3 +5138,23 @@ body:has(.ip-bar) .ai-pill, .pdp ~ .ai-pill { bottom: 104px; }
 @media (max-width: 860px) { .ik-confirm { display: flex; margin-top: 16px; } .ik-confirm:focus-visible { outline: 3px solid var(--accent-ink); outline-offset: 3px; } }
 .iowners-stars i.off { color: #d9dbe0; }
 .ik-card h2[tabindex]:focus { outline: none; }
+
+.ic-details .ic-monthly { margin: -6px 0 0; display: block; text-align: right; font-size: 14px; line-height: 20px; font-weight: 400; color: var(--muted); }
+.ic-details .ic-monthly b { color: var(--accent-ink); font-weight: 600; margin: 0 1px; }
+
+/* payment logos (Shopify's own payment icons, as on 1laser.com) */
+.ic-pay img { width: 38px; height: 24px; display: block; border-radius: 3px; }
+@media (max-width: 760px) { body .ic-details > ul li .ic-pay { gap: 4px; } body .ic-details > ul li .ic-pay img { width: 32px; height: 20px; } }
+
+/* Cart: accept the policies before checkout (checkbox above Check out, and the small window when it is not ticked) */
+.ic-terms { margin-top: 16px; display: grid; grid-template-columns: 18px minmax(0, 1fr); gap: 10px; align-items: start; font-size: 13px; line-height: 19px; color: var(--muted); cursor: pointer; }
+.ic-terms input { width: 18px; height: 18px; margin: 0; accent-color: var(--title); }
+.ic-terms a { color: var(--title); text-decoration: underline; text-underline-offset: 2px; }
+.ic-details .ic-terms + .ic-checkout { margin-top: 12px; }
+.ic-ask { position: relative; width: min(460px, 100%); padding: 28px 28px 24px; border-radius: 16px; background: #fff; box-shadow: 0 30px 80px rgba(0,0,0,.25); animation: icOfferUp .28s cubic-bezier(.2,.8,.2,1) both; }
+.ic-ask h2 { margin: 0; padding-right: 40px; font-size: 20px; line-height: 27px; font-weight: 700; color: var(--title); }
+.ic-ask-sub { margin: 6px 0 0; font-size: 15px; line-height: 21px; color: var(--muted); }
+@media (max-width: 860px) { .ic-ask { width: 100%; border-radius: 18px 18px 0 0; padding: 24px 20px calc(24px + env(safe-area-inset-bottom)); animation-name: icOfferSheet; } }
+.ic-ask .ic-terms { margin-top: 18px; padding: 14px 16px; border-radius: 12px; background: var(--page); font-size: 14px; line-height: 21px; color: var(--title); }
+.ic-terms-x { position: absolute; top: 16px; right: 16px; width: 36px; height: 36px; display: grid; place-items: center; border-radius: 50%; color: var(--title); }
+.ic-terms-x:hover { background: var(--page); }

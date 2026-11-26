@@ -8,7 +8,7 @@ import Product from "./pages/Product.jsx";
 import Cart from "./pages/Cart.jsx";
 import Checkout from "./pages/Checkout.jsx";
 import Compare from "./pages/Compare.jsx";
-import Consult from "./pages/Consult.jsx";
+import Consult, { Booking } from "./pages/Consult.jsx";
 import Finance from "./pages/Finance.jsx";
 import Assistant from "./components/Assistant.jsx";
 import FinderFlow from "./components/FinderFlow.jsx";
@@ -42,14 +42,31 @@ function Page({ path, query }) {
   return <Home />;
 }
 
-/* The machine finder as a popup on any page ("Find my machine" in the header, the listing banner, the assistant).
-   Same finder card and answers as the one on the home page; it closes by itself when the visitor follows a link out of it. */
-function FinderPopup({ path }) {
-  const [open, setOpen] = useState(false);
-  useEffect(() => { const f = () => setOpen(true); window.addEventListener("onelaser:finder-open", f); return () => window.removeEventListener("onelaser:finder-open", f); }, []);
-  useEffect(() => setOpen(false), [path]);
-  // a link inside it (machine, details, booking) closes it, even when it points at the page already open underneath
-  return open ? <div onClickCapture={(e) => e.target.closest?.("a[href]") && setTimeout(() => setOpen(false))}><TrustDialog kind="finder" onClose={() => setOpen(false)} /></div> : null;
+/* Popups over the current page, so the visitor never loses their place:
+   - "finder": "Find my machine" in the header, the listing banner, the assistant (same finder card as the home page);
+   - "financing": the payment estimate, started on the cart total or a machine ({ h, amount });
+   - "book": the free-call time picker from the booking page.
+   Opened with openPopup() (lib.js); a link to another page inside closes it, even one pointing at the page underneath. */
+function Popup({ path }) {
+  const [p, setP] = useState(null);
+  useEffect(() => {
+    const onPopup = (e) => setP(e.detail);
+    const onFinder = () => setP({ kind: "finder" });
+    window.addEventListener("onelaser:popup", onPopup);
+    window.addEventListener("onelaser:finder-open", onFinder);
+    return () => { window.removeEventListener("onelaser:popup", onPopup); window.removeEventListener("onelaser:finder-open", onFinder); };
+  }, []);
+  useEffect(() => setP(null), [path]);
+  if (!p) return null;
+  const close = () => setP(null);
+  return (
+    <div onClickCapture={(e) => e.target.closest?.('a[href^="#/"]:not([data-popup])') && setTimeout(close)}>
+      <TrustDialog key={p.kind} kind={p.kind} start={p} onClose={close} onBook={() => setP({ kind: "book" })}>{p.kind === "book" ? <BookPopup /> : null}</TrustDialog>
+    </div>
+  );
+}
+function BookPopup() {
+  return <div className="tdlg-book"><Booking /></div>;
 }
 
 export default function App() {
@@ -65,7 +82,7 @@ export default function App() {
           <Header path={path} lang={lang} />
           <main key={`main-${lang}`}><Page path={path} query={query} /></main>
           <Footer key={`footer-${lang}`} />
-          <FinderPopup path={path} />
+          <Popup path={path} />
           {/* Shopping assistant while people are choosing (home, product, collection, search, compare).
               Left out of the single-goal pages: booking, financing, cart and checkout. */}
           {/^\/($|products\/|collections\/|search|compare)/.test(path) && <Assistant key={path.split("/")[2] || "site"} product={path.startsWith("/products/") ? byHandle[path.split("/")[2]] : null} />}

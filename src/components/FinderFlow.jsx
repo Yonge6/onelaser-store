@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { t, tf } from "../i18n.js";
-import { byHandle, frontImg, go, img, money } from "../lib.js";
+import { byHandle, frontImg, go, img, money, popupLink } from "../lib.js";
 import { contact } from "../data/site.js";
 import { Icon, Link } from "./ui.jsx";
 import { useCart } from "../cart.jsx";
@@ -66,7 +66,7 @@ function Result({ a, onRetake, onClose }) {
             <p className="ff-price"><b>{money(v.price)}</b>{v.compareAt > v.price && <s>{money(v.compareAt)}</s>}</p>
           </header>
           {p.variants.length > 1 && v.title && <p className="ff-version">{v.title}</p>}
-          <p className="ff-monthly"><Link to={`/pages/financing?p=${p.handle}`}>{t("Estimate monthly payments")} →</Link></p>
+          <p className="ff-monthly"><a {...popupLink("financing", { h: p.handle }, `#/pages/financing?p=${p.handle}`)}>{t("Estimate monthly payments")} →</a></p>
           {(m.best.reasons.length > 0 || m.overBudget || m.bareMetal) && (
             <>
               <p className="ff-why-title">{t("Why it fits you")}</p>
@@ -96,7 +96,7 @@ function Result({ a, onRetake, onClose }) {
       <div className="ff-second">
         <Icon name="headset" size={22} />
         <p>{t("Want a second opinion? Our U.S.-based engineers can confirm the fit.")}</p>
-        <Link to="/pages/sales-consultation" className="ff-btn line" onClick={onClose}>{t("Talk to an engineer")}</Link>
+        <a {...popupLink("book", {}, "#/pages/sales-consultation")} className="ff-btn line">{t("Talk to an engineer")}</a>
       </div>
     </div>
   );

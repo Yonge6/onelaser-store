@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { t } from "../i18n.js";
-import { asset, byHandle, frontImg, img, lockScroll, money, products, useFocusTrap, isTopDialog } from "../lib.js";
+import { asset, byHandle, frontImg, img, lockScroll, money, popupLink, products, useFocusTrap, isTopDialog } from "../lib.js";
 import { AddButton, Icon, Link } from "./ui.jsx";
 import { contact, saleOn } from "../data/site.js";
 import { M, STEPS, rank as rankAll, roundFocus, hasRound, ready } from "./finderRules.js";
@@ -179,11 +179,11 @@ export default function FinderCard({ modal = false }) {
             <AddButton product={top} className="ih-btn line" />
             <Link to={`/products/${top.handle}`} className="ih-btn dark">{t("Buy now")}</Link>
           </div>
-          <Link to="/pages/sales-consultation" className="fx-call-cta">
+          <a {...popupLink("book", {}, "#/pages/sales-consultation")} className="fx-call-cta">
             <span className="fx-call-ico"><Icon name="calendar" size={20} tone /></span>
             <span><b>{t("Want to talk it through first?")}</b><em>{t("Free 30-minute call with a laser expert")}</em></span>
             <Icon name="arrow" size={18} />
-          </Link>
+          </a>
           <p className="fx-foot">
             <button type="button" onClick={() => edit(STEPS.length - 1)}>← {t("Change answers")}</button>
             <button type="button" onClick={reset}>↺ {t("Start over")}</button>
@@ -444,7 +444,7 @@ export function FinderHelp() {
           <h3>{t("Not sure which one fits?")}</h3>
           <p>{t("Tell a OneLaser engineer what you make. We'll point you to the right machine.")}</p>
         </div>
-        <Link to="/pages/sales-consultation" className="ih-btn dark">{t("Book a free call")}</Link>
+        <a {...popupLink("book", {}, "#/pages/sales-consultation")} className="ih-btn dark">{t("Book a free call")}</a>
       </div>
     </>
   );

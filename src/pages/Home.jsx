@@ -225,7 +225,7 @@ const faqText = (q) => homeFaq.find(([k]) => k.startsWith(q))?.[1] || "";
 const DLG_HEAD = {
   reviews: ["star", "Owner reviews"], company: ["flag", "U.S. company"], warranty: ["shield", "Warranty and returns"],
   returns: ["refresh", "Picked the wrong one?"], support: ["headset", "Stuck on a job?"], training: ["user", "First laser?"],
-  financing: ["card", "Budget tight?"], fox: ["tv", "TV feature"], call: ["calendar", "How the call works"], sources: ["search", "Sources"],
+  financing: ["card", "Budget tight?"], fox: ["tv", "TV feature"], call: ["calendar", "How the call works"], sources: ["search", "Sources"], book: ["calendar", "Book a free call"],
 };
 const FIN_MACHINES = ["onelaser-xrf-desktop-laser-machine", "cobra-10-100w-co2-laser-engraver-cutter", "hydra-9-gen-2-70w-rf-co2-dual-laser-machine", "hydra-16-gen-2-70w-rf-co2-dual-laser-machine"];
 const perMonth = (amount, apr, n) => { const r = apr / 1200; return r ? (amount * r) / (1 - (1 + r) ** -n) : amount / n; };
@@ -249,10 +249,12 @@ function useSwipeClose(onClose) {
   };
 }
 
-export function TrustDialog({ kind, onClose, onTrustpilot, onBook }) {
+export function TrustDialog({ kind, onClose, onTrustpilot, onBook, start, children }) {
   const [film, setFilm] = useState(false);
   const [clip, setClip] = useState(PRESS[0]);
-  const [fin, setFin] = useState({ h: FIN_MACHINES[2], n: 36 });
+  /* financing: opened from a cart or a machine, it starts on that amount or machine (start = { h, amount }) */
+  const finList = start?.h && byHandle[start.h] && !FIN_MACHINES.includes(start.h) ? [start.h, ...FIN_MACHINES] : FIN_MACHINES;
+  const [fin, setFin] = useState({ h: start?.amount > 0 ? "cart" : start?.h && byHandle[start.h] ? start.h : FIN_MACHINES[2], n: start?.amount > 0 || start?.h ? 24 : 36 });
   const quotes = useRef(null);
   const swipe = useSwipeClose(onClose);
   const box = useRef(null);
@@ -280,7 +282,9 @@ export function TrustDialog({ kind, onClose, onTrustpilot, onBook }) {
     </ul>
   );
   let body;
-  if (kind === "finder") {
+  if (children) {
+    body = children;
+  } else if (kind === "finder") {
     body = (
       <>
         <div className="tdlg-finder"><FinderCard modal /></div>
@@ -449,12 +453,13 @@ export function TrustDialog({ kind, onClose, onTrustpilot, onBook }) {
     );
   } else if (kind === "financing") {
     const m = byHandle[fin.h];
-    const pay = m ? perMonth(m.price, 15, fin.n) : 0;
+    const amount = fin.h === "cart" ? start.amount : m?.price || 0;
+    const pay = amount ? perMonth(amount, 15, fin.n) : 0;
     body = (
       <>
         <Head title={t("Spread the cost four ways")} />
         <div className="tdlg-calc">
-          <label><span>{t("Machine")}</span><select value={fin.h} onChange={(e) => setFin((f) => ({ ...f, h: e.target.value }))}>{FIN_MACHINES.map((h) => byHandle[h] && <option key={h} value={h}>{byHandle[h].name} · {money(byHandle[h].price)}</option>)}</select></label>
+          <label><span>{t("Machine")}</span><select value={fin.h} onChange={(e) => setFin((f) => ({ ...f, h: e.target.value }))}>{start?.amount > 0 && <option value="cart">{t("My cart")} · {money(start.amount)}</option>}{finList.map((h) => byHandle[h] && <option key={h} value={h}>{byHandle[h].name} · {money(byHandle[h].price)}</option>)}</select></label>
           <div className="tdlg-seg">{[12, 24, 36, 60].map((n) => <button key={n} type="button" className={fin.n === n ? "on" : ""} onClick={() => setFin((f) => ({ ...f, n }))}>{tf("{n} months", { n })}</button>)}</div>
           <p className="tdlg-pay"><b>{money(Math.round(pay))}</b><span>/{t("mo")}</span><small>{t("Estimate at 15% APR. Your rate is set by the lender.")}</small></p>
         </div>
@@ -464,7 +469,7 @@ export function TrustDialog({ kind, onClose, onTrustpilot, onBook }) {
           <li><b>{t("Shop Pay Installments")}</b><span>{t("3, 6 or 12 monthly payments, chosen at checkout.")}</span></li>
           <li><b>ClickLease</b><span>{t("Lease to own, $0 down, approval in minutes.")}</span></li>
         </ul>
-        <div className="tdlg-links"><More to={`/pages/financing?p=${fin.h}`}>{t("Compare all financing options")}</More></div>
+        <div className="tdlg-links"><More to={`/pages/financing${fin.h === "cart" ? (start.h ? `?p=${start.h}` : "") : `?p=${fin.h}`}`}>{t("Compare all financing options")}</More></div>
       </>
     );
   } else {

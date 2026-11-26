@@ -92,7 +92,7 @@ const zoneLabel = (tz) => {
   return `${known ? t(known[1]) : tz.replace(/_/g, " ").split("/").pop()} (${gmt})`;
 };
 
-function Booking() {
+export function Booking() {
   const days = useMemo(businessDays, []);
   const [zone, setZone] = useState(guessZone);
   const [day, setDay] = useState(0);

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { getLang, t, tf, tx as txNodes } from "../i18n.js";
-import { lockScroll, byHandle, frontImg, img, money, products, useFocusTrap, isTopDialog, dialogOpen } from "../lib.js";
+import { lockScroll, byHandle, frontImg, img, money, openPopup, products, useFocusTrap, isTopDialog, dialogOpen } from "../lib.js";
 import { useCart } from "../cart.jsx";
 import { AddButton, Icon, Link } from "./ui.jsx";
 import { M, STEPS, rank } from "./finderRules.js";
@@ -527,7 +527,7 @@ export default function Assistant({ product }) {
                       {(m.links || m.finder) && (
                         <div className="ai-links">
                           {m.finder && <button type="button" onClick={toFinder}>{t("Open the full machine finder")} →</button>}
-                          {m.links?.map(([l, u]) => (/^(https?:|tel:)/.test(u) ? <Link key={u} href={u}>{say(l)} →</Link> : <Link key={u} to={u} onClick={() => !wide() && setOpen(false)}>{say(l)} →</Link>))}
+                          {m.links?.map(([l, u]) => (/^(https?:|tel:)/.test(u) ? <Link key={u} href={u}>{say(l)} →</Link> : /^\/pages\/financing/.test(u) ? <button key={u} type="button" onClick={() => { if (!wide()) setOpen(false); openPopup("financing", { h: (u.match(/[?&]p=([^&]+)/) || [])[1] }); }}>{say(l)} →</button> : <Link key={u} to={u} onClick={() => !wide() && setOpen(false)}>{say(l)} →</Link>))}
                         </div>
                       )}
                       {!m.quick && <div className="ai-meta">

@@ -216,3 +216,9 @@ export function useFocusTrap(ref, on = true) {
     };
   }, [ref, on]);
 }
+
+/** Open a popup over the current page (Popup in App.jsx): "finder", "financing" ({ h, amount }) or "book" (the free-call picker). */
+export const openPopup = (kind, detail = {}) => window.dispatchEvent(new CustomEvent("onelaser:popup", { detail: { kind, ...detail } }));
+/** Props for a link that opens a popup instead of leaving the page. Keeps the page's address as href, so a new tab or
+    no-JS still reaches the full page. Marked data-popup so an open popup does not treat it as "leaving". */
+export const popupLink = (kind, detail, href) => ({ href, "data-popup": "", onClick: (e) => { if (e.metaKey || e.ctrlKey || e.shiftKey) return; e.preventDefault(); openPopup(kind, detail); } });
