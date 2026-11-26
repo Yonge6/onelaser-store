@@ -9,6 +9,7 @@ import Cart from "./pages/Cart.jsx";
 import Checkout from "./pages/Checkout.jsx";
 import Compare from "./pages/Compare.jsx";
 import Consult, { Booking } from "./pages/Consult.jsx";
+import { PolicyBody } from "./components/Terms.jsx";
 import Finance from "./pages/Finance.jsx";
 import Assistant from "./components/Assistant.jsx";
 import FinderFlow from "./components/FinderFlow.jsx";
@@ -61,7 +62,7 @@ function Popup({ path }) {
   const close = () => setP(null);
   return (
     <div onClickCapture={(e) => e.target.closest?.('a[href^="#/"]:not([data-popup])') && setTimeout(close)}>
-      <TrustDialog key={p.kind} kind={p.kind} start={p} onClose={close} onBook={() => setP({ kind: "book" })}>{p.kind === "book" ? <BookPopup /> : null}</TrustDialog>
+      <TrustDialog key={p.kind} kind={p.kind} start={p} onClose={close} onBook={() => setP({ kind: "book" })}>{p.kind === "book" ? <BookPopup /> : p.kind === "policy" ? <PolicyBody page={p.page} /> : null}</TrustDialog>
     </div>
   );
 }
@@ -76,7 +77,10 @@ export default function App() {
     <CartProvider>
       <SaleEnded />
       {path === "/checkout" ? (
-        <Checkout key={lang} />
+        <>
+          <Checkout key={lang} />
+          <Popup path={path} />
+        </>
       ) : (
         <>
           <Header path={path} lang={lang} />

@@ -92,14 +92,33 @@ const zoneLabel = (tz) => {
   return `${known ? t(known[1]) : tz.replace(/_/g, " ").split("/").pop()} (${gmt})`;
 };
 
+/* The booking in progress (time, step, form fields) survives closing the popup or leaving the page during the visit. */
+const draft = { fields: {} };
 export function Booking() {
   const days = useMemo(businessDays, []);
-  const [zone, setZone] = useState(guessZone);
-  const [day, setDay] = useState(0);
-  const [slot, setSlot] = useState(null);
-  const [step, setStep] = useState("time"); // time → details → done
+  const [zone, setZone] = useState(() => draft.zone || guessZone());
+  const [day, setDay] = useState(draft.day || 0);
+  const [slot, setSlot] = useState(draft.slot || null);
+  const [step, setStep] = useState(draft.step || "time"); // time → details → done
   const [err, setErr] = useState({});
-  const [machines, setMachines] = useState([]);
+  const [machines, setMachines] = useState(draft.machines || []);
+  useEffect(() => { Object.assign(draft, { zone, day, slot, step, machines }); }, [zone, day, slot, step, machines]);
+  const formRef = useRef(null);
+  // put back what was typed before (uncontrolled fields)
+  useEffect(() => {
+    const form = formRef.current;
+    if (step !== "details" || !form) return;
+    Object.entries(draft.fields).forEach(([k, v]) => {
+      const el = form.elements[k];
+      if (!el) return;
+      if (el.type === "checkbox") el.checked = v;
+      else el.value = v; // inputs, selects, and radio groups (RadioNodeList.value)
+    });
+  }, [step]);
+  const keep = (e) => {
+    const form = e.currentTarget;
+    [...form.elements].forEach((el) => { if (!el.name) return; if (el.type === "checkbox") draft.fields[el.name] = el.checked; else if (el.type === "radio") { if (el.checked) draft.fields[el.name] = el.value; } else draft.fields[el.name] = el.value; });
+  };
   const stripRef = useRef(null);
   const soon = useMemo(() => {
     const out = [];
@@ -211,7 +230,7 @@ export function Booking() {
       )}
 
       {step === "details" && (
-        <form className="cs-book-body cs-form" onSubmit={submit} noValidate>
+        <form ref={formRef} className="cs-book-body cs-form" onSubmit={submit} onInput={keep} onChange={keep} noValidate>
           <button type="button" className="cs-back" onClick={() => setStep("time")}><Icon name="arrow" size={16} />{t("Back to times")}</button>
           <div className="cs-when"><Icon name="calendar" size={18} /><span><b>{when}</b><small>{zoneLabel(zone)}</small></span></div>
           <div className="cs-row">

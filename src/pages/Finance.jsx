@@ -175,8 +175,10 @@ function Q({ k, label, opts, ans, setAns }) {
 export default function Finance({ query }) {
   useEffect(() => { document.title = "Financing | OneLaser"; return () => { document.title = "OneLaser Store — Redesign Draft"; }; }, []);
   const start = byHandle[query?.get("p")] ? query.get("p") : "hydra-9-gen-2-70w-rf-co2-dual-laser-machine";
-  const [handle, setHandle] = useState(start);
-  const [amount, setAmount] = useState(byHandle[start]?.price || 9999);
+  // ?amount= (from the cart or a finder pick) starts the estimate on that exact amount
+  const given = Number(query?.get("amount")) > 0 ? Number(query.get("amount")) : 0;
+  const [handle, setHandle] = useState(given ? "custom" : start);
+  const [amount, setAmount] = useState(given || byHandle[start]?.price || 9999);
   const [ans, setAns] = useState({ buyer: "business", credit: "good", years: "est" });
   const fit = useMemo(() => fitFor(ans, amount), [ans, amount]);
   const [tab, setTab] = useState("subsidy");

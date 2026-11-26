@@ -222,3 +222,10 @@ export const openPopup = (kind, detail = {}) => window.dispatchEvent(new CustomE
 /** Props for a link that opens a popup instead of leaving the page. Keeps the page's address as href, so a new tab or
     no-JS still reaches the full page. Marked data-popup so an open popup does not treat it as "leaving". */
 export const popupLink = (kind, detail, href) => ({ href, "data-popup": "", onClick: (e) => { if (e.metaKey || e.ctrlKey || e.shiftKey) return; e.preventDefault(); openPopup(kind, detail); } });
+
+/* The one monthly-payment estimate shown anywhere on the site (product cards, finder, cart, payment popup):
+   a standard loan payment at 15% APR. Pages never divide a price themselves (scripts/check-monthly.mjs). */
+export const FIN_APR = 15;
+export const FIN_MONTHS = 24;
+export const perMonth = (amount, apr = FIN_APR, n = FIN_MONTHS) => { const r = apr / 1200; return r ? (amount * r) / (1 - (1 + r) ** -n) : amount / n; };
+export const monthlyText = (amount) => `$${perMonth(amount).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;

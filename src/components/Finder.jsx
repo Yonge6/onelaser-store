@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { t } from "../i18n.js";
-import { asset, byHandle, frontImg, img, lockScroll, money, popupLink, products, useFocusTrap, isTopDialog } from "../lib.js";
+import { asset, byHandle, frontImg, img, lockScroll, money, monthlyText, popupLink, products, useFocusTrap, isTopDialog } from "../lib.js";
 import { AddButton, Icon, Link } from "./ui.jsx";
 import { contact, saleOn } from "../data/site.js";
 import { M, STEPS, rank as rankAll, roundFocus, hasRound, ready } from "./finderRules.js";
@@ -23,8 +23,6 @@ function addOnsFor(a, key) {
   return out.filter(([, h]) => byHandle[h]);
 }
 
-const FINANCE_MONTHS = 24; // same illustration as 1laser.com's "24-month payment": price ÷ 24
-const monthly = (p) => (p.price / FINANCE_MONTHS).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
 /* Idle state of the finder preview: line drawings traced from the straight front views on the 1laser.com home page
    (public/assets/finder-front-*.png), blue lines with the brand-red trim where it sits on each machine.
@@ -174,7 +172,7 @@ export default function FinderCard({ modal = false }) {
           <h3 className="fx-name"><Link to={`/products/${top.handle}`}>{top.name}</Link></h3>
           <p className="fx-tag">{t(top.tagline)}</p>
           {reasons.length > 0 && <ul className="fx-why">{reasons.map((r) => <li key={r}><Icon name="check" size={14} />{t(r)}</li>)}</ul>}
-          <p className="fx-price"><b>{money(top.price)}</b>{top.compareAt > top.price && <><s>{money(top.compareAt)}</s><em>{t("Save")} {money(top.compareAt - top.price)}</em></>}<span>{t("or")} ${monthly(top)}{t("/mo for 24 months")}</span></p>
+          <p className="fx-price"><b>{money(top.price)}</b>{top.compareAt > top.price && <><s>{money(top.compareAt)}</s><em>{t("Save")} {money(top.compareAt - top.price)}</em></>}<span>{t("or")} {monthlyText(top.price)}{t("/mo for 24 months (est. 15% APR)")}</span></p>
           <div className="fx-cta">
             <AddButton product={top} className="ih-btn line" />
             <Link to={`/products/${top.handle}`} className="ih-btn dark">{t("Buy now")}</Link>

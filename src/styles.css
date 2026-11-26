@@ -5158,3 +5158,20 @@ body:has(.ip-bar) .ai-pill, .pdp ~ .ai-pill { bottom: 104px; }
 .ic-ask .ic-terms { margin-top: 18px; padding: 14px 16px; border-radius: 12px; background: var(--page); font-size: 14px; line-height: 21px; color: var(--title); }
 .ic-terms-x { position: absolute; top: 16px; right: 16px; width: 36px; height: 36px; display: grid; place-items: center; border-radius: 50%; color: var(--title); }
 .ic-terms-x:hover { background: var(--page); }
+
+/* Checkout: the policies box sits above whichever "Place order" this screen uses */
+.ik-terms-phone { display: none; }
+@media (max-width: 860px) { .ik-terms-phone { display: block; } .ik-terms-wide { display: none; } }
+.ic-terms.bad { color: var(--brand); }
+.ic-terms.bad input { outline: 2px solid var(--brand); outline-offset: 2px; }
+
+/* Policy popup: the policy text, readable, scrolling inside the window */
+.tdlg-policy { max-height: min(70vh, 640px); overflow: auto; padding-right: 6px; font-size: 14px; line-height: 22px; color: #3f3f46; }
+.tdlg-policy h3 { margin: 0 0 12px; padding-right: 40px; font-size: 22px; line-height: 28px; color: var(--title); }
+.tdlg-policy h4 { margin: 18px 0 6px; font-size: 15px; line-height: 21px; color: var(--title); }
+.tdlg-policy p { margin: 0 0 10px; }
+.tdlg-policy p.li { position: relative; padding-left: 16px; }
+.tdlg-policy p.li::before { content: "•"; position: absolute; left: 2px; }
+.tdlg-policy-src { margin-top: 18px !important; }
+.tdlg-policy-src a { color: var(--accent-ink); font-weight: 600; }
+@media (max-width: 860px) { .tdlg-policy { max-height: 72vh; } }

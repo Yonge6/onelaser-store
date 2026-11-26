@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useRef, useState } from "react";
 import { t, tf, localeTag } from "../i18n.js";
-import { asset, byHandle, img, lockScroll, money, products, frontImg, useFocusTrap, isTopDialog } from "../lib.js";
+import { asset, byHandle, img, lockScroll, money, products, frontImg, useFocusTrap, isTopDialog, FIN_APR, monthlyText, perMonth } from "../lib.js";
 import { contact, footer, heroSlides, homeFaq, homeProof, homeReviews, homeStandard, homeTabs, trustpilot, newHandles, promo, saleOn, shortSlogans, homeProofSources } from "../data/site.js";
 import { AddButton, Countdown, Icon, Link, SpecIcon, useDragScroll } from "../components/ui.jsx";
 import FinderCard, { FinderHelp } from "../components/Finder.jsx";
@@ -138,7 +138,6 @@ function Hero() {
    it adds the first available option (the one the product page preselects), stays on the page and confirms for a moment. */
 // Monthly figure = price ÷ 24, the same "24-month payment" 1laser.com shows on its product pages ($4,399 → $183.29/mo.).
 // It is an illustration, not an offer: the real rate and term depend on the lender's approval.
-const FINANCE_MONTHS = 24;
 
 function HomeCard({ p }) {
   return (
@@ -156,7 +155,7 @@ function HomeCard({ p }) {
         {p.compareAt > p.price && <><span className="ih-card-break" aria-hidden="true" /><em>{t("Save")} {money(p.compareAt - p.price)}</em></>}
       </p>
       {p.kind === "machine" && (
-        <p className="ih-card-monthly">{t("or")} <b>${(p.price / FINANCE_MONTHS).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</b>{t("/mo for 24 months")}</p>
+        <p className="ih-card-monthly">{t("or")} <b>{monthlyText(p.price)}</b>{t("/mo for 24 months (est. 15% APR)")}</p>
       )}
       <div className="ih-card-btns">
         <AddButton product={p} className="ih-btn line sm" />
@@ -225,10 +224,9 @@ const faqText = (q) => homeFaq.find(([k]) => k.startsWith(q))?.[1] || "";
 const DLG_HEAD = {
   reviews: ["star", "Owner reviews"], company: ["flag", "U.S. company"], warranty: ["shield", "Warranty and returns"],
   returns: ["refresh", "Picked the wrong one?"], support: ["headset", "Stuck on a job?"], training: ["user", "First laser?"],
-  financing: ["card", "Budget tight?"], fox: ["tv", "TV feature"], call: ["calendar", "How the call works"], sources: ["search", "Sources"], book: ["calendar", "Book a free call"],
+  financing: ["card", "Budget tight?"], fox: ["tv", "TV feature"], call: ["calendar", "How the call works"], sources: ["search", "Sources"], book: ["calendar", "Book a free call"], policy: ["shield", "Policies"],
 };
 const FIN_MACHINES = ["onelaser-xrf-desktop-laser-machine", "cobra-10-100w-co2-laser-engraver-cutter", "hydra-9-gen-2-70w-rf-co2-dual-laser-machine", "hydra-16-gen-2-70w-rf-co2-dual-laser-machine"];
-const perMonth = (amount, apr, n) => { const r = apr / 1200; return r ? (amount * r) / (1 - (1 + r) ** -n) : amount / n; };
 const Faces = () => <span className="tdlg-faces" aria-hidden="true">{[1, 2, 3].map((n) => <img key={n} src={asset(`team-${n}.jpg`)} alt="" />)}</span>;
 
 /** Phone sheets: drag down from the top (sheet scrolled to its top) to close; a short drag springs back. */
@@ -454,12 +452,12 @@ export function TrustDialog({ kind, onClose, onTrustpilot, onBook, start, childr
   } else if (kind === "financing") {
     const m = byHandle[fin.h];
     const amount = fin.h === "cart" ? start.amount : m?.price || 0;
-    const pay = amount ? perMonth(amount, 15, fin.n) : 0;
+    const pay = amount ? perMonth(amount, FIN_APR, fin.n) : 0;
     body = (
       <>
         <Head title={t("Spread the cost four ways")} />
         <div className="tdlg-calc">
-          <label><span>{t("Machine")}</span><select value={fin.h} onChange={(e) => setFin((f) => ({ ...f, h: e.target.value }))}>{start?.amount > 0 && <option value="cart">{t("My cart")} · {money(start.amount)}</option>}{finList.map((h) => byHandle[h] && <option key={h} value={h}>{byHandle[h].name} · {money(byHandle[h].price)}</option>)}</select></label>
+          <label><span>{t("Machine")}</span><select value={fin.h} onChange={(e) => setFin((f) => ({ ...f, h: e.target.value }))}>{start?.amount > 0 && <option value="cart">{start.label || t("My cart")} · {money(start.amount)}</option>}{finList.map((h) => byHandle[h] && <option key={h} value={h}>{byHandle[h].name} · {money(byHandle[h].price)}</option>)}</select></label>
           <div className="tdlg-seg">{[12, 24, 36, 60].map((n) => <button key={n} type="button" className={fin.n === n ? "on" : ""} onClick={() => setFin((f) => ({ ...f, n }))}>{tf("{n} months", { n })}</button>)}</div>
           <p className="tdlg-pay"><b>{money(Math.round(pay))}</b><span>/{t("mo")}</span><small>{t("Estimate at 15% APR. Your rate is set by the lender.")}</small></p>
         </div>
@@ -469,7 +467,7 @@ export function TrustDialog({ kind, onClose, onTrustpilot, onBook, start, childr
           <li><b>{t("Shop Pay Installments")}</b><span>{t("3, 6 or 12 monthly payments, chosen at checkout.")}</span></li>
           <li><b>ClickLease</b><span>{t("Lease to own, $0 down, approval in minutes.")}</span></li>
         </ul>
-        <div className="tdlg-links"><More to={`/pages/financing${fin.h === "cart" ? (start.h ? `?p=${start.h}` : "") : `?p=${fin.h}`}`}>{t("Compare all financing options")}</More></div>
+        <div className="tdlg-links"><More to={fin.h === "cart" ? `/pages/financing?amount=${Math.round(start.amount)}${start.h ? `&p=${start.h}` : ""}` : `/pages/financing?p=${fin.h}`}>{t("Compare all financing options")}</More></div>
       </>
     );
   } else {

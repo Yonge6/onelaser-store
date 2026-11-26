@@ -4,6 +4,7 @@ import { asset, frontImg, img, money } from "../lib.js";
 import { useCart } from "../cart.jsx";
 import { Icon, Link } from "../components/ui.jsx";
 import { OfferGate } from "./Cart.jsx";
+import { TermsBox, useTerms } from "../components/Terms.jsx";
 
 // Tax-exempt buyers: the state's official resale certificate (OneLaser ships from California; 1laser.com has no form of its own).
 // Exemption requests go to the sales team (sales@1laser.com, as listed in the site footer). TODO(team): finance to confirm.
@@ -43,6 +44,9 @@ export default function Checkout() {
   const [f, setF] = useState(draft.f || { state: "" });
   useEffect(() => { try { sessionStorage.setItem(DRAFT, JSON.stringify({ step, f })); } catch { /* private mode: this page only */ } }, [step, f]);
   const [err, setErr] = useState({});
+  // the policies must be accepted before the order is placed, however the buyer got here (cart, Buy now, a new tab)
+  const [terms, setTerms] = useTerms();
+  const [termsBad, setTermsBad] = useState(false);
   /* Phones: the bottom bar's button changes with the step; it is disabled for 700 ms after a step change so a double tap
      cannot run the next step too. */
   const [cool, setCool] = useState(false);
@@ -91,7 +95,8 @@ export default function Checkout() {
     }
     setStep(1);
   };
-  const place = () => { try { sessionStorage.removeItem(DRAFT); } catch { /* ignore */ } setDone(subtotal); clearPicked(); window.scrollTo(0, 0); };
+  const place = () => {
+    if (!terms) { setTermsBad(true); document.querySelector(".ik-terms-at input")?.focus(); return; } try { sessionStorage.removeItem(DRAFT); } catch { /* ignore */ } setDone(subtotal); clearPicked(); window.scrollTo(0, 0); };
   const applyCode = () => setCodeMsg(code.trim() ? t("Codes are checked on the live store. This draft does not apply discounts.") : t("Enter a code first."));
 
   const summary = (
@@ -226,6 +231,7 @@ export default function Checkout() {
                   <p className="ik-biz"><Icon name="card" size={18} /><span>{t("Buying for a business? $0-down loans and lease-to-own are arranged before you order.")} <Link to="/pages/financing">{t("See business financing")}</Link></span></p>
                   <p className="ik-hint">{t("Payment fields are disabled in this design draft.")}</p>
                   {/* phones: the order is placed here, in the payment section, never from the bottom bar */}
+                  <div className="ik-terms-at ik-terms-phone"><TermsBox id="ik-terms-m" ok={terms} bad={termsBad && !terms} onChange={(v) => { setTerms(v); setTermsBad(false); }} /></div>
                   <button type="button" ref={confirmRef} className="ik-pill wide ik-confirm" disabled={ended} onClick={place}>{`${t("Place order")} · ${money(subtotal)}`}</button>
                 </>
               )}
@@ -235,6 +241,7 @@ export default function Checkout() {
           <aside className="ik-card ik-summary">
             <div className="ik-summary-head"><h2>{t("Order summary")}</h2><Link to="/cart">{t("Edit cart")}</Link></div>
             <div className="ik-summary-body">{summary}</div>
+            {step === 2 && <div className="ik-terms-at ik-terms-wide"><TermsBox id="ik-terms" ok={terms} bad={termsBad && !terms} onChange={(v) => { setTerms(v); setTermsBad(false); }} /></div>}
             <button type="button" className="ik-pill wide" disabled={step < 2 || ended} onClick={place}>{step < 2 ? t("Complete the steps to place your order") : `${t("Place order")} · ${money(subtotal)}`}</button>
             <ul className="ik-trust">
               <li><Icon name="lock" size={16} />{t("Secure, encrypted checkout")}</li>

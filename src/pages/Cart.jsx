@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from "react";
-import { asset, byHandle, frontImg, go, img, lockScroll, money, popupLink, useFocusTrap, isTopDialog } from "../lib.js";
-import { footer } from "../data/site.js";
+import { asset, byHandle, frontImg, go, img, lockScroll, money, monthlyText, popupLink, useFocusTrap, isTopDialog } from "../lib.js";
+import { TermsAsk, TermsBox, useTerms } from "../components/Terms.jsx";
 import { t } from "../i18n.js";
 import { useCart } from "../cart.jsx";
 import { Icon, Link } from "../components/ui.jsx";
@@ -34,51 +34,6 @@ const OFFER = {
   [CHILLER]: ["1400W cooling capacity", "\u00b10.3\u00b0C temperature control", "Water-flow and temperature alarms"],
 };
 const OFFER_KEY = "onelaser-cart-offer-seen";
-
-/* Policies the buyer accepts before checkout (as on aeonlaser.us): terms, warranty, shipping and refund, linked to the
-   1laser.com pages in the footer's Policy group. Accepted once per visit. */
-const TERMS_KEY = "onelaser-terms-ok";
-const POLICY = ["Terms of Service", "Warranty Policy", "Shipping Policy", "Refund Policy"];
-const policyUrl = (name) => footer.groups.find(([g]) => g === "Policy")?.[1].find(([l]) => l === name)?.[1];
-function TermsText() {
-  return (
-    <span>
-      {t("I have read and accept the")}{" "}
-      {POLICY.map((p, n) => (
-        <span key={p}>{n > 0 && (n === POLICY.length - 1 ? ` ${t("and")} ` : ", ")}<a href={policyUrl(p)} target="_blank" rel="noreferrer">{t(p)}</a></span>
-      ))}.
-    </span>
-  );
-}
-function TermsBox({ ok, onChange, id }) {
-  return (
-    <label className="ic-terms" htmlFor={id}>
-      <input id={id} type="checkbox" checked={ok} onChange={(e) => onChange(e.target.checked)} />
-      <TermsText />
-    </label>
-  );
-}
-/* Check out without the box ticked: ask once in a small window; ticking it there continues to checkout. */
-function TermsAsk({ onClose, onAccept }) {
-  const box = useRef(null);
-  useFocusTrap(box);
-  useEffect(() => {
-    const unlock = lockScroll();
-    const esc = (e) => e.key === "Escape" && isTopDialog(box.current) && onClose();
-    window.addEventListener("keydown", esc);
-    return () => { unlock(); window.removeEventListener("keydown", esc); };
-  }, []);
-  return (
-    <div className="ic-offer-scrim" onClick={onClose}>
-      <div ref={box} className="ic-ask" role="dialog" aria-modal="true" aria-labelledby="ic-terms-h" onClick={(e) => e.stopPropagation()}>
-        <button type="button" className="ic-terms-x" aria-label={t("Close")} onClick={onClose}><Icon name="close" size={20} /></button>
-        <h2 id="ic-terms-h">{t("Please review and accept our policies")}</h2>
-        <p className="ic-ask-sub">{t("Tick the box to continue to checkout.")}</p>
-        <TermsBox id="ic-terms-modal" ok={false} onChange={(v) => v && onAccept()} />
-      </div>
-    </div>
-  );
-}
 
 function Offer({ list, onClose }) {
   const { add } = useCart();
@@ -166,7 +121,7 @@ function Suggestions({ exclude = [] }) {
 
 export default function Cart() {
   const { items, picked, setQty, add, subtotal, savings, toggle, toggleAll } = useCart();
-  const [terms, setTerms] = useState(() => { try { return sessionStorage.getItem(TERMS_KEY) === "1"; } catch { return false; } });
+  const [terms, setTermsOk] = useTerms();
   const [ask, setAsk] = useState(false);
   const inCart = items.map((i) => i.product.handle);
   const hasMachine = items.find((i) => i.product.kind === "machine");
@@ -189,7 +144,7 @@ export default function Cart() {
       </section>
     );
   const all = picked.length === items.length;
-  const okTerms = () => { setTerms(true); try { sessionStorage.setItem(TERMS_KEY, "1"); } catch { /* private mode */ } };
+  const okTerms = () => setTermsOk(true);
   const toCheckout = (e) => { if (!terms) { e.preventDefault(); setAsk(true); } };
   const pickedQty = picked.reduce((s, i) => s + i.qty, 0);
   const machine = picked.find((i) => i.product.kind === "machine") || items.find((i) => i.product.kind === "machine");
@@ -254,14 +209,14 @@ export default function Cart() {
             <p><span>{t("Shipping")}</span><span className="muted">{t("Calculated at checkout")}</span></p>
             <p><span>{t("Tax")}</span><span className="muted">{t("Calculated at checkout")}</span></p>
             <p className="total"><span>{t("Estimated total")}</span><b>{money(subtotal)}</b></p>
-            {/* same illustration as the product cards: total ÷ 24 */}
-            {subtotal >= 1000 && <p className="ic-monthly">{t("or")} <b>{money(subtotal / 24)}</b>{t("/mo for 24 months")}</p>}
+            {/* the site's one estimate (lib.js perMonth), same as the product cards and the payment popup */}
+            {subtotal >= 1000 && <p className="ic-monthly">{t("or")} <b>{monthlyText(subtotal)}</b>{t("/mo for 24 months (est. 15% APR)")}</p>}
             {subtotal >= 1000 && (
               <a {...popupLink("financing", { amount: subtotal, h: machine?.product.handle }, `#/pages/financing${machine ? `?p=${machine.product.handle}` : ""}`)} className="ic-finance">
                 <Icon name="card" size={16} />{t("Pay over time with financing.")} <u>{t("Estimate my payment")}</u>
               </a>
             )}
-            {picked.length > 0 && <TermsBox id="ic-terms" ok={terms} onChange={(v) => (v ? okTerms() : (setTerms(false), (() => { try { sessionStorage.removeItem(TERMS_KEY); } catch { /* private mode */ } })()))} />}
+            {picked.length > 0 && <TermsBox id="ic-terms" ok={terms} onChange={setTermsOk} />}
             {picked.length ? <Link to="/checkout" className="ic-checkout" onClick={toCheckout}>{t("Check out")}</Link> : <span className="ic-checkout off" aria-disabled="true">{t("Select an item to check out")}</span>}
             <Link to="/collections/machines" className="ic-continue">{t("Continue shopping")}</Link>
             <h3>{t("Shipped by OneLaser")}</h3>
