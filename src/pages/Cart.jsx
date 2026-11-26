@@ -17,9 +17,10 @@ const SERVICES = ["engineer-1-on-1-training-support", "lightburn-software-pro-li
 const CHILLER = "onelaser-industrial-chiller-for-hydra-laser-engraver"; // "for Hydra & Cobra glass tube laser system"
 const GLASS = ["cobra", "hydra"]; // series that can run a glass tube; Hydra 7 Gen2 is RF only
 const SUGGEST = ["piburn-v-for-onelaser", "air-assist-for-laser-engraver-cutter", "filtrabox-micro", "lightburn-software-pro-license-key", "multi-function-rotary-axis-57-motor", "engineer-1-on-1-training-support", "1-8-frosted-matte-acrylic-sheets-12-12-4-pack-for-laser-engraving-cutting"];
-/* The methods 1laser.com's own Payment Methods page shows, with the same Shopify payment logos (public/assets/pay).
-   Shop Pay covers Shop Pay Installments (provided by Affirm), so Affirm has no logo of its own. */
-const PAY = [["visa", "Visa"], ["mastercard", "Mastercard"], ["amex", "American Express"], ["discover", "Discover"], ["apple-pay", "Apple Pay"], ["google-pay", "Google Pay"], ["shop-pay", "Shop Pay"]];
+/* The methods 1laser.com takes: its Payment Methods page plus the express buttons on its live checkout (PayPal, Amazon Pay;
+   checked 2026-11-26), with Shopify's own payment logos (public/assets/pay). Shop Pay covers Shop Pay Installments
+   (provided by Affirm), so Affirm has no logo of its own. */
+const PAY = [["visa", "Visa"], ["mastercard", "Mastercard"], ["amex", "American Express"], ["discover", "Discover"], ["paypal", "PayPal"], ["apple-pay", "Apple Pay"], ["google-pay", "Google Pay"], ["amazon-pay", "Amazon Pay"], ["shop-pay", "Shop Pay"]];
 
 const addOnsFor = (p) => {
   if (p.kind !== "machine") return [];
@@ -248,8 +249,9 @@ export default function Cart() {
             <p><span>{t("Price")} ({pickedQty} {t(pickedQty === 1 ? "item" : "items")})</span><span>{money(subtotal + savings)}</span></p>
             {savings > 0 && <p className="save"><span>{t("Savings")}</span><span>−{money(savings)}</span></p>}
             <p><span>{t("Shipping")}</span>{quote ? <span>{quoteCell(quote)}</span> : <span className="muted">{t(shipRegion(zip) ? "Calculated at checkout" : "Enter your ZIP above")}</span>}</p>
-            {/* which states OneLaser collects sales tax in is for finance to confirm; the live checkout adds it */}
-            <p><span>{t("Tax")}</span><span className="muted">{t("Added by state at checkout")}</span></p>
+            {/* the live checkout (Shopify) estimates the full local sales tax from the address and confirms it after the order;
+                checked 2026-11-26: CA 7.75%, TX 8.25%, NY 8.875%, FL 7%, WA 10.55%, OR none. The draft does not copy rates. */}
+            <p><span>{t("Tax")}</span><span className="muted">{t("Estimated from your address at checkout")}</span></p>
             <p className="total"><span>{t("Estimated total")}</span><b>{money(total)}</b></p>
             {/* the site's one estimate (lib.js perMonth), same as the product cards and the payment popup */}
             {/* financing covers the items (the business-loan subsidy threshold is on the purchase), so shipping is left out */}

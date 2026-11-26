@@ -135,9 +135,10 @@ export default function Checkout() {
         {savings > 0 && <div className="save"><dt>{t("Savings")}</dt><dd>−{money(savings)}</dd></div>}
         {/* live: changes as soon as a ZIP is typed (rule from the shipping policy; the dollar rate once RATES is filled in) */}
         <div><dt>{t("Shipping")}</dt><dd>{quote ? quoteCell(quote) : region ? t(region === "lower48" ? "Fixed rate" : SHIP_TEXT[region][0]) : t("Enter your address")}</dd></div>
-        <div><dt>{t("Tax")}</dt><dd>{t("Added by state when you pay")}</dd></div>
+        <div><dt>{t("Tax")}</dt><dd>{t("Estimated from your address")}</dd></div>
         <div className="total"><dt>{t("Total")}</dt><dd><small>USD</small> {money(total)}</dd></div>
       </dl>
+      <p className="ik-tax-note">{t("The final tax and total are confirmed by email after you place your order.")}</p>
       <div className="ik-tax">
         <p><b>{t("Buying tax-exempt or for resale?")}</b>{t("Download the California resale certificate (CDTFA-230), or use your own state's exemption form. Email it to our sales team at sales@1laser.com before you pay so they can apply your exemption.")}</p>
         <a href={TAX_FORM} target="_blank" rel="noreferrer" download><Icon name="download" size={16} />{t("Download the California form (PDF)")}</a>
