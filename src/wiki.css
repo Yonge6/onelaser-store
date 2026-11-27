@@ -215,7 +215,7 @@
 .wk-hero.dark .container { position: relative; z-index: 1; }
 .wk-hero.dark h1 { color: #fff; max-width: 640px; font-size: 46px; line-height: 54px; }
 .wk-hero.dark .wk-kicker { color: #ff6a4a; }
-.wk-hero-art { position: absolute; right: max(-40px, calc(50% - 760px)); bottom: -24px; height: 340px; width: auto; opacity: .95; pointer-events: none; }
+.wk-hero-art { position: absolute; top: 0; right: 0; height: 100%; width: min(62%, 900px); object-fit: cover; object-position: 60% 55%; pointer-events: none; -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 38%); mask-image: linear-gradient(to right, transparent 0%, #000 38%); }
 .wk-hero.dark .wk-search { max-width: 680px; height: 64px; border: 0; border-radius: 16px; box-shadow: 0 20px 50px rgba(0, 0, 0, .35); }
 .wk-hero.dark .wk-search .btn-primary { height: 50px; border-radius: 12px; padding: 0 26px; }
 .wk-hero.dark .wk-popular a { background: transparent; border-color: rgba(255, 255, 255, .25); color: #ececf1; }
@@ -258,12 +258,12 @@
 .wk-learn-text small { font-size: 12px; font-weight: 600; color: var(--brand); }
 .wk-learn-text b { font-size: 16px; line-height: 23px; color: var(--title); }
 @media (prefers-reduced-motion: reduce) { .wk-learn-card:hover .wk-learn-pic img { transform: none; } }
-@media (max-width: 1180px) { .wk-symptoms { grid-template-columns: repeat(4, minmax(0, 1fr)); } .wk-hero-art { height: 260px; opacity: .5; } }
+@media (max-width: 1180px) { .wk-symptoms { grid-template-columns: repeat(4, minmax(0, 1fr)); } .wk-hero-art { width: 70%; opacity: .55; } }
 @media (max-width: 1080px) { .wk-machines { grid-template-columns: repeat(2, minmax(0, 1fr)); } .wk-learn { grid-template-columns: 1fr 1fr; } .wk-learn-card:first-child { grid-row: auto; grid-column: 1 / -1; } }
 @media (max-width: 860px) {
   .wk-hero.dark { padding: 36px 0 32px; }
   .wk-hero.dark h1 { font-size: 28px; line-height: 36px; }
-  .wk-hero-art { display: none; }
+  .wk-hero-art { width: 100%; opacity: .28; -webkit-mask-image: linear-gradient(to bottom, #000 30%, transparent 100%); mask-image: linear-gradient(to bottom, #000 30%, transparent 100%); }
   .wk-hero.dark .wk-search { height: 54px; border-radius: 14px; padding-left: 14px; }
   .wk-hero.dark .wk-search .btn-primary { height: 42px; padding: 0 14px; border-radius: 10px; }
   .wk-symptoms { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }

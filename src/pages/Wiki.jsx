@@ -227,7 +227,7 @@ function Overview() {
   return (
     <>
       <section className="wk-hero dark">
-        <img className="wk-hero-art" src={familyImage("hydra-series")} alt="" />
+        <img className="wk-hero-art" src={asset("wiki-hero-lineup.jpg")} alt="" />
         <div className="container">
           <p className="wk-kicker">{t("OneLaser Support")}</p>
           <h1>{t("What's going on with your laser?")}</h1>
